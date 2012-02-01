@@ -1,3 +1,4 @@
+# This is a change made by Vivek
 # appends argument term to the end of formula object
 addtermToFormula <- function(formulaObject, term) {
   formulaObject[[3]] <- call("+", formulaObject[[3]], substitute(term))
