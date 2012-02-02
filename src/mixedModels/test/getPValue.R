@@ -12,11 +12,11 @@ library(nlme)
 
 # construct batch and no batch models
 loadedMeanModel=lme(Nose.To.Tail.Base.Length~Genotype + Gender + Weight + Genotype*Gender, random=~1|Assay.Date, data, na.action="na.omit", method="REML")
-noBatchModel=gls(Nose.To.Tail.Base.Length~Genotype + Gender + Weight + Genotype*Gender, data, na.action="na.omit") 
+noBatchModel=gls(Nose.To.Tail.Base.Length~Genotype + Gender + Weight + Genotype*Gender, data, na.action="na.omit")
 # Work out if they are significantly different
 canOmittBatchEffects = (anova(loadedMeanModel, noBatchModel)$p[2] / 2)> 0.05
 
-if(!canOmittBatchEffects) {  # if batch effects are significant
+if(!canOmittBatchEffects) { # if batch effects are significant
   # use the batch model (linear mixed model?) for the subsequent tests
   meanModelToUse = loadedMeanModel
   # construct a similar model with unequal variance
@@ -41,25 +41,25 @@ if(canAssumeEqualVariance) { # if variances are similar
 # work out which of the variables are significant
 resultOfReductionAnalysis = anova(heterovariantModel)
 
-keepGender = resultOfReductionAnalysis$p[3] > 0.05
-keepWeight = resultOfReductionAnalysis$p[4] > 0.05
-keepGenotypeGenderInteraction = resultOfReductionAnalysis$p[5] > 0.05
+keepGender = resultOfReductionAnalysis$p[3] < 0.05
+keepWeight = resultOfReductionAnalysis$p[4] < 0.05
+keepGenotypeGenderInteraction = resultOfReductionAnalysis$p[5] < 0.05
 
 # assemble formula, adding terms if they are significant
-formulaGenotype = Nose.To.Tail.Base.Length~Genotype + Gender
+formulaGenotype = Nose.To.Tail.Base.Length~Genotype
 formulaEffectSize = Nose.To.Tail.Base.Length~Genotype
 
 if(keepGender) {
   formulaGenotype = addtermToFormula(formulaGenotype, Gender)
-  formulaEffectSize = addtermToFormula(formulaNull, Gender)
+  formulaEffectSize = addtermToFormula(formulaEffectSize, Gender)
 }
 if(keepWeight) {
   formulaGenotype = addtermToFormula(formulaGenotype, Weight)
-  formulaEffectSize = addtermToFormula(formulaNull, Weight)
+  formulaEffectSize = addtermToFormula(formulaEffectSize, Weight)
 }
 if(keepGenotypeGenderInteraction) {
   formulaGenotype = addtermToFormula(formulaGenotype, Genotype*Gender)
-  formulaEffectSize = addtermToFormula(formulaNull, Genotype*Gender)
+  formulaEffectSize = addtermToFormula(formulaEffectSize, Genotype*Gender)
 }
 
 if(keepGender) {
@@ -96,7 +96,7 @@ if(canAssumeEqualVariance) {
     finalModelGenotype = lme(formulaGenotype, random=~1|Assay.Date, data, na.action="na.omit", method="ML", weights=varIdent(form=~1|Genotype))
     finalModelNull = lme(formulaNull, random=~1|Assay.Date, data, na.action="na.omit", method="ML", weights=varIdent(form=~1|Genotype))
     finalModelEffectSizes = lme(formulaEffectSize, random=~1|Assay.Date, data, na.action="na.omit", method="REML", weights=varIdent(form=~1|Genotype))
-  }  
+  }
 }
 
 print('final p value = ')
