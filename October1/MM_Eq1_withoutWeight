@@ -1,0 +1,199 @@
+#----------------------------------------------------------------------------------------------------
+#Function model_Formula:  set the basic fully loaded model formula which depends on how many genders levels exist.
+model_Formula <- function(dataset, depVariable){
+  numberofgenders=length(levels(dataset$Gender))
+  if(numberofgenders==2){
+  	model.formula <- as.formula(paste(depVariable, "~", paste("Genotype", "Gender", "Genotype*Gender", sep= "+")))
+  }else{ 
+    model.formula <- as.formula(paste(depVariable, "~", paste("Genotype",  sep= "+"))) 
+      } 
+  return(model.formula)
+}
+
+#--------------------------------------------------------------------------------------------------
+#Function final_genotype_model: testing the fixed effects and building final genotype model formula
+# Goal:  to test fixed effects of the model and based on the output build the final genotype model formula for later testing.  As a genotype model it automatically includes genotype.
+# First model_forFIXEDtest to build the model to be queried
+# The anova function tests the fixed effects associated by treatment with a null hypothesis that the regression coefficients are equal to zero  and an alternative hypothesis that the regression coefficient are not equal to zero.
+# If the p-values of these tests are less than 0.05 we reject the null and accept the alternative that the are significant components of the model and should be included.
+# Note a complexity surrounds the interaction term  - if it is significant but gender is excluded it is included.
+
+
+final_genotype_model<-function(dataset, depVariable){
+  model_followingbatchandvartest=model_forFIXEDtest(dataset, depVariable)
+  anova_results = anova(model_followingbatchandvartest, type="marginal")$"p-value" < 0.05
+  numberofgenders=length(levels(dataset$Gender))
+  if(numberofgenders==2){
+  	keepGender = anova_results[3]
+    keepInteraction = anova_results[4]
+    if (!keepGender  && !keepInteraction){
+          return(model.formula <- as.formula(paste(depVariable, "~", "Genotype")))
+    } else if((keepGender && keepInteraction)|(!keepGender && keepInteraction)){
+          return(model.formula <- as.formula(paste(depVariable, "~", paste("Genotype", "Gender",  "Genotype*Gender", sep= "+"))))
+    } else if(keepGender && !keepInteraction){
+         return(model.formula <- as.formula(paste(depVariable, "~", paste("Genotype", "Gender", sep= "+"))))
+    } 
+  }else{
+     	return(model.formula <- as.formula(paste(depVariable, "~", paste("Genotype"))))	 
+	 }
+}
+
+
+#---------------------------------------------------------------------------------------------------------------------------
+#Function final_null_model: testing the fixed effects and building final null model
+# Goal:  to test fixed effects of the model and based on the output build the final null model formula for later testing - as a null model it automatically excludes genotype and interaction term.
+# First model_forFIXEDtest to build the model to be queried
+# The anova function tests the fixed effects associated by treatment with a null hypothesis that the regression coefficients are equal to zero  and an alternative hypothesis that the regression coefficient are not equal to zero.
+# If the p-values of these tests are less than 0.05 we reject the null and accept the alternative that the are significant components of the model and should be included.
+# If no terms are significant a model can be build with just an intercept element this is specified as  "model.formula <- as.formula(paste(depVariable, "~", "1"))"
+
+
+final_null_model<-function(dataset, depVariable){
+    model_followingbatchandvartest=model_forFIXEDtest(dataset, depVariable)
+    anova_results = anova(model_followingbatchandvartest, type="marginal")$"p-value" < 0.05
+    numberofgenders=length(levels(dataset$Gender))
+    if(numberofgenders==2){
+      keepGender = anova_results[3]
+      keepInteraction = anova_results[4]
+      if(!keepGender&&!keepInteraction){
+         return(model.formula <- as.formula(paste(depVariable, "~", "1")))
+      }else{
+         return(model.formula <- as.formula(paste(depVariable, "~", "Gender")))
+      }
+    }else{
+      return(model.formula <- as.formula(paste(depVariable, "~", "1")))
+    }
+}
+
+
+#-------------------------------------------------------------------------------------
+#Function: table_content.  function return the table content which indicates where to query the table to grab information but also what can be grabbed.  
+
+
+table_content<-function(dataset,depVariable){
+	model_followingbatchandvartest=model_forFIXEDtest(dataset, depVariable)
+	anova_results = anova(model_followingbatchandvartest, type="marginal")$"p-value" < 0.05
+	numberofgenders=length(levels(dataset$Gender))
+	if(numberofgenders==2){
+		keepGender = anova_results[3]
+		keepInteraction = anova_results[4]
+		return(list(Gender_sig=keepGender, Weight_sig=FALSE, Interaction_sig=keepInteraction))
+	}else{
+		return(list(Gender_sig=FALSE, Weight_sig=FALSE, Interaction_sig=FALSE))
+	}
+}   
+#--------------------------------------------------------------------
+
+#Function: tablelength.  function return the model length which is needed to extract the data correctly.
+#Goal of this function is to return a length measure that will determine the table width so when we try to capture the output we can point correctly to the right point in a vector of values.
+
+
+ tablelength<-function(dataset,depVariable){
+   model_followingbatchandvartest=model_forFIXEDtest(dataset, depVariable)
+   anova_results = anova(model_followingbatchandvartest, type="marginal")$"p-value" < 0.05
+   numberofgenders=length(levels(dataset$Gender))
+   if(numberofgenders==2){
+      keepGender = anova_results[3]
+    #here I am counting how many elements will be on the table based on how the model used.  However the model used isnot a direct additive system of the yes calls (ie you can't have an interaction if you don't have gender in the model).
+       keepInteraction = anova_results[4]
+       if((keepGender && keepInteraction)|(!keepGender && keepInteraction)){
+             return(table_length=4)
+       }else if(!keepGender && !keepInteraction){
+             return(table_length=2)
+       }else{
+             return(table_length=3)
+      }  
+    }else{
+      return(table_length=2)
+    }
+}
+  
+
+#-------------------------------------------------------------------------------------
+#Function: finalmodel_info - Capturing the information from the final model
+
+finalmodel_info<-function(dataset, depVariable){
+	dataset=EnsureWTisRefLevel(dataset)
+	MM_fitquality=Diagnostictest(dataset, depVariable)
+	modeloutput=summary(finalmodel(dataset, depVariable))
+    keep_batch=testing_batch(dataset,depVariable)
+	variance_test=testing_variance(dataset, depVariable)
+    Nulltest_genotype_pvalue=testing_genotype_effect(dataset,depVariable)
+	model_followingbatchandvartest=model_forFIXEDtest(dataset, depVariable)
+	anova_results = anova(model_followingbatchandvartest, type="marginal")$"p-value" < 0.05
+	table_content=table_content(dataset, depVariable)
+	Gender_sig=table_content$Gender_sig
+	Weight_sig=table_content$Weight_sig
+	Interaction_sig=table_content$Interaction_sig
+	lengthoftable=tablelength(dataset,depVariable)
+    #problem depending on the length of the table where we grab values.  the table is organised as a vector of values,  ordered going down each column in the summary table.  there is one less column when batch is not significant.
+	
+    if(keep_batch){
+     #for mixed model 
+        genotype_estimate = modeloutput[["tTable"]][[2]]
+        genotype_estimate_SE = modeloutput[["tTable"]][[(2+lengthoftable)]]
+        genotype_p_value =  modeloutput[["tTable"]][[(2+4*lengthoftable)]]
+		weight_estimate="NA"
+		weight_estimate_SE="NA"
+		weight_p_value="NA"
+		if((Gender_sig && Interaction_sig) |( !Gender_sig&& Interaction_sig)){
+			interaction_estimate=modeloutput[["tTable"]][[4]]
+			interaction_estimate_SE=modeloutput[["tTable"]][[(4+lengthoftable)]]
+			interaction_p_value=modeloutput[["tTable"]][[(4+4*lengthoftable)]]
+			gender_estimate=modeloutput[["tTable"]][[3]]
+			gender_estimate_SE=modeloutput[["tTable"]][[(3+lengthoftable)]]
+			gender_p_value= modeloutput[["tTable"]][[(3+4*lengthoftable)]]
+		} else if( !Gender_sig && !Interaction_sig){
+			interaction_estimate="NA"
+			interaction_estimate_SE="NA"
+			interaction_p_value="NA"
+			gender_estimate="NA"
+			gender_estimate_SE="NA"
+			gender_p_value= "NA"
+		}else{
+			interaction_estimate="NA"
+			interaction_estimate_SE="NA"
+			interaction_p_value="NA"
+			gender_estimate=modeloutput[["tTable"]][[3]]
+			gender_estimate_SE=modeloutput[["tTable"]][[(3+lengthoftable)]]
+			gender_p_value= modeloutput[["tTable"]][[(3+4*lengthoftable)]]	
+		}
+	  values=c(depVariable, keep_batch, variance_test, Nulltest_genotype_pvalue, genotype_estimate, genotype_estimate_SE,  genotype_p_value,gender_estimate, gender_estimate_SE,  gender_p_value, interaction_estimate, interaction_estimate_SE, interaction_p_value, weight_estimate, weight_estimate_SE, weight_p_value, MM_fitquality)
+      return(values)
+
+     }else{
+        #adaption for being a linear model rather than a mixed model
+        genotype_estimate = modeloutput[["tTable"]][[2]]
+        genotype_estimate_SE = modeloutput[["tTable"]][[(2+lengthoftable)]]
+        genotype_p_value =  modeloutput[["tTable"]][[(2+3*lengthoftable)]]
+        weight_estimate="NA"
+		weight_estimate_SE="NA"
+		weight_p_value="NA"
+        
+		if((Gender_sig && Interaction_sig) |( !Gender_sig&& Interaction_sig)){
+			interaction_estimate=modeloutput[["tTable"]][[4]]
+			interaction_estimate_SE=modeloutput[["tTable"]][[(4+lengthoftable)]]
+			interaction_p_value=modeloutput[["tTable"]][[(4+3*lengthoftable)]]
+			gender_estimate=modeloutput[["tTable"]][[3]]
+			gender_estimate_SE=modeloutput[["tTable"]][[(3+lengthoftable)]]
+			gender_p_value= modeloutput[["tTable"]][[(3+3*lengthoftable)]]
+		} else if( !Gender_sig && !Interaction_sig){
+			interaction_estimate="NA"
+			interaction_estimate_SE="NA"
+			interaction_p_value="NA"
+			gender_estimate="NA"
+			gender_estimate_SE="NA"
+			gender_p_value= "NA"
+		}else{
+			interaction_estimate="NA"
+			interaction_estimate_SE="NA"
+			interaction_p_value="NA"
+			gender_estimate=modeloutput[["tTable"]][[3]]
+			gender_estimate_SE=modeloutput[["tTable"]][[(3+lengthoftable)]]
+			gender_p_value= modeloutput[["tTable"]][[(3+3*lengthoftable)]]	
+		}	
+		values=c(depVariable, keep_batch, variance_test, Nulltest_genotype_pvalue, genotype_estimate, genotype_estimate_SE,  genotype_p_value,gender_estimate, gender_estimate_SE,  gender_p_value, interaction_estimate, interaction_estimate_SE, interaction_p_value, weight_estimate, weight_estimate_SE, weight_p_value, MM_fitquality)
+		return(values)
+	}  
+}
+
