@@ -175,7 +175,7 @@ finalmodel_info<-function(dataset, depVariable){
 			gender_MvKO_SE=NA
 			gender_MvKO_p_value=NA
 		}
-	  values=c("Eq1",depVariable, keep_batch, variance_test, Nulltest_genotype_pvalue, genotype_estimate, genotype_estimate_SE,  genotype_p_value,gender_estimate, gender_estimate_SE,  gender_p_value, weight_estimate, weight_estimate_SE, weight_p_value, MM_fitquality, intercept_estimate, intercept_estimate_SE, Interaction_sig, Interaction_test, gender_FvKO_estimate, gender_FvKO_SE,   gender_FvKO_p_value,  gender_MvKO_estimate,  gender_MvKO_SE,  gender_MvKO_p_value)
+	  values=c("Eq1_V2.1",depVariable, keep_batch, variance_test, Nulltest_genotype_pvalue, genotype_estimate, genotype_estimate_SE,  genotype_p_value,gender_estimate, gender_estimate_SE,  gender_p_value, weight_estimate, weight_estimate_SE, weight_p_value, MM_fitquality, intercept_estimate, intercept_estimate_SE, Interaction_sig, Interaction_test, gender_FvKO_estimate, gender_FvKO_SE,   gender_FvKO_p_value,  gender_MvKO_estimate,  gender_MvKO_SE,  gender_MvKO_p_value)
       return(values)
 
      }else{
@@ -232,7 +232,7 @@ finalmodel_info<-function(dataset, depVariable){
 			gender_MvKO_SE=NA
 			gender_MvKO_p_value=NA
 		}	
-		values=c("Eq1",depVariable, keep_batch, variance_test, Nulltest_genotype_pvalue, genotype_estimate, genotype_estimate_SE,  genotype_p_value,gender_estimate, gender_estimate_SE,  gender_p_value, weight_estimate, weight_estimate_SE, weight_p_value, MM_fitquality, intercept_estimate, intercept_estimate_SE, Interaction_sig, Interaction_test, gender_FvKO_estimate, gender_FvKO_SE,   gender_FvKO_p_value,  gender_MvKO_estimate,  gender_MvKO_SE,  gender_MvKO_p_value)
+		values=c("Eq1_V2.1",depVariable, keep_batch, variance_test, Nulltest_genotype_pvalue, genotype_estimate, genotype_estimate_SE,  genotype_p_value,gender_estimate, gender_estimate_SE,  gender_p_value, weight_estimate, weight_estimate_SE, weight_p_value, MM_fitquality, intercept_estimate, intercept_estimate_SE, Interaction_sig, Interaction_test, gender_FvKO_estimate, gender_FvKO_SE,   gender_FvKO_p_value,  gender_MvKO_estimate,  gender_MvKO_SE,  gender_MvKO_p_value)
 		return(values)
 	}  
 }
