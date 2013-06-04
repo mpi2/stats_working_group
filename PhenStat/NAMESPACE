@@ -1,0 +1,4 @@
+#  All functions exported other than those starting with "."
+exportPattern("^[^\\.]")
+
+exportClasses("PhenList","PhenTestResult")
