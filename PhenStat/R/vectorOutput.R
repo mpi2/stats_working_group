@@ -1,14 +1,20 @@
 vectorOutput <- function(result)
+
+# Wrapper to output the modeling and testing results in a vector form
+
 {
     if(!is(result,"PhenTestResult")) {
         stop ("Please provide PhenTestResult object as an argument")
     }
+    
+    if (is.null(result$modelFormula.genotype)) stop("There are no results to wrap. Please run function 'buildFinalModel' first")
 
-# final_model - na.exlude, others na.omit
     MM_fitquality=result$MM_fitquality
     depVariable=result$depVariable
     
-    modeloutput=result$modelOutput
+    # Fitted final genotype model
+    modeloutput=result$modelOutput 
+    
     keep_batch=result$batchEffect
     variance_test=result$varianceEffect
     Nulltest_genotype_pvalue=result$genotypeEffect
@@ -17,11 +23,15 @@ vectorOutput <- function(result)
     Weight_sig=result$weightEffect
     Interaction_sig=result$interactionEffect
     
-    Interaction_test=result$interactionTest
+    Interaction_test=result$interactionTestResult
     
-    lengthoftable=result$outputLength
-    #problem depending on the length of the table where we grab values.  the table is organised as a vector of values,  ordered going down each column in the summary table.  there is one less column when batch is not significant.
-
+    # Problem depending on the length of the table where we grab values. 
+    # There is one less column when batch is not significant.
+    lengthoftable=outputLength(result)
+    
+ 
+    # The table is organised as a vector of values,  
+    # Ordered going down each column in the summary table.
     values <- switch(result$equation,
             withoutWeight = {
                 if(keep_batch){

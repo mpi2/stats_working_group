@@ -1,16 +1,15 @@
 Diagnostictest<-function(object, result=NULL, equation=NULL, depVariable=NULL, pThreshold=0.05, keep_list=NULL)
 {
+    require(nortest)
     
-    #    Check object
+    # Check PhenList object
     if(is(object,"PhenList")) {
-        x <- object$phendata  
-        if (!is(x$Genotype)) stop("Genotype values are not defined")      
-        
+        x <- object$phendata           
     } else {
         x <- as.data.frame(object)
-        if (!is(x$Genotype)) stop("Genotype values are not defined")   
     }
     
+    # Check PhenTestResult object
     if(is(result,"PhenTestResult")) {
         if (!is.null(result$MM_fitquality)) return(result)
         if (is.null(depVariable)) depVariable <- result$depVariable
@@ -30,31 +29,32 @@ Diagnostictest<-function(object, result=NULL, equation=NULL, depVariable=NULL, p
 
     }
     else{
-        if (is.null(keep_list) || length(keep_list)!=5) stop("Please define the values for tests: 
-                'keep_list=c(keep_batch,keep_equalvar,keep_weight,keep_gender,keep_interaction)'")
+        # Stop function if there are no enough needed input parameters
+        if (is.null(keepList) || length(keepList)!=5) 
+        stop("Please define the values for 'keepList' list, where for each effect/part of the model TRUE/FALSE value defines to keep it in the model or not: 
+                'keepList=c(keepBatch,keepVariance,keepWeight,keepGender,keepInteraction)'")
+        if (is.null(depVariable)) stop("Please define dependant variable")
+        if (is.null(equation)) stop("Please define equation: 'withWeight' or 'withoutWeight'")
+        
         keep_weight <- keep_list[3]
         keep_gender <- keep_list[4]
         keep_interaction <- keep_list[5]
         keep_batch <- keep_list[1]
         keep_equalvar <- keep_list[2]
-        result <- new("PhenTestResult",list(modelOutput=NULL,depVariable=depVariable,equation=equation, 
-                        batchEffect=keep_batch,varianceEffect=keep_equalvar,interactionEffect=keep_interaction,
-                        genderEffect=keep_gender,weightEffect=keep_weight))
-        result<-buildModel(object, result, pThreshold)
-        if (!is.null(result$MM_fitquality)) return(result)
+        result<-buildFinalModel(object, equation=equation, depVariable=depVariable, pThreshold=pThreshold, keepList=keepList)
     }
     
       
     a=levels(x$Genotype)
-    numberofgenders=length(levels(x$Gender))
+    numberofgenders=result$numberGenders
+    
     #withWeight and weight is not significant
     if(!keep_weight && equation=="withWeight"){
         testresults=c(a[1], NA, a[2], NA, NA, NA)
         return(testresults)    
         
     }else{    
-        #withoutWeight or weight significant
-        require(nortest)
+        #withoutWeight or weight significant        
         modeloutput=result$modelOutput
         res=resid(modeloutput)
         data_all= data.frame(x, res)
@@ -95,10 +95,8 @@ Diagnostictest<-function(object, result=NULL, equation=NULL, depVariable=NULL, p
         }    
         
         testresults=c(a[1], gp1_norm_res, a[2], gp2_norm_res, blups_test, rotated_residual_test)
-
-        result$MM_fitquality=testresults
         
-        return(result)        
+        return(testresults)        
         
     }
       

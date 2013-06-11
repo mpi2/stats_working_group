@@ -1,7 +1,7 @@
 PhenTestResult <- function(modelOutput=NULL, depVariable=NULL, equation="withWeight", batchEffect=NULL, varianceEffect=NULL, 
-                  genderEffect=NULL, interactionEffect=NULL, interactionTest=NULL, weightEffect=NULL, outputLength=NULL,
-                  pThreshold=0.05, model.formula=NULL, model.null=NULL, 
-                  model.genotype=NULL, model=NULL, genotypeEffect=NULL, MM_fitquality=NULL) 
+                  genderEffect=NULL, interactionEffect=NULL, interactionTestResult=NULL, weightEffect=NULL, numberGenders=NULL,
+                  pThreshold=0.05, modelFormula.null=NULL, 
+                  modelFormula.genotype=NULL, model=NULL, genotypeEffect=NULL, MM_fitquality=NULL) 
 #    Construct PhenTestResult object from components
 {
     
