@@ -1,7 +1,7 @@
+# vectorOutput.R contains vectorOutput and outputLength functions
+
 vectorOutput <- function(result)
-
-# Wrapper to output the modeling and testing results in a vector form
-
+# Wrapper to prepare the output of the modeling and testing results in vector form
 {
     if(!is(result,"PhenTestResult")) {
         stop ("Please provide PhenTestResult object as an argument")
@@ -306,5 +306,52 @@ vectorOutput <- function(result)
        }
       )
     return(values)
+}
 
+outputLength <- function(result)
+# The output in the vector form depends on effects that are included into the model
+{
+    if(!is(result,"PhenTestResult")) {
+        stop("Please provide result paramtere as PhenTestResult object")
+    }
+    
+    numberofgenders=result$numberGenders
+    keep_weight <- result$weightEffect
+    keep_gender <- result$genderEffect
+    keep_interaction <- result$interactionEffect
+    keep_batch <- result$batchEffect
+    keep_equalvar <- result$varianceEffect
+    equation <- result$equation
+    
+    table_length <- NA
+    
+    if (equation=="withWeight"){   
+        if(numberofgenders==2){
+            if((keep_gender && keep_interaction)|(!keep_gender && keep_interaction)){
+                table_length=5
+            }else if(keep_gender && !keep_interaction){
+                table_length=4
+            }else {
+                table_length=3
+            }  
+        }else{
+            table_length=3
+        }
+    }
+    # Eq.1
+    else{
+        if(numberofgenders==2){
+            if((keep_gender && keep_interaction)|(!keep_gender && keep_interaction)){
+                table_length=4
+            }else if(!keep_gender && !keep_interaction){
+                table_length=2
+            }else{
+                table_length=3
+            }  
+        }else{
+            table_length=2
+        }
+    } 
+    
+    return (table_length)
 }

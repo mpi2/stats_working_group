@@ -1,18 +1,20 @@
+# testDataset.R contains testDataset, buildStartModel and modelFormula functions
+
 testDataset <- function(object, equation="withWeight", depVariable=NULL, pThreshold=0.05)
 
-# Start model is created and modified by using different hypothesis: random effects significance etc. 
-# Significance is assigned to fixed effects  
-# As the result important effects are stored in the PhenTestResult object for the further final model build.
-# These effects are: batch effect (random effects significance), variance effect (TRUE if residual variances for 
+# Create start model and modifies it after testing of different hypothesis.
+# TRUE/FALSE values assigned to effects of the model are stored in the PhenTestResult object for the further final model build.
+
+# The testable effects are: batch effect (random effects significance), variance effect (TRUE if residual variances for 
 # genotype groups are homogeneous and FALSE if they are heterogeneous), interaction effect (genotype by gender 
 # interaction significance) plus interaction test anova results, gender effect (gender significance), weigth effect 
-# (weigth significance) and finally, output length estimation based on tests results)
-# The idea here is regardless the test results, all effects can be change if needed before the final model build
+# (weigth significance).
+
 
 {
     require(nlme)
 
-    #    Check object
+    # Check PhenList object
     if(is(object,"PhenList")) {
         x <- object$phendata    
         
@@ -27,30 +29,8 @@ testDataset <- function(object, equation="withWeight", depVariable=NULL, pThresh
 
     numberofgenders=length(levels(x$Gender))
        
-    # Start model formula: homogenous residual variance, genotype and sex interaction included      
-    model.formula <- switch(equation,
-                    # Eq.2
-                    withWeight = {
-                        # Fixed effects: 1) Gender 2) Genotype by Gender interaction 3) Weight
-                        if(numberofgenders==2){                            
-                            as.formula(paste(depVariable, "~", paste("Genotype", "Gender", "Genotype*Gender","Weight", sep= "+")))
-                        }else{ 
-                            as.formula(paste(depVariable, "~", paste("Genotype", "Weight",  sep= "+"))) 
-                        } 
-                        
-                    },
-                    # Eq.1 
-                    withoutWeight = {
-                        # Fixed effects: 1) Gender 2) Genotype by Gender interaction
-                        if(numberofgenders==2){
-                            as.formula(paste(depVariable, "~", paste("Genotype", "Gender", "Genotype*Gender", sep= "+")))
-                        }else{ 
-                            as.formula(paste(depVariable, "~", paste("Genotype",  sep= "+"))) 
-                        } 
-                        
-                    }
-                    
-    )
+    # Start model formula: homogenous residual variance, genotype and sex interaction included  
+    model.formula = modelFormula(equation,numberofgenders)
 
     # MM fit of model formula (with random effects)
     # Model 1 
@@ -96,7 +76,6 @@ testDataset <- function(object, equation="withWeight", depVariable=NULL, pThresh
 
     
     # Tests for significance of fixed effects using TypeI F-test from anova functionality by using selected model
-
     anova_results = anova(model, type="marginal")$"p-value" < 0.05
     if(numberofgenders==2){
         # Result of the test for gender significance (fixed effect 1.)
@@ -129,15 +108,16 @@ testDataset <- function(object, equation="withWeight", depVariable=NULL, pThresh
                         interactionTestResult=interactionTest,genderEffect=keep_gender,weightEffect=keep_weight,
                         numberGenders=numberofgenders))
         
-        return(result)
-   
+        return(result)   
 }
 
 buildStartModel <- function(object, equation="withWeight", depVariable, pThreshold=0.05, keepList)
+# If someone would like to assign other TRUE/FALSE values to effects of the model then start model is build by using
+# buildStartModel function  
 {
     require(nlme)
     
-    #    Check object
+    # Check object
     if(is(object,"PhenList")) {
     x <- object$phendata    
     
@@ -147,31 +127,13 @@ buildStartModel <- function(object, equation="withWeight", depVariable, pThresho
     
     numberofgenders=length(levels(x$Gender))
 
+    # User's values for effects
     keep_batch <- keepList[1]
     keep_equalvar <- keepList[2]
 
     # Start model formula: homogenous residual variance, genotype and sex interaction included      
-    model.formula <- switch(equation,
-        # Eq.2
-        withWeight = {
-            # Fixed effects: 1) Gender 2) Genotype by Gender interaction 3) Weight
-            if(numberofgenders==2){                            
-                as.formula(paste(depVariable, "~", paste("Genotype", "Gender", "Genotype*Gender","Weight", sep= "+")))
-            }else{ 
-                as.formula(paste(depVariable, "~", paste("Genotype", "Weight",  sep= "+"))) 
-            }     
-        },
-        # Eq.1 
-        withoutWeight = {
-            # Fixed effects: 1) Gender 2) Genotype by Gender interaction
-            if(numberofgenders==2){
-                as.formula(paste(depVariable, "~", paste("Genotype", "Gender", "Genotype*Gender", sep= "+")))
-            }else{ 
-                as.formula(paste(depVariable, "~", paste("Genotype",  sep= "+"))) 
-            }         
-        }    
-    )
-
+    model.formula = modelFormula(equation,numberofgenders)
+    
     # MM fit of model formula (with random effects)
     # Model 1 
     model_MM = do.call("lme", args = list(model.formula, random=~1|Assay.Date, data = x, na.action="na.omit", method="REML"))
@@ -200,4 +162,32 @@ buildStartModel <- function(object, equation="withWeight", depVariable, pThresho
     }
 
     return(model)
+}
+
+
+modelFormula <- function(equation, numberofgenders)
+# Creats formula for the start model based on equation and number of genders in the data
+{
+
+    model.formula <- switch(equation,
+        # Eq.2
+        withWeight = {
+            # Fixed effects: 1) Gender 2) Genotype by Gender interaction 3) Weight
+            if(numberofgenders==2){                            
+                as.formula(paste(depVariable, "~", paste("Genotype", "Gender", "Genotype*Gender","Weight", sep= "+")))
+            }else{ 
+                as.formula(paste(depVariable, "~", paste("Genotype", "Weight",  sep= "+"))) 
+            }         
+        },
+        # Eq.1 
+        withoutWeight = {
+            # Fixed effects: 1) Gender 2) Genotype by Gender interaction
+            if(numberofgenders==2){
+                as.formula(paste(depVariable, "~", paste("Genotype", "Gender", "Genotype*Gender", sep= "+")))
+            }else{ 
+                as.formula(paste(depVariable, "~", paste("Genotype",  sep= "+"))) 
+            } 
+        }
+    )
+    return(model.formula)
 }

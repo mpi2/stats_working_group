@@ -1,6 +1,11 @@
+# buildFinalModel.R contains buildFinalModel function
+
 buildFinalModel <- function(object, result=NULL, equation=NULL, depVariable=NULL, pThreshold=0.05, keepList=NULL)
 
-# Build final model based on tests results 
+# Build final model based on the significance of different effects (see testDataset.R) 
+# By default works with PhenTestResult object created by testDataset function.
+# If someone would like to assign other TRUE/FALSE values to effects of the model then function 
+# work with list of TRUE/FALSE values (keepList parameter).
 
 {
     require(nlme)
@@ -172,13 +177,13 @@ buildFinalModel <- function(object, result=NULL, equation=NULL, depVariable=NULL
     }
 
    
-        
+    # Store the results      
     result$modelOutput=model_genotype
     result$genotypeEffect=p.value
     result$modelFormula.null=model_null.formula
     result$modelFormula.genotype=model_genotype.formula
     
-    # MM fit quality
+    # Assign MM quality of fit
     MM_fitquality=Diagnostictest(x,result)
     
     result$MM_fitquality=MM_fitquality

@@ -1,4 +1,7 @@
+# Diagnostictest.R contains Diagnostictest function
+
 Diagnostictest<-function(object, result=NULL, equation=NULL, depVariable=NULL, pThreshold=0.05, keep_list=NULL)
+# Diagnostic test output for MM quality of fit
 {
     require(nortest)
     
@@ -48,13 +51,11 @@ Diagnostictest<-function(object, result=NULL, equation=NULL, depVariable=NULL, p
     a=levels(x$Genotype)
     numberofgenders=result$numberGenders
     
-    #withWeight and weight is not significant
     if(!keep_weight && equation=="withWeight"){
         testresults=c(a[1], NA, a[2], NA, NA, NA)
         return(testresults)    
         
     }else{    
-        #withoutWeight or weight significant        
         modeloutput=result$modelOutput
         res=resid(modeloutput)
         data_all= data.frame(x, res)

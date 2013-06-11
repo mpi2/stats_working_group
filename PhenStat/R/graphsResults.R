@@ -1,3 +1,7 @@
+# graphsResults.R contains functions for graphics when the model is build and saved: 
+# qqplotGenotype, plotResidualPredicted, qqplotRandomEffects,
+# boxplotResidualBatch, qqplotRotatedResiduals 
+
 # Q-Q Residual plots for each genotype
 qqplotGenotype<-function(phenList, phenTestResult){
     if(is(phenList,"PhenList")) {

@@ -1,4 +1,6 @@
-# Raw data diagnostic plots
+# graphsDataset.R contains functions for dataset diagnostic plots:
+# boxplotGenderGenotype, boxplotGenderGenotypeBatch, scatterplotGenotypeWeigh
+
 #-----------------------------------------------------------------------------------
 # Raw data boxplot split by gender and genotype
 boxplotGenderGenotype<-function(phenList, depVariable){
@@ -26,7 +28,6 @@ boxplotGenderGenotype<-function(phenList, depVariable){
         boxplot(x[ ,depVariable]~x$Genotype, ylab=depVariable, xlab="Genotype")    
     }
 }    
-
 #-----------------------------------------------------------------------------------
 # Row data boxplot by gender,genotype and batch (Assay.date)
 boxplotGenderGenotypeBatch<-function(phenList, depVariable){

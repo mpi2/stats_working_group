@@ -1,5 +1,5 @@
-#    CLASSES.R defines classes that are used in PhenStat package: 
-#    PhenList, PhenTestResult which extends LargeDataObject of limma package
+# CLASSES.R defines classes that are used in PhenStat package: 
+# PhenList, PhenTestResult objects extends LargeDataObject of limma package
 require(methods)
 setClass("LargeDataObject")
 # LargeDataObject is the class from limma package developed by Gordon Smyth
