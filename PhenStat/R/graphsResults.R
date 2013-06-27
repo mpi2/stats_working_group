@@ -1,27 +1,41 @@
-# graphsResults.R contains functions for graphics when the model is build and saved: 
+# Copyright © 2011-2013 EMBL - European Bioinformatics Institute
+# 
+# Licensed under the Apache License, Version 2.0 (the "License"); 
+# you may not use this file except in compliance with the License.  
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# graphsResults.R contains functions for model fit diagnostic plots: 
 # qqplotGenotype, plotResidualPredicted, qqplotRandomEffects,
 # boxplotResidualBatch, qqplotRotatedResiduals 
 
-# Q-Q Residual plots for each genotype
+#-----------------------------------------------------------------------------------
+# Q-Q plot of residuals for each genotype
 qqplotGenotype<-function(phenList, phenTestResult){
     if(is(phenList,"PhenList")) {
-        x <- phenList$phendata     
+        x <- phenList$dataset     
         
     } else {
         x <- as.data.frame(phenList)
     }
     if(is(phenTestResult,"PhenTestResult")) {
-        modeloutput=phenTestResult$modelOutput
+        modeloutput=phenTestResult$model.output
     }
     else{
         modeloutput=phenTestResult
     }
-    if (!is(x$Genotype)) stop("Genotype values are not defined") 
     
     res=resid(modeloutput)
     data_all= data.frame(x, res)
     a=levels(data_all$Genotype)
-    par(mfrow = c(1, 2))    
+    par(mfrow=c(1,2))     
     Gp1 = subset(data_all, data_all$Genotype==a[1])
     Gp2 = subset(data_all, data_all$Genotype==a[2])
     qqnorm(Gp1$res, main=" ")
@@ -37,25 +51,24 @@ qqplotGenotype<-function(phenList, phenTestResult){
 # Predicted versus residual plots split by genotype
 plotResidualPredicted<-function(phenList, phenTestResult){
     if(is(phenList,"PhenList")) {
-        x <- phenList$phendata     
+        x <- phenList$dataset     
         
     } else {
         x <- as.data.frame(phenList)
     }
     if(is(phenTestResult,"PhenTestResult")) {
-        modeloutput=phenTestResult$modelOutput
+        modeloutput=phenTestResult$model.output
     }
     else{
-       modeloutput=phenTestResult
+        modeloutput=phenTestResult
     }
-    if (!is(x$Genotype)) stop("Genotype values are not defined") 
     
     pred = predict(modeloutput)
     res=resid(modeloutput)
     data_all= data.frame(x, res, pred)
     a=levels(x$Genotype)
     genotype_no=length(a)
-    par(mfrow = c(1, 2))    
+    par(mfrow=c(1,2)) 
     Gp1pred = subset(data_all, data_all$Genotype==a[1])
     Gp2pred = subset(data_all, data_all$Genotype==a[2])
     plot(x=Gp1pred$pred, y=Gp1pred$res, xlab="Predicted", ylab="Residuals")
@@ -66,18 +79,17 @@ plotResidualPredicted<-function(phenList, phenTestResult){
 
 
 #-----------------------------------------------------------------------------------
-# QQ plot of blups
-
+# Q-Q plot of blups
 qqplotRandomEffects<-function(phenList, phenTestResult, keep_batch=NULL){
     if(is(phenList,"PhenList")) {
-        x <- phenList$phendata     
+        x <- phenList$dataset     
         
     } else {
         x <- as.data.frame(phenList)
     }
     if(is(phenTestResult,"PhenTestResult")) {
-        modeloutput=phenTestResult$modelOutput
-        if (is.null(keep_batch)) keep_batch <- phenTestResult$batchEffect
+        modeloutput=phenTestResult$model.output
+        if (is.null(keep_batch)) keep_batch <- phenTestResult$model.effect.batch
     }
     else{
         modeloutput=phenTestResult
@@ -87,58 +99,56 @@ qqplotRandomEffects<-function(phenList, phenTestResult, keep_batch=NULL){
     
     if(keep_batch){
         blups=ranef(modeloutput)
-        qqnorm(blups[ ,1])
+        close.screen(n=1, all.screens = FALSE)
+        qqnorm(blups[ ,1], main=" ")
         qqline(blups[ ,1])
-
+        
     }
     else {
         message("Diagnostics on random effects not relevant as variation between Assay.Date (batches) was not significant")
     }
 }
-  
+
 #----------------------------------------------------------------------------------------------------------
 # Residue versus batch split by genotype
-
 boxplotResidualBatch<-function(phenList, phenTestResult){
     if(is(phenList,"PhenList")) {
-        x <- phenList$phendata     
+        x <- phenList$dataset     
         
     } else {
         x <- as.data.frame(phenList)
     }
     if(is(phenTestResult,"PhenTestResult")) {
-        modeloutput=phenTestResult$modelOutput
+        modeloutput=phenTestResult$model.output
     }
     else{
         modeloutput=phenTestResult
     }
-    if (!is(x$Genotype)) stop("Genotype values are not defined") 
     
     res=resid(modeloutput)
     data_all= data.frame(x, res)
     a=levels(x$Genotype)
-    par(mfrow = c(1, 2))    
+    par(mfrow=c(1,2))  
     Gp1 <- subset(data_all, data_all$Genotype==a[1])
     Gp2 <- subset(data_all, data_all$Genotype==a[2])
-    with(Gp1, boxplot(res~Assay.Date, ylab="Residuals", xlab="Batch",names=NULL))
+    with(Gp1, boxplot(res~Assay.Date, ylab="Residuals", xlab="Batch", names=NULL))
     legend("bottomleft", a[1], cex=1.3, bty="n")
-    with(Gp2, boxplot(res~Assay.Date, ylab="Residuals", xlab="Batch",names=NULL))
-    legend("bottomleft", a[2], cex=1.3, bty="n")    
+    with(Gp2, boxplot(res~Assay.Date, ylab="Residuals", xlab="Batch", names=NULL))
+    legend("bottomleft", a[2], cex=1.3, bty="n")   
 }
 
 #-------------------------------------------------------------------------------
-# Q-Q plot rotated residuals
-
+# Q-Q plot of rotated residuals
 qqplotRotatedResiduals<-function(phenList, phenTestResult, keep_batch=NULL){
     if(is(phenList,"PhenList")) {
-        x <- phenList$phendata     
+        x <- phenList$dataset     
         
     } else {
         x <- as.data.frame(phenList)
     }
     if(is(phenTestResult,"PhenTestResult")) {
-        modeloutput=phenTestResult$modelOutput
-        if (is.null(keep_batch)) keep_batch <- phenTestResult$batchEffect
+        modeloutput=phenTestResult$model.output
+        if (is.null(keep_batch)) keep_batch <- phenTestResult$model.effect.batch
     }
     else{
         modeloutput=phenTestResult
@@ -157,14 +167,14 @@ qqplotRotatedResiduals<-function(phenList, phenTestResult, keep_batch=NULL){
         Lt = chol(solve(ycov))  #Cholesky decomposition of inverse of cov(y) (see Houseman '04 eq. (2))
         unrotres =  modeloutput$residuals[, "fixed"]    #unrotated residuals
         rotres = Lt %*%  modeloutput$residuals[, "fixed"]    #rotated residuals
-        par(mfrow = c(1, 2))
-        qqnorm(unrotres, main = "Unrotated residuals")
+        par(mfrow=c(1,2)) 
+        qqnorm(unrotres, main = "Unrotated")
         qqline(unrotres)
-        qqnorm(rotres, main = "Rotated residuals")
+        qqnorm(rotres, main = "Rotated")
         qqline(rotres)
     }
 }
-
+#-------------------------------------------------------------------------------
 
 
 

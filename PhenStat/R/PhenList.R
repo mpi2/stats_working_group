@@ -1,67 +1,178 @@
-# PhenList.R contains PhenList function which construct new PhenList object from components
+# Copyright © 2011-2013 EMBL - European Bioinformatics Institute
+# 
+# Licensed under the Apache License, Version 2.0 (the "License"); 
+# you may not use this file except in compliance with the License.  
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-PhenList <- function(phendata=matrix(0,0,0), refGenotype='+/+', datasetstat=NULL, assay.date.colname=NULL,
-        genotype.colname=NULL, gender.colname=NULL, weight.colname=NULL, remove.zeros=FALSE) 
+
+# PhenList.R contains PhenList and checkDataset functions to construct new PhenList object from components and to check 
+# dataset integrity
+
+PhenList <- function(dataset=matrix(0,0,0), refGenotype='+/+', dataset.stat=NULL, dataset.colname.assayDate=NULL,
+        dataset.colname.genotype=NULL, dataset.colname.gender=NULL, dataset.colname.weight=NULL, dataset.values.missingValue=NULL, 
+        dataset.values.male=NULL, dataset.values.female=NULL, dataset.clean=FALSE, testGenotype=NULL, hemGenotype=NULL) 
 
 # Construct PhenList object from components with data quality checks
 
+# TODO 
+# testGenotype
+# clean all other records (with other genotypes)
+
 {
-    phendata <- phendata[,order(names(phendata))]
+    dataset <- dataset[,order(names(dataset))]
+    
     # Rename columns if needed
-    if(!is.null(assay.date.colname)) colnames(phendata)[colnames(phendata) == assay.date.colname] <-'Assay.Date'
-    if(!is.null(genotype.colname)) colnames(phendata)[colnames(phendata) == genotype.colname] <-'Genotype'
-    if(!is.null(gender.colname)) colnames(phendata)[colnames(phendata) == gender.colname] <-'Gender'
-    if(!is.null(weight.colname)) colnames(phendata)[colnames(phendata) == weight.colname] <-'Weight'
+    if(!is.null(dataset.colname.assayDate)) colnames(dataset)[colnames(dataset) == dataset.colname.assayDate] <-'Assay.Date'
+    if(!is.null(dataset.colname.genotype)) colnames(dataset)[colnames(dataset) == dataset.colname.genotype] <-'Genotype'
+    if(!is.null(dataset.colname.gender)) colnames(dataset)[colnames(dataset) == dataset.colname.gender] <-'Gender'
+    if(!is.null(dataset.colname.weight)) colnames(dataset)[colnames(dataset) == dataset.colname.weight] <-'Weight'
     
-    # Minimum required data
-    if (!('Assay.Date' %in% colnames(phendata))) stop("Phenotypic data must have 'Assay.Date' column")
-    if (!('Genotype' %in% colnames(phendata))) stop("Phenotypic data must have 'Genotype' column")
-    if (!('Gender' %in% colnames(phendata))) stop("Phenotypic data must have 'Gender' column")
+    # Replace missing values specified in the user format with NA if needed 
+    if(!is.null(dataset.values.missingValue)) dataset[dataset == dataset.values.missingValue] <- NA 
     
-    # TODO
-    # Check and rename when needed genders into Male/Female (M/F, 1/2 etc.)
+    # Replace values for genders with 'Male','Female' if needed 
+    if(!is.null(dataset.values.female)) levels(dataset$Gender)[levels(dataset$Gender)==dataset.values.female] <- "Female"
+    if(!is.null(dataset.values.male)) levels(dataset$Gender)[levels(dataset$Gender)==dataset.values.male] <- "Male"
     
-    Genotype_levels=levels(phendata$Genotype)
-    
-    if(sum(grepl(refGenotype, Genotype_levels, fixed=TRUE))==1){
-        phendata$Genotype=relevel(phendata$Genotype, ref=refGenotype)
+    if (dataset.clean && !is.null(hemGenotype) && !is.null(testGenotype))  
+        levels(dataset$Genotype)[levels(dataset$Genotype)==hemGenotype] <- testGenotype
+    if (dataset.clean && !is.null(testGenotype) && length(levels(dataset$Genotype))>2) {
+        dataset <- dataset[-(dataset$Genotype!=testGenotype && dataset$Genotype!=refGenotype),]
+        message(paste("Warning: Dataset have been clean: filterd out rows with genotype value other than ", testGenotype,"or",refGenotype))
     }
-    else stop(paste("There are not enough records for statistical analysis with reference genotype",refGenotype))
+        
+    
+    dataset <- checkDataset(dataset,refGenotype,dataset.clean)
+    
+    Genotype_levels=levels(dataset$Genotype)
+    Gender_levels=levels(dataset$Gender)
     
     # Statistics
-    datasetstat <- data.frame(Variables = colnames(phendata),Numeric = sapply(phendata, is.numeric), 
-            NObs = sapply(phendata, function(x) length(na.omit(x))),
-            Mean = sapply(phendata, function(x) if(is.numeric(x)) mean(na.omit(x)) else NA),
-            StdDev = sapply(phendata, function(x) if(is.numeric(x)) sd(na.omit(x)) else NA),
-            Minimum = sapply(phendata, function(x) if(is.numeric(x)) min(na.omit(x)) else NA),
-            Maximum = sapply(phendata, function(x) if(is.numeric(x)) max(na.omit(x)) else NA))
-    rownames(datasetstat) <- NULL
+    dataset.stat <- data.frame(Variables = colnames(dataset),Numeric = sapply(dataset, is.numeric), 
+            Continuous = sapply(dataset, function(x) if(is.numeric(x)) {if (length(unique(x))/length(x)>0.05) TRUE else FALSE} else FALSE),
+            Levels = sapply(dataset, function(x) if (length(unique(x))<4) paste(levels(x),collapse="*") else length(unique(x)) ), 
+            #UniqueObs = sapply(dataset, function(x) if(is.numeric(x)) {paste(round(length(unique(x))/length(x),digits=2)*100,"%",sep="")} else NA), 
+            NObs = sapply(dataset, function(x) length(na.omit(x))),
+            Mean = sapply(dataset, function(x) if(is.numeric(x)) round(mean(na.omit(x)),digit=2) else NA),
+            StdDev = sapply(dataset, function(x) if(is.numeric(x)) round(sd(na.omit(x)),digit=2) else NA),
+            Minimum = sapply(dataset, function(x) if(is.numeric(x)) round(min(na.omit(x)),digit=2) else NA),
+            Maximum = sapply(dataset, function(x) if(is.numeric(x)) round(max(na.omit(x)),digit=2) else NA))
+    rownames(dataset.stat) <- NULL
     
-    #    Check variables
-    #phendata <- as.matrix(phendata)
-    nvar <- ncol(phendata)
-    ntags <- nrow(phendata)
-    # Column names should be given
-    if(nvar>0 && is.null(colnames(phendata))) stop("Phendata must have column names")
-    
-    if(ntags>0 && is.null(rownames(phendata))) rownames(phendata) <- 1:ntags
-    
-    x <- new("PhenList",list(phendata=phendata))
+  
 
-    x$datasetstat <- datasetstat
-    x$refGenotype <- refGenotype
-    x$assay.date.colname <- assay.date.colname
-    x$genotype.colname <- genotype.colname
-    x$gender.colname <- gender.colname
-    x$remove.zeros <- remove.zeros
+    x <- new("PhenList",list(dataset=dataset))
     
-    if(remove.zeros) {
-        all.zeros <- rowSums(phendata,na.rm=TRUE)==0
-        if(any(all.zeros)) {
-            x <- x[!all.zeros,]
-            message("Removing ",sum(all.zeros)," rows with all zero counts.")
-        }
-    }
+    x$refGenotype <- refGenotype
+    x$testGenotype <- testGenotype
+    x$hemGenotype <- hemGenotype
+    x$dataset.stat <- dataset.stat
+    x$dataset.colname.assayDate <- dataset.colname.assayDate
+    x$dataset.colname.genotype <- dataset.colname.genotype
+    x$dataset.colname.gender <- dataset.colname.gender
+    x$dataset.colname.weight <- dataset.colname.weight
+    x$dataset.values.missingValue <- dataset.values.missingValue
+    x$dataset.values.male <- dataset.values.male
+    x$dataset.values.female <- dataset.values.female
+    x$dataset.clean <- dataset.clean
+    
     
     x
+}
+
+checkDataset <- function(dataset,refGenotype="+/+",dataset.clean=FALSE)
+
+# Check dataset for the minimum required info
+
+{
+    message <- " "
+    pass <- TRUE
+    
+    
+    nvar <- ncol(dataset)
+    ntags <- nrow(dataset)
+    
+    # Column names should be given
+    if(nvar>0 && is.null(colnames(dataset))) {
+        pass <- FALSE
+        message <- paste(message, "Dataset with no column names")
+    }    
+    
+    if(ntags>0 && is.null(rownames(dataset))) rownames(dataset) <- 1:ntags
+    
+    # Minimum required data
+    if (!('Assay.Date' %in% colnames(dataset))){
+        pass <- FALSE
+        message <- paste(message, "Dataset's 'Assay.Date' column is missed\n")
+    }    
+    if (!('Genotype' %in% colnames(dataset))) {
+        pass <- FALSE
+        message <- paste(message,"Dataset's 'Genotype' column is missed\n")
+    }
+    
+    # What about datasets without Gender info???
+    if (!('Gender' %in% colnames(dataset))) {
+        pass <- FALSE
+        message <- paste(message, "Dataset's 'Gender' column is missed\n")
+    }    
+    
+    Genotype_levels=levels(dataset$Genotype)
+    Gender_levels=levels(dataset$Gender)  
+    
+    # Genotype/Gender with at least two data points
+    for (i in 1:length(Genotype_levels)){
+        GenotypeSubset <- subset(dataset, dataset$Genotype==Genotype_levels[i])
+        for (j in 1:length(Gender_levels)){
+            nr <- sum(is.finite(GenotypeSubset[GenotypeSubset$Gender==Gender_levels[j],][ , "Gender"]))
+            # message(paste(Genotype_levels[i],Gender_levels[j],nr))
+            if (nr<2) {
+                if (dataset.clean){
+                    dataset <- dataset[-(dataset$Genotype==Genotype_levels[i] && dataset$Gender==Gender_levels[j]),]
+                    message(paste("Warning: Dataset have been clean: filterd out rows with ", Genotype_levels[i],"/",Gender_levels[j],"combination"))
+                }
+                else{
+                    pass <- FALSE
+                    if (nr==0) nr="no"
+                    message <- paste(message,paste("Dataset should have at least two readings for each Genotype/Gender combination. The dataset consists of", nr, 
+                                    "reading for",Genotype_levels[i],"/",Gender_levels[j],"combination.\n"))
+                }
+            }    
+        }    
+        
+    }
+    
+    Genotype_levels=levels(dataset$Genotype)
+    Gender_levels=levels(dataset$Gender)
+    
+    if (length(Genotype_levels)!=2)  {
+        pass <- FALSE
+        message <- paste(message,"Dataset's 'Genotype' column have to have two values\n")
+    }      
+    
+    if (length(Gender_levels)>2) {
+        pass <- FALSE
+        message <- paste(message,"Dataset's 'Gender' column have to have one or two values\n")
+    }    
+    
+    
+    
+    
+    if (sum(grepl(refGenotype, Genotype_levels, fixed=TRUE))==1)
+    dataset$Genotype=relevel(dataset$Genotype, ref=refGenotype)
+    else { 
+        pass <- FALSE
+        message <- paste(message,paste("Dataset with not enough records for statistical analysis with reference genotype",refGenotype))
+    }
+    if (!pass) stop(paste("Error(s):", message)) # Column names should be given
+
+    return(dataset)
+    
 }

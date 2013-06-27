@@ -1,27 +1,42 @@
-# Diagnostictest.R contains Diagnostictest function
+# Copyright © 2011-2013 EMBL - European Bioinformatics Institute
+# 
+# Licensed under the Apache License, Version 2.0 (the "License"); 
+# you may not use this file except in compliance with the License.  
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-Diagnostictest<-function(object, result=NULL, equation=NULL, depVariable=NULL, pThreshold=0.05, keep_list=NULL)
+# Diagnostictest.R contains testFinalModel function
+
+testFinalModel<-function(object, result=NULL, equation=NULL, depVariable=NULL, pThreshold=0.05, keepList=NULL)
 # Diagnostic test output for MM quality of fit
 {
     require(nortest)
     
     # Check PhenList object
     if(is(object,"PhenList")) {
-        x <- object$phendata           
+        x <- object$dataset          
     } else {
         x <- as.data.frame(object)
     }
     
+    
     # Check PhenTestResult object
     if(is(result,"PhenTestResult")) {
-        if (!is.null(result$MM_fitquality)) return(result)
+        if (!is.null(result$model.output.quality)) return(result$model.output.quality)
         if (is.null(depVariable)) depVariable <- result$depVariable
         if (is.null(equation)) equation <- result$equation
-        keep_weight <- result$weightEffect
-        keep_gender <- result$genderEffect
-        keep_interaction <- result$interactionEffect
-        keep_batch <- result$batchEffect
-        keep_equalvar <- result$varianceEffect
+        keep_weight <- result$model.effect.weight
+        keep_gender <- result$model.effect.gender
+        keep_interaction <- result$model.effect.interaction
+        keep_batch <- result$model.effect.batch
+        keep_equalvar <- result$model.effect.variance
         
         if (is.null(depVariable)) stop("Please define dependant variable")
         if (is.null(equation)) stop("Please define equation: 'withWeight' or 'withoutWeight'")
@@ -29,7 +44,7 @@ Diagnostictest<-function(object, result=NULL, equation=NULL, depVariable=NULL, p
         stop ("Please run function 'testData' first")
         if (result$equation!=equation) stop(paste("Tests have been done with another equation: ",result$equation))
         if (result$depVariable!=depVariable) stop(paste("Tests have been done for another dependant variable: ",result$depVariable))
-
+        
     }
     else{
         # Stop function if there are no enough needed input parameters
@@ -39,15 +54,15 @@ Diagnostictest<-function(object, result=NULL, equation=NULL, depVariable=NULL, p
         if (is.null(depVariable)) stop("Please define dependant variable")
         if (is.null(equation)) stop("Please define equation: 'withWeight' or 'withoutWeight'")
         
-        keep_weight <- keep_list[3]
-        keep_gender <- keep_list[4]
-        keep_interaction <- keep_list[5]
-        keep_batch <- keep_list[1]
-        keep_equalvar <- keep_list[2]
+        keep_weight <- keepList[3]
+        keep_gender <- keepList[4]
+        keep_interaction <- keepList[5]
+        keep_batch <- keepList[1]
+        keep_equalvar <- keepList[2]
         result<-buildFinalModel(object, equation=equation, depVariable=depVariable, pThreshold=pThreshold, keepList=keepList)
     }
     
-      
+    
     a=levels(x$Genotype)
     numberofgenders=result$numberGenders
     
@@ -56,13 +71,17 @@ Diagnostictest<-function(object, result=NULL, equation=NULL, depVariable=NULL, p
         return(testresults)    
         
     }else{    
-        modeloutput=result$modelOutput
-        res=resid(modeloutput)
+        res=resid(result$model.output)
         data_all= data.frame(x, res)
         genotype_no=length(a)
         data_all[, c("Gender", "Assay.Date")] = lapply(data_all[, c("Gender", "Assay.Date")], factor)
         No_batches=nlevels(data_all$Assay.Date)
         outputnumeric=is.numeric(modeloutput$apVar)
+        
+        Gp1 = subset(data_all, data_all$Genotype==a[1])
+        Gp2 = subset(data_all, data_all$Genotype==a[2])
+        No_Gp1=sum(is.finite(Gp1[ , depVariable]))
+        No_Gp2=sum(is.finite(Gp2[ , depVariable]))
         
         if(keep_batch && No_batches >7 && outputnumeric){
             blups=ranef(modeloutput)
@@ -78,10 +97,7 @@ Diagnostictest<-function(object, result=NULL, equation=NULL, depVariable=NULL, p
             rotated_residual_test=NA
         }   
         
-        Gp1 = subset(data_all, data_all$Genotype==a[1])
-        Gp2 = subset(data_all, data_all$Genotype==a[2])
-        No_Gp1=sum(is.finite(Gp1[ , depVariable]))
-        No_Gp2=sum(is.finite(Gp2[ , depVariable]))
+        
         
         if(No_Gp1>7){
             gp1_norm_res= cvm.test(Gp1$res)$p.value
@@ -96,6 +112,8 @@ Diagnostictest<-function(object, result=NULL, equation=NULL, depVariable=NULL, p
         }    
         
         testresults=c(a[1], gp1_norm_res, a[2], gp2_norm_res, blups_test, rotated_residual_test)
+        
+        
         
         return(testresults)        
         

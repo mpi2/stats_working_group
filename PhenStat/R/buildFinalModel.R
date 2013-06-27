@@ -1,3 +1,17 @@
+# Copyright © 2011-2013 EMBL - European Bioinformatics Institute
+# 
+# Licensed under the Apache License, Version 2.0 (the "License"); 
+# you may not use this file except in compliance with the License.  
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 # buildFinalModel.R contains buildFinalModel function
 
 buildFinalModel <- function(object, result=NULL, equation=NULL, depVariable=NULL, pThreshold=0.05, keepList=NULL)
@@ -12,21 +26,22 @@ buildFinalModel <- function(object, result=NULL, equation=NULL, depVariable=NULL
     
     # Check PhenList object
     if(is(object,"PhenList")) {
-        x <- object$phendata  
+        x <- object$dataset  
         
     } else {
         x <- as.data.frame(object)
+        x <- checkDataset(x)
     }
     
     # Check PhenTestResult object
     if(is(result,"PhenTestResult")) {
         if (is.null(depVariable)) depVariable <- result$depVariable
         if (is.null(equation)) equation <- result$equation
-        keep_weight <- result$weightEffect
-        keep_gender <- result$genderEffect
-        keep_interaction <- result$interactionEffect
-        keep_batch <- result$batchEffect
-        keep_equalvar <- result$varianceEffect
+        keep_weight <- result$model.effect.weight
+        keep_gender <- result$model.effect.gender
+        keep_interaction <- result$model.effect.interaction
+        keep_batch <- result$model.effect.batch
+        keep_equalvar <- result$model.effect.variance
     
         # Stop function if there are no enough needed input parameters
         if (is.null(depVariable)) stop("Please define dependant variable")
@@ -59,9 +74,9 @@ buildFinalModel <- function(object, result=NULL, equation=NULL, depVariable=NULL
             interactionTest=anova(model, type="marginal")$"p-value"[5]   
             
             # Create new PhenTestResult object using input parameters
-            result <- new("PhenTestResult",list(modelOutput=model,depVariable=depVariable,equation=equation, 
-                        batchEffect=keep_batch,varianceEffect=keep_equalvar,interactionEffect=keep_interaction,
-                        interactionTestResult=interactionTest,genderEffect=keep_gender,weightEffect=keep_weight,
+            result <- new("PhenTestResult",list(model.output=model,depVariable=depVariable,equation=equation, 
+                        model.effect.batch=keep_batch,model.effect.variance=keep_equalvar,model.effect.interaction=keep_interaction,
+                        model.output.interaction=interactionTest,model.effect.gender=keep_gender,model.effect.weight=keep_weight,
                         numberGenders=numberofgenders))
     }
    
@@ -178,18 +193,217 @@ buildFinalModel <- function(object, result=NULL, equation=NULL, depVariable=NULL
 
    
     # Store the results      
-    result$modelOutput=model_genotype
-    result$genotypeEffect=p.value
-    result$modelFormula.null=model_null.formula
-    result$modelFormula.genotype=model_genotype.formula
+    result$model.output=model_genotype
+    result$model.output.genotype.nulltest.pVal=p.value
+    result$model.formula.null=model_null.formula
+    result$model.formula.genotype=model_genotype.formula
     
     # Assign MM quality of fit
-    MM_fitquality=Diagnostictest(x,result)
+    result$model.output.quality=testFinalModel(object,result)
     
-    result$MM_fitquality=MM_fitquality
+    # Parse modeloutput and choose output depending on model 
+    result$model.output.summary = parserOutputSummary(result)
 
-    return(result)
+    return(result)  
     
+}
+
+parserOutputSummary<-function(result)
+
+{
+    modeloutput_summary = summary(result$model.output)
+    genotype_estimate =NA
+    genotype_estimate_SE =NA
+    genotype_p_value =NA
     
+    gender_estimate=NA
+    gender_estimate_SE=NA
+    gender_p_value=NA
     
+    intercept_estimate = NA
+    intercept_estimate_SE =NA
+    weight_estimate=NA
+    weight_estimate_SE=NA
+    weight_p_value=NA
+    
+    gender_FvKO_estimate=NA
+    gender_FvKO_SE=NA
+    gender_FvKO_p_value=NA
+    gender_MvKO_estimate=NA
+    gender_MvKO_SE=NA
+    gender_MvKO_p_value=NA
+    
+    lengthoftable=outputLength(result)
+    
+    switch(result$equation,
+            withoutWeight = {
+                if(result$model.effect.batch){                   
+                    #for mixed model 
+                    intercept_estimate = modeloutput_summary[["tTable"]][[1]]
+                    intercept_estimate_SE = modeloutput_summary[["tTable"]][[(1+lengthoftable)]]
+                    if((result$model.effect.gender && result$model.effect.interaction) |( !result$model.effect.gender&& result$model.effect.interaction)){
+                        gender_estimate=modeloutput_summary[["tTable"]][[2]]
+                        gender_estimate_SE=modeloutput_summary[["tTable"]][[(2+lengthoftable)]]
+                        gender_p_value= modeloutput_summary[["tTable"]][[(2+4*lengthoftable)]]
+                        gender_FvKO_estimate= modeloutput_summary[["tTable"]][[3]]
+                        gender_FvKO_SE=modeloutput_summary[["tTable"]][[(3+lengthoftable)]]
+                        gender_FvKO_p_value=modeloutput_summary[["tTable"]][[(3+4*lengthoftable)]]
+                        gender_MvKO_estimate=modeloutput_summary[["tTable"]][[4]]
+                        gender_MvKO_SE=modeloutput_summary[["tTable"]][[(4+lengthoftable)]]
+                        gender_MvKO_p_value=modeloutput_summary[["tTable"]][[(4+4*lengthoftable)]]                        
+                    } else if( !result$model.effect.gender && !result$model.effect.interaction){
+                        genotype_estimate = modeloutput_summary[["tTable"]][[2]]
+                        genotype_estimate_SE = modeloutput_summary[["tTable"]][[(2+lengthoftable)]]
+                        genotype_p_value =  modeloutput_summary[["tTable"]][[(2+4*lengthoftable)]]
+                        
+                    }else{
+                        genotype_estimate = modeloutput_summary[["tTable"]][[2]]
+                        genotype_estimate_SE = modeloutput_summary[["tTable"]][[(2+lengthoftable)]]
+                        genotype_p_value =  modeloutput_summary[["tTable"]][[(2+4*lengthoftable)]]
+                        gender_estimate=modeloutput_summary[["tTable"]][[3]]
+                        gender_estimate_SE=modeloutput_summary[["tTable"]][[(3+lengthoftable)]]
+                        gender_p_value= modeloutput_summary[["tTable"]][[(3+4*lengthoftable)]]    
+                    }
+                    
+                }else{
+                    #adaption for being a linear model rather than a mixed model
+                    intercept_estimate = modeloutput_summary[["tTable"]][[1]]
+                    intercept_estimate_SE = modeloutput_summary[["tTable"]][[(1+lengthoftable)]]
+                    
+                    if((result$model.effect.gender && result$model.effect.interaction) |( !result$model.effect.gender&& result$model.effect.interaction)){
+                        
+                        gender_estimate=modeloutput_summary[["tTable"]][[3]]
+                        gender_estimate_SE=modeloutput_summary[["tTable"]][[(3+lengthoftable)]]
+                        gender_p_value= modeloutput_summary[["tTable"]][[(3+3*lengthoftable)]]
+                        gender_FvKO_estimate= modeloutput_summary[["tTable"]][[3]]
+                        gender_FvKO_SE=modeloutput_summary[["tTable"]][[(3+lengthoftable)]]
+                        gender_FvKO_p_value=modeloutput_summary[["tTable"]][[(3+3*lengthoftable)]]
+                        gender_MvKO_estimate=modeloutput_summary[["tTable"]][[4]]
+                        gender_MvKO_SE=modeloutput_summary[["tTable"]][[(4+lengthoftable)]]
+                        gender_MvKO_p_value=modeloutput_summary[["tTable"]][[(4+3*lengthoftable)]]
+                        
+                        
+                    } else if( !result$model.effect.gender && !result$model.effect.interaction){
+                        
+                        genotype_estimate = modeloutput_summary[["tTable"]][[2]]
+                        genotype_estimate_SE = modeloutput_summary[["tTable"]][[(2+lengthoftable)]]
+                        genotype_p_value =  modeloutput_summary[["tTable"]][[(2+3*lengthoftable)]]
+                        
+                    }else{
+                        
+                        genotype_estimate = modeloutput_summary[["tTable"]][[2]]
+                        genotype_estimate_SE = modeloutput_summary[["tTable"]][[(2+lengthoftable)]]
+                        genotype_p_value =  modeloutput_summary[["tTable"]][[(2+3*lengthoftable)]]
+                        gender_estimate=modeloutput_summary[["tTable"]][[3]]
+                        gender_estimate_SE=modeloutput_summary[["tTable"]][[(3+lengthoftable)]]
+                        gender_p_value= modeloutput_summary[["tTable"]][[(3+3*lengthoftable)]]    
+                    }    
+                    
+                    
+                } 
+            },
+            withWeight = {
+                
+                if(!result$model.effect.weight){
+                    
+                    #If weight is not significant then the output is the same as fitting model Eq1 and so no output is needed. 
+                    result$model.effect.batch=NA
+                    
+                }else{
+                    
+                    if(result$model.effect.batch){
+                        
+                        #for mixed model 
+                        intercept_estimate = modeloutput_summary[["tTable"]][[1]]
+                        intercept_estimate_SE = modeloutput_summary[["tTable"]][[(1+lengthoftable)]]
+                        
+                        if((result$model.effect.weight && result$model.effect.gender && result$model.effect.interaction) | (result$model.effect.weight && !result$model.effect.gender&& result$model.effect.interaction)){
+                            gender_estimate=modeloutput_summary[["tTable"]][[2]]
+                            gender_estimate_SE=modeloutput_summary[["tTable"]][[(2+lengthoftable)]]
+                            gender_p_value= modeloutput_summary[["tTable"]][[(2+4*lengthoftable)]]
+                            gender_FvKO_estimate= modeloutput_summary[["tTable"]][[4]]
+                            gender_FvKO_SE=modeloutput_summary[["tTable"]][[(4+lengthoftable)]]
+                            gender_FvKO_p_value=modeloutput_summary[["tTable"]][[(4+4*lengthoftable)]]
+                            gender_MvKO_estimate=modeloutput_summary[["tTable"]][[5]]
+                            gender_MvKO_SE=modeloutput_summary[["tTable"]][[(5+lengthoftable)]]
+                            gender_MvKO_p_value=modeloutput_summary[["tTable"]][[(5+4*lengthoftable)]]
+                            weight_estimate=modeloutput_summary[["tTable"]][[3]]
+                            weight_estimate_SE=modeloutput_summary[["tTable"]][[(3+lengthoftable)]]
+                            weight_p_value=modeloutput_summary[["tTable"]][[(3+4*lengthoftable)]]    
+                            
+                        } else if (result$model.effect.weight && !result$model.effect.gender && !result$model.effect.interaction){    
+                            
+                            genotype_estimate = modeloutput_summary[["tTable"]][[2]]
+                            genotype_estimate_SE = modeloutput_summary[["tTable"]][[(2+lengthoftable)]]
+                            genotype_p_value =  modeloutput_summary[["tTable"]][[(2+4*lengthoftable)]]
+                            weight_estimate=modeloutput_summary[["tTable"]][[3]]
+                            weight_estimate_SE=modeloutput_summary[["tTable"]][[(3+lengthoftable)]]
+                            weight_p_value=modeloutput_summary[["tTable"]][[(3+4*lengthoftable)]]
+                            
+                        }else if (result$model.effect.weight && result$model.effect.gender && !result$model.effect.interaction){
+                            
+                            genotype_estimate = modeloutput_summary[["tTable"]][[2]]
+                            genotype_estimate_SE = modeloutput_summary[["tTable"]][[(2+lengthoftable)]]
+                            genotype_p_value =  modeloutput_summary[["tTable"]][[(2+4*lengthoftable)]]
+                            gender_estimate=modeloutput_summary[["tTable"]][[3]]
+                            gender_estimate_SE=modeloutput_summary[["tTable"]][[(3+lengthoftable)]]
+                            gender_p_value= modeloutput_summary[["tTable"]][[(3+4*lengthoftable)]]    
+                            weight_estimate=modeloutput_summary[["tTable"]][[4]]
+                            weight_estimate_SE=modeloutput_summary[["tTable"]][[(4+lengthoftable)]]
+                            weight_p_value=modeloutput_summary[["tTable"]][[(4+4*lengthoftable)]]
+                            
+                        }
+                        
+                    }else{
+                        #adaption for being a linear model rather than a mixed model
+                        intercept_estimate = modeloutput_summary[["tTable"]][[1]]
+                        intercept_estimate_SE = modeloutput_summary[["tTable"]][[(1+lengthoftable)]]
+                        
+                        if((result$model.effect.weight && result$model.effect.gender && result$model.effect.interaction )|(result$model.effect.weight && !result$model.effect.gender&& result$model.effect.interaction)){
+                            gender_estimate=modeloutput_summary[["tTable"]][[2]]
+                            gender_estimate_SE=modeloutput_summary[["tTable"]][[(2+lengthoftable)]]
+                            gender_p_value= modeloutput_summary[["tTable"]][[(2+3*lengthoftable)]]
+                            weight_estimate=modeloutput_summary[["tTable"]][[3]]
+                            weight_estimate_SE=modeloutput_summary[["tTable"]][[(3+lengthoftable)]]
+                            weight_p_value=modeloutput_summary[["tTable"]][[(3+3*lengthoftable)]]    
+                            gender_FvKO_estimate= modeloutput_summary[["tTable"]][[4]]
+                            gender_FvKO_SE=modeloutput_summary[["tTable"]][[(4+lengthoftable)]]
+                            gender_FvKO_p_value=modeloutput_summary[["tTable"]][[(4+3*lengthoftable)]]
+                            gender_MvKO_estimate=modeloutput_summary[["tTable"]][[5]]
+                            gender_MvKO_SE=modeloutput_summary[["tTable"]][[(5+lengthoftable)]]
+                            gender_MvKO_p_value=modeloutput_summary[["tTable"]][[(5+3*lengthoftable)]]        
+                            
+                        } else if (result$model.effect.weight && result$model.effect.gender && !result$model.effect.interaction){
+                            
+                            genotype_estimate = modeloutput_summary[["tTable"]][[2]]
+                            genotype_estimate_SE = modeloutput_summary[["tTable"]][[(2+lengthoftable)]]
+                            genotype_p_value =  modeloutput_summary[["tTable"]][[(2+3*lengthoftable)]]
+                            gender_estimate=modeloutput_summary[["tTable"]][[3]]
+                            gender_estimate_SE=modeloutput_summary[["tTable"]][[(3+lengthoftable)]]
+                            gender_p_value= modeloutput_summary[["tTable"]][[(3+3*lengthoftable)]]
+                            weight_estimate=modeloutput_summary[["tTable"]][[4]]
+                            weight_estimate_SE=modeloutput_summary[["tTable"]][[(4+lengthoftable)]]
+                            weight_p_value=modeloutput_summary[["tTable"]][[(4+3*lengthoftable)]]
+                            
+                            
+                        }else if (result$model.effect.weight && !result$model.effect.gender && !result$model.effect.interaction){    
+                            genotype_estimate = modeloutput_summary[["tTable"]][[2]]
+                            genotype_estimate_SE = modeloutput_summary[["tTable"]][[(2+lengthoftable)]]
+                            genotype_p_value =  modeloutput_summary[["tTable"]][[(2+3*lengthoftable)]]
+                            weight_estimate=modeloutput_summary[["tTable"]][[3]]
+                            weight_estimate_SE=modeloutput_summary[["tTable"]][[(3+lengthoftable)]]
+                            weight_p_value=modeloutput_summary[["tTable"]][[(3+3*lengthoftable)]]
+                        }    
+                        
+                    }      
+                    
+                }
+            }
+            )
+    output = c(genotype_estimate, genotype_estimate_SE,  genotype_p_value,gender_estimate, gender_estimate_SE,  gender_p_value, weight_estimate, weight_estimate_SE, weight_p_value, intercept_estimate, intercept_estimate_SE, gender_FvKO_estimate, gender_FvKO_SE,   gender_FvKO_p_value,  gender_MvKO_estimate,  gender_MvKO_SE,  gender_MvKO_p_value)
+    names = c("genotype_estimate", "genotype_estimate_SE", "genotype_p_value", "gender_estimate", "gender_estimate_SE", "gender_p_value", "weight_estimate", 
+            "weight_estimate_SE", "weight_p_value", "intercept_estimate", "intercept_estimate_SE", "gender_FvKO_estimate", "gender_FvKO_SE", 
+            "gender_FvKO_p_value", "gender_MvKO_estimate", "gender_MvKO_SE", "gender_MvKO_p_value")
+    names(output) = names
+    return(output)
 }
