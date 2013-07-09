@@ -63,7 +63,7 @@ testDataset <- function(object, equation="withWeight", depVariable=NULL, pThresh
         # Start model formula: homogenous residual variance, genotype and sex interaction included  
         model.formula = modelFormula(equation,numberofgenders, depVariable)
         
-        if ('Batch' %in% colnames(dataset)){
+        if ('Batch' %in% colnames(x)){
         
             # MM fit of model formula (with random effects)
             # Model 1 

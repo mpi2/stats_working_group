@@ -64,10 +64,10 @@ PhenList <- function(dataset=matrix(0,0,0), interactionMode=TRUE, refGenotype='+
             Levels = sapply(dataset, function(x) if (length(unique(x))<4) paste(levels(x),collapse="*") else length(unique(x)) ), 
             #UniqueObs = sapply(dataset, function(x) if(is.numeric(x)) {paste(round(length(unique(x))/length(x),digits=2)*100,"%",sep="")} else NA), 
             NObs = sapply(dataset, function(x) length(na.omit(x))),
-            Mean = sapply(dataset, function(x) if(is.numeric(x)) round(mean(na.omit(x)),digit=2) else NA),
-            StdDev = sapply(dataset, function(x) if(is.numeric(x)) round(sd(na.omit(x)),digit=2) else NA),
-            Minimum = sapply(dataset, function(x) if(is.numeric(x)) round(min(na.omit(x)),digit=2) else NA),
-            Maximum = sapply(dataset, function(x) if(is.numeric(x)) round(max(na.omit(x)),digit=2) else NA))
+            Mean = sapply(dataset, function(x) if(is.numeric(x)) round(mean(na.omit(x)),digits=2) else NA),
+            StdDev = sapply(dataset, function(x) if(is.numeric(x)) round(sd(na.omit(x)),digits=2) else NA),
+            Minimum = sapply(dataset, function(x) if(is.numeric(x)) round(min(na.omit(x)),digits=2) else NA),
+            Maximum = sapply(dataset, function(x) if(is.numeric(x)) round(max(na.omit(x)),digits=2) else NA))
     rownames(dataset.stat) <- NULL
     
   
