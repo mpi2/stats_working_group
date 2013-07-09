@@ -16,7 +16,7 @@
 # PhenList.R contains PhenList and checkDataset functions to construct new PhenList object from components and to check 
 # dataset integrity
 
-PhenList <- function(dataset=matrix(0,0,0), refGenotype='+/+', dataset.stat=NULL, dataset.colname.assayDate=NULL,
+PhenList <- function(dataset=matrix(0,0,0), interactionMode=TRUE, refGenotype='+/+', dataset.stat=NULL, dataset.colname.batch=NULL,
         dataset.colname.genotype=NULL, dataset.colname.gender=NULL, dataset.colname.weight=NULL, dataset.values.missingValue=NULL, 
         dataset.values.male=NULL, dataset.values.female=NULL, dataset.clean=FALSE, testGenotype=NULL, hemGenotype=NULL) 
 
@@ -29,8 +29,9 @@ PhenList <- function(dataset=matrix(0,0,0), refGenotype='+/+', dataset.stat=NULL
 {
     dataset <- dataset[,order(names(dataset))]
     
-    # Rename columns if needed
-    if(!is.null(dataset.colname.assayDate)) colnames(dataset)[colnames(dataset) == dataset.colname.assayDate] <-'Assay.Date'
+    # Rename columns if needed    
+    if(!is.null(dataset.colname.batch)) colnames(dataset)[colnames(dataset) == dataset.colname.batch] <-'Batch'
+    else  colnames(dataset)[colnames(dataset) == 'Assay.Date'] <-'Batch'
     if(!is.null(dataset.colname.genotype)) colnames(dataset)[colnames(dataset) == dataset.colname.genotype] <-'Genotype'
     if(!is.null(dataset.colname.gender)) colnames(dataset)[colnames(dataset) == dataset.colname.gender] <-'Gender'
     if(!is.null(dataset.colname.weight)) colnames(dataset)[colnames(dataset) == dataset.colname.weight] <-'Weight'
@@ -42,15 +43,17 @@ PhenList <- function(dataset=matrix(0,0,0), refGenotype='+/+', dataset.stat=NULL
     if(!is.null(dataset.values.female)) levels(dataset$Gender)[levels(dataset$Gender)==dataset.values.female] <- "Female"
     if(!is.null(dataset.values.male)) levels(dataset$Gender)[levels(dataset$Gender)==dataset.values.male] <- "Male"
     
+
     if (dataset.clean && !is.null(hemGenotype) && !is.null(testGenotype))  
         levels(dataset$Genotype)[levels(dataset$Genotype)==hemGenotype] <- testGenotype
     if (dataset.clean && !is.null(testGenotype) && length(levels(dataset$Genotype))>2) {
-        dataset <- dataset[-(dataset$Genotype!=testGenotype && dataset$Genotype!=refGenotype),]
+        dataset <- dataset[-(dataset$Genotype!=testGenotype || dataset$Genotype!=refGenotype),]
         message(paste("Warning: Dataset have been clean: filterd out rows with genotype value other than ", testGenotype,"or",refGenotype))
     }
         
     
-    dataset <- checkDataset(dataset,refGenotype,dataset.clean)
+
+    dataset <- checkDataset(dataset, interactionMode, refGenotype, dataset.clean)
     
     Genotype_levels=levels(dataset$Genotype)
     Gender_levels=levels(dataset$Gender)
@@ -75,7 +78,7 @@ PhenList <- function(dataset=matrix(0,0,0), refGenotype='+/+', dataset.stat=NULL
     x$testGenotype <- testGenotype
     x$hemGenotype <- hemGenotype
     x$dataset.stat <- dataset.stat
-    x$dataset.colname.assayDate <- dataset.colname.assayDate
+    x$dataset.colname.batch <- dataset.colname.batch
     x$dataset.colname.genotype <- dataset.colname.genotype
     x$dataset.colname.gender <- dataset.colname.gender
     x$dataset.colname.weight <- dataset.colname.weight
@@ -88,7 +91,7 @@ PhenList <- function(dataset=matrix(0,0,0), refGenotype='+/+', dataset.stat=NULL
     x
 }
 
-checkDataset <- function(dataset,refGenotype="+/+",dataset.clean=FALSE)
+checkDataset <- function(dataset,interactionMode,refGenotype="+/+",dataset.clean=FALSE)
 
 # Check dataset for the minimum required info
 
@@ -99,7 +102,7 @@ checkDataset <- function(dataset,refGenotype="+/+",dataset.clean=FALSE)
     
     nvar <- ncol(dataset)
     ntags <- nrow(dataset)
-    
+
     # Column names should be given
     if(nvar>0 && is.null(colnames(dataset))) {
         pass <- FALSE
@@ -109,10 +112,11 @@ checkDataset <- function(dataset,refGenotype="+/+",dataset.clean=FALSE)
     if(ntags>0 && is.null(rownames(dataset))) rownames(dataset) <- 1:ntags
     
     # Minimum required data
-    if (!('Assay.Date' %in% colnames(dataset))){
+    if (!('Batch' %in% colnames(dataset))){
         pass <- FALSE
-        message <- paste(message, "Dataset's 'Assay.Date' column is missed\n")
+        message <- paste(message, "Dataset's 'Batch' column is missed\n")
     }    
+    
     if (!('Genotype' %in% colnames(dataset))) {
         pass <- FALSE
         message <- paste(message,"Dataset's 'Genotype' column is missed\n")
@@ -125,17 +129,17 @@ checkDataset <- function(dataset,refGenotype="+/+",dataset.clean=FALSE)
     }    
     
     Genotype_levels=levels(dataset$Genotype)
-    Gender_levels=levels(dataset$Gender)  
-    
+    Gender_levels=levels(dataset$Gender) 
+    # Genotype/Gender with at least two data points
     # Genotype/Gender with at least two data points
     for (i in 1:length(Genotype_levels)){
         GenotypeSubset <- subset(dataset, dataset$Genotype==Genotype_levels[i])
         for (j in 1:length(Gender_levels)){
             nr <- sum(is.finite(GenotypeSubset[GenotypeSubset$Gender==Gender_levels[j],][ , "Gender"]))
-            # message(paste(Genotype_levels[i],Gender_levels[j],nr))
+            #message(paste(Genotype_levels[i],Gender_levels[j],nr))
             if (nr<2) {
                 if (dataset.clean){
-                    dataset <- dataset[-(dataset$Genotype==Genotype_levels[i] && dataset$Gender==Gender_levels[j]),]
+                    dataset <- subset(dataset,(dataset$Genotype!=Genotype_levels[i] & dataset$Gender!=Gender_levels[j]))
                     message(paste("Warning: Dataset have been clean: filterd out rows with ", Genotype_levels[i],"/",Gender_levels[j],"combination"))
                 }
                 else{
@@ -171,7 +175,14 @@ checkDataset <- function(dataset,refGenotype="+/+",dataset.clean=FALSE)
         pass <- FALSE
         message <- paste(message,paste("Dataset with not enough records for statistical analysis with reference genotype",refGenotype))
     }
-    if (!pass) stop(paste("Error(s):", message)) # Column names should be given
+    if (!pass) 
+        if (interactionMode)
+            stop(paste("Error(s):", message)) # Column names should be given
+        else {
+            opt <- options(show.error.messages=FALSE)
+            on.exit(options(opt))
+            stop()
+        }
 
     return(dataset)
     

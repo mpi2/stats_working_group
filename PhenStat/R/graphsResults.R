@@ -105,7 +105,7 @@ qqplotRandomEffects<-function(phenList, phenTestResult, keep_batch=NULL){
         
     }
     else {
-        message("Diagnostics on random effects not relevant as variation between Assay.Date (batches) was not significant")
+        message("Diagnostics on random effects not relevant as variation between batches was not significant")
     }
 }
 
@@ -131,9 +131,9 @@ boxplotResidualBatch<-function(phenList, phenTestResult){
     par(mfrow=c(1,2))  
     Gp1 <- subset(data_all, data_all$Genotype==a[1])
     Gp2 <- subset(data_all, data_all$Genotype==a[2])
-    with(Gp1, boxplot(res~Assay.Date, ylab="Residuals", xlab="Batch", names=NULL))
+    with(Gp1, boxplot(res~Batch, ylab="Residuals", xlab="Batch", names=NULL))
     legend("bottomleft", a[1], cex=1.3, bty="n")
-    with(Gp2, boxplot(res~Assay.Date, ylab="Residuals", xlab="Batch", names=NULL))
+    with(Gp2, boxplot(res~Batch, ylab="Residuals", xlab="Batch", names=NULL))
     legend("bottomleft", a[2], cex=1.3, bty="n")   
 }
 
@@ -156,14 +156,14 @@ qqplotRotatedResiduals<-function(phenList, phenTestResult, keep_batch=NULL){
     if (is.null(keep_batch))
     stop("Please make test for the batch effect and provide TRUE/FALSE value")
     
-    x[, c("Genotype", "Gender", "Assay.Date")] = lapply(x[, c("Genotype", "Gender", "Assay.Date")], factor)
+    x[, c("Genotype", "Gender", "Batch")] = lapply(x[, c("Genotype", "Gender", "Batch")], factor)
     
     if(!keep_batch){
-        stop("Diagnostics on rotated residues not relevant as variation between Assay.Date (batches) was not significant")
+        stop("Diagnostics on rotated residues not relevant as variation between batches was not significant")
     }else{
         sdests = exp(attr(modeloutput$apVar, "Pars"))           #extract variance estimates
-        Zbat = model.matrix(~ Assay.Date, model.frame( ~ Assay.Date, modeloutput$groups))    #create random effects design matrix
-        ycov = (Zbat %*% t(Zbat)) * sdests["reStruct.Assay.Date"]^2 + diag(rep(1,nrow(modeloutput$groups))) * sdests["lSigma"]^2    #create estimated cov(y)
+        Zbat = model.matrix(~ Batch, model.frame( ~ Batch, modeloutput$groups))    #create random effects design matrix
+        ycov = (Zbat %*% t(Zbat)) * sdests["reStruct.Batch"]^2 + diag(rep(1,nrow(modeloutput$groups))) * sdests["lSigma"]^2    #create estimated cov(y)
         Lt = chol(solve(ycov))  #Cholesky decomposition of inverse of cov(y) (see Houseman '04 eq. (2))
         unrotres =  modeloutput$residuals[, "fixed"]    #unrotated residuals
         rotres = Lt %*%  modeloutput$residuals[, "fixed"]    #rotated residuals

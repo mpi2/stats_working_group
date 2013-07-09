@@ -18,13 +18,6 @@ classificationTag<-function(result, phenotypeThreshold=0.01)
 # Sexual Dimorphism Classification Tag
 
 {
-    genderVector<-vectorOutput(result)[25:30] 
-    m<-matrix(genderVector,1,6)
-    colnames(m) = c("FvKO_par", "FvKO_SE", "FvKO_pvalue", 
-            "MvKO_par", "MvKO_SE", "MvKO_pvalue")
-    gvr<-as.data.frame(m,stringsAsFactors=FALSE)
-    
-        
         #added a layer for no fitting of data ie NA
         if(is.na(result$model.output.genotype.nulltest.pVal)==TRUE){
             ChangeClassification==NA
@@ -34,14 +27,14 @@ classificationTag<-function(result, phenotypeThreshold=0.01)
             if(result$model.effect.interaction==FALSE) {
                 ChangeClassification=paste("With phenotype threshold value",phenotypeThreshold,"- both sexes equally")
             
-            }else if(gvr$FvKO_pvalue>=0.05 && gvrMvKO_pvalue>=0.05){
+            }else if(result$model.output.summary["gender_FvKO_p_value"]>=0.05 && result$model.output.summary["gender_MvKO_p_value"]>=0.05){
                 ChangeClassification=paste("With phenotype threshold value",phenotypeThreshold,"- cannot classify effect")
-            }else if(gvr$FvKO_pvalue<0.05 && gvr$MvKO_pvalue>=0.05){
+            }else if(result$model.output.summary["gender_FvKO_p_value"]<0.05 && result$model.output.summary["gender_MvKO_p_value"]>=0.05){
                 ChangeClassification=paste("With phenotype threshold value",phenotypeThreshold,"- females only")
-            }else if(gvr$FvKO_pvalue>=0.05 && gvr$MvKO_pvalue<0.05){
+            }else if(result$model.output.summary["gender_FvKO_p_value"]>=0.05 && result$model.output.summary["gender_MvKO_p_value"]<0.05){
                 ChangeClassificationpaste("With phenotype threshold value",phenotypeThreshold,"- males only")
-            }else if(gvr$FvKO_par>0 && gvr$MvKO_par>0 |gvr$FvKO_par<0 && gvr$MvKO_par<0){
-                if(abs(gvr$FvKO_par)>abs(gvr$MvKO_par)){
+            }else if(result$model.output.summary["gender_FvKO_estimate"]>0 && result$model.output.summary["gender_MvKO_estimate"]>0 |result$model.output.summary["gender_FvKO_estimate"]<0 && result$model.output.summary["gender_MvKO_estimate"]<0){
+                if(abs(result$model.output.summary["gender_FvKO_estimate"])>abs(result$model.output.summary["gender_MvKO_estimate"])){
                     ChangeClassification=paste("With phenotype threshold value",phenotypeThreshold,"- different size as females greater") 
                     # change could be positive or negative but size change greater
                 }else{

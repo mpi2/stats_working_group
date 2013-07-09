@@ -63,31 +63,39 @@ testDataset <- function(object, equation="withWeight", depVariable=NULL, pThresh
         # Start model formula: homogenous residual variance, genotype and sex interaction included  
         model.formula = modelFormula(equation,numberofgenders, depVariable)
         
-        # MM fit of model formula (with random effects)
-        # Model 1 
-        model_MM = do.call("lme", args = list(model.formula, random=~1|Assay.Date, data = x, na.action="na.omit", method="REML"))
-        # GLS fit of model formula  (no random effects)
-        # Model 1A
-        model_withoutbatch <- do.call("gls", args=list(model.formula, x, na.action="na.omit"))
-        # Test: the random effects associated with batch intercepts can be ommited from model
-        # Hypothesis 1
-        # Null Hypothesis: variance of batch = 0
-        # Alternative Hypothesis: variance of batch > 0 
-        p.value.batch <-(anova(model_MM, model_withoutbatch)$p[2])/2
-        # The result of the test for Hypothesis 1 will help to select the structure for random effects
-        keep_batch= p.value.batch<pThreshold
+        if ('Batch' %in% colnames(dataset)){
         
-        # MM fit of model formula with heterogeneous residual variances for genotype groups
-        # Model 1 assumes homogeneous residual variances
-        # Model 2 with heterogeneous residual variances 
-        model_hetvariance= do.call("lme", args=list(model.formula, random=~1|Assay.Date, x, weights=varIdent(form=~1|Genotype), na.action="na.omit", method="REML"))
-        # Test: the variance of the residuals is the same (homogeneous) for all genotype groups
-        # Hypothesis 2
-        # Null Hypothesis: all residual variances are equal
-        # Alternative Hypothesis: at least one pair of residual variances is not equal    
-        p.value.variance=(anova(model_MM, model_hetvariance)$p[2])
-        # The result of the test for Hypothesis 2 will help to select a covariance structure for the residuals
-        keep_equalvar= p.value.variance>pThreshold
+            # MM fit of model formula (with random effects)
+            # Model 1 
+            model_MM = do.call("lme", args = list(model.formula, random=~1|Batch, data = x, na.action="na.omit", method="REML"))
+            # GLS fit of model formula  (no random effects)
+            # Model 1A
+            model_withoutbatch <- do.call("gls", args=list(model.formula, x, na.action="na.omit"))
+            # Test: the random effects associated with batch intercepts can be ommited from model
+            # Hypothesis 1
+            # Null Hypothesis: variance of batch = 0
+            # Alternative Hypothesis: variance of batch > 0 
+            p.value.batch <-(anova(model_MM, model_withoutbatch)$p[2])/2
+            # The result of the test for Hypothesis 1 will help to select the structure for random effects
+            keep_batch= p.value.batch<pThreshold
+            
+            # MM fit of model formula with heterogeneous residual variances for genotype groups
+            # Model 1 assumes homogeneous residual variances
+            # Model 2 with heterogeneous residual variances 
+            model_hetvariance= do.call("lme", args=list(model.formula, random=~1|Batch, x, weights=varIdent(form=~1|Genotype), na.action="na.omit", method="REML"))
+            # Test: the variance of the residuals is the same (homogeneous) for all genotype groups
+            # Hypothesis 2
+            # Null Hypothesis: all residual variances are equal
+            # Alternative Hypothesis: at least one pair of residual variances is not equal    
+            p.value.variance=(anova(model_MM, model_hetvariance)$p[2])
+            # The result of the test for Hypothesis 2 will help to select a covariance structure for the residuals
+            keep_equalvar= p.value.variance>pThreshold
+        }
+        else {
+            # No Batch effects
+            keep_batch = FALSE
+            keep_equalvar = FALSE
+        }
         
         
         # Model fit is selected according to test results    
@@ -107,7 +115,7 @@ testDataset <- function(object, equation="withWeight", depVariable=NULL, pThresh
     
 
         # Tests for significance of fixed effects using TypeI F-test from anova functionality by using selected model
-        anova_results = anova(model, type="marginal")$"p-value" < 0.05
+        anova_results = anova(model, type="marginal")$"p-value" < pThreshold
         if(numberofgenders==2){
             # Result of the test for gender significance (fixed effect 1.)
             keep_gender = anova_results[3]
@@ -175,14 +183,14 @@ buildStartModel <- function(object, equation="withWeight", depVariable, pThresho
     
     # MM fit of model formula (with random effects)
     # Model 1 
-    model_MM = do.call("lme", args = list(model.formula, random=~1|Assay.Date, data = x, na.action="na.omit", method="REML"))
+    model_MM = do.call("lme", args = list(model.formula, random=~1|Batch, data = x, na.action="na.omit", method="REML"))
     # GLS fit of model formula  (no random effects)
     # Model 1A
     model_withoutbatch <- do.call("gls", args=list(model.formula, x, na.action="na.omit"))
     # MM fit of model formula with heterogeneous residual variances for genotype groups
     # Model 1 assumes homogeneous residual variances
     # Model 2 with heterogeneous residual variances 
-    model_hetvariance= do.call("lme", args=list(model.formula, random=~1|Assay.Date, x, weights=varIdent(form=~1|Genotype), 
+    model_hetvariance= do.call("lme", args=list(model.formula, random=~1|Batch, x, weights=varIdent(form=~1|Genotype), 
                     na.action="na.omit", method="REML"))
     
     # Model fit is selected according to test results    

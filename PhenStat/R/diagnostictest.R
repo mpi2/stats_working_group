@@ -18,6 +18,7 @@ testFinalModel<-function(object, result=NULL, equation=NULL, depVariable=NULL, p
 # Diagnostic test output for MM quality of fit
 {
     require(nortest)
+
     
     # Check PhenList object
     if(is(object,"PhenList")) {
@@ -29,7 +30,7 @@ testFinalModel<-function(object, result=NULL, equation=NULL, depVariable=NULL, p
     
     # Check PhenTestResult object
     if(is(result,"PhenTestResult")) {
-        if (!is.null(result$model.output.quality)) return(result$model.output.quality)
+        #if (!is.null(result$model.output.quality)) return(result$model.output.quality)
         if (is.null(depVariable)) depVariable <- result$depVariable
         if (is.null(equation)) equation <- result$equation
         keep_weight <- result$model.effect.weight
@@ -62,7 +63,7 @@ testFinalModel<-function(object, result=NULL, equation=NULL, depVariable=NULL, p
         result<-buildFinalModel(object, equation=equation, depVariable=depVariable, pThreshold=pThreshold, keepList=keepList)
     }
     
-    
+
     a=levels(x$Genotype)
     numberofgenders=result$numberGenders
     
@@ -71,26 +72,27 @@ testFinalModel<-function(object, result=NULL, equation=NULL, depVariable=NULL, p
         return(testresults)    
         
     }else{    
+
         res=resid(result$model.output)
         data_all= data.frame(x, res)
         genotype_no=length(a)
-        data_all[, c("Gender", "Assay.Date")] = lapply(data_all[, c("Gender", "Assay.Date")], factor)
-        No_batches=nlevels(data_all$Assay.Date)
-        outputnumeric=is.numeric(modeloutput$apVar)
-        
+        data_all[, c("Gender", "Batch")] = lapply(data_all[, c("Gender", "Batch")], factor)
+        No_batches=nlevels(data_all$Batch)
+        outputnumeric=is.numeric(result$model.output$apVar)        
         Gp1 = subset(data_all, data_all$Genotype==a[1])
         Gp2 = subset(data_all, data_all$Genotype==a[2])
         No_Gp1=sum(is.finite(Gp1[ , depVariable]))
         No_Gp2=sum(is.finite(Gp2[ , depVariable]))
         
         if(keep_batch && No_batches >7 && outputnumeric){
-            blups=ranef(modeloutput)
+
+            blups=ranef(result$model.output)
             blups_test= cvm.test(blups [ ,1])$p.value
-            sdests = exp(attr(modeloutput$apVar, "Pars"))           #extract variance estimates
-            Zbat = model.matrix(~ Assay.Date, model.frame( ~ Assay.Date, modeloutput$groups))    #create random effects design matrix
-            ycov = (Zbat %*% t(Zbat)) * sdests["reStruct.Assay.Date"]^2 + diag(rep(1,nrow(modeloutput$groups))) * sdests["lSigma"]^2    #create estimated cov(y)
+            sdests = exp(attr(result$model.output$apVar, "Pars"))           #extract variance estimates
+            Zbat = model.matrix(~ Batch, model.frame( ~ Batch, result$model.output$groups))    #create random effects design matrix
+            ycov = (Zbat %*% t(Zbat)) * sdests["reStruct.Batch"]^2 + diag(rep(1,nrow(result$model.output$groups))) * sdests["lSigma"]^2    #create estimated cov(y)
             Lt = chol(solve(ycov))  #Cholesky decomposition of inverse of cov(y) (see Houseman '04 eq. (2))
-            rotres = Lt %*%  modeloutput$residuals[, "fixed"]    #rotated residuals
+            rotres = Lt %*%  result$model.output$residuals[, "fixed"]    #rotated residuals
             rotated_residual_test=cvm.test(rotres)$p.value
         }else{
             blups_test=NA

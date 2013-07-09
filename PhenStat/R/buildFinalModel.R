@@ -163,12 +163,12 @@ buildFinalModel <- function(object, result=NULL, equation=NULL, depVariable=NULL
     # Null Hypothesis: genotypes are not associated with dependant variable 
     # Alternative Hypothesis: genotypes are associated with dependant variable 
     if(keep_batch && keep_equalvar){
-        model_genotype=do.call("lme", args = list(model_genotype.formula, random=~1|Assay.Date, x, na.action="na.omit", method="ML"))
-        model_null=do.call("lme", args=list(model_null.formula, x,random=~1|Assay.Date, na.action="na.omit",  method="ML"))
+        model_genotype=do.call("lme", args = list(model_genotype.formula, random=~1|Batch, x, na.action="na.omit", method="ML"))
+        model_null=do.call("lme", args=list(model_null.formula, x,random=~1|Batch, na.action="na.omit",  method="ML"))
         p.value=(anova(model_genotype, model_null)$p[2])
     }else if(keep_batch && !keep_equalvar){
-        model_genotype=do.call("lme", args = list(model_genotype.formula, random=~1|Assay.Date, x,weights=varIdent(form=~1|Genotype), na.action="na.omit", method="ML"))
-        model_null=do.call("lme", args=list(model_null.formula, x, random=~1|Assay.Date,weights=varIdent(form=~1|Genotype), na.action="na.omit",  method="ML"))
+        model_genotype=do.call("lme", args = list(model_genotype.formula, random=~1|Batch, x,weights=varIdent(form=~1|Genotype), na.action="na.omit", method="ML"))
+        model_null=do.call("lme", args=list(model_null.formula, x, random=~1|Batch,weights=varIdent(form=~1|Genotype), na.action="na.omit",  method="ML"))
         p.value=(anova(model_genotype, model_null)$p[2])
     }else if(!keep_batch && !keep_equalvar){
         model_genotype=do.call("gls", args = list(model_genotype.formula,  x,weights=varIdent(form=~1|Genotype),method="ML", na.action="na.omit"))
@@ -182,9 +182,9 @@ buildFinalModel <- function(object, result=NULL, equation=NULL, depVariable=NULL
     
     # Final model version with na.exclude and REML method
     if(keep_batch && keep_equalvar){
-        model_genotype=do.call("lme", args = list(model_genotype.formula, random=~1|Assay.Date, x, na.action="na.exclude", method="REML"))
+        model_genotype=do.call("lme", args = list(model_genotype.formula, random=~1|Batch, x, na.action="na.exclude", method="REML"))
     }else if(keep_batch && !keep_equalvar){
-        model_genotype=do.call("lme", args = list(model_genotype.formula, random=~1|Assay.Date, x,weights=varIdent(form=~1|Genotype), na.action="na.exclude", method="REML"))
+        model_genotype=do.call("lme", args = list(model_genotype.formula, random=~1|Batch, x,weights=varIdent(form=~1|Genotype), na.action="na.exclude", method="REML"))
     }else if(!keep_batch && !keep_equalvar){
         model_genotype=do.call("gls", args = list(model_genotype.formula,  x,weights=varIdent(form=~1|Genotype), na.action="na.exclude"))
     }else if(!keep_batch && keep_equalvar){

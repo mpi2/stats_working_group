@@ -41,7 +41,7 @@ boxplotGenderGenotype<-function(phenList, depVariable){
     }
 }    
 #-----------------------------------------------------------------------------------
-# Raw data boxplot: split by gender,genotype and batch (Assay.date)
+# Raw data boxplot: split by gender,genotype and batch 
 boxplotGenderGenotypeBatch<-function(phenList, depVariable){
     if(is(phenList,"PhenList")) {
         x <- phenList$dataset
@@ -55,22 +55,22 @@ boxplotGenderGenotypeBatch<-function(phenList, depVariable){
     
     numberofgenders=length(levels(x$Gender))
     y_range=c(min(x[ ,depVariable], na.rm=TRUE), max((x[ ,depVariable]), na.rm=TRUE))
-    x_range=c(levels(x$Assay.Date))
+    x_range=c(levels(x$Batch))
     
     if(numberofgenders==2){
         Male = subset(x, x$Gender=="Male")
         Female= subset(x, x$Gender=="Female")
         par(mfrow=c(1,2)) 
-        boxplot(Male[ , depVariable]~Male$Genotype+Male$Assay.Date, subset=(Male$Genotype=="+/+"), ylab=depVariable, ylim=y_range, xlab="Genotype", names=NULL)
-        boxplot(Male[ , depVariable]~Male$Genotype + Male$Assay.Date, add=TRUE, subset=(Male$Genotype!="+/+"), ylim=y_range, ylab=depVariable, xlab="Genotype", col="red", names=NULL)
+        boxplot(Male[ , depVariable]~Male$Genotype+Male$Batch, subset=(Male$Genotype=="+/+"), ylab=depVariable, ylim=y_range, xlab="Genotype", names=NULL)
+        boxplot(Male[ , depVariable]~Male$Genotype + Male$Batch, add=TRUE, subset=(Male$Genotype!="+/+"), ylim=y_range, ylab=depVariable, xlab="Genotype", col="red", names=NULL)
         legend("topright", "Male", cex=1.3, bty="n")
-        boxplot(Female[ , depVariable]~Female$Genotype + Female$Assay.Date, subset=(Female$Genotype=="+/+"),ylim=y_range,ylab=depVariable, xlab="Genotype", names=NULL )
-        boxplot(Female[ , depVariable]~Female$Genotype + Female$Assay.Date, add=TRUE, subset=(Female$Genotype!="+/+"),ylim=y_range, ylab=depVariable, xlab="Genotype", col="red",names=NULL)
+        boxplot(Female[ , depVariable]~Female$Genotype + Female$Batch, subset=(Female$Genotype=="+/+"),ylim=y_range,ylab=depVariable, xlab="Genotype", names=NULL )
+        boxplot(Female[ , depVariable]~Female$Genotype + Female$Batch, add=TRUE, subset=(Female$Genotype!="+/+"),ylim=y_range, ylab=depVariable, xlab="Genotype", col="red",names=NULL)
         legend("topright", "Female", cex=1.3, bty="n")
     }else{
         par(mfrow=c(1,1))
-        boxplot(x[ ,depVariable]~x$Genotype+Male$Assay.Date,subset=(Male$Genotype=="+/+"), ylab=depVariable, xlab="Genotype", names=NULL) # xlim=x_range,
-        boxplot(x[ ,depVariable]~x$Genotype+Male$Assay.Date,subset=(Male$Genotype!="+/+"), ylab=depVariable, xlab="Genotype", col="red", names=NULL)    
+        boxplot(x[ ,depVariable]~x$Genotype+Male$Batch,subset=(Male$Genotype=="+/+"), ylab=depVariable, xlab="Genotype", names=NULL) # xlim=x_range,
+        boxplot(x[ ,depVariable]~x$Genotype+Male$Batch,subset=(Male$Genotype!="+/+"), ylab=depVariable, xlab="Genotype", col="red", names=NULL)    
     }
     
 }    
