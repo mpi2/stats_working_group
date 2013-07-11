@@ -1,0 +1,23 @@
+\name{LargeDataObject-class}
+\docType{class}
+
+\alias{LargeDataObject-class}
+\alias{show,LargeDataObject-method}
+\alias{printHead,LargeDataObject-method}
+
+\title{Class "LargeDataObject"}
+
+\description{A list-based S4 class for storing large data objects}
+
+\section{Methods}{
+    \describe{
+        \item{show}{\code{signature(object = "LargeDataObject")}: Prints out the object head using common method show}
+        \item{printHead}{\code{signature(object = "LargeDataObject")}: Print leading 5 elements or rows of atomic object}
+    }
+}
+\references{
+    Placeholder for references
+}
+\author{Gordon Smyth}
+
+\keyword{classes}

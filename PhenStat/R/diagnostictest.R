@@ -14,7 +14,7 @@
 
 # Diagnostictest.R contains testFinalModel function
 
-testFinalModel<-function(object, result=NULL, equation=NULL, depVariable=NULL, pThreshold=0.05, keepList=NULL)
+testFinalModel<-function(object, result)
 # Diagnostic test output for MM quality of fit
 {
     require(nortest)
@@ -24,15 +24,15 @@ testFinalModel<-function(object, result=NULL, equation=NULL, depVariable=NULL, p
     if(is(object,"PhenList")) {
         x <- object$dataset          
     } else {
-        x <- as.data.frame(object)
+        stop ("Please provide 'PhenList' object as an argument")
     }
     
     
     # Check PhenTestResult object
     if(is(result,"PhenTestResult")) {
         #if (!is.null(result$model.output.quality)) return(result$model.output.quality)
-        if (is.null(depVariable)) depVariable <- result$depVariable
-        if (is.null(equation)) equation <- result$equation
+        depVariable <- result$depVariable
+        equation <- result$equation
         keep_weight <- result$model.effect.weight
         keep_gender <- result$model.effect.gender
         keep_interaction <- result$model.effect.interaction
@@ -42,25 +42,10 @@ testFinalModel<-function(object, result=NULL, equation=NULL, depVariable=NULL, p
         if (is.null(depVariable)) stop("Please define dependant variable")
         if (is.null(equation)) stop("Please define equation: 'withWeight' or 'withoutWeight'")
         if (is.null(keep_batch) || is.null(keep_equalvar) || is.null(keep_gender) || is.null(keep_interaction)) 
-        stop ("Please run function 'testData' first")
-        if (result$equation!=equation) stop(paste("Tests have been done with another equation: ",result$equation))
-        if (result$depVariable!=depVariable) stop(paste("Tests have been done for another dependant variable: ",result$depVariable))
-        
+            stop ("Please run function 'testDataset' first")
     }
     else{
-        # Stop function if there are no enough needed input parameters
-        if (is.null(keepList) || length(keepList)!=5) 
-        stop("Please define the values for 'keepList' list, where for each effect/part of the model TRUE/FALSE value defines to keep it in the model or not: 
-                'keepList=c(keepBatch,keepVariance,keepWeight,keepGender,keepInteraction)'")
-        if (is.null(depVariable)) stop("Please define dependant variable")
-        if (is.null(equation)) stop("Please define equation: 'withWeight' or 'withoutWeight'")
-        
-        keep_weight <- keepList[3]
-        keep_gender <- keepList[4]
-        keep_interaction <- keepList[5]
-        keep_batch <- keepList[1]
-        keep_equalvar <- keepList[2]
-        result<-buildFinalModel(object, equation=equation, depVariable=depVariable, pThreshold=pThreshold, keepList=keepList)
+        stop ("Please provide 'PhenTestResult' object as an argument")
     }
     
 

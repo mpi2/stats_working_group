@@ -15,6 +15,7 @@
 # CLASSES.R defines classes that are used in PhenStat package: 
 # PhenList, PhenTestResult objects extends LargeDataObject of limma package
 require(methods)
+
 setClass("LargeDataObject")
 # LargeDataObject is the class from limma package developed by Gordon Smyth
 # Here we are using LargeDataObject for the storage of phenotype data and for the storage of model fitting results
@@ -119,15 +120,12 @@ setClass("PhenList",
         representation("list")
         )
 
-
 setIs("PhenList","LargeDataObject")
 
 dim.PhenList <- function(x) if(is.null(x$dataset)) c(0, 0) else dim(as.matrix(x$dataset))
 
-
-length.PhenList <- function(x) prod(dim(x))
-
 dimnames.PhenList <- function(x) dimnames(x$dataset)
+
 assign("dimnames<-.PhenList",function(x,value)
         {
             dimnames(x$dataset) <- value
@@ -136,6 +134,7 @@ assign("dimnames<-.PhenList",function(x,value)
 
 as.matrix.PhenList <- function(x,...) as.matrix(x$dataset)
 
+
 setClass("PhenTestResult",
         #  model tests results
         representation("list")
@@ -143,17 +142,6 @@ setClass("PhenTestResult",
 
 setIs("PhenTestResult","LargeDataObject")
 
-dim.PhenTestResult <- function(x) if(is.null(x$modelOutput)) c(0, 0) else dim(as.matrix(x$modelOutput))
+method.PhenTestResult <- function(x) if(is.null(x$model.output)) NA else class(x$model.output)
 
-
-length.PhenTestResult <- function(x) prod(dim(x))
-
-dimnames.PhenTestResult <- function(x) dimnames(x$modelOutput)
-assign("dimnames<-.PhenTestResult",function(x,value)
-        {
-            dimnames(x$modelOutput) <- value
-            x
-        })
-
-as.matrix.PhenTestResult <- function(x,...) as.matrix(x$modelOutput)
 

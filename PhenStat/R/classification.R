@@ -14,11 +14,11 @@
 
 # classification.R contains classificationTag function
 
-classificationTag<-function(result, phenotypeThreshold=0.01)
+classificationTag<-function(result, interactionMode=TRUE, phenotypeThreshold=0.01)
 # Sexual Dimorphism Classification Tag
 
 {
-        #added a layer for no fitting of data ie NA
+    if (interactionMode) {    
         if(is.na(result$model.output.genotype.nulltest.pVal)==TRUE){
             ChangeClassification==NA
         }else if(result$model.output.genotype.nulltest.pVal>phenotypeThreshold){
@@ -32,7 +32,7 @@ classificationTag<-function(result, phenotypeThreshold=0.01)
             }else if(result$model.output.summary["gender_FvKO_p_value"]<0.05 && result$model.output.summary["gender_MvKO_p_value"]>=0.05){
                 ChangeClassification=paste("With phenotype threshold value",phenotypeThreshold,"- females only")
             }else if(result$model.output.summary["gender_FvKO_p_value"]>=0.05 && result$model.output.summary["gender_MvKO_p_value"]<0.05){
-                ChangeClassificationpaste("With phenotype threshold value",phenotypeThreshold,"- males only")
+                ChangeClassification=paste("With phenotype threshold value",phenotypeThreshold,"- males only")
             }else if(result$model.output.summary["gender_FvKO_estimate"]>0 && result$model.output.summary["gender_MvKO_estimate"]>0 |result$model.output.summary["gender_FvKO_estimate"]<0 && result$model.output.summary["gender_MvKO_estimate"]<0){
                 if(abs(result$model.output.summary["gender_FvKO_estimate"])>abs(result$model.output.summary["gender_MvKO_estimate"])){
                     ChangeClassification=paste("With phenotype threshold value",phenotypeThreshold,"- different size as females greater") 
@@ -44,6 +44,31 @@ classificationTag<-function(result, phenotypeThreshold=0.01)
                 ChangeClassification=paste("With phenotype threshold value",phenotypeThreshold,"- different direction for the sexes")
             }                                        
         }
+    }
+    else {
+     
+            if(result$model.effect.interaction==FALSE) {
+                ChangeClassification=paste("If phenotype is significant - both sexes equally")
+                
+            }else if(result$model.output.summary["gender_FvKO_p_value"]>=0.05 && result$model.output.summary["gender_MvKO_p_value"]>=0.05){
+                ChangeClassification=paste("If phenotype is significant - cannot classify effect")
+            }else if(result$model.output.summary["gender_FvKO_p_value"]<0.05 && result$model.output.summary["gender_MvKO_p_value"]>=0.05){
+                ChangeClassification=paste("If phenotype is significant - females only")
+            }else if(result$model.output.summary["gender_FvKO_p_value"]>=0.05 && result$model.output.summary["gender_MvKO_p_value"]<0.05){
+                ChangeClassification=paste("If phenotype is significant - males only")
+            }else if(result$model.output.summary["gender_FvKO_estimate"]>0 && result$model.output.summary["gender_MvKO_estimate"]>0 |result$model.output.summary["gender_FvKO_estimate"]<0 && result$model.output.summary["gender_MvKO_estimate"]<0){
+                if(abs(result$model.output.summary["gender_FvKO_estimate"])>abs(result$model.output.summary["gender_MvKO_estimate"])){
+                    ChangeClassification=paste("If phenotype is significant - different size as females greater") 
+                    # change could be positive or negative but size change greater
+                }else{
+                    ChangeClassification=paste("If phenotype is significant - different size as males greater")
+                }        
+            }else{
+                ChangeClassification=paste("If phenotype is significant - different direction for the sexes")
+            }                                        
+        
+    }
+    
     
     return(ChangeClassification)
 }

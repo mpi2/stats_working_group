@@ -1,27 +1,47 @@
-\name{PhenList}
-\alias{PhenList}
-\title{Returns an instance of the PhenList object created from the data file.}
-\description{
-    Creates PhenList object, checks the data integrity, rename colums when requested, provide simple statistics ablut dataset. 
+\name{PhenList-class}
+\docType{class}
+
+\alias{PhenList-class}
+\alias{testDataset,PhenList,character,character,numeric,character-method}
+\alias{buildStartModel,PhenList,character,character,numerical,logical vector-method}
+\alias{scatterplotGenotypeWeight,PhenList,character-method}
+\alias{boxplotGenderGenotypeBatch,PhenList,character-method}
+\alias{boxplotGenderGenotype,PhenList,character-method}  
+
+\title{Class "PhenList"}
+
+\description{A list-based S4 class for storing phenotypic data and support basic operations: quality check and statistics calculation}
+
+\section{Create PhenList object}{
+    The appropriate way to create PhenList object is via \code{\link{PhenList}} function.
 }
-\usage{
-    PhenList(dataFrame)
+\section{Dataset graphs}{
+    The appropriate way to check the dataset properties is vie \code{\link{boxplotGenderGenotype}}, 
+    \code{\link{boxplotGenderGenotypeBatch}} and \code{\link{scatterplotGenotypeWeight}} functions.
 }
-\arguments{
-    \item{dataFrame}{data frame created from file or from another source}
-}
-\value{
-    Returns an instance of the \code{\linkS4class{PhenList}} class.
+\section{Methods}{
+    \describe{
+        \item{testDataset}{\code{signature(object = "PhenList", equation = "character",depVariable = "character",
+                pThreshold = "numeric",method = "character")}: Tests the fixed effects of the model}
+        \item{buildStartModel}{\code{signature(object = "PhenList", equation = "character",depVariable = "character",
+                        pThreshold = "numeric",keepList = "logical vector")}: Builds start model based in provided values 
+            of significances for fixed effects}
+        \item{scatterplotGenotypeWeight}{\code{signature(object = "PhenList", depVariable = "character")}: Creates a scatter plot body weight versus dependant variable}
+        \item{boxplotGenderGenotypeBatch}{\code{signature(object = "PhenList", depVariable = "character")}: Creates a box plot split by gender, genotype and batch}
+        \item{boxplotGenderGenotype}{\code{signature(object = "PhenList", depVariable = "character")}: Creates a box plot split by gender and genotype}
+               
+    }
 }
 \references{
-    Publication placeholder
-
+   Placeholder for references
 }
 \author{Natalja Kurbatova}
 
-\seealso{\code{\linkS4class{PhenList}}}
-
 \examples{
-    test <- PhenList(phendata=read.csv("./PhenStat/extdata/MBAU_data.csv"))
-    test2 <- PhenList(phendata=read.csv("./PhenStat/extdata/MAAJ_CCdata.csv"),weight.colname="Weight.Value")
+    test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"))
+    test2 <- PhenList(dataset=read.csv("./PhenStat/extdata/MAAJ_CCdata.csv"),dataset.colname.weight="Weight.Value",
+            dataset.clean=TRUE,testGenotype="Arid4a/Arid4a",refGenotype="+/+",hemGenotype="Arid4a/+")
 }
+
+
+\keyword{classes}

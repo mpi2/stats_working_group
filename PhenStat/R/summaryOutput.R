@@ -14,31 +14,31 @@
 
 # simpleOutput.R contains simpleOutput function
 
-simpleOutput <- function(result,phenotypeThreshold=0.01)
+summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
 # Wrapper to prepare the output of the modeling and testing results in simple user friendly form
 {
     message("Model details:")
     
-    message(paste("Was batch significant?",result$model.effect.batch))
+    message(paste("Was batch significant?",phenTestResult$model.effect.batch))
     
-    message(paste("Was variance equal?",result$model.effect.variance))
+    message(paste("Was variance equal?",phenTestResult$model.effect.variance))
     
-    if (result$model.effect.interaction)
+    if (phenTestResult$model.effect.interaction)
         sexualDimorphism = "yes"
     else 
-    sexualDimorphism = "no"
-    message(paste("Was there evidence of sexual dimorphism? ",sexualDimorphism," (p-value ",round(result$model.output.interaction,digits=3),")",sep=""))
+        sexualDimorphism = "no"
+    message(paste("Was there evidence of sexual dimorphism? ",sexualDimorphism," (p-value ",round(phenTestResult$model.output.interaction,digits=3),")",sep=""))
     
-    message(paste("Final fitted model:",toString(result$model.formula.genotype)))
+    message(paste("Final fitted model:",toString(phenTestResult$model.formula.genotype)))
     
     
     message("Model output:")
     
-    message(paste("Genotype effect:",round(result$model.output.genotype.nulltest.pVal,digit=3)))
+    message(paste("Genotype effect:",round(phenTestResult$model.output.genotype.nulltest.pVal,digits=3)))
     
-    message(paste("Classification tag:", classificationTag(result,phenotypeThreshold)))
+    message(paste("Classification tag:", classificationTag(phenTestResult,phenotypeThreshold=phenotypeThreshold)))
     
-    summary(result$model.output)$tTable
+    summary(phenTestResult$model.output)$tTable
     
     
 }

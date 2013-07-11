@@ -29,6 +29,7 @@ PhenList <- function(dataset=matrix(0,0,0), interactionMode=TRUE, refGenotype='+
 {
     dataset <- dataset[,order(names(dataset))]
     
+    
     # Rename columns if needed    
     if(!is.null(dataset.colname.batch)) colnames(dataset)[colnames(dataset) == dataset.colname.batch] <-'Batch'
     else  colnames(dataset)[colnames(dataset) == 'Assay.Date'] <-'Batch'
@@ -44,19 +45,33 @@ PhenList <- function(dataset=matrix(0,0,0), interactionMode=TRUE, refGenotype='+
     if(!is.null(dataset.values.male)) levels(dataset$Gender)[levels(dataset$Gender)==dataset.values.male] <- "Male"
     
 
-    if (dataset.clean && !is.null(hemGenotype) && !is.null(testGenotype))  
+    if (dataset.clean && !is.null(hemGenotype) && !is.null(testGenotype)) { 
         levels(dataset$Genotype)[levels(dataset$Genotype)==hemGenotype] <- testGenotype
+        if (interactionMode)
+            message(paste("Warning: Hemizygotes '",hemGenotype,"' have been relabled to homozygotes '",testGenotype,"'. If you don't want this behaviour please delete the hemizygotes records from the dataset.",sep=""))
+    }
     if (dataset.clean && !is.null(testGenotype) && length(levels(dataset$Genotype))>2) {
         dataset <- dataset[-(dataset$Genotype!=testGenotype || dataset$Genotype!=refGenotype),]
-        message(paste("Warning: Dataset have been clean: filterd out rows with genotype value other than ", testGenotype,"or",refGenotype))
+        if (interactionMode)
+            message(paste("Warning: Dataset has been cleaned, filtered out rows with genotype value other than ", testGenotype,"or",refGenotype))
     }
-        
+     
+    # Clean the empty records   
+    dataset<-dataset[dataset$Gender!="",]
+    dataset<-dataset[dataset$Genotype!="",]
+    dataset<-dataset[dataset$Batch!="",]
     
+    # Renew levels 
+    dataset$Gender<-factor(dataset$Gender)
+    dataset$Genotype<-factor(dataset$Genotype)
+    dataset$Batch<-factor(dataset$Batch)
 
     dataset <- checkDataset(dataset, interactionMode, refGenotype, dataset.clean)
     
     Genotype_levels=levels(dataset$Genotype)
     Gender_levels=levels(dataset$Gender)
+    
+    #TODO Reset the levels!
     
     # Statistics
     dataset.stat <- data.frame(Variables = colnames(dataset),Numeric = sapply(dataset, is.numeric), 
@@ -91,7 +106,7 @@ PhenList <- function(dataset=matrix(0,0,0), interactionMode=TRUE, refGenotype='+
     x
 }
 
-checkDataset <- function(dataset,interactionMode,refGenotype="+/+",dataset.clean=FALSE)
+checkDataset <- function(dataset, interactionMode=TRUE, refGenotype="+/+", dataset.clean=FALSE)
 
 # Check dataset for the minimum required info
 
@@ -112,10 +127,10 @@ checkDataset <- function(dataset,interactionMode,refGenotype="+/+",dataset.clean
     if(ntags>0 && is.null(rownames(dataset))) rownames(dataset) <- 1:ntags
     
     # Minimum required data
-    if (!('Batch' %in% colnames(dataset))){
-        pass <- FALSE
-        message <- paste(message, "Dataset's 'Batch' column is missed\n")
-    }    
+    #if (!('Batch' %in% colnames(dataset))){
+    #    pass <- FALSE
+    #    message <- paste(message, "Dataset's 'Batch' column is missed\n")
+    #}    
     
     if (!('Genotype' %in% colnames(dataset))) {
         pass <- FALSE
@@ -153,6 +168,11 @@ checkDataset <- function(dataset,interactionMode,refGenotype="+/+",dataset.clean
         
     }
     
+    # Renew levels 
+    dataset$Gender<-factor(dataset$Gender)
+    dataset$Genotype<-factor(dataset$Genotype)
+    dataset$Batch<-factor(dataset$Batch)
+    
     Genotype_levels=levels(dataset$Genotype)
     Gender_levels=levels(dataset$Gender)
     
@@ -177,7 +197,7 @@ checkDataset <- function(dataset,interactionMode,refGenotype="+/+",dataset.clean
     }
     if (!pass) 
         if (interactionMode)
-            stop(paste("Error(s):", message)) # Column names should be given
+            stop(paste("Error(s):", message)) 
         else {
             opt <- options(show.error.messages=FALSE)
             on.exit(options(opt))

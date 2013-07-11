@@ -14,7 +14,7 @@
 
 # buildFinalModel.R contains buildFinalModel function
 
-buildFinalModel <- function(object, result=NULL, equation=NULL, depVariable=NULL, pThreshold=0.05, keepList=NULL)
+buildFinalModel <- function(phenList, phenTestResult=NULL, equation=NULL, depVariable=NULL, pThreshold=0.05, keepList=NULL)
 
 # Build final model based on the significance of different effects (see testDataset.R) 
 # By default works with PhenTestResult object created by testDataset function.
@@ -25,16 +25,16 @@ buildFinalModel <- function(object, result=NULL, equation=NULL, depVariable=NULL
     require(nlme)
     
     # Check PhenList object
-    if(is(object,"PhenList")) {
-        x <- object$dataset  
+    if(is(phenList,"PhenList")) {
+        x <- phenList$dataset  
         
     } else {
-        x <- as.data.frame(object)
-        x <- checkDataset(x)
+        stop("PhenList object should be the function's parameter")
     }
     
     # Check PhenTestResult object
-    if(is(result,"PhenTestResult")) {
+    if(is(phenTestResult,"PhenTestResult")) {
+        result<-phenTestResult
         if (is.null(depVariable)) depVariable <- result$depVariable
         if (is.null(equation)) equation <- result$equation
         keep_weight <- result$model.effect.weight
@@ -51,9 +51,11 @@ buildFinalModel <- function(object, result=NULL, equation=NULL, depVariable=NULL
         if (result$equation!=equation) stop(paste("Tests have been done with another equation: ",result$equation))
         if (result$depVariable!=depVariable) stop(paste("Tests have been done for another dependant variable: ",result$depVariable))
     }
-    else{
+    
+    # Dealing with provided significance values
+    if (!is.null(keepList)){
             # Stop function if there are no enough needed input parameters
-            if (is.null(keepList) || length(keepList)!=5) 
+            if (length(keepList)!=5) 
                 stop("Please define the values for 'keepList' list, where for each effect/part of the model TRUE/FALSE value defines to keep it in the model or not: 
                     'keepList=c(keepBatch,keepVariance,keepWeight,keepGender,keepInteraction)'")
             keep_weight <- keepList[3]
@@ -67,7 +69,7 @@ buildFinalModel <- function(object, result=NULL, equation=NULL, depVariable=NULL
             if (is.null(equation)) stop("Please define equation: 'withWeight' or 'withoutWeight'")
         
             # Create start model
-            model=buildStartModel(object,equation,depVariable,pThreshold,c(keep_batch,keep_equalvar))
+            model=buildStartModel(phenList,equation,depVariable,pThreshold,c(keep_batch,keep_equalvar))
         
             numberofgenders=length(levels(x$Gender))
         
@@ -199,7 +201,7 @@ buildFinalModel <- function(object, result=NULL, equation=NULL, depVariable=NULL
     result$model.formula.genotype=model_genotype.formula
     
     # Assign MM quality of fit
-    result$model.output.quality=testFinalModel(object,result)
+    result$model.output.quality=testFinalModel(phenList,result)
     
     # Parse modeloutput and choose output depending on model 
     result$model.output.summary = parserOutputSummary(result)
@@ -208,9 +210,15 @@ buildFinalModel <- function(object, result=NULL, equation=NULL, depVariable=NULL
     
 }
 
-parserOutputSummary<-function(result)
+# Parser model output summary and return in readable vector format 
+parserOutputSummary<-function(phenTestResult)
 
 {
+    if(is(phenTestResult,"PhenTestResult"))
+        result<-phenTestResult
+    else 
+        stop("PhenTestResult object should be the function's parameter")
+
     modeloutput_summary = summary(result$model.output)
     genotype_estimate =NA
     genotype_estimate_SE =NA
@@ -233,7 +241,41 @@ parserOutputSummary<-function(result)
     gender_MvKO_SE=NA
     gender_MvKO_p_value=NA
     
-    lengthoftable=outputLength(result)
+    lengthoftable={
+        table_length <- NA
+        
+        if (result$equation=="withWeight"){   
+            if(result$numberGenders==2){
+                if((result$model.effect.gender && result$model.effect.interaction)|
+                        (!result$model.effect.gender && result$model.effect.interaction)){
+                    table_length=5
+                }else if(result$model.effect.gender && !result$model.effect.interaction){
+                    table_length=4
+                }else {
+                    table_length=3
+                }  
+            }else{
+                table_length=3
+            }
+        }
+        # Eq.1
+        else{
+            if(result$numberGenders==2){
+                if((result$model.effect.gender && result$model.effect.interaction)|
+                        (!result$model.effect.gender && result$model.effect.interaction)){
+                    table_length=4
+                }else if(!result$model.effect.gender && !result$model.effect.interaction){
+                    table_length=2
+                }else{
+                    table_length=3
+                }  
+            }else{
+                table_length=2
+            }
+        } 
+        
+        return (table_length)
+    }
     
     switch(result$equation,
             withoutWeight = {
