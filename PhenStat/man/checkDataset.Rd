@@ -1,9 +1,8 @@
 \name{checkDataset}
 \alias{checkDataset}
-
-\title{Check dataset for the minimum required info}
+\title{Method "checkDataset"}
 \description{
-    Check dataset for the minimum required info 
+    Checks dataset for the minimum required info 
 }
 \usage{
     checkDataset(dataset, interactionMode=TRUE, refGenotype="+/+", dataset.clean=FALSE) 
@@ -25,7 +24,7 @@
     Publication placeholder
     
 }
-\author{Natalja Kurbatova}
+\author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 
 \seealso{\code{\linkS4class{PhenTestResult}}}
 

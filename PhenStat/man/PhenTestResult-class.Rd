@@ -44,7 +44,7 @@
 \references{
     Placeholder for references
 }
-\author{Natalja Kurbatova}
+\author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"))

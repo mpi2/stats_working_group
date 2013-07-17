@@ -22,9 +22,9 @@ boxplotGenderGenotype<-function(phenList, depVariable){
         x <- phenList$dataset       
         
     } else {
-        x <- as.data.frame(phenList)
+        stop("Please create a PhenList object first")
     }
-    if (is.null(depVariable)) stop("Please define dependant variable 'depVariable'")
+    if (is.null(depVariable)) stop("Please define dependent variable 'depVariable'")
     
     numberofgenders=length(levels(x$Gender))
     if(numberofgenders==2){
@@ -48,10 +48,9 @@ boxplotGenderGenotypeBatch<-function(phenList, depVariable){
         refGenotype <- phenList$refGenotype
         
     } else {
-        x <- as.data.frame(phenList)
-        refGenotype <- "+/+"
+        stop("Please create a PhenList object first")
     }
-    if (is.null(depVariable)) stop("Please define dependant variable 'depVariable'")
+    if (is.null(depVariable)) stop("Please define dependent variable 'depVariable'")
     
     numberofgenders=length(levels(x$Gender))
     y_range=c(min(x[ ,depVariable], na.rm=TRUE), max((x[ ,depVariable]), na.rm=TRUE))
@@ -69,8 +68,8 @@ boxplotGenderGenotypeBatch<-function(phenList, depVariable){
         legend("topright", "Female", cex=1.3, bty="n")
     }else{
         par(mfrow=c(1,1))
-        boxplot(x[ ,depVariable]~x$Genotype+Male$Batch,subset=(Male$Genotype=="+/+"), ylab=depVariable, xlab="Genotype", names=NULL) # xlim=x_range,
-        boxplot(x[ ,depVariable]~x$Genotype+Male$Batch,subset=(Male$Genotype!="+/+"), ylab=depVariable, xlab="Genotype", col="red", names=NULL)    
+        boxplot(x[ ,depVariable]~x$Genotype+x$Batch,subset=(x$Genotype=="+/+"), ylab=depVariable, xlab="Genotype", names=NULL) # xlim=x_range,
+        boxplot(x[ ,depVariable]~x$Genotype+x$Batch,subset=(x$Genotype!="+/+"), ylab=depVariable, xlab="Genotype", col="red", names=NULL)    
     }
     
 }    
@@ -83,9 +82,9 @@ scatterplotGenotypeWeight<-function(phenList, depVariable){
         x <- phenList$dataset     
         
     } else {
-        x <- as.data.frame(phenList)
+        stop("Please create a PhenList object first")
     }
-    if (is.null(depVariable)) stop("Please define dependant variable 'depVariable'")
+    if (is.null(depVariable)) stop("Please define dependent variable 'depVariable'")
     
     model.formula <- as.formula(paste(depVariable, "~", paste("Weight", "Genotype", sep= "|")))
     scatterplot(data=x, model.formula)

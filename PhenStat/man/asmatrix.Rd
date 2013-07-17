@@ -1,6 +1,6 @@
 \name{as.matrix}
 \alias{as.matrix.PhenList}
-\title{Turn a PhenList object into a matrix}
+\title{Method from limma package "as.matrix"}
 \description{
     Turn a phenotypic data object into a numeric matrix by extracting the dataset or model output values.
 }

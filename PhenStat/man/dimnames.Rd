@@ -1,9 +1,9 @@
 \name{dimnames}
 \alias{dimnames.PhenList}
 \alias{dimnames<-.PhenList}
-\title{Retrieve the dimension names of a PhenList object}
+\title{Method "dimnames"}
 \description{
-    Retrieve the dimension names of a phenotypic data object. Based on dimnames methods of LIMMA package.
+    Retrieves the dimension names of a phenotypic data object. Based on dimnames methods of LIMMA package.
 }
 \usage{
     \method{dimnames}{PhenList}(x)

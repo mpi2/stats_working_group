@@ -1,8 +1,8 @@
 \name{testFinalModel}
 \alias{testFinalModel}
-\title{Perform diagnostic tests for mixed model quality of fit}
+\title{Method "testFinalModel"}
 \description{
-    Perform diagnostic tests for mixed model quality of fit
+    Performs diagnostic tests for mixed model quality of fit
 }
 \usage{
     testFinalModel(object,result)
@@ -18,7 +18,7 @@
 \references{
     Placeholder for references
 }
-\author{Natalja Kurbatova}
+\author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenTestResult}}}
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"))

@@ -1,9 +1,10 @@
 \name{PhenList}
 \alias{PhenList}
-
-\title{Returns an instance of the PhenList object created from the data file}
+\title{Method "PhenList"}
 \description{
-    Creates PhenList object, checks the data integrity, rename colums when requested, provide simple statistics ablut dataset. 
+    Creates PhenList object, checks the data integrity, rename colums when requested, 
+    provide simple statistics ablut dataset. 
+    Returns an instance of the PhenList object created from the data file
 }
 \usage{
     PhenList(dataset=matrix(0,0,0), interactionMode=TRUE, refGenotype='+/+', dataset.stat=NULL, 
@@ -37,7 +38,7 @@
     Publication placeholder
     
 }
-\author{Natalja Kurbatova}
+\author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 
 \seealso{\code{\linkS4class{PhenTestResult}}}
 

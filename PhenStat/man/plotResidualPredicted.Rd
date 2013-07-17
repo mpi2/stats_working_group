@@ -1,6 +1,6 @@
 \name{plotResidualPredicted}
 \alias{plotResidualPredicted}
-\title{Creates predicted versus residual values plots split by genotype}
+\title{Method "plotResidualPredicted"}
 \description{
     Creates predicted versus residual values plots split by genotype
 }
@@ -15,7 +15,7 @@
 \references{
     Placeholder for references
 }
-\author{Natalja Kurbatova}
+\author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenList}} and \code{\linkS4class{PhenTestResult}}}
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"))

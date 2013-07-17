@@ -1,8 +1,8 @@
 \name{dim}
 \alias{dim.PhenList}
-\title{Retrieve the dimensions of a PhenList object}
+\title{Method "dim"}
 \description{
-    Retrieve the number of rows (measures) and columns (parameters) for an PhenList object.
+    Retrieve the number of rows (measures) and columns (parameters) for a PhenList object.
 }
 \usage{
     \method{dim}{PhenList}(x)

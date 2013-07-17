@@ -1,6 +1,6 @@
 \name{qqplotGenotype}
 \alias{qqplotGenotype}
-\title{Creates a Q-Q plot of residuals for each genotype}
+\title{Method "qqplotGenotype"}
 \description{
     Creates a Q-Q plot of residuals for each genotype
 }
@@ -15,7 +15,7 @@
 \references{
     Placeholder for references
 }
-\author{Natalja Kurbatova}
+\author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenList}} and \code{\linkS4class{PhenTestResult}}}
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"))

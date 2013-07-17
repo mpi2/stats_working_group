@@ -1,6 +1,6 @@
 \name{vectorOutput}
 \alias{vectorOutput}
-\title{Returns model fitting and testing results in a vector format}
+\title{Method "vectorOutput"}
 \description{
     Wrapper for the model fitting results. Returns model fitting and testing results in a vector format 
 }
@@ -17,7 +17,7 @@
 \references{
     Placeholder for references
 }
-\author{Natalja Kurbatova}
+\author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenTestResult}}}
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"))

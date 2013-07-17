@@ -1,6 +1,6 @@
 \name{boxplotResidualBatch}
 \alias{boxplotResidualBatch}
-\title{Creates a box plot with residue versus batch split by genotype}
+\title{Method "boxplotResidualBatch"}
 \description{
     Creates a box plot with residue versus batch split by genotype
 }
@@ -15,7 +15,7 @@
 \references{
     Placeholder for references
 }
-\author{Natalja Kurbatova}
+\author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenList}} and \code{\linkS4class{PhenTestResult}}}
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"))

@@ -1,6 +1,6 @@
 \name{testDataset}
 \alias{testDataset}
-\title{Tests the fixed effects and creates the start model}
+\title{Method "testDataset"}
 \description{
     Tests the fixed effects and creates the start model
 }
@@ -11,7 +11,7 @@
     \item{phenList}{instance of the \code{\linkS4class{PhenList}} class}
     \item{interactionMode}{flag: "FALSE" value for the no interaction messages to the user; "TRUE" value to interact}
     \item{equation}{a character string defining the equation to use}
-    \item{depVariable}{a character string defining the depening variable of interest}
+    \item{depVariable}{a character string defining the dependent variable of interest}
     \item{pThreshold}{a numerical value for the p-value threshold to use in tests}    
     \item{method}{a character string defining the method to use for model building, default value "MM" mixed model}
 }
@@ -19,7 +19,7 @@
 \references{
     Placeholder for references
 }
-\author{Natalja Kurbatova}
+\author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenList}}}
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"))

@@ -1,6 +1,6 @@
 \name{scatterplotGenotypeWeight}
 \alias{scatterplotGenotypeWeight}
-\title{Creates a scatter plot body weight versus dependant variable}
+\title{Method "scatterplotGenotypeWeight"}
 \description{
     Creates a scatter plot body weight versus dependant variable
 }
@@ -9,13 +9,13 @@
 }
 \arguments{
     \item{phenList}{instance of the \code{\linkS4class{PhenList}} class}
-    \item{depVariable}{a character string defining the depening variable of interest}
+    \item{depVariable}{a character string defining the dependent variable of interest}
 }
 
 \references{
     Placeholder for references
 }
-\author{Natalja Kurbatova}
+\author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenList}}}
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"))

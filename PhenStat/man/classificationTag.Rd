@@ -1,6 +1,6 @@
 \name{classificationTag}
 \alias{classificationTag}
-\title{Returns classification tag for sexual dimorphism}
+\title{Method "classificationTag"}
 \description{
     Returns classification tag for sexual dimorphism
 }
@@ -19,7 +19,7 @@
 \references{
     Placeholder for references
 }
-\author{Natalja Kurbatova}
+\author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenTestResult}}}
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"))

@@ -1,6 +1,6 @@
 \name{printHead}
 \alias{printHead}
-\title{Print leading 5 elements or rows of atomic object}
+\title{Method from limma package "printHead"}
 \description{
     Print leading 5 elements or rows of atomic object
 }

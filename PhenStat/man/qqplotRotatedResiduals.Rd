@@ -1,6 +1,6 @@
 \name{qqplotRotatedResiduals}
 \alias{qqplotRotatedResiduals}
-\title{Creates a Q-Q plot of rotated residuals}
+\title{Method "qqplotRotatedResiduals"}
 \description{
     Creates a Q-Q plot of rotated residuals
 }
@@ -16,7 +16,7 @@
 \references{
     Placeholder for references
 }
-\author{Natalja Kurbatova}
+\author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenList}} and \code{\linkS4class{PhenTestResult}}}
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MAAJ_CCdata.csv"),dataset.colname.weight="Weight.Value",

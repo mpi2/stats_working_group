@@ -1,8 +1,9 @@
 \name{PhenTestResult}
 \alias{PhenTestResult}
-\title{Returns an instance of the PhenTestResult object}
+\title{Method "PhenTestResult"}
 \description{
     Creates PhenTestResult object, based on test results or model building results. 
+    Returns an instance of the PhenTestResult object.
 }
 \usage{
     PhenTestResult(model.output=NULL, depVariable=NULL, equation="withWeight", model.effect.batch=NULL, 
@@ -36,7 +37,7 @@
     Publication placeholder
     
 }
-\author{Natalja Kurbatova}
+\author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 
 \seealso{\code{\linkS4class{PhenList}}}
 

@@ -1,8 +1,8 @@
 \name{method}
 \alias{method.PhenTestResult}
-\title{Retrieve the method used to create the model}
+\title{Method "method"}
 \description{
-    Retrieve the method used to create the model: gls, lme.
+    Retrieves the method used to create the model: gls, lme.
 }
 \usage{
     \method{method}{PhenTestResult}(x)

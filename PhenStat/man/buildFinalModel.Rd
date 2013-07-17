@@ -1,6 +1,6 @@
 \name{buildFinalModel}
 \alias{buildFinalModel}
-\title{Build final mixed model}
+\title{Method "buildFinalModel"}
 \description{
     Build final mixed model
 }
@@ -11,7 +11,7 @@
     \item{phenList}{instance of the \code{\linkS4class{PhenList}} class}
     \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class}
     \item{equation}{a character string defining the equation to use}
-    \item{depVariable}{a character string defining the depening variable of interest}
+    \item{depVariable}{a character string defining the dependent variable of interest}
     \item{pThreshold}{a numerical value for the p-value threshold to use in tests}    
     \item{keepList}{a logical vector defining the significanse of different effects: keep_batch, keep_equalvar,
         keep_weight, keep_gender, keep_interaction}
@@ -23,7 +23,7 @@
 \references{
     Placeholder for references
 }
-\author{Natalja Kurbatova}
+\author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenTestResult}}}
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"))
