@@ -13,8 +13,7 @@
 # limitations under the License.
 
 
-# PhenList.R contains PhenList and checkDataset functions to construct new PhenList object from components and to check 
-# dataset integrity
+# PhenList.R contains PhenList and checkDataset functions to construct new PhenList object from components and to check dataset integrity
 
 PhenList <- function(dataset=matrix(0,0,0), interactionMode=TRUE, refGenotype='+/+', dataset.stat=NULL, dataset.colname.batch=NULL,
         dataset.colname.genotype=NULL, dataset.colname.gender=NULL, dataset.colname.weight=NULL, dataset.values.missingValue=NULL, 
@@ -48,7 +47,7 @@ PhenList <- function(dataset=matrix(0,0,0), interactionMode=TRUE, refGenotype='+
     if (dataset.clean && !is.null(hemGenotype) && !is.null(testGenotype)) { 
         levels(dataset$Genotype)[levels(dataset$Genotype)==hemGenotype] <- testGenotype
         if (interactionMode)
-            message(paste("Warning: Hemizygotes '",hemGenotype,"' have been relabled to homozygotes '",testGenotype,"'. If you don't want this behaviour please delete the hemizygotes records from the dataset.",sep=""))
+            message(paste("Warning: Hemizygotes '",hemGenotype,"' have been relabeled to '",testGenotype,"'. If you don't want this behaviour please delete the hemizygotes records from the dataset.",sep=""))
     }
     if (dataset.clean && !is.null(testGenotype) && length(levels(dataset$Genotype))>2) {
         dataset <- dataset[-(dataset$Genotype!=testGenotype || dataset$Genotype!=refGenotype),]
@@ -70,8 +69,6 @@ PhenList <- function(dataset=matrix(0,0,0), interactionMode=TRUE, refGenotype='+
     
     Genotype_levels=levels(dataset$Genotype)
     Gender_levels=levels(dataset$Gender)
-    
-    #TODO Reset the levels!
     
     # Statistics
     dataset.stat <- data.frame(Variables = colnames(dataset),Numeric = sapply(dataset, is.numeric), 
@@ -127,17 +124,17 @@ checkDataset <- function(dataset, interactionMode=TRUE, refGenotype="+/+", datas
     if(ntags>0 && is.null(rownames(dataset))) rownames(dataset) <- 1:ntags
     
     # Minimum required data
-    #if (!('Batch' %in% colnames(dataset))){
-    #    pass <- FALSE
-    #    message <- paste(message, "Dataset's 'Batch' column is missed\n")
-    #}    
+    if (!('Batch' %in% colnames(dataset))){
+        pass <- FALSE
+       message <- paste(message, "Dataset's 'Batch' column is missed\n")
+    }    
     
     if (!('Genotype' %in% colnames(dataset))) {
         pass <- FALSE
         message <- paste(message,"Dataset's 'Genotype' column is missed\n")
     }
     
-    # What about datasets without Gender info???
+    # What about datasets without Gender info?
     if (!('Gender' %in% colnames(dataset))) {
         pass <- FALSE
         message <- paste(message, "Dataset's 'Gender' column is missed\n")

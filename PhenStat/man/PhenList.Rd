@@ -2,8 +2,8 @@
 \alias{PhenList}
 \title{Method "PhenList"}
 \description{
-    Creates PhenList object, checks the data integrity, rename colums when requested, 
-    provide simple statistics ablut dataset. 
+    Creates PhenList object, checks the data integrity, rename columns when requested, 
+    provide simple statistics about dataset. 
     Returns an instance of the PhenList object created from the data file
 }
 \usage{
@@ -26,8 +26,8 @@
     \item{dataset.values.male}{value used to label "males" in the "dataset" dataset}
     \item{dataset.values.female}{value used to label "females" in the "dataset" dataset}
     \item{dataset.clean}{flag: "FALSE" value for no modification of the dataset; "TRUE" value to clean dataset if needed}
-    \item{testGenotype}{test genotype}
-    \item{hemGenotype}{genotype value for heterozygos that will be changed to testGenotype value}
+    \item{testGenotype}{defines the test genotype to be compared to the reference genotype}
+    \item{hemGenotype}{genotype value for hemizygous that will be changed to testGenotype value}
 }
 \value{
     Returns an instance of the \code{\linkS4class{PhenList}} class.
