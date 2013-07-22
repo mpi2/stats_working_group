@@ -13,8 +13,7 @@
 # limitations under the License.
 
 
-# PhenList.R contains PhenList and checkDataset functions to construct new PhenList object from components and to check 
-# dataset integrity
+# PhenList.R contains PhenList and checkDataset functions to construct new PhenList object from components and to check dataset integrity
 
 PhenList <- function(dataset=matrix(0,0,0), outputMessages=TRUE, refGenotype='+/+', dataset.stat=NULL, dataset.colname.batch=NULL,
         dataset.colname.genotype=NULL, dataset.colname.gender=NULL, dataset.colname.weight=NULL, dataset.values.missingValue=NULL, 
@@ -42,6 +41,7 @@ PhenList <- function(dataset=matrix(0,0,0), outputMessages=TRUE, refGenotype='+/
                     message(paste("Warning: Dataset contains columns that might be used for Batch effect modeling, for instance '",batch_potential_columns,"'.",sep=""))
                 }
 
+<<<<<<< HEAD
         }
         if(!is.null(dataset.colname.genotype)) colnames(dataset)[colnames(dataset) == dataset.colname.genotype] <-'Genotype'
         if(!is.null(dataset.colname.gender)) colnames(dataset)[colnames(dataset) == dataset.colname.gender] <-'Gender'
@@ -49,6 +49,17 @@ PhenList <- function(dataset=matrix(0,0,0), outputMessages=TRUE, refGenotype='+/
         
         # Replace missing values specified in the user format with NA if needed 
         if(!is.null(dataset.values.missingValue)) dataset[dataset == dataset.values.missingValue] <- NA 
+=======
+    if (dataset.clean && !is.null(hemGenotype) && !is.null(testGenotype)) { 
+        levels(dataset$Genotype)[levels(dataset$Genotype)==hemGenotype] <- testGenotype
+        if (interactionMode)
+            message(paste("Warning: Hemizygotes '",hemGenotype,"' have been relabeled to '",testGenotype,"'. If you don't want this behaviour please delete the hemizygotes records from the dataset.",sep=""))
+    }
+    if (dataset.clean && !is.null(testGenotype) && length(levels(dataset$Genotype))>2) {
+        dataset <- dataset[-(dataset$Genotype!=testGenotype || dataset$Genotype!=refGenotype),]
+        if (interactionMode)
+            message(paste("Warning: Dataset has been cleaned, filtered out rows with genotype value other than ", testGenotype,"or",refGenotype))
+>>>>>>> 7aca5064c2ca7e49e3c0056e911d644f0545d912
     }
     
     # Clean the empty records   
@@ -148,17 +159,22 @@ checkDataset <- function(dataset, outputMessages=TRUE, refGenotype="+/+", datase
 
     
     # Minimum required data
-    #if (!('Batch' %in% colnames(dataset))){
-    #    pass <- FALSE
-    #    message <- paste(message, "Dataset's 'Batch' column is missed\n")
-    #}    
+    if (!('Batch' %in% colnames(dataset))){
+        pass <- FALSE
+       message <- paste(message, "Dataset's 'Batch' column is missed\n")
+    }    
     
     # Check for mandatory columns: Genotype and Gender
     if (!('Genotype' %in% colnames(dataset))) {
         pass <- FALSE
         message <- paste(message,"Dataset's 'Genotype' column is missed.\n",sep="")
     }
+<<<<<<< HEAD
 
+=======
+    
+    # What about datasets without Gender info?
+>>>>>>> 7aca5064c2ca7e49e3c0056e911d644f0545d912
     if (!('Gender' %in% colnames(dataset))) {
         pass <- FALSE
         message <- paste(message, "Dataset's 'Gender' column is missed.\n",sep="")
