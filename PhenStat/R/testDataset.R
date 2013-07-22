@@ -15,7 +15,7 @@
 # testDataset.R contains testDataset, buildStartModel and modelFormula functions and constructs the PhenTestResult 
 # class object
 
-testDataset <- function(phenList, interactionMode=TRUE, equation="withWeight", depVariable=NULL, pThreshold=0.05, method="MM")
+testDataset <- function(phenList, outputMessages=TRUE, equation=c("withWeight","withoutWeight"), depVariable=NULL, pThreshold=0.05, method="MM")
 
 # Create start model and modify it after testing of different hypothesis.
 # TRUE/FALSE values assigned to effects of the model are stored in the PhenTestResult object for the further final model build.
@@ -33,9 +33,15 @@ testDataset <- function(phenList, interactionMode=TRUE, equation="withWeight", d
         x <- phenList$dataset    
         
     } else {
-       stop("PhenList object should be the function's parameter")
-    }
+            stop("Please create a PhenList object first.")
+    }    
     
+    # Stop function if there are not enough input parameters
+    if (is.null(depVariable)) 
+        stop("Please define dependent variable 'depVariable'.")
+
+    if (!(depVariable %in% colnames(x)))
+        stop(paste(depVariable,"column is missed in the dataset."))
     
     # Test: depVariable is continuous variable
     columnOfInterest <- x[,c(depVariable)]
@@ -43,15 +49,11 @@ testDataset <- function(phenList, interactionMode=TRUE, equation="withWeight", d
         if (length(unique(columnOfInterest))/length(columnOfInterest)<0.05) 
             message(paste("Warning: Dependent variable '",depVariable,"' is numeric but seemed to be categorical because there is little variation. Fisher Exact Test can be better way to do the analysis than mixed models.",sep="")) 
     }
-    else stop(paste("Error: Dependent variable '",depVariable,"' is not numeric or does not have sufficient variation. Please run Fisher Exact Test for the analysis of this dependent variable.",sep="")) 
+    else stop(paste("Dependent variable '",depVariable,"' is not numeric or does not have sufficient variation. Please run Fisher Exact Test for the analysis of this dependent variable.",sep="")) 
     
     
     # Mixed Models
     if (method=="MM"){ 
-
-
-        # Stop function if there are not enough input parameters
-        if (is.null(depVariable)) stop("Please define dependant variable")
         
         numberofgenders=length(levels(x$Gender))
         
@@ -144,8 +146,8 @@ testDataset <- function(phenList, interactionMode=TRUE, equation="withWeight", d
             else keep_weight = FALSE
         }
         
-        if (!keep_weight && equation=="withWeight" && interactionMode) {
-            message("Since weight effect is not significant the equation Eq.1 'withoutWeight' should be used instead")
+        if (!keep_weight && equation=="withWeight" && outputMessages) {
+            message("Since weight effect is not significant the equation Eq.1 'withoutWeight' should be used instead.")
         }
         
         result <- new("PhenTestResult",list(model.output=model,depVariable=depVariable,equation=equation, 
@@ -164,7 +166,7 @@ testDataset <- function(phenList, interactionMode=TRUE, equation="withWeight", d
     return(result)   
 }
 
-buildStartModel <- function(object, equation="withWeight", depVariable, pThreshold=0.05, keepList)
+buildStartModel <- function(object, equation=c("withWeight","withoutWeight"), depVariable, pThreshold=0.05, keepList)
 # If someone would like to assign other TRUE/FALSE values to effects of the model then start model is build by using
 # buildStartModel function  
 {
@@ -175,7 +177,7 @@ buildStartModel <- function(object, equation="withWeight", depVariable, pThresho
         x <- object$dataset    
         
     } else {
-        x <- as.data.frame(object)
+        stop("Please create a PhenList object first.")
     }
     
     numberofgenders=length(levels(x$Gender))

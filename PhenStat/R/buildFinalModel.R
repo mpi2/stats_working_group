@@ -29,7 +29,7 @@ buildFinalModel <- function(phenList, phenTestResult=NULL, equation=NULL, depVar
         x <- phenList$dataset  
         
     } else {
-        stop("PhenList object should be the function's parameter")
+        stop("Please create a PhenList object first.")
     }
     
     # Check PhenTestResult object

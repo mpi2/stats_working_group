@@ -1,4 +1,4 @@
-# Copyright Â© 2011-2013 EMBL - European Bioinformatics Institute
+# Copyright © 2011-2013 EMBL - European Bioinformatics Institute
 # 
 # Licensed under the Apache License, Version 2.0 (the "License"); 
 # you may not use this file except in compliance with the License.  
@@ -22,9 +22,12 @@ boxplotGenderGenotype<-function(phenList, depVariable){
         x <- phenList$dataset       
         
     } else {
-        stop("Please create a PhenList object first")
+        stop("Please create a PhenList object first.")
     }
-    if (is.null(depVariable)) stop("Please define dependent variable 'depVariable'")
+    if (is.null(depVariable)) stop("Please define dependent variable 'depVariable'.")
+    
+    if (!(depVariable %in% colnames(x)))
+        stop(paste(depVariable,"column is missed in the dataset"))
     
     numberofgenders=length(levels(x$Gender))
     if(numberofgenders==2){
@@ -48,9 +51,14 @@ boxplotGenderGenotypeBatch<-function(phenList, depVariable){
         refGenotype <- phenList$refGenotype
         
     } else {
-        stop("Please create a PhenList object first")
+        stop("Please create a PhenList object first.")
     }
-    if (is.null(depVariable)) stop("Please define dependent variable 'depVariable'")
+    if (is.null(depVariable)) stop("Please define dependent variable 'depVariable'.")
+    
+    if (!(depVariable %in% colnames(x)))
+        stop(paste(depVariable,"column is missed in the dataset."))
+    if (!('Batch' %in% colnames(dataset)))
+        stop(paste("Batch column is missed in the dataset."))
     
     numberofgenders=length(levels(x$Gender))
     y_range=c(min(x[ ,depVariable], na.rm=TRUE), max((x[ ,depVariable]), na.rm=TRUE))
@@ -82,9 +90,15 @@ scatterplotGenotypeWeight<-function(phenList, depVariable){
         x <- phenList$dataset     
         
     } else {
-        stop("Please create a PhenList object first")
+        stop("Please create a PhenList object first.")
     }
-    if (is.null(depVariable)) stop("Please define dependent variable 'depVariable'")
+    if (is.null(depVariable)) stop("Please define dependent variable 'depVariable'.")
+    
+    if (!(depVariable %in% colnames(x)))
+        stop(paste(depVariable,"column is missed in the dataset."))
+    
+    if (!('Weight' %in% colnames(x)))
+        stop("Weight is missed in the dataset.")
     
     model.formula <- as.formula(paste(depVariable, "~", paste("Weight", "Genotype", sep= "|")))
     scatterplot(data=x, model.formula)

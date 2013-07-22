@@ -23,13 +23,13 @@ qqplotGenotype<-function(phenList, phenTestResult){
         x <- phenList$dataset     
         
     } else {
-        x <- as.data.frame(phenList)
+        stop("Please create a PhenList object first.")
     }
     if(is(phenTestResult,"PhenTestResult")) {
         modeloutput=phenTestResult$model.output
     }
     else{
-        modeloutput=phenTestResult
+        stop("Please create a PhenTestResult object first.")
     }
     
     res=resid(modeloutput)
@@ -54,13 +54,13 @@ plotResidualPredicted<-function(phenList, phenTestResult){
         x <- phenList$dataset     
         
     } else {
-        x <- as.data.frame(phenList)
+        stop("Please create a PhenList object first.")
     }
     if(is(phenTestResult,"PhenTestResult")) {
         modeloutput=phenTestResult$model.output
     }
     else{
-        modeloutput=phenTestResult
+        stop("Please create a PhenTestResult object first.")
     }
     
     pred = predict(modeloutput)
@@ -85,17 +85,21 @@ qqplotRandomEffects<-function(phenList, phenTestResult, keep_batch=NULL){
         x <- phenList$dataset     
         
     } else {
-        x <- as.data.frame(phenList)
+        stop("Please create a PhenList object first.")
     }
     if(is(phenTestResult,"PhenTestResult")) {
         modeloutput=phenTestResult$model.output
         if (is.null(keep_batch)) keep_batch <- phenTestResult$model.effect.batch
     }
     else{
-        modeloutput=phenTestResult
+        stop("Please create a PhenTestResult object first.")
     }
+    
     if (is.null(keep_batch))
-    stop("Please make test for the batch effect and provide TRUE/FALSE value")
+        stop("Please make test for the batch effect and provide TRUE/FALSE value for 'keep_batch' argument.")
+    
+    if (!('Batch' %in% colnames(dataset)))
+        stop(paste("Batch column is missed in the dataset."))
     
     if(keep_batch){
         blups=ranef(modeloutput)
@@ -105,7 +109,7 @@ qqplotRandomEffects<-function(phenList, phenTestResult, keep_batch=NULL){
         
     }
     else {
-        message("Diagnostics on random effects not relevant as variation between batches was not significant")
+        message("Diagnostics on random effects not relevant as variation between batches was not significant.")
     }
 }
 
@@ -116,14 +120,17 @@ boxplotResidualBatch<-function(phenList, phenTestResult){
         x <- phenList$dataset     
         
     } else {
-        x <- as.data.frame(phenList)
+        stop("Please create a PhenList object first.")
     }
     if(is(phenTestResult,"PhenTestResult")) {
         modeloutput=phenTestResult$model.output
     }
     else{
-        modeloutput=phenTestResult
+        stop("Please create a PhenTestResult object first.")
     }
+    
+    if (!('Batch' %in% colnames(dataset)))
+        stop(paste("Batch column is missed in the dataset."))
     
     res=resid(modeloutput)
     data_all= data.frame(x, res)
@@ -144,22 +151,26 @@ qqplotRotatedResiduals<-function(phenList, phenTestResult, keep_batch=NULL){
         x <- phenList$dataset     
         
     } else {
-        x <- as.data.frame(phenList)
+        stop("Please create a PhenList object first.")
     }
     if(is(phenTestResult,"PhenTestResult")) {
         modeloutput=phenTestResult$model.output
         if (is.null(keep_batch)) keep_batch <- phenTestResult$model.effect.batch
     }
     else{
-        modeloutput=phenTestResult
+        stop("Please create a PhenTestResult object first.")
     }
+    
+    if (!('Batch' %in% colnames(dataset)))
+        stop(paste("Batch column is missed in the dataset."))
+    
     if (is.null(keep_batch))
-    stop("Please make test for the batch effect and provide TRUE/FALSE value")
+        stop("Please make test for the batch effect and provide TRUE/FALSE value for 'keep_batch' argument.")
     
     x[, c("Genotype", "Gender", "Batch")] = lapply(x[, c("Genotype", "Gender", "Batch")], factor)
     
     if(!keep_batch){
-        stop("Diagnostics on rotated residues not relevant as variation between batches was not significant")
+        stop("Diagnostics on rotated residues not relevant as variation between batches was not significant.")
     }else{
         sdests = exp(attr(modeloutput$apVar, "Pars"))           #extract variance estimates
         Zbat = model.matrix(~ Batch, model.frame( ~ Batch, modeloutput$groups))    #create random effects design matrix

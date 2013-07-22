@@ -7,15 +7,15 @@
     Returns an instance of the PhenList object created from the data file
 }
 \usage{
-    PhenList(dataset=matrix(0,0,0), interactionMode=TRUE, refGenotype='+/+', dataset.stat=NULL, 
+    PhenList(dataset=matrix(0,0,0), outputMessages=TRUE, refGenotype='+/+', dataset.stat=NULL, 
             dataset.colname.batch=NULL,dataset.colname.genotype=NULL, dataset.colname.gender=NULL, 
             dataset.colname.weight=NULL, dataset.values.missingValue=NULL,dataset.values.male=NULL, 
-            dataset.values.female=NULL, dataset.clean=FALSE, testGenotype=NULL, hemGenotype=NULL) 
+            dataset.values.female=NULL, dataset.clean=TRUE, testGenotype=NULL, hemiGenotype=NULL) 
     
 }
 \arguments{
     \item{dataset}{data frame created from file or from another source}
-    \item{interactionMode}{flag: "FALSE" value for the no interaction messages to the user; "TRUE" value to interact}
+    \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages}
     \item{refGenotype}{reference genotype, assigned default value is "+/+"}
     \item{dataset.stat}{simple statistics obtained from "dataset" dataset}
     \item{dataset.colname.batch}{column name within "dataset" dataset for the batch effect}
@@ -27,7 +27,7 @@
     \item{dataset.values.female}{value used to label "females" in the "dataset" dataset}
     \item{dataset.clean}{flag: "FALSE" value for no modification of the dataset; "TRUE" value to clean dataset if needed}
     \item{testGenotype}{test genotype}
-    \item{hemGenotype}{genotype value for heterozygos that will be changed to testGenotype value}
+    \item{hemiGenotype}{genotype value for heterozygos that will be changed to testGenotype value}
 }
 \value{
     Returns an instance of the \code{\linkS4class{PhenList}} class.

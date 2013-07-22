@@ -5,11 +5,11 @@
     Tests the fixed effects and creates the start model
 }
 \usage{
-    testDataset(phenList, interactionMode=TRUE, equation="withWeight", depVariable=NULL, pThreshold=0.05, method="MM")
+    testDataset(phenList, outputMessages=TRUE, equation="withWeight", depVariable=NULL, pThreshold=0.05, method="MM")
 }
 \arguments{
     \item{phenList}{instance of the \code{\linkS4class{PhenList}} class}
-    \item{interactionMode}{flag: "FALSE" value for the no interaction messages to the user; "TRUE" value to interact}
+    \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages}
     \item{equation}{a character string defining the equation to use}
     \item{depVariable}{a character string defining the dependent variable of interest}
     \item{pThreshold}{a numerical value for the p-value threshold to use in tests}    
