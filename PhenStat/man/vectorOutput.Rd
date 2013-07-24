@@ -2,7 +2,9 @@
 \alias{vectorOutput}
 \title{Method "vectorOutput"}
 \description{
-    Wrapper for the model fitting results. Returns model fitting and testing results in a vector format 
+    Wrapper for the model fitting results. Returns model fitting and testing results in a vector format. 
+    Assumes that modeling results are stored in the phenTestResult object 
+    (output from functions testDataset and buildFinalModel).
 }
 \usage{
     vectorOutput(phenTestResult)

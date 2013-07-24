@@ -11,43 +11,22 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+#-----------------------------------------------------------------------------------
 # Diagnostictest.R contains testFinalModel function
-
+#-----------------------------------------------------------------------------------
 testFinalModel<-function(object, result)
-# Diagnostic test output for MM quality of fit
+# Diagnostic test output for MM quality of fit. There are no arguments checks assuming that 
+# function is called internally from the buildFinalModel function. Otherwise should be used with precaution. 
 {
     require(nortest)
 
-    
-    # Check PhenList object
-    if(is(object,"PhenList")) {
-        x <- object$dataset          
-    } else {
-        stop ("Please provide 'PhenList' object as an argument")
-    }
-    
-    
-    # Check PhenTestResult object
-    if(is(result,"PhenTestResult")) {
-        #if (!is.null(result$model.output.quality)) return(result$model.output.quality)
-        depVariable <- result$depVariable
-        equation <- result$equation
-        keep_weight <- result$model.effect.weight
-        keep_gender <- result$model.effect.gender
-        keep_interaction <- result$model.effect.interaction
-        keep_batch <- result$model.effect.batch
-        keep_equalvar <- result$model.effect.variance
-        
-        if (is.null(depVariable)) stop("Please define dependant variable")
-        if (is.null(equation)) stop("Please define equation: 'withWeight' or 'withoutWeight'")
-        if (is.null(keep_batch) || is.null(keep_equalvar) || is.null(keep_gender) || is.null(keep_interaction)) 
-            stop ("Please run function 'testDataset' first")
-    }
-    else{
-        stop ("Please provide 'PhenTestResult' object as an argument")
-    }
-    
+    depVariable <- result$depVariable
+    equation <- result$equation
+    keep_weight <- result$model.effect.weight
+    keep_gender <- result$model.effect.gender
+    keep_interaction <- result$model.effect.interaction
+    keep_batch <- result$model.effect.batch
+    keep_equalvar <- result$model.effect.variance    
 
     a=levels(x$Genotype)
     numberofgenders=result$numberGenders
@@ -84,8 +63,6 @@ testFinalModel<-function(object, result)
             rotated_residual_test=NA
         }   
         
-        
-        
         if(No_Gp1>7){
             gp1_norm_res= cvm.test(Gp1$res)$p.value
         }else{
@@ -98,9 +75,7 @@ testFinalModel<-function(object, result)
             gp2_norm_res= NA
         }    
         
-        testresults=c(a[1], gp1_norm_res, a[2], gp2_norm_res, blups_test, rotated_residual_test)
-        
-        
+        testresults=c(a[1], gp1_norm_res, a[2], gp2_norm_res, blups_test, rotated_residual_test)        
         
         return(testresults)        
         

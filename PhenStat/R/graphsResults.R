@@ -11,20 +11,22 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+#-----------------------------------------------------------------------------------
 # graphsResults.R contains functions for model fit diagnostic plots: 
 # qqplotGenotype, plotResidualPredicted, qqplotRandomEffects,
 # boxplotResidualBatch, qqplotRotatedResiduals 
-
 #-----------------------------------------------------------------------------------
 # Q-Q plot of residuals for each genotype
 qqplotGenotype<-function(phenList, phenTestResult){
+    
+    # Checks
     if(is(phenList,"PhenList")) {
         x <- phenList$dataset     
         
     } else {
         stop("Please create a PhenList object first.")
     }
+    
     if(is(phenTestResult,"PhenTestResult")) {
         modeloutput=phenTestResult$model.output
     }
@@ -32,6 +34,7 @@ qqplotGenotype<-function(phenList, phenTestResult){
         stop("Please create a PhenTestResult object first.")
     }
     
+    # Plot creation
     res=resid(modeloutput)
     data_all= data.frame(x, res)
     a=levels(data_all$Genotype)
@@ -50,6 +53,8 @@ qqplotGenotype<-function(phenList, phenTestResult){
 #-------------------------------------------------------------------------
 # Predicted versus residual plots split by genotype
 plotResidualPredicted<-function(phenList, phenTestResult){
+    
+    # Checks
     if(is(phenList,"PhenList")) {
         x <- phenList$dataset     
         
@@ -63,6 +68,7 @@ plotResidualPredicted<-function(phenList, phenTestResult){
         stop("Please create a PhenTestResult object first.")
     }
     
+    # Plot creation
     pred = predict(modeloutput)
     res=resid(modeloutput)
     data_all= data.frame(x, res, pred)
@@ -81,6 +87,8 @@ plotResidualPredicted<-function(phenList, phenTestResult){
 #-----------------------------------------------------------------------------------
 # Q-Q plot of blups
 qqplotRandomEffects<-function(phenList, phenTestResult, keep_batch=NULL){
+    
+    # Checks
     if(is(phenList,"PhenList")) {
         x <- phenList$dataset     
         
@@ -99,8 +107,9 @@ qqplotRandomEffects<-function(phenList, phenTestResult, keep_batch=NULL){
         stop("Please make test for the batch effect and provide TRUE/FALSE value for 'keep_batch' argument.")
     
     if (!('Batch' %in% colnames(dataset)))
-        stop(paste("Batch column is missed in the dataset."))
+        stop("Batch column is missed in the dataset.")
     
+    # Plot creation
     if(keep_batch){
         blups=ranef(modeloutput)
         close.screen(n=1, all.screens = FALSE)
@@ -116,6 +125,8 @@ qqplotRandomEffects<-function(phenList, phenTestResult, keep_batch=NULL){
 #----------------------------------------------------------------------------------------------------------
 # Residue versus batch split by genotype
 boxplotResidualBatch<-function(phenList, phenTestResult){
+    
+    # Checks
     if(is(phenList,"PhenList")) {
         x <- phenList$dataset     
         
@@ -130,8 +141,9 @@ boxplotResidualBatch<-function(phenList, phenTestResult){
     }
     
     if (!('Batch' %in% colnames(dataset)))
-        stop(paste("Batch column is missed in the dataset."))
+        stop("Batch column is missed in the dataset.")
     
+    # Plot creation
     res=resid(modeloutput)
     data_all= data.frame(x, res)
     a=levels(x$Genotype)
@@ -147,6 +159,8 @@ boxplotResidualBatch<-function(phenList, phenTestResult){
 #-------------------------------------------------------------------------------
 # Q-Q plot of rotated residuals
 qqplotRotatedResiduals<-function(phenList, phenTestResult, keep_batch=NULL){
+    
+    # Checks
     if(is(phenList,"PhenList")) {
         x <- phenList$dataset     
         
@@ -162,27 +176,37 @@ qqplotRotatedResiduals<-function(phenList, phenTestResult, keep_batch=NULL){
     }
     
     if (!('Batch' %in% colnames(dataset)))
-        stop(paste("Batch column is missed in the dataset."))
+        stop("Batch column is missed in the dataset.")
     
     if (is.null(keep_batch))
         stop("Please make test for the batch effect and provide TRUE/FALSE value for 'keep_batch' argument.")
     
-    x[, c("Genotype", "Gender", "Batch")] = lapply(x[, c("Genotype", "Gender", "Batch")], factor)
     
-    if(!keep_batch){
-        stop("Diagnostics on rotated residues not relevant as variation between batches was not significant.")
-    }else{
-        sdests = exp(attr(modeloutput$apVar, "Pars"))           #extract variance estimates
-        Zbat = model.matrix(~ Batch, model.frame( ~ Batch, modeloutput$groups))    #create random effects design matrix
-        ycov = (Zbat %*% t(Zbat)) * sdests["reStruct.Batch"]^2 + diag(rep(1,nrow(modeloutput$groups))) * sdests["lSigma"]^2    #create estimated cov(y)
-        Lt = chol(solve(ycov))  #Cholesky decomposition of inverse of cov(y) (see Houseman '04 eq. (2))
-        unrotres =  modeloutput$residuals[, "fixed"]    #unrotated residuals
-        rotres = Lt %*%  modeloutput$residuals[, "fixed"]    #rotated residuals
+    # Plot creation
+    x[, c("Genotype", "Gender", "Batch")] = lapply(x[, c("Genotype", "Gender", "Batch")], factor)
+        
+    if (keep_batch){
+        # Extract variance estimates
+        sdests = exp(attr(modeloutput$apVar, "Pars"))        
+        # Create random effects design matrix   
+        Zbat = model.matrix(~ Batch, model.frame( ~ Batch, modeloutput$groups))    
+        # Create estimated cov(y)
+        ycov = (Zbat %*% t(Zbat)) * sdests["reStruct.Batch"]^2 + diag(rep(1,nrow(modeloutput$groups))) * sdests["lSigma"]^2    
+        # Cholesky decomposition of inverse of cov(y) (see Houseman '04 eq. (2))
+        Lt = chol(solve(ycov)) 
+        # Unrotated residuals
+        unrotres =  modeloutput$residuals[, "fixed"]    
+        # Rotated residuals
+        rotres = Lt %*%  modeloutput$residuals[, "fixed"]           
+        # Plot 
         par(mfrow=c(1,2)) 
         qqnorm(unrotres, main = "Unrotated")
         qqline(unrotres)
         qqnorm(rotres, main = "Rotated")
         qqline(rotres)
+    }
+    else{
+        message("Diagnostics on rotated residues not relevant as variation between batches was not significant.")
     }
 }
 #-------------------------------------------------------------------------------

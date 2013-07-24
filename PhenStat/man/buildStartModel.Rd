@@ -3,16 +3,16 @@
 \title{Method "buildStartModel"}
 \description{
     If someone would like to assign other TRUE/FALSE values to effects of the model then start model 
-    is built by using this function 
+    is built by using this function. There are no dataset checks or arguments checks assuming that buildStartModel
+    function is called internally from the buildFinalModel function. Otherwise should be used with precaution. 
 }
 \usage{    
-    buildStartModel(object, equation = "withWeight", depVariable, pThreshold=0.05, keepList)
+    buildStartModel(object, equation, depVariable, keepList)
 }
 \arguments{
     \item{object}{instance of the \code{\linkS4class{PhenList}} class}
     \item{equation}{a character string defining the equation to use}
     \item{depVariable}{a character string defining the dependent variable of interest}
-    \item{pThreshold}{a numerical value for the p-value threshold to use in tests}    
     \item{keepList}{a logical vector defining the significanse of different effects: keep_batch, keep_equalvar,
         keep_weight, keep_gender, keep_interaction}
 }

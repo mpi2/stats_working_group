@@ -11,11 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-# simpleOutput.R contains simpleOutput function
-
+#-----------------------------------------------------------------------------------
+# simpleOutput.R contains simpleOutput, generateGraphs functions
+#-----------------------------------------------------------------------------------
 summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
-# Wrapper to prepare the output of the modeling and testing results in simple user friendly form
+# Wrapper to prepare the output of the modeling and testing results in simple user friendly form. Assumes that modeling results are 
+# stored in the phenTestResult object (output from functions testDataset and buildFinalModel)
 {
     message("Model details:")
     
@@ -42,3 +43,69 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
     
     
 }
+#-----------------------------------------------------------------------------------
+generateGraphs <- function(phenList, phenTestResult, dir, type="Xlib")
+# Generate all possible graphs and store them in the defined directory
+{
+    
+    #1
+    graph_name=file.path(dir, "boxplotGenderGenotype.png")
+    png(graph_name,type=type)
+    boxplotGenderGenotype(phenList,phenTestResult$depVariable)
+    dev.off()
+    
+    #2
+    if (('Batch' %in% colnames(phenList$dataset))){
+        graph_name=file.path(dir, "boxplotGenderGenotypeBatch.png")
+        png(graph_name,type=type)
+        boxplotGenderGenotypeBatch(phenList,phenTestResult$depVariable)
+        dev.off()
+    }
+    
+    #3
+    if (('Weight' %in% colnames(phenList$dataset))){
+        graph_name=file.path(dir, "scatterplotGenotypeWeight.png")
+        png(graph_name,type=type)
+        scatterplotGenotypeWeight(phenList,phenTestResult$depVariable)
+        dev.off()
+    }
+    
+    #4
+    graph_name=file.path(dir, "qqplotGenotype.png")
+    png(graph_name,type=type)
+    qqplotGenotype(phenList,phenTestResult)
+    dev.off()
+    
+    #5
+    graph_name=file.path(dir, "plotResidualPredicted.png")
+    png(graph_name,type=type)
+    plotResidualPredicted(phenList,phenTestResult)
+    dev.off()
+    
+    #6
+    if (('Batch' %in% colnames(phenList$dataset)) && phenTestResult$model.effect.batch){
+        graph_name=file.path(dir, "qqplotRandomEffects.png")
+        png(graph_name,type=type)
+        qqplotRandomEffects(phenList,phenTestResult,phenTestResult$model.effect.batch)
+        dev.off()
+    }    
+    
+    #7
+    if (('Batch' %in% colnames(phenList$dataset))){
+        graph_name=file.path(dir, "boxplotResidualBatch.png")
+        png(graph_name,type=type)
+        boxplotResidualBatch(phenList,phenTestResult)
+        dev.off()
+    }    
+    
+    #8
+    if (('Batch' %in% colnames(phenList$dataset)) && phenTestResult$model.effect.batch){
+        graph_name=file.path(dir, "qqplotRotatedResiduals.png")
+        png(graph_name,type=type)
+        qqplotRotatedResiduals(phenList,phenTestResult,phenTestResult$model.effect.batch)
+        dev.off()
+    }    
+    
+    
+}    
+ 

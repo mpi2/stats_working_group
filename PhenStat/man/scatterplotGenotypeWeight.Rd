@@ -3,7 +3,6 @@
 \title{Method "scatterplotGenotypeWeight"}
 \description{
     Creates a scatter plot body weight versus dependant variable
-    \\ Note: Both a regression line and a loess line (locally weighted line) is fitted for each genotype.
 }
 \usage{
     scatterplotGenotypeWeight(phenList,depVariable)
@@ -11,7 +10,6 @@
 \arguments{
     \item{phenList}{instance of the \code{\linkS4class{PhenList}} class}
     \item{depVariable}{a character string defining the dependent variable of interest}
-    \item{graphingName}{a character string defining the name to be used on the graph for the dependent variable}
 }
 
 \references{
@@ -21,7 +19,5 @@
 \seealso{\code{\linkS4class{PhenList}}}
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"))
-    scatterplotGenotypeWeight(test,depVariable="Bone.Mineral.Content",graphingName="BMC" )
-    test_1gender <- PhenList(dataset=read.csv("./PhenStat/extdata/MAHN_DEXAdata_1Gender.csv"))
-    scatterplotGenotypeWeight(test_1gender,depVariable="Lean.Mass", graphingName="Lean Mass")
+    scatterplotGenotypeWeight(test,depVariable="Bone.Area")
 }

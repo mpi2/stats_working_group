@@ -11,9 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+#-----------------------------------------------------------------------------------
 # PhenTestResult.R contains PhenTestResult function
-
+#-----------------------------------------------------------------------------------
 PhenTestResult <- function(model.output=NULL, depVariable=NULL, equation="withWeight", model.effect.batch=NULL, model.effect.variance=NULL, 
         model.effect.gender=NULL, model.effect.interaction=NULL, model.output.interaction=NULL, model.effect.weight=NULL, numberGenders=NULL,
         pThreshold=0.05, model.formula.null=NULL, 

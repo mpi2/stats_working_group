@@ -11,12 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-# buildFinalModel.R contains buildFinalModel function
-
-buildFinalModel <- function(phenList, phenTestResult=NULL, equation=NULL, depVariable=NULL, pThreshold=0.05, keepList=NULL)
-
+#-----------------------------------------------------------------------------------
+# buildFinalModel.R contains buildFinalModel and parserOutputSummary functions
+#-----------------------------------------------------------------------------------
 # Build final model based on the significance of different effects (see testDataset.R) 
+buildFinalModel <- function(phenList, phenTestResult=NULL, depVariable=NULL, equation=NULL, 
+        outputMessages=TRUE, keepList=NULL)
+
 # By default works with PhenTestResult object created by testDataset function.
 # If someone would like to assign other TRUE/FALSE values to effects of the model then function 
 # work with list of TRUE/FALSE values (keepList parameter).
@@ -24,13 +25,24 @@ buildFinalModel <- function(phenList, phenTestResult=NULL, equation=NULL, depVar
 {
     require(nlme)
     
+    
+    # Checks and stop messages
+    stop_message <- ""
+    
     # Check PhenList object
     if(is(phenList,"PhenList")) {
         x <- phenList$dataset  
         
     } else {
-        stop("Please create a PhenList object first.")
+        stop_message <- "Error:\nPlease create a PhenList object first.\n"
     }
+
+    if (!is.null(equation))
+        if (!('Weight' %in% colnames(x)) && equation=="withWeight"){
+            if (outputMessages)
+                message("Warning:\nWeight column is missed in the dataset. Equation 'withWeight' can't be used and has been replaced to 'withoutWeight'.")
+            equation="withoutWeight"
+        }
     
     # Check PhenTestResult object
     if(is(phenTestResult,"PhenTestResult")) {
@@ -43,33 +55,55 @@ buildFinalModel <- function(phenList, phenTestResult=NULL, equation=NULL, depVar
         keep_batch <- result$model.effect.batch
         keep_equalvar <- result$model.effect.variance
     
-        # Stop function if there are no enough needed input parameters
-        if (is.null(depVariable)) stop("Please define dependant variable")
-        if (is.null(equation)) stop("Please define equation: 'withWeight' or 'withoutWeight'")
+        # Stop function if there are no enough needed input parameters      
         if (is.null(keep_batch) || is.null(keep_equalvar) || is.null(keep_gender) || is.null(keep_interaction)) 
-        stop ("Please run function 'testDataset' first")
-        if (result$equation!=equation) stop(paste("Tests have been done with another equation: ",result$equation))
-        if (result$depVariable!=depVariable) stop(paste("Tests have been done for another dependant variable: ",result$depVariable))
+            stop_message <- "Error:\nPlease run function 'testDataset' first.\n"
+        if (result$equation!=equation) 
+            stop_message <- paste("Error:\nTests have been done with another equation: '",result$equation,"'.\n",sep="")
+        if (result$depVariable!=depVariable) 
+            stop_message <- paste("Error:\nTests have been done for another dependent variable: '",result$depVariable,"'.\n",sep="")
     }
-    
-    # Dealing with provided significance values
-    if (!is.null(keepList)){
+    else{
+        # Dealing with provided significance values
+        if (!is.null(keepList)){
             # Stop function if there are no enough needed input parameters
             if (length(keepList)!=5) 
-                stop("Please define the values for 'keepList' list, where for each effect/part of the model TRUE/FALSE value defines to keep it in the model or not: 
-                    'keepList=c(keepBatch,keepVariance,keepWeight,keepGender,keepInteraction)'")
+            stop_message <- "Error:\nPlease define the values for 'keepList' list, where for each effect/part of the model TRUE/FALSE value defines to keep it in the model or not: 
+            'keepList=c(keepBatch,keepVariance,keepWeight,keepGender,keepInteraction)'.\n"
+            
+        }
+        
+    }
+    
+    # Stop function if there are not enough arguments
+    if (is.null(depVariable))     
+        stop_message <- "Error:\nPlease define dependent variable 'depVariable'\n."
+    
+    if (!(depVariable %in% colnames(x)))
+        stop_message <- paste("Error:\nDependent variable column '",depVariable,"' is missed in the dataset.\n",sep="")
+    
+    if (!(equation %in% c("withWeight","withoutWeight")))
+        stop_message <- "Error:\nPlease define equation you would like to use from the following options: 'withWeight', 'withoutWeight'\n."        
+    
+    if (nchar(stop_message)>1){
+        if (outputMessages)   
+            message(stop_message)
+        opt <- options(show.error.messages=FALSE)
+        on.exit(options(opt))      
+        stop()
+    }
+    
+    # END Checks and stop messages
+        
+    if (!is.null(keepList)){   
             keep_weight <- keepList[3]
             keep_gender <- keepList[4]
             keep_interaction <- keepList[5]
             keep_batch <- keepList[1]
             keep_equalvar <- keepList[2]
         
-            # Stop function if there are no enough needed input parameters
-            if (is.null(depVariable)) stop("Please define dependant variable")
-            if (is.null(equation)) stop("Please define equation: 'withWeight' or 'withoutWeight'")
-        
             # Create start model
-            model=buildStartModel(phenList,equation,depVariable,pThreshold,c(keep_batch,keep_equalvar))
+            model=buildStartModel(phenList,equation,depVariable,c(keep_batch,keep_equalvar))
         
             numberofgenders=length(levels(x$Gender))
         
@@ -209,16 +243,11 @@ buildFinalModel <- function(phenList, phenTestResult=NULL, equation=NULL, depVar
     return(result)  
     
 }
-
+#-----------------------------------------------------------------------------------
 # Parser model output summary and return in readable vector format 
 parserOutputSummary<-function(phenTestResult)
 
 {
-    if(is(phenTestResult,"PhenTestResult"))
-        result<-phenTestResult
-    else 
-        stop("PhenTestResult object should be the function's parameter")
-
     modeloutput_summary = summary(result$model.output)
     genotype_estimate =NA
     genotype_estimate_SE =NA

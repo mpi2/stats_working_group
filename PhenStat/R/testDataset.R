@@ -11,14 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+#-----------------------------------------------------------------------------------
 # testDataset.R contains testDataset, buildStartModel and modelFormula functions and constructs the PhenTestResult 
 # class object
-
-testDataset <- function(phenList, outputMessages=TRUE, equation=c("withWeight","withoutWeight"), depVariable=NULL, pThreshold=0.05, method="MM")
-
+#-----------------------------------------------------------------------------------
 # Create start model and modify it after testing of different hypothesis.
 # TRUE/FALSE values assigned to effects of the model are stored in the PhenTestResult object for the further final model build.
+testDataset <- function(phenList, depVariable=NULL, equation="withWeight", outputMessages=TRUE, pThreshold=0.05, method="MM")
 
 # The testable effects are: batch effect (random effects significance), variance effect (TRUE if residual variances for 
 # genotype groups are homogeneous and FALSE if they are heterogeneous), interaction effect (genotype by gender 
@@ -28,29 +27,55 @@ testDataset <- function(phenList, outputMessages=TRUE, equation=c("withWeight","
 {
     require(nlme)
     
-    # Check PhenList object
+    stop_message <- ""
+    
+    # Checks and stop messages
+    
     if(is(phenList,"PhenList")) {
         x <- phenList$dataset    
         
     } else {
-            stop("Please create a PhenList object first.")
+        stop_message <- "Error:\nPlease create a PhenList object first.\n"
     }    
-    
-    # Stop function if there are not enough input parameters
+
     if (is.null(depVariable)) 
-        stop("Please define dependent variable 'depVariable'.")
+        stop_message <- "Error:\nPlease define dependent variable 'depVariable'\n."
+        
 
     if (!(depVariable %in% colnames(x)))
-        stop(paste(depVariable,"column is missed in the dataset."))
-    
-    # Test: depVariable is continuous variable
-    columnOfInterest <- x[,c(depVariable)]
-    if(is.numeric(columnOfInterest)){
-        if (length(unique(columnOfInterest))/length(columnOfInterest)<0.05) 
+        stop_message <- paste("Error:\nDependent variable column '",depVariable,"' is missed in the dataset.\n",sep="")
+    else{
+        
+        # Test: depVariable is continuous variable
+        columnOfInterest <- x[,c(depVariable)]
+        if(is.numeric(columnOfInterest)){
+            if ((length(unique(columnOfInterest))/length(columnOfInterest)<0.05) && outputMessages) 
             message(paste("Warning: Dependent variable '",depVariable,"' is numeric but seemed to be categorical because there is little variation. Fisher Exact Test can be better way to do the analysis than mixed models.",sep="")) 
+        }
+        else 
+            stop_message <- paste("Error:\nDependent variable '",depVariable,"' is not numeric or does not have sufficient variation. Please run Fisher Exact Test for the analysis of this dependent variable.\n",sep="")
+        
     }
-    else stop(paste("Dependent variable '",depVariable,"' is not numeric or does not have sufficient variation. Please run Fisher Exact Test for the analysis of this dependent variable.",sep="")) 
     
+    if (!(equation %in% c("withWeight","withoutWeight")))
+        stop_message <- "Error:\nPlease define equation you would like to use from the following options: 'withWeight', 'withoutWeight'\n."
+    
+    if (!('Weight' %in% colnames(x)) && equation=="withWeight"){
+        if (outputMessages)
+            message("Warning:\nWeight column is missed in the dataset. Equation 'withWeight' can't be used and has been replaced to 'withoutWeight'.")
+        equation="withoutWeight"
+    }
+      
+
+    if (nchar(stop_message)>1){
+        if (outputMessages)   
+            message(stop_message)
+        opt <- options(show.error.messages=FALSE)
+        on.exit(options(opt))      
+        stop()
+    }
+    
+    # END Checks and stop messages
     
     # Mixed Models
     if (method=="MM"){ 
@@ -149,36 +174,33 @@ testDataset <- function(phenList, outputMessages=TRUE, equation=c("withWeight","
         if (!keep_weight && equation=="withWeight" && outputMessages) {
             message("Since weight effect is not significant the equation Eq.1 'withoutWeight' should be used instead.")
         }
+
         
         result <- new("PhenTestResult",list(model.output=model,depVariable=depVariable,equation=equation, 
                         model.effect.batch=keep_batch,model.effect.variance=keep_equalvar,model.effect.interaction=keep_interaction,
                         model.output.interaction=interactionTest,model.effect.gender=keep_gender,model.effect.weight=keep_weight,
-                        numberGenders=numberofgenders))
-        #pThreshold should be stored
+                        numberGenders=numberofgenders,pThreshold=pThreshold))
+
     }
     else
     # Fisher Exact Test placeholder
     {
-        message("Fisher Exact Test")
+        if (outputMessages)
+            message("Fisher Exact Test")
         result <- NULL
     }
     
     return(result)   
 }
-
-buildStartModel <- function(object, equation=c("withWeight","withoutWeight"), depVariable, pThreshold=0.05, keepList)
+#-----------------------------------------------------------------------------------
+buildStartModel <- function(object, equation, depVariable, keepList)
 # If someone would like to assign other TRUE/FALSE values to effects of the model then start model is build by using
-# buildStartModel function  
+# this function. There are no dataset checks or arguments checks assuming that buildStartModel
+# function is called internally from the buildFinalModel function. Otherwise should be used with precaution.  
 {
     require(nlme)
     
-    # Check object
-    if(is(object,"PhenList")) {
-        x <- object$dataset    
-        
-    } else {
-        stop("Please create a PhenList object first.")
-    }
+    x <- object$dataset  
     
     numberofgenders=length(levels(x$Gender))
     
@@ -219,7 +241,7 @@ buildStartModel <- function(object, equation=c("withWeight","withoutWeight"), de
     return(model)
 }
 
-
+#-----------------------------------------------------------------------------------
 modelFormula <- function(equation, numberofgenders, depVariable)
 # Create formula for the start model based on equation and number of genders in the data
 {

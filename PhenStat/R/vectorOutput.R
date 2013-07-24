@@ -11,18 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+#-----------------------------------------------------------------------------------
 # vectorOutput.R contains vectorOutput and outputLength functions
-
+#-----------------------------------------------------------------------------------
 vectorOutput <- function(phenTestResult)
-# Wrapper to prepare the output of the modeling and testing results in vector form
+# Wrapper to prepare the output of the modeling and testing results in vector form. Assumes that modeling results are 
+# stored in the phenTestResult object (output from functions testDataset and buildFinalModel)
 {
     result <- phenTestResult
-    if(!is(phenTestResult,"PhenTestResult")) {
-        stop ("Please provide PhenTestResult object as an argument")
-    }
-    
-    if (is.null(phenTestResult$model.formula.genotype)) stop("There are no results to wrap. Please run function 'buildFinalModel' first")
     
     equation <- switch(phenTestResult$equation,withoutWeight = {"Eq1"},withWeight = {"Eq2"})
     

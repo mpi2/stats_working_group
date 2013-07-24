@@ -5,14 +5,14 @@
     Build final mixed model
 }
 \usage{
-    buildFinalModel(phenList, phenTestResult=NULL, equation=NULL, depVariable=NULL, pThreshold=0.05, keepList=NULL)
+    buildFinalModel(phenList, phenTestResult=NULL, depVariable=NULL, equation=NULL, outputMessages=TRUE, keepList=NULL)
 }
 \arguments{
     \item{phenList}{instance of the \code{\linkS4class{PhenList}} class}
-    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class}
-    \item{equation}{a character string defining the equation to use}
+    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class}    
     \item{depVariable}{a character string defining the dependent variable of interest}
-    \item{pThreshold}{a numerical value for the p-value threshold to use in tests}    
+    \item{equation}{a character string defining the equation to use}
+    \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages}   
     \item{keepList}{a logical vector defining the significanse of different effects: keep_batch, keep_equalvar,
         keep_weight, keep_gender, keep_interaction}
 }

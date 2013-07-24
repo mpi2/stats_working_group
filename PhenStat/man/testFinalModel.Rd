@@ -2,7 +2,8 @@
 \alias{testFinalModel}
 \title{Method "testFinalModel"}
 \description{
-    Performs diagnostic tests for mixed model quality of fit
+    Performs diagnostic tests for mixed model quality of fit. There are no arguments checks assuming that 
+    function is called internally from the buildFinalModel function. Otherwise should be used with precaution. 
 }
 \usage{
     testFinalModel(object,result)

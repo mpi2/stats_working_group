@@ -27,10 +27,10 @@ PhenList <- function(dataset, outputMessages=TRUE, dataset.clean=TRUE, refGenoty
     if (dataset.clean){  
         if(!is.null(dataset.colname.batch)) colnames(dataset)[colnames(dataset) == dataset.colname.batch] <-'Batch'
         else { 
-            if (!('Assay.Date' %in% colnames(dataset))){
+            if ('Assay.Date' %in% colnames(dataset)){
                 colnames(dataset)[colnames(dataset) == 'Assay.Date'] <-'Batch'
                 if (outputMessages)
-                message("Warning:\nDataset's column 'Assay.Date' has been renamed to 'Batch' and will be used for the Batch effect modeling.\n")
+                    message("Warning:\nDataset's column 'Assay.Date' has been renamed to 'Batch' and will be used for the batch effect modeling.\n")
             }
             else          
                     
@@ -162,7 +162,7 @@ checkDataset <- function(dataset, outputMessages=TRUE, refGenotype="+/+", datase
     }    
     
     if (!('Weight' %in% colnames(dataset)) && outputMessages) {
-        message("Warning:\nDataset's 'Weight' column is missed.\n")
+        message("Warning:\nDataset's 'Weight' column is missed.\nYou can define 'dataset.colname.weight' argument to specify column for the weight effect modeling.\n")
     }  
     
     if (('Gender' %in% colnames(dataset)) && ('Genotype' %in% colnames(dataset))){ 
@@ -250,7 +250,7 @@ checkDataset <- function(dataset, outputMessages=TRUE, refGenotype="+/+", datase
         
         if (length(Genotype_levels)!=2)  {
             pass <- FALSE
-            message <- paste(message,"\nCheck failed:\nDataset's 'Genotype' column has to have two values.\nYou can specify 'testGenotype' and 'refGenotype' arguments to automatically filter out records with genotype values other then specified. Alternatively you can specify 'hemiGenotype' and 'testGenotype' arguments to relable hemizygotes to homozygotes.\n",sep="")
+            message <- paste(message,"\nCheck failed:\nDataset's 'Genotype' column has to have two values.\nYou can define 'testGenotype' and 'refGenotype' arguments to automatically filter out records with genotype values other than specified. Alternatively you can define 'hemiGenotype' and 'testGenotype' arguments to relable hemizygotes to homozygotes.\n",sep="")
         }      
         
         
@@ -266,7 +266,7 @@ checkDataset <- function(dataset, outputMessages=TRUE, refGenotype="+/+", datase
         if (!length(wrong_gender_levels)==0){          
             pass <- FALSE
             if (length(Gender_levels)<=2)
-                message <- paste(message, paste("\nCheck failed:\nDataset's 'Gender' column has '",gender_values,"' values instead of 'Female' and/or 'Male' values. You can specify 'dataset.values.male' and 'dataset.values.female' arguments to replace those values automatically.\n",sep=""),sep="")
+                message <- paste(message, paste("\nCheck failed:\nDataset's 'Gender' column has '",gender_values,"' values instead of 'Female' and/or 'Male' values. You can define 'dataset.values.male' and 'dataset.values.female' arguments to replace those values automatically.\n",sep=""),sep="")
             else
                 message <- paste(message, paste("\nCheck failed:\nDataset's 'Gender' column has '",gender_values,"' values instead of 'Female' and/or 'Male' values only. Please delete records with gender(s) '",wrong_gender_values,"' from the dataset.\n",sep=""),sep="")
         }    
