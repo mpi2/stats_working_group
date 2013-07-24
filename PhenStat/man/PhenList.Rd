@@ -2,9 +2,11 @@
 \alias{PhenList}
 \title{Method "PhenList"}
 \description{
-    Creates PhenList object, checks the data integrity, rename colums when requested, 
-    provide simple statistics ablut dataset. 
-    Returns an instance of the PhenList object created from the data file
+    Create PhenList object, check the data integrity, rename columns when requested, 
+    provide simple statistics about dataset.
+    Returns an instance of the PhenList object created from the data file. 
+    Dataset is cleaned to ensure there is a maximum two gender levels and there are exactly two levels for genotype.
+    Data cleaning can be switched off by defining the argument 'dataset.clean' as FALSE.
 }
 \usage{
     PhenList(dataset, outputMessages=TRUE, dataset.clean=TRUE, refGenotype='+/+', 
@@ -17,8 +19,8 @@
     \item{dataset}{data frame created from file or from another source}
     \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages}
     \item{dataset.clean}{flag: "FALSE" value for no modification of the dataset; "TRUE" value to clean dataset if needed}
-    \item{testGenotype}{test genotype value}
-    \item{hemiGenotype}{genotype value for heterozygos that will be changed to testGenotype value}
+    \item{testGenotype}{defines the test genotype to be compared to the reference genotype}
+    \item{hemiGenotype}{genotype value for hemizygous that will be changed to testGenotype value}
     \item{refGenotype}{reference genotype, assigned default value is "+/+"}    
     \item{dataset.colname.batch}{column name within "dataset" dataset for the batch effect}
     \item{dataset.colname.genotype}{column name within "dataset" dataset for the genotype info}

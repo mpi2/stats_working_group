@@ -49,7 +49,7 @@
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"))
     result <- testDataset(test,equation="withoutWeight",depVariable="Bone.Area")
-    result <- buildFinalModel(test,result)
+    result <- buildFinalModel(test,result,equation="withoutWeight")
     summaryOutput(result)
 }
 

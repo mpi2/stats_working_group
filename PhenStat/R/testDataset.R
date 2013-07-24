@@ -97,7 +97,7 @@ testDataset <- function(phenList, depVariable=NULL, equation="withWeight", outpu
             # Hypothesis 1
             # Null Hypothesis: variance of batch = 0
             # Alternative Hypothesis: variance of batch > 0 
-            # ADD EXPLANATIONS AND REFERENCE
+            # For the division by 2 explanations see p.80 of "Linear Mixed Models"...
             p.value.batch <-(anova(model_MM, model_withoutbatch)$p[2])/2
             # The result of the test for Hypothesis 1 will help to select the structure for random effects
             keep_batch= p.value.batch<pThreshold
@@ -200,28 +200,41 @@ buildStartModel <- function(object, equation, depVariable, keepList)
 {
     require(nlme)
     
-    x <- object$dataset  
+    x <- object$dataset 
+    
+    # User's values for effects
+    keep_weight <- keepList[3]
+    keep_gender <- keepList[4]
+    keep_interaction <- keepList[5]
+    keep_batch <- keepList[1]
+    keep_equalvar <- keepList[2]
+
     
     numberofgenders=length(levels(x$Gender))
     
-    # User's values for effects
-    keep_batch <- keepList[1]
-    keep_equalvar <- keepList[2]
+
     
     # Start model formula: homogenous residual variance, genotype and sex interaction included      
     model.formula = modelFormula(equation, numberofgenders, depVariable)
     
-    # MM fit of model formula (with random effects)
-    # Model 1 
-    model_MM = do.call("lme", args = list(model.formula, random=~1|Batch, data = x, na.action="na.omit", method="REML"))
+    if ('Batch' %in% colnames(x)){
+        # MM fit of model formula (with random effects)
+        # Model 1 
+        model_MM = do.call("lme", args = list(model.formula, random=~1|Batch, data = x, na.action="na.omit", method="REML"))
+        # MM fit of model formula with heterogeneous residual variances for genotype groups
+        # Model 1 assumes homogeneous residual variances
+        # Model 2 with heterogeneous residual variances 
+        model_hetvariance= do.call("lme", args=list(model.formula, random=~1|Batch, x, weights=varIdent(form=~1|Genotype), 
+                        na.action="na.omit", method="REML"))
+    }    
+    else {
+        keep_batch=FALSE
+        keep_equalvar=FALSE
+    }
     # GLS fit of model formula  (no random effects)
     # Model 1A
     model_withoutbatch <- do.call("gls", args=list(model.formula, x, na.action="na.omit"))
-    # MM fit of model formula with heterogeneous residual variances for genotype groups
-    # Model 1 assumes homogeneous residual variances
-    # Model 2 with heterogeneous residual variances 
-    model_hetvariance= do.call("lme", args=list(model.formula, random=~1|Batch, x, weights=varIdent(form=~1|Genotype), 
-                    na.action="na.omit", method="REML"))
+
     
     # Model fit is selected according to test results    
     if(keep_batch && keep_equalvar){
@@ -229,7 +242,7 @@ buildStartModel <- function(object, equation, depVariable, keepList)
         model= model_MM
     }else if(keep_batch && !keep_equalvar){
         # Model 2
-        model= model_hetvariance
+        model= model_hetvariance  
     }else if(!keep_batch && keep_equalvar){
         # Model 1A
         model= model_withoutbatch
@@ -238,7 +251,14 @@ buildStartModel <- function(object, equation, depVariable, keepList)
         model= do.call("gls", args=list(model.formula, weights=varIdent(form=~1|Genotype), x, na.action="na.omit"))
     }
     
-    return(model)
+    interactionTest=anova(model, type="marginal")$"p-value"[5]   
+
+    result <- new("PhenTestResult",list(model.output=model,depVariable=depVariable,equation=equation, 
+                    model.effect.batch=keep_batch,model.effect.variance=keep_equalvar,model.effect.interaction=keep_interaction,
+                    model.output.interaction=interactionTest,model.effect.gender=keep_gender,model.effect.weight=keep_weight,
+                    numberGenders=numberofgenders))
+        
+    return(result)
 }
 
 #-----------------------------------------------------------------------------------

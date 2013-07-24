@@ -17,7 +17,7 @@
         keep_weight, keep_gender, keep_interaction}
 }
 \value{
-    Returns start model
+    Returns results stored in instance of the \code{\linkS4class{PhenTestResult}} class
 }
 
 \references{
@@ -27,5 +27,5 @@
 \seealso{\code{\linkS4class{PhenTestResult}}}
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"))
-    model <- buildStartModel(test,equation="withWeight",depVariable="Bone.Area",keepList=c(TRUE,TRUE,TRUE,TRUE,FALSE))
+    result <- buildStartModel(test,equation="withWeight",depVariable="Bone.Area",keepList=c(TRUE,TRUE,TRUE,TRUE,FALSE))
 }

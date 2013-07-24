@@ -34,7 +34,8 @@
     Returns an instance of the \code{\linkS4class{PhenTestResult}} class.
 }
 \references{
-    Publication placeholder
+        Chapter 3. "Linear Mixed Models" ...
+        PLOS one manuscript ...
     
 }
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}

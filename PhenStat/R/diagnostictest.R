@@ -34,10 +34,8 @@ testFinalModel<-function(object, result)
     
     if(!keep_weight && equation=="withWeight"){
         testresults=c(a[1], NA, a[2], NA, NA, NA)
-        return(testresults)    
         
-    }else{    
-
+    }else if ('Batch' %in% colnames(x)){    
         res=resid(result$model.output)
         data_all= data.frame(x, res)
         genotype_no=length(a)
@@ -76,10 +74,14 @@ testFinalModel<-function(object, result)
             gp2_norm_res= NA
         }    
         
-        testresults=c(a[1], gp1_norm_res, a[2], gp2_norm_res, blups_test, rotated_residual_test)        
+        testresults=c(a[1], gp1_norm_res, a[2], gp2_norm_res, blups_test, rotated_residual_test)
+    }   
+    else{
+        testresults=c(a[1], NA, a[2], NA, NA, NA)
+    }     
         
-        return(testresults)        
+    return(testresults)        
         
-    }
+    
       
 }

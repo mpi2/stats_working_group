@@ -12,8 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #-----------------------------------------------------------------------------------
-# PhenList.R contains PhenList and checkDataset functions to construct new PhenList object from components and to check 
-# dataset integrity
+#PhenList.R contains PhenList and checkDataset functions to construct new PhenList object from components and to check dataset integrity
 #-----------------------------------------------------------------------------------
 # Construct PhenList object from components with data quality checks
 PhenList <- function(dataset, outputMessages=TRUE, dataset.clean=TRUE, refGenotype='+/+', 
@@ -74,7 +73,7 @@ PhenList <- function(dataset, outputMessages=TRUE, dataset.clean=TRUE, refGenoty
         if (!is.null(hemiGenotype) && !is.null(testGenotype)) { 
             levels(dataset$Genotype)[levels(dataset$Genotype)==hemiGenotype] <- testGenotype
             if (outputMessages)
-            message(paste("Warning:\nHemizygotes '",hemiGenotype,"' have been relabled to homozygotes '",testGenotype,"'.\nIf you don't want this behaviour then don't define 'hemiGenotype' argument.\n",sep=""))
+            message(paste("Warning:\nHemizygotes '",hemiGenotype,"' have been relabeled to test genotype '",testGenotype,"'.\nIf you don't want this behaviour then don't define 'hemiGenotype' argument.\n",sep=""))
         }
         
         # Clean genotypes
@@ -128,6 +127,7 @@ PhenList <- function(dataset, outputMessages=TRUE, dataset.clean=TRUE, refGenoty
 checkDataset <- function(dataset, outputMessages=TRUE, refGenotype="+/+", dataset.clean=TRUE)
 
 {
+    # TODO Add check that testGenotype and refGenotype should be in levels in the Genotype column !!!
     message <- ""
     message_dp <- ""
     pass <- TRUE
@@ -165,6 +165,10 @@ checkDataset <- function(dataset, outputMessages=TRUE, refGenotype="+/+", datase
         message("Warning:\nDataset's 'Weight' column is missed.\nYou can define 'dataset.colname.weight' argument to specify column for the weight effect modeling.\n")
     }  
     
+    if (!('Batch' %in% colnames(dataset))){
+        message("Warning:\nDataset's 'Batch' column is missed.\nYou can define 'dataset.colname.batch' argument to specify column for the batch effect modeling.\n")
+    } 
+     
     if (('Gender' %in% colnames(dataset)) && ('Genotype' %in% colnames(dataset))){ 
     
         Genotype_levels=levels(dataset$Genotype)
@@ -250,7 +254,7 @@ checkDataset <- function(dataset, outputMessages=TRUE, refGenotype="+/+", datase
         
         if (length(Genotype_levels)!=2)  {
             pass <- FALSE
-            message <- paste(message,"\nCheck failed:\nDataset's 'Genotype' column has to have two values.\nYou can define 'testGenotype' and 'refGenotype' arguments to automatically filter out records with genotype values other than specified. Alternatively you can define 'hemiGenotype' and 'testGenotype' arguments to relable hemizygotes to homozygotes.\n",sep="")
+            message <- paste(message,"\nCheck failed:\nDataset's 'Genotype' column has to have two values.\nYou can define 'testGenotype' and 'refGenotype' arguments to automatically filter out records with genotype values other than specified. Alternatively you can define 'hemiGenotype' and 'testGenotype' arguments to relabel hemizygotes to homozygotes.\n",sep="")
         }      
         
         

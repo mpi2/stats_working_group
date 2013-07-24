@@ -44,21 +44,24 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
     
 }
 #-----------------------------------------------------------------------------------
-generateGraphs <- function(phenList, phenTestResult, dir, type="Xlib")
+generateGraphs <- function(phenList, phenTestResult, dir, graphingName=NULL, type="Xlib")
 # Generate all possible graphs and store them in the defined directory
 {
+    # ADD graphing name and call all graphs 
+    if (is.null(graphingName))
+        graphingName = phenTestResult$depVariable
     
     #1
     graph_name=file.path(dir, "boxplotGenderGenotype.png")
     png(graph_name,type=type)
-    boxplotGenderGenotype(phenList,phenTestResult$depVariable)
+    boxplotGenderGenotype(phenList,phenTestResult$depVariable, graphingName=graphingName)
     dev.off()
     
     #2
     if (('Batch' %in% colnames(phenList$dataset))){
         graph_name=file.path(dir, "boxplotGenderGenotypeBatch.png")
         png(graph_name,type=type)
-        boxplotGenderGenotypeBatch(phenList,phenTestResult$depVariable)
+        boxplotGenderGenotypeBatch(phenList,phenTestResult$depVariable, graphingName=graphingName)
         dev.off()
     }
     
@@ -66,7 +69,7 @@ generateGraphs <- function(phenList, phenTestResult, dir, type="Xlib")
     if (('Weight' %in% colnames(phenList$dataset))){
         graph_name=file.path(dir, "scatterplotGenotypeWeight.png")
         png(graph_name,type=type)
-        scatterplotGenotypeWeight(phenList,phenTestResult$depVariable)
+        scatterplotGenotypeWeight(phenList,phenTestResult$depVariable, graphingName=graphingName)
         dev.off()
     }
     
@@ -81,8 +84,7 @@ generateGraphs <- function(phenList, phenTestResult, dir, type="Xlib")
     png(graph_name,type=type)
     plotResidualPredicted(phenList,phenTestResult)
     dev.off()
-    
-    #6
+
     if (('Batch' %in% colnames(phenList$dataset)) && phenTestResult$model.effect.batch){
         graph_name=file.path(dir, "qqplotRandomEffects.png")
         png(graph_name,type=type)

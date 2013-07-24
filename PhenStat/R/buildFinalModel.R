@@ -15,7 +15,7 @@
 # buildFinalModel.R contains buildFinalModel and parserOutputSummary functions
 #-----------------------------------------------------------------------------------
 # Build final model based on the significance of different effects (see testDataset.R) 
-buildFinalModel <- function(phenList, phenTestResult=NULL, depVariable=NULL, equation=NULL, 
+buildFinalModel <- function(phenList, phenTestResult=NULL, depVariable=NULL, equation="withWeight", 
         outputMessages=TRUE, keepList=NULL)
 
 # By default works with PhenTestResult object created by testDataset function.
@@ -102,18 +102,36 @@ buildFinalModel <- function(phenList, phenTestResult=NULL, depVariable=NULL, equ
             keep_batch <- keepList[1]
             keep_equalvar <- keepList[2]
         
+            if (!('Weight' %in% colnames(x)) && keep_weight){
+                if (outputMessages)
+                    message("Warning:\nWeight column is missed in the dataset. 'keepWeight' is set to FALSE.")
+                keep_weight=FALSE
+            }
+        
+            if (!('Batch' %in% colnames(x)) && (keep_batch || keep_equalvar)){
+                if (outputMessages)
+                    message("Warning:\nBatch column is missed in the dataset. 'keepBatch' and 'keepVariance' are set to FALSE.")
+                keep_batch=FALSE
+                keep_equalvar=FALSE
+            }
+        
+            keepList <- c(keep_batch,keep_equalvar,keep_weight,keep_gender,keep_interaction)
+            
+            result <- buildStartModel(phenList,equation,depVariable,keepList)
+           
             # Create start model
-            model=buildStartModel(phenList,equation,depVariable,c(keep_batch,keep_equalvar))
+            #model=buildStartModel(phenList,equation,depVariable,c(keep_batch,keep_equalvar))
         
-            numberofgenders=length(levels(x$Gender))
+            #numberofgenders=length(levels(x$Gender))
         
-            interactionTest=anova(model, type="marginal")$"p-value"[5]   
+            #interactionTest=anova(model, type="marginal")$"p-value"[5]   
             
             # Create new PhenTestResult object using input parameters
-            result <- new("PhenTestResult",list(model.output=model,depVariable=depVariable,equation=equation, 
-                        model.effect.batch=keep_batch,model.effect.variance=keep_equalvar,model.effect.interaction=keep_interaction,
-                        model.output.interaction=interactionTest,model.effect.gender=keep_gender,model.effect.weight=keep_weight,
-                        numberGenders=numberofgenders))
+            #result <- new("PhenTestResult",list(model.output=model,depVariable=depVariable,equation=equation, 
+             #           model.effect.batch=keep_batch,model.effect.variance=keep_equalvar,model.effect.interaction=keep_interaction,
+             #           model.output.interaction=interactionTest,model.effect.gender=keep_gender,model.effect.weight=keep_weight,
+             #           numberGenders=numberofgenders))
+ 
     }
    
 
