@@ -39,7 +39,7 @@
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"))
     test2 <- PhenList(dataset=read.csv("./PhenStat/extdata/MAAJ_CCdata.csv"),dataset.colname.weight="Weight.Value",
-            dataset.clean=TRUE,testGenotype="Arid4a/Arid4a",refGenotype="+/+",hemGenotype="Arid4a/+")
+            dataset.clean=TRUE,testGenotype="Arid4a/Arid4a",refGenotype="+/+",hemiGenotype="Arid4a/+")
 }
 
 

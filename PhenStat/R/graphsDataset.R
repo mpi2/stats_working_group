@@ -62,7 +62,7 @@ boxplotGenderGenotypeBatch<-function(phenList, depVariable){
     if (!(depVariable %in% colnames(x)))
         stop(paste(depVariable,"column is missed in the dataset."))
     
-    if (!('Batch' %in% colnames(dataset)))
+    if (!('Batch' %in% colnames(x)))
         stop(paste("Batch column is missed in the dataset."))
     
     # Plot creation

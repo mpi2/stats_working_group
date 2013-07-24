@@ -19,7 +19,8 @@ testFinalModel<-function(object, result)
 # function is called internally from the buildFinalModel function. Otherwise should be used with precaution. 
 {
     require(nortest)
-
+    
+    x <- object$dataset
     depVariable <- result$depVariable
     equation <- result$equation
     keep_weight <- result$model.effect.weight

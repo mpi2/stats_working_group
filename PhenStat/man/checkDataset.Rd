@@ -5,12 +5,12 @@
     Checks dataset for the minimum required info 
 }
 \usage{
-    checkDataset(dataset, interactionMode=TRUE, refGenotype="+/+", dataset.clean=FALSE) 
+    checkDataset(dataset, outputMessages=TRUE, refGenotype="+/+", dataset.clean=TRUE) 
     
 }
 \arguments{
     \item{dataset}{data frame created from file or from another source}
-    \item{interactionMode}{flag: "FALSE" value for the no interaction messages to the user; "TRUE" value to interact}
+    \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages}
     \item{refGenotype}{reference genotype, assigned default value is "+/+"}
     \item{dataset.clean}{flag: "FALSE" value for no modification of the dataset; "TRUE" value to clean dataset if needed}
    

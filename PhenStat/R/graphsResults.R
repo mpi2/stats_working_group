@@ -106,7 +106,7 @@ qqplotRandomEffects<-function(phenList, phenTestResult, keep_batch=NULL){
     if (is.null(keep_batch))
         stop("Please make test for the batch effect and provide TRUE/FALSE value for 'keep_batch' argument.")
     
-    if (!('Batch' %in% colnames(dataset)))
+    if (!('Batch' %in% colnames(x)))
         stop("Batch column is missed in the dataset.")
     
     # Plot creation
@@ -140,7 +140,7 @@ boxplotResidualBatch<-function(phenList, phenTestResult){
         stop("Please create a PhenTestResult object first.")
     }
     
-    if (!('Batch' %in% colnames(dataset)))
+    if (!('Batch' %in% colnames(x)))
         stop("Batch column is missed in the dataset.")
     
     # Plot creation
@@ -175,7 +175,7 @@ qqplotRotatedResiduals<-function(phenList, phenTestResult, keep_batch=NULL){
         stop("Please create a PhenTestResult object first.")
     }
     
-    if (!('Batch' %in% colnames(dataset)))
+    if (!('Batch' %in% colnames(x)))
         stop("Batch column is missed in the dataset.")
     
     if (is.null(keep_batch))
