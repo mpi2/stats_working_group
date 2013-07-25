@@ -13,7 +13,7 @@
     \item{depVariable}{a character string defining the dependent variable of interest}
     \item{equation}{a character string defining the equation to use}
     \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages}   
-    \item{keepList}{a logical vector defining the significanse of different effects: keep_batch, keep_equalvar,
+    \item{keepList}{a logical vector defining the significance of different effects: keep_batch, keep_equalvar,
         keep_weight, keep_gender, keep_interaction}
 }
 \value{
