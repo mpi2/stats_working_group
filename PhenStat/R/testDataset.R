@@ -167,6 +167,8 @@ testDataset <- function(phenList, depVariable=NULL, equation="withWeight", outpu
         else {
             keep_gender = FALSE
             keep_interaction = FALSE 
+			interactionTest = NA 
+			
             if (equation=="withWeight") keep_weight = anova_results[3]
             else keep_weight = FALSE
         }
@@ -183,7 +185,7 @@ testDataset <- function(phenList, depVariable=NULL, equation="withWeight", outpu
 
     }
     else
-    # Fisher Exact Test placeholder
+    # Fisher Exact Test place holder
     {
         if (outputMessages)
             message("Fisher Exact Test")
