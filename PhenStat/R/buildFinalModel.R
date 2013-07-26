@@ -15,7 +15,7 @@
 # buildFinalModel.R contains buildFinalModel and parserOutputSummary functions
 #-----------------------------------------------------------------------------------
 # Build final model based on the significance of different effects (see testDataset.R) 
-buildFinalModel <- function(phenList, phenTestResult=NULL, depVariable=NULL, equation="withWeight", 
+buildFinalModel <- function(phenList, phenTestResult=NULL, depVariable=NULL, equation=NULL, 
         outputMessages=TRUE, keepList=NULL)
 
 # By default works with PhenTestResult object created by testDataset function.
@@ -266,6 +266,7 @@ buildFinalModel <- function(phenList, phenTestResult=NULL, depVariable=NULL, equ
 parserOutputSummary<-function(phenTestResult)
 
 {
+    result <- phenTestResult    
     modeloutput_summary = summary(result$model.output)
     genotype_estimate =NA
     genotype_estimate_SE =NA
@@ -321,8 +322,10 @@ parserOutputSummary<-function(phenTestResult)
             }
         } 
         
-        return (table_length)
+         table_length
     }
+    
+
     
     switch(result$equation,
             withoutWeight = {
