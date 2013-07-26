@@ -29,7 +29,7 @@
     \item{dataset.values.missingValue}{value used as missing value in the "dataset" dataset}
     \item{dataset.values.male}{value used to label "males" in the "dataset" dataset}
     \item{dataset.values.female}{value used to label "females" in the "dataset" dataset}
-    \item{dataset.stat}{simple statistics obtained from "dataset" dataset}   
+    \item{dataset.stat}{simple statistics obtained from "dataset" dataset}
 }
 \value{
     Returns an instance of the \code{\linkS4class{PhenList}} class.

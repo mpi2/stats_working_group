@@ -12,7 +12,7 @@
     \item{depVariable}{a character string defining the dependent variable of interest}
     \item{equation}{a character string defining the equation to use}
     \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages}        
-    \item{pThreshold}{a numerical value for the p-value threshold to use in tests}    
+    \item{pThreshold}{a numerical value for the p-value threshold to use in tests, default value 0.05}    
     \item{method}{a character string defining the method to use for model building, default value "MM" mixed model}
 }
 
