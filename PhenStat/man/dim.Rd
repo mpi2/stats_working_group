@@ -24,7 +24,7 @@
     \code{\link[base]{dim}} in the base package.
 }
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"))
+    test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),testGenotype="Sparc/Sparc")
     dim(test)
 }
 

@@ -3,7 +3,7 @@
 \alias{dimnames<-.PhenList}
 \title{Method "dimnames"}
 \description{
-    Retrieves the dimension names of a phenotypic data object. Based on dimnames methods of LIMMA package.
+    Retrieve the dimension names of a phenotypic data object. Based on dimnames methods of LIMMA package.
 }
 \usage{
     \method{dimnames}{PhenList}(x)

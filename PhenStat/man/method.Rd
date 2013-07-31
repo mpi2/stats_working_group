@@ -2,7 +2,7 @@
 \alias{method.PhenTestResult}
 \title{Method "method"}
 \description{
-    Retrieves the method used to create the model: gls, lme.
+    Retrieve the method used to create the model: gls, lme.
 }
 \usage{
     \method{method}{PhenTestResult}(x)
@@ -15,7 +15,7 @@
 }
 \author{Natalja Kurbatova}
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"))
+    test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),testGenotype="Sparc/Sparc")
     result <- testDataset(test,depVariable="Bone.Area")
     result <- buildFinalModel(test,result)
     method.PhenTestResult(result)

@@ -14,7 +14,7 @@
 #-----------------------------------------------------------------------------------
 # PhenTestResult.R contains PhenTestResult function
 #-----------------------------------------------------------------------------------
-PhenTestResult <- function(model.output=NULL, depVariable=NULL, equation="withWeight", model.effect.batch=NULL, model.effect.variance=NULL, 
+PhenTestResult <- function(model.output=NULL, depVariable=NULL, equation="withWeight", method="MM", model.effect.batch=NULL, model.effect.variance=NULL, 
         model.effect.gender=NULL, model.effect.interaction=NULL, model.output.interaction=NULL, model.effect.weight=NULL, numberGenders=NULL,
         pThreshold=0.05, model.formula.null=NULL, 
         model.formula.genotype=NULL, model.output.genotype.nulltest.pVal=NULL, model.output.quality=NULL,model.output.summary=NULL) 
@@ -26,6 +26,7 @@ PhenTestResult <- function(model.output=NULL, depVariable=NULL, equation="withWe
     
     x$depVariable <- depVariable
     x$equation <- equation
+    x$method <- method
     x$model.effect.batch <- model.effect.batch
     x$model.effect.variance <- model.effect.variance
     x$model.effect.gender <- model.effect.gender

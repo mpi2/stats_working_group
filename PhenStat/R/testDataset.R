@@ -12,17 +12,43 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #-----------------------------------------------------------------------------------
-# testDataset.R contains testDataset, buildStartModel and modelFormula functions and constructs the PhenTestResult 
+# testDataset.R contains testDataset and modelFormula functions and constructs the PhenTestResult 
 # class object
 #-----------------------------------------------------------------------------------
-# Create start model and modify it after testing of different hypothesis.
-# TRUE/FALSE values assigned to effects of the model are stored in the PhenTestResult object for the further final model build.
-testDataset <- function(phenList, depVariable=NULL, equation="withWeight", outputMessages=TRUE, pThreshold=0.05, method="MM")
+testDataset <- function(phenList, depVariable, equation="withWeight", outputMessages=TRUE, pThreshold=0.05, method="MM", keepList=NULL)
+# Performs the following checks for dependent variable:
+# 1. "depVariable" column should present in the dataset
+# 2. "depVariable" should be numeric for Mixed Model (MM) framework, otherwise recommends Fisher Exact Test (FE)
+# 3. Each one genotype level should have more than one "depVariable" level
+# (variability) for MM framework, otherwise recommends FE framework. 
 
-# The testable effects are: batch effect (random effects significance), variance effect (TRUE if residual variances for 
-# genotype groups are homogeneous and FALSE if they are heterogeneous), interaction effect (genotype by gender 
-# interaction significance) plus interaction test anova results, gender effect (gender significance), weigth effect 
-# (weigth significance).
+# Performs other consistency checks. For instance, when "depVariable" column contains cathegorical values, 
+# but defined method is MM redefines method to FE.
+
+# MM framework: 
+# For MM framework creates start model and modifies it after testing of different hypothesis (the model effects).
+# The model effects are: 
+# - batch effect (random effect significance), 
+# - variance effect (TRUE if residual variances for genotype groups are homogeneous and FALSE if they are heterogeneous), 
+# - interaction effect (genotype by gender interaction significance), 
+# - gender effect (gender significance), 
+# - weigth effect (weigth significance).
+
+# If user would like to assign other TRUE/FALSE values to the effects of the model 
+# then he or she has to define keepList argument which is vector of TRUE/FALSE values.
+
+# If user has defined model effects (keepList argument) then function prints out calculated and user defined effects 
+# (only when outputMessages argument is set to TRUE), checks user defined effects for consistency 
+# (for instance, if there are no "Weight" column in the dataset then weigth effect can't be assigned to TRUE, etc.)
+# and modifies start model according to user defined effects. 
+
+# As the result PhenTestResult object that contains calculated or user defined model effects and MM start model is created. 
+
+# FE framework:  
+# For Fisher Exact Test framework there are no special checks except "depVariable" checks mentioned above. 
+# "buildFisherExactTest" function is called for count matrix (matrices) creation and Fihser tests performance. 
+
+# As the result PhenTestResult object that contains Fisher tests output is created.   
 
 {
     require(nlme)
@@ -37,39 +63,61 @@ testDataset <- function(phenList, depVariable=NULL, equation="withWeight", outpu
     } else {
         stop_message <- "Error:\nPlease create a PhenList object first.\n"
     }    
-
-    if (is.null(depVariable)) 
-        stop_message <- "Error:\nPlease define dependent variable 'depVariable'\n."
-        
-
+    
     if (!(depVariable %in% colnames(x)))
-        stop_message <- paste("Error:\nDependent variable column '",depVariable,"' is missed in the dataset.\n",sep="")
-    else{
-        
-        # Test: depVariable is continuous variable
-        columnOfInterest <- x[,c(depVariable)]
-        if(is.numeric(columnOfInterest)){
-            if ((length(unique(columnOfInterest))/length(columnOfInterest)<0.05) && outputMessages) 
-            message(paste("Warning: Dependent variable '",depVariable,"' is numeric but seemed to be categorical because there is little variation. Fisher Exact Test can be better way to do the analysis than mixed models.",sep="")) 
-        }
-        else 
-            stop_message <- paste("Error:\nDependent variable '",depVariable,"' is not numeric or does not have sufficient variation. Please run Fisher Exact Test for the analysis of this dependent variable.\n",sep="")
-        
-    }
+    stop_message <- paste("Error:\nDependent variable column '",depVariable,"' is missed in the dataset.\n",sep="")
     
-    if (!(equation %in% c("withWeight","withoutWeight")))
-        stop_message <- "Error:\nPlease define equation you would like to use from the following options: 'withWeight', 'withoutWeight'\n."
     
-    if (!('Weight' %in% colnames(x)) && equation=="withWeight"){
+    if (!(equation %in% c("withWeight","withoutWeight")) && method=="MM")
+    stop_message <- "Error:\nPlease define equation you would like to use from the following options: 'withWeight', 'withoutWeight'\n."
+    
+    if (!('Weight' %in% colnames(x)) && equation=="withWeight" && method=="MM"){
         if (outputMessages)
-            message("Warning:\nWeight column is missed in the dataset. Equation 'withWeight' can't be used and has been replaced to 'withoutWeight'.")
+        message("Warning:\nWeight column is missed in the dataset. Equation 'withWeight' can't be used and has been replaced to 'withoutWeight'.")
         equation="withoutWeight"
     }
-      
-
+    
+    # Test: depVariable is continuous variable
+    
+    columnOfInterest <- x[,c(depVariable)]
+    
+    if(is.numeric(columnOfInterest)){
+        if ((length(unique(columnOfInterest))/length(columnOfInterest)<0.05) && outputMessages && method=="MM") 
+        message(paste("Warning: Dependent variable '",depVariable,"' is numeric but seemed to be categorical because there is little variation. Fisher Exact Test can be better way to do the analysis than Mixed Models.\n",sep="")) 
+    }
+    else if (method=="MM"){
+        method="FE"
+        if (outputMessages)
+        message(paste("Warning:\nDependent variable '",depVariable,"' is not numeric. Fisher Exact Test will be used for the analysis of this dependent variable.\n",sep=""))
+    }
+    # Test: depVariable variablity in Genotypes (require at least 2 levels)
+    
+    Genotype_levels=levels(x$Genotype)
+    Gender_levels=levels(x$Gender)  
+    
+    for (i in 1:length(Genotype_levels)){
+        GenotypeSubset <- subset(x, x$Genotype==Genotype_levels[i])
+        for (j in 1:length(Gender_levels)){           
+            GenotypeGenderSubset <- subset(GenotypeSubset, GenotypeSubset$Gender==Gender_levels[j]) 
+            columnOfInterest <- GenotypeGenderSubset[,c(depVariable)]
+            if (length(unique(columnOfInterest))==1)
+            stop_message <- paste("Error:\nInsufficient variability in the dependent variable '",depVariable,"' for genotype/gender combinations to allow the application of Mixed Model or Fisher Exact test framework.\n",sep="")
+        }                
+    }  
+    
+    # Dealing with provided significance values
+    if (!is.null(keepList)){
+        # Stop function if there are no enough needed input parameters
+        if (length(keepList)!=5) 
+        stop_message <- "Error:\nPlease define the values for 'keepList' list, where for each effect/part of the model TRUE/FALSE value defines to keep it in the model or not: 
+        'keepList=c(keepBatch,keepVariance,keepWeight,keepGender,keepInteraction)'.\n"
+        
+    }
+    
+    
     if (nchar(stop_message)>1){
         if (outputMessages)   
-            message(stop_message)
+        message(stop_message)
         opt <- options(show.error.messages=FALSE)
         on.exit(options(opt))      
         stop()
@@ -77,16 +125,53 @@ testDataset <- function(phenList, depVariable=NULL, equation="withWeight", outpu
     
     # END Checks and stop messages
     
-    # Mixed Models
-    if (method=="MM"){ 
+    if (outputMessages)
+        message(paste("Information:\nDependent variable: '",depVariable,"'.\n",sep="")) 
+    
+    # Mixed Models framework
+    if (method=="MM")    { 
+        
+        if (outputMessages)
+            message(paste("Information:\nMethod: Mixed Model framework.\n",sep="")) 
+        
+        if (!is.null(keepList)){
+            
+            if (!('Weight' %in% colnames(x)) && keep_weight){
+                if (outputMessages)
+                    message("Warning:\nWeight column is missed in the dataset. 'keepWeight' is set to FALSE.")
+                user_keep_weight=FALSE
+            }
+            
+            if (!('Batch' %in% colnames(x)) && (keep_batch || keep_equalvar)){
+                if (outputMessages)
+                    message("Warning:\nBatch column is missed in the dataset. 'keepBatch' and 'keepVariance' are set to FALSE.")
+                user_keep_batch=FALSE
+                user_keep_equalvar=FALSE
+            }
+        
+            # User's values for effects
+            user_keep_weight <- keepList[3]
+            user_keep_gender <- keepList[4]
+            user_keep_interaction <- keepList[5]
+            user_keep_batch <- keepList[1]
+            user_keep_equalvar <- keepList[2]
+            
+            if (outputMessages)
+                message(paste("Information:\nUser's values for model effects are: keepBatch=",user_keep_batch,
+                            ", keepVariance=",user_keep_equalvar,
+                            ", keepWeight=",user_keep_weight,
+                            ", keepGender=",user_keep_gender, 
+                            ", keepInteraction=",user_keep_interaction,".\n",sep=""))     
+        }
         
         numberofgenders=length(levels(x$Gender))
+        
         
         # Start model formula: homogenous residual variance, genotype and sex interaction included  
         model.formula = modelFormula(equation,numberofgenders, depVariable)
         
         if ('Batch' %in% colnames(x)){
-        
+            
             # MM fit of model formula (with random effects)
             # Model 1 (model_MM)
             model_MM = do.call("lme", args = list(model.formula, random=~1|Batch, data = x, na.action="na.omit", method="REML"))
@@ -135,8 +220,8 @@ testDataset <- function(phenList, depVariable=NULL, equation="withWeight", outpu
             # Modify model 1A to heterogeneous residual variances
             model= do.call("gls", args=list(model.formula, weights=varIdent(form=~1|Genotype), x, na.action="na.omit"))
         }
-    
-
+        
+        
         # Tests for significance of fixed effects using TypeI F-test from anova functionality by using selected model
         anova_results = anova(model, type="marginal")$"p-value" < pThreshold
         if(numberofgenders==2){
@@ -167,100 +252,93 @@ testDataset <- function(phenList, depVariable=NULL, equation="withWeight", outpu
         else {
             keep_gender = FALSE
             keep_interaction = FALSE 
-			interactionTest = NA 
-			
+            interactionTest = NA
             if (equation=="withWeight") keep_weight = anova_results[3]
             else keep_weight = FALSE
         }
         
-        if (!keep_weight && equation=="withWeight" && outputMessages) {
+        if (!keep_weight && equation=="withWeight") {
+            equation="withoutWeight"
+            if (outputMessages)
             message("Since weight effect is not significant the equation Eq.1 'withoutWeight' should be used instead.")
         }
+        
+        if (outputMessages)
+            message(paste("Information:\nCalculated values for model effects are: keepBatch=",keep_batch,
+                        ", keepVariance=",keep_equalvar,
+                        ", keepWeight=",keep_weight,
+                        ", keepGender=",keep_gender, 
+                        ", keepInteraction=",keep_interaction,".\n",sep=""))  
+               
+        # Results for user defined model effects values
+        if (!is.null(keepList)){
+            # Model fit is selected according to user defined model effects    
+            if(user_keep_batch && user_keep_equalvar){
+                # Model 1
+                model= model_MM
+            }else if(user_keep_batch && !user_keep_equalvar){
+                # Model 2
+                model= model_hetvariance  
+            }else if(!user_keep_batch && user_keep_equalvar){
+                # Model 1A
+                model= model_withoutbatch
+            }else if(!user_keep_batch && !user_keep_equalvar){
+                # Modify model 1A to heterogeneous residual variances
+                model= do.call("gls", args=list(model.formula, weights=varIdent(form=~1|Genotype), x, na.action="na.omit"))
+            }
+            
+            if(numberofgenders==2){
+                if (equation=="withWeight"){   
+                    interactionTest=anova(model, type="marginal")$"p-value"[5]           
+                }
+                else{
+                    interactionTest=anova(model, type="marginal")$"p-value"[4]      
+                } 
+            }
+            else {
+                interactionTest = NA
+            }
+            
+            compList <- (keepList==c(keep_batch,keep_equalvar,keep_weight,keep_gender,keep_interaction))
+            
+            if (length(compList[compList==FALSE])>0 && outputMessages)
+                message("Warning:\nCalculated values differ from user defined values for model effects.\n")
+            
+            keep_weight <- user_keep_weight
+            keep_gender <- user_keep_gender
+            keep_interaction <- user_keep_interaction
+            keep_batch <- user_keep_batch
+            keep_equalvar <- user_keep_equalvar
+            
+        }
+        
+        if (outputMessages)
+            message(paste("Information:\nEquation: '",equation,"'.\n",sep=""))   
 
         
-        result <- new("PhenTestResult",list(model.output=model,depVariable=depVariable,equation=equation, 
+        result <- new("PhenTestResult",list(model.output=model,depVariable=depVariable,equation=equation,method="MM", 
                         model.effect.batch=keep_batch,model.effect.variance=keep_equalvar,model.effect.interaction=keep_interaction,
                         model.output.interaction=interactionTest,model.effect.gender=keep_gender,model.effect.weight=keep_weight,
                         numberGenders=numberofgenders,pThreshold=pThreshold))
-
+        
     }
-    else
-    # Fisher Exact Test place holder
-    {
+    else if (method=="FE") {
+        # Fisher Exact Test 
         if (outputMessages)
-            message("Fisher Exact Test")
-        result <- NULL
+            message(paste("Information:\nMethod: Fisher Exact Test framework.\n",sep="")) 
+        
+        result <- buildFisherExactTest(phenList,depVariable,outputMessages)
     }
+    else {
+        if (outputMessages)   
+            message(paste("Error:\nMethod define in the 'method' argument '",method,"' is not supported.\nAt the moment we are supporting 'MM' value for Mixed Model framework and 'FE' value for Fisher Exact Test framework.\n",sep=""))
+        opt <- options(show.error.messages=FALSE)
+        on.exit(options(opt))      
+        stop()
+        
+    }        
     
     return(result)   
-}
-#-----------------------------------------------------------------------------------
-buildStartModel <- function(object, equation, depVariable, keepList)
-# If someone would like to assign other TRUE/FALSE values to effects of the model then start model is build by using
-# this function. There are no dataset checks or arguments checks assuming that buildStartModel
-# function is called internally from the buildFinalModel function. Otherwise should be used with precaution.  
-{
-    require(nlme)
-    
-    x <- object$dataset 
-    
-    # User's values for effects
-    keep_weight <- keepList[3]
-    keep_gender <- keepList[4]
-    keep_interaction <- keepList[5]
-    keep_batch <- keepList[1]
-    keep_equalvar <- keepList[2]
-
-    
-    numberofgenders=length(levels(x$Gender))
-    
-
-    
-    # Start model formula: homogenous residual variance, genotype and sex interaction included      
-    model.formula = modelFormula(equation, numberofgenders, depVariable)
-    
-    if ('Batch' %in% colnames(x)){
-        # MM fit of model formula (with random effects)
-        # Model 1 
-        model_MM = do.call("lme", args = list(model.formula, random=~1|Batch, data = x, na.action="na.omit", method="REML"))
-        # MM fit of model formula with heterogeneous residual variances for genotype groups
-        # Model 1 assumes homogeneous residual variances
-        # Model 2 with heterogeneous residual variances 
-        model_hetvariance= do.call("lme", args=list(model.formula, random=~1|Batch, x, weights=varIdent(form=~1|Genotype), 
-                        na.action="na.omit", method="REML"))
-    }    
-    else {
-        keep_batch=FALSE
-        keep_equalvar=FALSE
-    }
-    # GLS fit of model formula  (no random effects)
-    # Model 1A
-    model_withoutbatch <- do.call("gls", args=list(model.formula, x, na.action="na.omit"))
-
-    
-    # Model fit is selected according to test results    
-    if(keep_batch && keep_equalvar){
-        # Model 1
-        model= model_MM
-    }else if(keep_batch && !keep_equalvar){
-        # Model 2
-        model= model_hetvariance  
-    }else if(!keep_batch && keep_equalvar){
-        # Model 1A
-        model= model_withoutbatch
-    }else if(!keep_batch && !keep_equalvar){
-        # Modify model 1A to heterogeneous residual variances
-        model= do.call("gls", args=list(model.formula, weights=varIdent(form=~1|Genotype), x, na.action="na.omit"))
-    }
-    
-    interactionTest=anova(model, type="marginal")$"p-value"[5]   
-
-    result <- new("PhenTestResult",list(model.output=model,depVariable=depVariable,equation=equation, 
-                    model.effect.batch=keep_batch,model.effect.variance=keep_equalvar,model.effect.interaction=keep_interaction,
-                    model.output.interaction=interactionTest,model.effect.gender=keep_gender,model.effect.weight=keep_weight,
-                    numberGenders=numberofgenders))
-        
-    return(result)
 }
 
 #-----------------------------------------------------------------------------------

@@ -15,9 +15,13 @@
     Gordon Smyth
     May 2003.  Last modified 14 April 2009.
 }
+\references{
+    limma package of Bioconductor \url{http://bioconductor.org/packages/release/bioc/html/limma.html}
+}
 \author{Gordon Smyth}
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"))
+    test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
+            testGenotype="Sparc/Sparc")
     printHead(test)
     test
 }

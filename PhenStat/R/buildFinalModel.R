@@ -14,13 +14,11 @@
 #-----------------------------------------------------------------------------------
 # buildFinalModel.R contains buildFinalModel and parserOutputSummary functions
 #-----------------------------------------------------------------------------------
-# Build final model based on the significance of different effects (see testDataset.R) 
-buildFinalModel <- function(phenList, phenTestResult=NULL, depVariable=NULL, equation=NULL, 
-        outputMessages=TRUE, keepList=NULL)
+buildFinalModel <- function(phenList, phenTestResult, outputMessages=TRUE)
 
-# By default works with PhenTestResult object created by testDataset function.
-# If someone would like to assign other TRUE/FALSE values to effects of the model then function 
-# work with list of TRUE/FALSE values (keepList parameter).
+# Works with PhenTestResult object created by testDataset function. 
+# Builds final model based on the significance of different model effects, depVariable and equation 
+# stored in phenTestResult object (see testDataset.R).
 
 {
     require(nlme)
@@ -37,104 +35,38 @@ buildFinalModel <- function(phenList, phenTestResult=NULL, depVariable=NULL, equ
         stop_message <- "Error:\nPlease create a PhenList object first.\n"
     }
 
-    if (!is.null(equation))
-        if (!('Weight' %in% colnames(x)) && equation=="withWeight"){
-            if (outputMessages)
-                message("Warning:\nWeight column is missed in the dataset. Equation 'withWeight' can't be used and has been replaced to 'withoutWeight'.")
-            equation="withoutWeight"
-        }
     
     # Check PhenTestResult object
     if(is(phenTestResult,"PhenTestResult")) {
         result<-phenTestResult
-        if (is.null(depVariable)) depVariable <- result$depVariable
-        if (is.null(equation)) equation <- result$equation
+        depVariable <- result$depVariable
+        equation <- result$equation
         keep_weight <- result$model.effect.weight
         keep_gender <- result$model.effect.gender
         keep_interaction <- result$model.effect.interaction
         keep_batch <- result$model.effect.batch
         keep_equalvar <- result$model.effect.variance
-    
-        # Stop function if there are no enough needed input parameters      
-        if (is.null(keep_batch) || is.null(keep_equalvar) || is.null(keep_gender) || is.null(keep_interaction)) 
-            stop_message <- "Error:\nPlease run function 'testDataset' first.\n"
-        if (result$equation!=equation) 
-            stop_message <- paste("Error:\nTests have been done with another equation: '",result$equation,"'.\n",sep="")
-        if (result$depVariable!=depVariable) 
-            stop_message <- paste("Error:\nTests have been done for another dependent variable: '",result$depVariable,"'.\n",sep="")
+        
+        # Stop function if there are no enough input parameters      
+        if (is.null(equation) || is.null(depVariable) || is.null(keep_batch) || is.null(keep_equalvar) 
+                || is.null(keep_gender) || is.null(keep_interaction)) 
+        stop_message <- "Error:\nPlease run function 'testDataset' first.\n"
     }
     else{
-        # Dealing with provided significance values
-        if (!is.null(keepList)){
-            # Stop function if there are no enough needed input parameters
-            if (length(keepList)!=5) 
-            stop_message <- "Error:\nPlease define the values for 'keepList' list, where for each effect/part of the model TRUE/FALSE value defines to keep it in the model or not: 
-            'keepList=c(keepBatch,keepVariance,keepWeight,keepGender,keepInteraction)'.\n"
-            
-        }
-        
+        stop_message <- "Error:\nPlease create a PhenTestResult object first.\n"        
     }
     
-    # Stop function if there are not enough arguments
-    if (is.null(depVariable))     
-        stop_message <- "Error:\nPlease define dependent variable 'depVariable'\n."
-    
-    if (!(depVariable %in% colnames(x)))
-        stop_message <- paste("Error:\nDependent variable column '",depVariable,"' is missed in the dataset.\n",sep="")
-    
-    if (!(equation %in% c("withWeight","withoutWeight")))
-        stop_message <- "Error:\nPlease define equation you would like to use from the following options: 'withWeight', 'withoutWeight'\n."        
-    
+     
     if (nchar(stop_message)>1){
         if (outputMessages)   
-            message(stop_message)
+        message(stop_message)
         opt <- options(show.error.messages=FALSE)
         on.exit(options(opt))      
         stop()
     }
     
     # END Checks and stop messages
-        
-    if (!is.null(keepList)){   
-            keep_weight <- keepList[3]
-            keep_gender <- keepList[4]
-            keep_interaction <- keepList[5]
-            keep_batch <- keepList[1]
-            keep_equalvar <- keepList[2]
-        
-            if (!('Weight' %in% colnames(x)) && keep_weight){
-                if (outputMessages)
-                    message("Warning:\nWeight column is missed in the dataset. 'keepWeight' is set to FALSE.")
-                keep_weight=FALSE
-            }
-        
-            if (!('Batch' %in% colnames(x)) && (keep_batch || keep_equalvar)){
-                if (outputMessages)
-                    message("Warning:\nBatch column is missed in the dataset. 'keepBatch' and 'keepVariance' are set to FALSE.")
-                keep_batch=FALSE
-                keep_equalvar=FALSE
-            }
-        
-            keepList <- c(keep_batch,keep_equalvar,keep_weight,keep_gender,keep_interaction)
-            
-            result <- buildStartModel(phenList,equation,depVariable,keepList)
-           
-            # Create start model
-            #model=buildStartModel(phenList,equation,depVariable,c(keep_batch,keep_equalvar))
-        
-            #numberofgenders=length(levels(x$Gender))
-        
-            #interactionTest=anova(model, type="marginal")$"p-value"[5]   
-            
-            # Create new PhenTestResult object using input parameters
-            #result <- new("PhenTestResult",list(model.output=model,depVariable=depVariable,equation=equation, 
-             #           model.effect.batch=keep_batch,model.effect.variance=keep_equalvar,model.effect.interaction=keep_interaction,
-             #           model.output.interaction=interactionTest,model.effect.gender=keep_gender,model.effect.weight=keep_weight,
-             #           numberGenders=numberofgenders))
- 
-    }
-   
-
+    
     numberofgenders=result$numberGenders
     
     
@@ -175,7 +107,7 @@ buildFinalModel <- function(phenList, phenTestResult=NULL, depVariable=NULL, equ
                     as.formula(paste(depVariable, "~", "1"))
                 }                 
             }            
-    )
+            )
     
     #Alternative model: genotype is significant
     model_genotype.formula <- switch(equation,
@@ -210,7 +142,7 @@ buildFinalModel <- function(phenList, phenTestResult=NULL, depVariable=NULL, equ
                     as.formula(paste(depVariable, "~", paste("Genotype")))     
                 }                
             }            
-    )
+            )
     
     
     # Test: genotype groups association with dependant variable
@@ -244,8 +176,8 @@ buildFinalModel <- function(phenList, phenTestResult=NULL, depVariable=NULL, equ
     }else if(!keep_batch && keep_equalvar){
         model_genotype=do.call("gls", args = list(model_genotype.formula,  x, na.action="na.exclude"))
     }
-
-   
+    
+    
     # Store the results      
     result$model.output=model_genotype
     result$model.output.genotype.nulltest.pVal=p.value
@@ -257,7 +189,7 @@ buildFinalModel <- function(phenList, phenTestResult=NULL, depVariable=NULL, equ
     
     # Parse modeloutput and choose output depending on model 
     result$model.output.summary = parserOutputSummary(result)
-
+    
     return(result)  
     
 }
@@ -322,10 +254,10 @@ parserOutputSummary<-function(phenTestResult)
             }
         } 
         
-         table_length
+        table_length
     }
     
-
+    
     
     switch(result$equation,
             withoutWeight = {

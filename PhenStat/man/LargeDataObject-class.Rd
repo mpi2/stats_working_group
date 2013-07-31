@@ -16,7 +16,7 @@
     }
 }
 \references{
-    Placeholder for references
+    limma package of Bioconductor \url{http://bioconductor.org/packages/release/bioc/html/limma.html}
 }
 \author{Gordon Smyth}
 

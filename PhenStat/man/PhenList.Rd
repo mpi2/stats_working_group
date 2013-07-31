@@ -2,50 +2,55 @@
 \alias{PhenList}
 \title{Method "PhenList"}
 \description{
-    Create PhenList object, check the data integrity, rename columns when requested, 
+    Create PhenList object, check data integrity, rename columns when requested, 
     provide simple statistics about dataset.
-    Returns an instance of the PhenList object created from the data file. 
+    Return an instance of the PhenList object created from the data file. 
     Dataset is cleaned to ensure there is a maximum two gender levels and there are exactly two levels for genotype.
-    Data cleaning can be switched off by defining the argument 'dataset.clean' as FALSE.
+    Data cleaning can be switched off by defining the argument "dataset.clean" as FALSE.
 }
 \usage{
-    PhenList(dataset, outputMessages=TRUE, dataset.clean=TRUE, refGenotype='+/+', 
-            testGenotype=NULL, hemiGenotype=NULL, dataset.colname.batch=NULL, dataset.colname.genotype=NULL, 
-            dataset.colname.gender=NULL, dataset.colname.weight=NULL, dataset.values.missingValue=NULL, 
-            dataset.values.male=NULL, dataset.values.female=NULL, dataset.stat=NULL)
+    PhenList(dataset, testGenotype, refGenotype="+/+", hemiGenotype=NULL, 
+            outputMessages=TRUE, dataset.clean=TRUE, 
+            dataset.colname.batch=NULL, dataset.colname.genotype=NULL, 
+            dataset.colname.gender=NULL, dataset.colname.weight=NULL, 
+            dataset.values.missingValue=NULL, dataset.values.male=NULL, 
+            dataset.values.female=NULL, dataset.stat=NULL)
     
 }
 \arguments{
-    \item{dataset}{data frame created from file or from another source}
-    \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages}
-    \item{dataset.clean}{flag: "FALSE" value for no modification of the dataset; "TRUE" value to clean dataset if needed}
-    \item{testGenotype}{defines the test genotype to be compared to the reference genotype}
-    \item{hemiGenotype}{genotype value for hemizygous that will be changed to testGenotype value}
-    \item{refGenotype}{reference genotype, assigned default value is "+/+"}    
-    \item{dataset.colname.batch}{column name within "dataset" dataset for the batch effect}
-    \item{dataset.colname.genotype}{column name within "dataset" dataset for the genotype info}
-    \item{dataset.colname.gender}{column name within "dataset" dataset for the gender info}
-    \item{dataset.colname.weight}{column name within "dataset" dataset for the weight info}
-    \item{dataset.values.missingValue}{value used as missing value in the "dataset" dataset}
-    \item{dataset.values.male}{value used to label "males" in the "dataset" dataset}
-    \item{dataset.values.female}{value used to label "females" in the "dataset" dataset}
-    \item{dataset.stat}{simple statistics obtained from "dataset" dataset}
+    \item{dataset}{data frame created from file or from another source; mandatory argument}
+    \item{testGenotype}{defines the test genotype to be compared to the reference genotype; mandatory argument}
+    \item{refGenotype}{defines the reference genotype; assigned default value is "+/+"}    
+    \item{hemiGenotype}{defines the genotype value for hemizygous that will be changed to test genotype value}
+    \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages; assigned default value is TRUE}
+    \item{dataset.clean}{flag: "FALSE" value for no modification of the dataset; "TRUE" value to clean dataset if needed; assigned default value is TRUE}
+    \item{dataset.colname.batch}{column name within dataset for the batch effect}
+    \item{dataset.colname.genotype}{column name within dataset for the genotype info}
+    \item{dataset.colname.gender}{column name within dataset for the gender info}
+    \item{dataset.colname.weight}{column name within dataset for the weight info}
+    \item{dataset.values.missingValue}{value used as missing value in the dataset}
+    \item{dataset.values.male}{value used to label "males" in the dataset}
+    \item{dataset.values.female}{value used to label "females" in the dataset}
+    \item{dataset.stat}{simple statistics obtained from the dataset}   
 }
 \value{
-    Returns an instance of the \code{\linkS4class{PhenList}} class.
+    Return an instance of the \code{\linkS4class{PhenList}} class.
 }
 
 
 \references{
-    Publication placeholder
+    Karp N, Melvin D, Sanger Mouse Genetics Project, Mott R (2012): Robust and Sensitive Analysis of Mouse Knockout Phenotypes. \emph{PLoS ONE} \bold{7}(12): e52410. doi:10.1371/journal.pone.0052410
     
+    West B, Welch K, Galecki A (2007): Linear Mixed Models: A practical guide using statistical software  \emph{New York: Chapman & Hall/CRC} 353 p.
 }
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 
 \seealso{\code{\linkS4class{PhenTestResult}}}
 
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"))
-    test2 <- PhenList(dataset=read.csv("./PhenStat/extdata/MAAJ_CCdata.csv"),dataset.colname.weight="Weight.Value",
-            dataset.clean=TRUE,testGenotype="Arid4a/Arid4a",refGenotype="+/+",hemiGenotype="Arid4a/+")
+    test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
+            testGenotype="Sparc/Sparc")
+    test2 <- PhenList(dataset=read.csv("./PhenStat/extdata/MAAJ_CCdata.csv"),
+            testGenotype="Arid4a/Arid4a",refGenotype="+/+",hemiGenotype="Arid4a/+",
+            dataset.colname.weight="Weight.Value")
 }
