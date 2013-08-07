@@ -25,6 +25,5 @@
             dataset.colname.weight="Weight.Value",
             testGenotype="Arid4a/Arid4a",hemiGenotype="Arid4a/+")
     result <- testDataset(test,depVariable="Cl")
-    result <- buildFinalModel(test,result)
     qqplotRotatedResiduals(test,result)
 }

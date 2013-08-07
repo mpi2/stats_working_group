@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #-----------------------------------------------------------------------------------
-# buildFisherExactTest.R contains buildFisherExactTest function
+# FETFramework.R contains buildFisherExactTest function
 #-----------------------------------------------------------------------------------
 # Create two times n table with record counts, where two rows represent genotype levels; n columns 
-# represent dependent variable levels. Perform Fisher Exact Test
-buildFisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
+# represent dependent variable levels. Perform Fisher Exact test(s)
+FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
 {    
 
     x <- phenList$dataset

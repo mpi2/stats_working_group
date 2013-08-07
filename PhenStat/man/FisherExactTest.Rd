@@ -1,6 +1,6 @@
-\name{buildFisherExactTest}
-\alias{buildFisherExactTest}
-\title{Method "buildFisherExactTest"}
+\name{FisherExactTest}
+\alias{FisherExactTest}
+\title{Method "FisherExactTest"}
 \description{
     Create two times n tables with record counts, where two rows represent genotype levels; n columns 
     represent dependent variable levels. Perform Fisher Exact Tests.
@@ -14,9 +14,11 @@
     - records where gender value is "Female" (if such exists).
     
     Is called from testDataset function when "method" argument is set to "FE" (Fisher Exact Test).
+    
+    As the result PhenTestResult object that contains Fisher tests output is created.  
 }
 \usage{
-    buildFisherExactTest(phenList, depVariable, outputMessages=TRUE)
+    FisherExactTest(phenList, depVariable, outputMessages=TRUE)
 }
 \arguments{   
     \item{phenList}{instance of the \code{\linkS4class{PhenList}} class}

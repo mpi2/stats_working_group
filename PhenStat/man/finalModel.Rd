@@ -1,13 +1,13 @@
-\name{buildFinalModel}
-\alias{buildFinalModel}
-\title{Method "buildFinalModel"}
+\name{finalModel}
+\alias{finalModel}
+\title{Method "finalModel"}
 \description{
-    Work with PhenTestResult object created by testDataset function. 
-    Build final model based on the significance of different model effects, depVariable and equation values 
+    Work with PhenTestResult object created by startModel function. 
+    The creation of MM final model is based on the significance of different fixed effects, depVariable and equation values 
     stored in phenTestResult object.
 }
 \usage{
-    buildFinalModel(phenList, phenTestResult, outputMessages = TRUE)
+    finalModel(phenList, phenTestResult, outputMessages = TRUE)
 }
 \arguments{   
     \item{phenList}{instance of the \code{\linkS4class{PhenList}} class}
@@ -29,6 +29,6 @@
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
             testGenotype="Sparc/Sparc")
-    result <- testDataset(test,depVariable="Bone.Area",equation="withoutWeight")
-    result <- buildFinalModel(test,result)
+    result <- testDataset(test,depVariable="Bone.Area",equation="withoutWeight",callAll=FALSE)
+    result <- finalModel(test,result)
 }

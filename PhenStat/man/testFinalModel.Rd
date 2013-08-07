@@ -26,7 +26,7 @@
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
             testGenotype="Sparc/Sparc")
-    result <- testDataset(test,depVariable="Bone.Area")
-    result <- buildFinalModel(test,result)
+    result <- testDataset(test,depVariable="Bone.Area",callAll=FALSE)
+    result <- finalModel(test,result)
     testFinalModel(test,result)
 }
