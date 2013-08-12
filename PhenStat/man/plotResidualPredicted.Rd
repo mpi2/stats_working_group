@@ -8,8 +8,8 @@
     plotResidualPredicted(phenList, phenTestResult)
 }
 \arguments{
-    \item{phenList}{instance of the \code{\linkS4class{PhenList}} class}
-    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class}
+    \item{phenList}{instance of the \code{\linkS4class{PhenList}} class; mandatory argument}
+    \item{phenTestResult}{instance of the \code{\linkS4class{testDataset}} class; mandatory argument}
 }
 
 \references{
@@ -22,6 +22,6 @@
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
             testGenotype="Sparc/Sparc")
-    result <- testDataset(test,depVariable="Bone.Area")
+    result <- testDataset(test,depVariable="Lean.Mass")
     plotResidualPredicted(test,result)
 }
