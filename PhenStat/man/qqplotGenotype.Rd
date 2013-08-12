@@ -9,7 +9,7 @@
 }
 \arguments{
     \item{phenList}{instance of the \code{\linkS4class{PhenList}} class}
-    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class}
+    \item{phenTestResult}{instance of the \code{\linkS4class{testDataset}} class}
 }
 
 \references{
