@@ -17,7 +17,7 @@
 }
 \arguments{
     \item{model.output}{representing the model fit gls object or lme object}
-    \item{depVariable}{depending varibale in the model}
+    \item{depVariable}{depending variable in the model}
     \item{equation}{possible values: "withWeight" to include weight effect into model, "withoutWeight" to exclude weight effect from the model}
     \item{method}{possible values: "MM" to work with Mixed Model framework, "FE" to work with Fisher Exact Test framework}
     \item{model.effect.batch}{Result of the test for batch effect significance}
@@ -28,7 +28,7 @@
     \item{model.output.interaction}{Interaction test result: p-value}
     \item{numberGenders}{number of possible gender values in the dataset}
     \item{pThreshold}{p-value threshold used to evaluate the effect significance, default value 0.05}
-    \item{model.formula.null}{formula for the model withput genotype effect}
+    \item{model.formula.null}{formula for the model without genotype effect}
     \item{model.formula.genotype}{formula for the model with genotype effect}
     \item{model.output.genotype.nulltest.pVal}{Genotype test results: p-value}
     \item{model.output.quality}{vector that contains diagnostic test output for mixed model quality of fit}

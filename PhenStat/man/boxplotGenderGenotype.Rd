@@ -8,9 +8,9 @@
     boxplotGenderGenotype(phenList,depVariable,graphingName)
 }
 \arguments{
-    \item{phenList}{instance of the \code{\linkS4class{PhenList}} class}
-    \item{depVariable}{a character string defining the dependent variable of interest}
-    \item{graphingName}{a character string defining the name to be used on the graph for the dependent variable}
+    \item{phenList}{instance of the \code{\linkS4class{PhenList}} class; mandatory argument}
+    \item{depVariable}{a character string defining the dependent variable of interest; mandatory argument}
+    \item{graphingName}{a character string defining the name to be used on the graph for the dependent variable; mandatory argument}
 }
 
 \references{
@@ -28,5 +28,5 @@
     dataFile <- read.csv("./PhenStat/extdata/MAHN_DEXAdata_1Gender.csv")
     test_1gender <- PhenList(dataset=dataFile,testGenotype="Mysm1/+")
     boxplotGenderGenotype(test_1gender,depVariable="Lean.Mass", 
-            graphingName="Lean Mass")
+            graphingName="Lean Mass (g)")
 }
