@@ -19,15 +19,15 @@
             pThreshold=0.05, method="MM", callAll=TRUE, keepList=NULL)
 }
 \arguments{
-    \item{phenList}{instance of the \code{\linkS4class{PhenList}} class}       
-    \item{depVariable}{a character string defining the dependent variable of interest}
+    \item{phenList}{instance of the \code{\linkS4class{PhenList}} class; mandatory argument}       
+    \item{depVariable}{a character string defining the dependent variable of interest; mandatory argument}
     \item{equation}{a character string defining the equation to use. Possible values "withWeight" (default),"withoutWeight"}
-    \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages}        
+    \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages; default value TRUE}        
     \item{pThreshold}{a numerical value for the p-value threshold to use in tests, default value 0.05}    
     \item{method}{a character string defining the method to use for model building, default value "MM" mixed model}
-    \item{callAll}{flag: "FALSE" value to run only the first method (framework) function; "TRUE" value to run all methods (framework) functions}        
+    \item{callAll}{flag: "FALSE" value to run only the first method (framework) function; "TRUE" value (default) to run all methods (framework) functions}        
     \item{keepList}{a logical vector defining the significance of different model effects: keep_batch, keep_equalvar,
-        keep_weight, keep_gender, keep_interaction}
+        keep_weight, keep_gender, keep_interaction; default value NULL}
 }
 \value{
     Return results stored in instance of the \code{\linkS4class{PhenTestResult}} class
@@ -43,5 +43,5 @@
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
             testGenotype="Sparc/Sparc")
-    result <- testDataset(test,depVariable="Bone.Area")
+    result <- testDataset(test,depVariable="Lean.Mass")
 }

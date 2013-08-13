@@ -10,9 +10,9 @@
     finalModel(phenList, phenTestResult, outputMessages = TRUE)
 }
 \arguments{   
-    \item{phenList}{instance of the \code{\linkS4class{PhenList}} class}
-    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class}    
-    \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages}   
+    \item{phenList}{instance of the \code{\linkS4class{PhenList}} class; mandatory argument}
+    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class; mandatory argument}    
+    \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages; default value TRUE}   
 
 }
 \value{
@@ -29,6 +29,6 @@
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
             testGenotype="Sparc/Sparc")
-    result <- testDataset(test,depVariable="Bone.Area",equation="withoutWeight",callAll=FALSE)
+    result <- testDataset(test,depVariable="Lean.Mass",equation="withoutWeight",callAll=FALSE)
     result <- finalModel(test,result)
 }

@@ -9,11 +9,11 @@
             graphingName=NULL, type="Xlib")
 }
 \arguments{
-    \item{phenList}{instance of the \code{\linkS4class{PhenTestResult}} class}
-    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class}
-    \item{dir}{directory where to store generated graphs}
-    \item{graphingName}{a character string defining the name to be used on the graph for the dependent variable}
-    \item{type}{character string, one of "Xlib" or "quartz" (some OS X builds) or "cairo"}
+    \item{phenList}{instance of the \code{\linkS4class{PhenList}} class; mandatory argument}
+    \item{phenTestResult}{instance of the \code{\linkS4class{testDataset}} class; mandatory argument}
+    \item{dir}{directory where to store generated graphs; mandatory argument}
+    \item{graphingName}{a character string defining the name to be used on the graph for the dependent variable; defaults to NULL then the depVariable name will be plotted}
+    \item{type}{character string, one of "Xlib" or "quartz" (some OS X builds) or "cairo", or "window", or cairo-png"; mandatory argument}
 }
 
 \references{

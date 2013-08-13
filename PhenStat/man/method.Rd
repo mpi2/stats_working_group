@@ -16,7 +16,7 @@
 \author{Natalja Kurbatova}
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),testGenotype="Sparc/Sparc")
-    result <- testDataset(test,depVariable="Bone.Area")
+    result <- testDataset(test,depVariable="Lean.Mass")
     method.PhenTestResult(result)
 }
 

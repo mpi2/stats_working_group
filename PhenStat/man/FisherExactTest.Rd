@@ -21,9 +21,9 @@
     FisherExactTest(phenList, depVariable, outputMessages=TRUE)
 }
 \arguments{   
-    \item{phenList}{instance of the \code{\linkS4class{PhenList}} class}
-    \item{depVariable}{a character string defining the dependent variable of interest}
-    \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages}   
+    \item{phenList}{instance of the \code{\linkS4class{PhenList}} class; mandatory argument}
+    \item{depVariable}{a character string defining the dependent variable of interest; mandatory argument}
+    \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages; default value TRUE}   
     
 }
 \value{
