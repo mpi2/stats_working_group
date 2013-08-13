@@ -50,11 +50,11 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
         message(paste("All data p-val: ",round(phenTestResult$model.output$all$p.val,digits=9),sep=""))
        
         if (!is.null(phenTestResult$model.output$male)){
-            message(paste("Males only p-val: ",round(phenTestResult$model.output$male$p.val,digits=3),sep=""))
+            message(paste("Males only p-val: ",round(phenTestResult$model.output$male$p.val,digits=9),sep=""))
             
         }
         if (!is.null(phenTestResult$model.output$female)){
-            message(paste("Females only p-val: ",round(phenTestResult$model.output$female$p.val,digits=3),sep=""))
+            message(paste("Females only p-val: ",round(phenTestResult$model.output$female$p.val,digits=9),sep=""))
            
         }
     }

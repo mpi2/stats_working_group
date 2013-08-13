@@ -12,7 +12,7 @@
     \item{phenotypeThreshold}{a numerical value defining the threshold to use in classification tag; ; default value 0.01}
 }
 \value{
-    Return model fitting results in a text format
+    Return model fitting results in a text format for the screen
 }
 
 \references{
@@ -25,6 +25,6 @@
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
             testGenotype="Sparc/Sparc")
-    result <- testDataset(test,depVariable="Bone.Area")
+    result <- testDataset(test,depVariable="Lean Mass")
     summaryOutput(result)
 }
