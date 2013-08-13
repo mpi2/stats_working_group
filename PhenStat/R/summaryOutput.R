@@ -15,7 +15,7 @@
 # simpleOutput.R contains simpleOutput, generateGraphs functions
 #-----------------------------------------------------------------------------------
 summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
-# Wrapper to prepare the output of the modeling and testing results in simple user friendly form. Assumes that modeling results are 
+# Wrapper to prepare the output of the modelling and testing results in simple user friendly form. Assumes that modelling results are 
 # stored in the phenTestResult object (output from functions testDataset and buildFinalModel)
 {
     message(paste("Test for dependent variable: ",phenTestResult$depVariable,sep=""))
@@ -33,8 +33,7 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
             sexualDimorphism = "no"
         message(paste("Was there evidence of sexual dimorphism? ",sexualDimorphism," (p-value ",round(phenTestResult$model.output.interaction,digits=3),")",sep=""))
         
-        message(paste("Final fitted model:",toString(phenTestResult$model.formula.genotype)))
-        
+        message(paste("Final fitted model:",format(result$model.formula.genotype)))
         
         message("Model output:")
         
