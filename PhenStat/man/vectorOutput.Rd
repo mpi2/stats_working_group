@@ -3,7 +3,7 @@
 \title{Method "vectorOutput"}
 \description{
     Wrapper for the model fitting results. Return model fitting and testing results in a vector format. 
-    Assume that modeling results are stored in the phenTestResult object 
+    Assume that modelling results are stored in the phenTestResult object 
     (output from functions testDataset and buildFinalModel).
 }
 \usage{
@@ -26,6 +26,6 @@
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
             testGenotype="Sparc/Sparc")
-    result <- testDataset(test,depVariable="Bone.Area")
+    result <- testDataset(test,depVariable="Lean.Mass")
     vectorOutput(result)
 }

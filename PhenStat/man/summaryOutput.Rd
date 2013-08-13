@@ -8,8 +8,8 @@
     summaryOutput(phenTestResult, phenotypeThreshold = 0.01)
 }
 \arguments{
-    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class}
-    \item{phenotypeThreshold}{a numerical value defining the threshold to use in classification tag}
+    \item{phenTestResult}{instance of the \code{\linkS4class{testDataset}} class; mandatory argument}
+    \item{phenotypeThreshold}{a numerical value defining the threshold to use in classification tag; ; default value 0.01}
 }
 \value{
     Return model fitting results in a text format
