@@ -11,7 +11,7 @@
 \arguments{
     \item{result}{instance of the \code{\linkS4class{PhenTestResult}} class; ; mandatory argument}
     \item{interactionMode}{flag: "FALSE" value for the no interaction messages to the user; "TRUE" value to interact; defaults to TRUE}
-    \item{phenotypeThreshold}{a numerical value defining the significance threshold to use in assigning the classification tag; default value 0.05}
+    \item{phenotypeThreshold}{a numerical value defining the significance threshold to use in assigning the classification tag; default value 0.01}
 }
 \value{
     Return model fitting results in a text format
