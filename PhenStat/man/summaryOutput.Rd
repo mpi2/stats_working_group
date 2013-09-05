@@ -8,7 +8,7 @@
     summaryOutput(phenTestResult, phenotypeThreshold = 0.01)
 }
 \arguments{
-    \item{phenTestResult}{instance of the \code{\linkS4class{testDataset}} class; mandatory argument}
+    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class; mandatory argument}
     \item{phenotypeThreshold}{a numerical value defining the threshold to use in classification tag; ; default value 0.01}
 }
 \value{
@@ -25,6 +25,6 @@
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
             testGenotype="Sparc/Sparc")
-    result <- testDataset(test,depVariable="Lean Mass")
+    result <- testDataset(test,depVariable="Lean.Mass")
     summaryOutput(result)
 }

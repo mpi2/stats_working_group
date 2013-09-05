@@ -86,7 +86,7 @@ plotResidualPredicted<-function(phenList, phenTestResult){
 
 #-----------------------------------------------------------------------------------
 # Q-Q plot of blups
-qqplotRandomEffects<-function(phenList, phenTestResult, keep_batch=NULL){
+qqplotRandomEffects<-function(phenList, phenTestResult){
     
     # Checks
     if(is(phenList,"PhenList")) {
@@ -97,17 +97,11 @@ qqplotRandomEffects<-function(phenList, phenTestResult, keep_batch=NULL){
     }
     if(is(phenTestResult,"PhenTestResult")) {
         modeloutput=phenTestResult$model.output
-        if (is.null(keep_batch)) keep_batch <- phenTestResult$model.effect.batch
+        keep_batch <- phenTestResult$model.effect.batch
     }
     else{
         stop("Please create a PhenTestResult object first.")
     }
-    
-    if (is.null(keep_batch))
-        stop("Please make test for the batch effect and provide TRUE/FALSE value for 'keep_batch' argument.")
-    
-    if (!('Batch' %in% colnames(x)))
-        stop("Batch column is missed in the dataset.")
     
     # Plot creation
     if(keep_batch){
@@ -158,7 +152,7 @@ boxplotResidualBatch<-function(phenList, phenTestResult){
 
 #-------------------------------------------------------------------------------
 # Q-Q plot of rotated residuals
-qqplotRotatedResiduals<-function(phenList, phenTestResult, keep_batch=NULL){
+qqplotRotatedResiduals<-function(phenList, phenTestResult){
     
     # Checks
     if(is(phenList,"PhenList")) {
@@ -169,18 +163,11 @@ qqplotRotatedResiduals<-function(phenList, phenTestResult, keep_batch=NULL){
     }
     if(is(phenTestResult,"PhenTestResult")) {
         modeloutput=phenTestResult$model.output
-        if (is.null(keep_batch)) keep_batch <- phenTestResult$model.effect.batch
+        keep_batch <- phenTestResult$model.effect.batch
     }
     else{
         stop("Please create a PhenTestResult object first.")
     }
-    
-    if (!('Batch' %in% colnames(x)))
-        stop("Batch column is missed in the dataset.")
-    
-    if (is.null(keep_batch))
-        stop("Please make test for the batch effect and provide TRUE/FALSE value for 'keep_batch' argument.")
-    
     
     # Plot creation
     x[, c("Genotype", "Gender", "Batch")] = lapply(x[, c("Genotype", "Gender", "Batch")], factor)

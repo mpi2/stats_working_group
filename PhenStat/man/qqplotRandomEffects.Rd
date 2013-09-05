@@ -5,12 +5,11 @@
     Create a Q-Q plot of blups
 }
 \usage{
-    qqplotRandomEffects(phenList, phenTestResult, keep_batch)
+    qqplotRandomEffects(phenList, phenTestResult)
 }
 \arguments{
     \item{phenList}{instance of the \code{\linkS4class{PhenList}} class; mandatory argument}
-    \item{phenTestResult}{instance of the \code{\linkS4class{testDataset}} class; mandatory argument}
-    \item{keep_batch}{a logical value defining the significance of batch effect}
+    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class; mandatory argument}
 }
 
 \references{
