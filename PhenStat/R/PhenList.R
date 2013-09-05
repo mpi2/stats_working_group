@@ -48,6 +48,17 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
         # Replace missing values specified in the user format with NA if needed 
         if(!is.null(dataset.values.missingValue)) dataset[dataset == dataset.values.missingValue] <- NA 
         
+        # Renew levels    
+        if ('Gender' %in% colnames(dataset))
+            dataset$Gender<-factor(dataset$Gender)
+        if ('Genotype' %in% colnames(dataset))
+            dataset$Genotype<-factor(dataset$Genotype)
+        if ('Batch' %in% colnames(dataset))
+            dataset$Batch<-factor(dataset$Batch)
+        if ('Weight' %in% colnames(dataset)){
+            dataset$Weight<-factor(dataset$Weight)
+            dataset$Weight<-as.numeric(dataset$Weight) 
+        }
         # Replace values for genders with 'Male','Female' if needed 
         if(!is.null(dataset.values.female)) levels(dataset$Gender)[levels(dataset$Gender)==dataset.values.female] <- "Female"
         if(!is.null(dataset.values.male)) levels(dataset$Gender)[levels(dataset$Gender)==dataset.values.male] <- "Male"
@@ -86,8 +97,10 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
         dataset$Genotype<-factor(dataset$Genotype)
     if ('Batch' %in% colnames(dataset))
         dataset$Batch<-factor(dataset$Batch)
-    if ('Weight' %in% colnames(dataset))
+    if ('Weight' %in% colnames(dataset)){
         dataset$Weight<-factor(dataset$Weight)   
+        dataset$Weight<-as.numeric(dataset$Weight) 
+    }
 
     # CHECKS 
     dataset <- checkDataset(dataset, testGenotype, refGenotype, outputMessages, dataset.clean)
