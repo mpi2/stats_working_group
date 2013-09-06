@@ -33,7 +33,7 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
             sexualDimorphism = "no"
         message(paste("Was there evidence of sexual dimorphism? ",sexualDimorphism," (p-value ",round(phenTestResult$model.output.interaction,digits=3),")",sep=""))
         
-        message(paste("Final fitted model:",format(result$model.formula.genotype)))
+        message(paste("Final fitted model:",format(phenTestResult$model.formula.genotype)))
         
         message("Model output:")
         
@@ -111,7 +111,7 @@ generateGraphs <- function(phenList, phenTestResult, dir, graphingName=NULL, typ
         if (('Batch' %in% colnames(phenList$dataset)) && phenTestResult$model.effect.batch){
             graph_name=file.path(dir, "qqplotRandomEffects.png")
             png(graph_name,type=type)
-            qqplotRandomEffects(phenList,phenTestResult,phenTestResult$model.effect.batch)
+            qqplotRandomEffects(phenList,phenTestResult)
             dev.off()
         }    
         
@@ -127,7 +127,7 @@ generateGraphs <- function(phenList, phenTestResult, dir, graphingName=NULL, typ
         if (('Batch' %in% colnames(phenList$dataset)) && phenTestResult$model.effect.batch){
             graph_name=file.path(dir, "qqplotRotatedResiduals.png")
             png(graph_name,type=type)
-            qqplotRotatedResiduals(phenList,phenTestResult,phenTestResult$model.effect.batch)
+            qqplotRotatedResiduals(phenList,phenTestResult)
             dev.off()
         }   
         
