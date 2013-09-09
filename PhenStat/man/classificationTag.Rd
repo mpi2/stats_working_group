@@ -5,16 +5,22 @@
     Returns a classification tag to assign a sexual dimorphism assessment of the phenotypic change
 }
 \usage{
-    classificationTag(result, interactionMode = TRUE, 
+    classificationTag(phenTestResult, userMode = "summaryOutput", 
             phenotypeThreshold = 0.01)
 }
 \arguments{
-    \item{result}{instance of the \code{\linkS4class{PhenTestResult}} class; ; mandatory argument}
-    \item{interactionMode}{flag: "FALSE" value for the no interaction messages to the user; "TRUE" value to interact; defaults to TRUE}
+    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{testDataset} ; mandatory argument}
+    \item{userMode}{flag: "vectorOuput" a sexual dimorphic classification is assigned with a proviso of later assessing 
+        the overall statistical significance; "summaryOutput" the phenotypeThreshold is used to assess the overall statistical 
+        significance and then if significant the sexual dimorphic classification determined; defaults to summaryOutput}
     \item{phenotypeThreshold}{a numerical value defining the significance threshold to use in assigning the classification tag; default value 0.01}
 }
 \value{
-    Return model fitting results in a text format
+    Return a classification tag to assign a sexual dimorphism assessment of the phenotypic change.  
+    If you are working interactively with the data,  the userMode summaryOutput will use the phenotypeThreshold 
+    and use the threshold to assess statistical significance of the genotype effect and if significant then assign 
+    a sexual dimorphic classification.  Alternatively, in the userMode of vectorMode, 
+    a sexual dimorphic classification will be returned where later you can globally assess whether the variable had a significant genotype effect. 
 }
 
 \references{

@@ -2,8 +2,8 @@
 \alias{PhenTestResult}
 \title{Method "PhenTestResult"}
 \description{
-    Create PhenTestResult object, based on test results or model building results. 
-    Return an instance of the PhenTestResult object.
+    Create \code{\linkS4class{PhenTestResult}} object, based on test results or model building results. 
+    Return an instance of the \code{\linkS4class{PhenTestResult}} object. Internal function for the package. Not build for users to directly call.
 }
 \usage{
     PhenTestResult(model.output=NULL, depVariable=NULL, equation="withWeight", 
@@ -50,4 +50,5 @@
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
             testGenotype="Sparc/Sparc")
     result <- testDataset(test,equation="withoutWeight",depVariable="Lean.Mass")
+    class(result)
 }

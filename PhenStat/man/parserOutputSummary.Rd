@@ -8,7 +8,7 @@
     parserOutputSummary(phenTestResult)
 }
 \arguments{
-    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class}
+    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{testDataset} ; mandatory argument}
 }
 \value{
     Return a named vector with model output summary results

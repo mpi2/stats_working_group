@@ -55,7 +55,7 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
                 else {
                     colnames(dataset)[colnames(dataset) == 'Weight'] <-'Weight_labels'
                     if (outputMessages)
-                        message("Warning:\nWeight column values are not numeric. In order to avoid erroneous execution of statistical functions column is renamed into 'Weight_labels'.\n")
+                        message("Warning:\nWeight column values are not numeric. In order to avoid erroneous execution of statistical functions column is renamed to 'Weight_labels'.\n")
                       
                 }
         }   

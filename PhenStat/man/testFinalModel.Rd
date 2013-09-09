@@ -10,7 +10,7 @@
 }
 \arguments{
     \item{phenList}{instance of the \code{\linkS4class{PhenList}} class; mandatory argument}
-    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class; mandatory argument}
+    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{testDataset} ; mandatory argument}
 }
 \value{
     Return a vector with model fitting results

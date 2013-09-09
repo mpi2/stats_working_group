@@ -11,7 +11,7 @@
 }
 \arguments{   
     \item{phenList}{instance of the \code{\linkS4class{PhenList}} class; mandatory argument}
-    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class; mandatory argument}    
+    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{testDataset} ; mandatory argument}
     \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages; default value TRUE}   
 
 }

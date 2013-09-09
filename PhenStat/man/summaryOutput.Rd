@@ -8,7 +8,7 @@
     summaryOutput(phenTestResult, phenotypeThreshold = 0.01)
 }
 \arguments{
-    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class; mandatory argument}
+    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{testDataset} ; mandatory argument}
     \item{phenotypeThreshold}{a numerical value defining the threshold to use in classification tag; ; default value 0.01}
 }
 \value{

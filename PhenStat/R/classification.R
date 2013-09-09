@@ -14,23 +14,43 @@
 #-----------------------------------------------------------------------------------
 # classification.R contains classificationTag function
 #-----------------------------------------------------------------------------------
-classificationTag<-function(result, interactionMode=TRUE, phenotypeThreshold=0.01)
+classificationTag<-function(phenTestResult, userMode="summaryOutput", phenotypeThreshold=0.01)
 # Sexual Dimorphism Classification Tag
 
 {
-    if (interactionMode) {    
+    # Check PhenTestResult object
+    if(is(phenTestResult,"PhenTestResult")) {
+        result<-phenTestResult
+        depVariable <- result$depVariable
+        equation <- result$equation
+        keep_weight <- result$model.effect.weight
+        keep_gender <- result$model.effect.gender
+        keep_interaction <- result$model.effect.interaction
+        keep_batch <- result$model.effect.batch
+        keep_equalvar <- result$model.effect.variance
+        
+        # Stop function if there are no enough input parameters      
+        if (is.null(equation) || is.null(depVariable) || is.null(keep_batch) || is.null(keep_equalvar) 
+                || is.null(keep_gender) || is.null(keep_interaction)) 
+        stop_message <- "Error:\nPlease run function 'testDataset' first.\n"
+    }
+    else{
+        stop_message <- "Error:\nPlease create a PhenTestResult object first by using function 'testDataset'.\n"        
+    }
+    
+    if (userMode=="summaryOutput") {    
         if(is.na(result$model.output.genotype.nulltest.pVal)==TRUE){
             ChangeClassification==NA
         }else if(result$model.output.genotype.nulltest.pVal>phenotypeThreshold){
             ChangeClassification=paste("With phenotype threshold value",phenotypeThreshold,"- no significant change")
         }else{
             if(result$model.effect.interaction==FALSE) {
-               	if (result$numberGenders==1){
-					ChangeClassification=paste("With phenotype threshold value",phenotypeThreshold,"- a significant change for the one genotype tested")
-				}
-				else{
-				ChangeClassification=paste("With phenotype threshold value",phenotypeThreshold,"- both sexes equally")
-				}
+                   if (result$numberGenders==1){
+                    ChangeClassification=paste("With phenotype threshold value",phenotypeThreshold,"- a significant change for the one genotype tested")
+                }
+                else{
+                ChangeClassification=paste("With phenotype threshold value",phenotypeThreshold,"- both sexes equally")
+                }
             }else if(result$model.output.summary["gender_FvKO_p_value"]>=0.05 && result$model.output.summary["gender_MvKO_p_value"]>=0.05){
                 ChangeClassification=paste("With phenotype threshold value",phenotypeThreshold,"- cannot classify effect")
             }else if(result$model.output.summary["gender_FvKO_p_value"]<0.05 && result$model.output.summary["gender_MvKO_p_value"]>=0.05){
@@ -52,12 +72,12 @@ classificationTag<-function(result, interactionMode=TRUE, phenotypeThreshold=0.0
     else {
      
             if(result$model.effect.interaction==FALSE) {
-				if (result$numberGenders==1){
-					ChangeClassification=paste("If phenotype is significant it is for the one genotype tested")
-				}else{
-				
+                if (result$numberGenders==1){
+                    ChangeClassification=paste("If phenotype is significant it is for the one genotype tested")
+                }else{
+                
                 ChangeClassification=paste("If phenotype is significant - both sexes equally")
-			} 
+            } 
             }else if(result$model.output.summary["gender_FvKO_p_value"]>=0.05 && result$model.output.summary["gender_MvKO_p_value"]>=0.05){
                 ChangeClassification=paste("If phenotype is significant - cannot classify effect")
             }else if(result$model.output.summary["gender_FvKO_p_value"]<0.05 && result$model.output.summary["gender_MvKO_p_value"]>=0.05){

@@ -22,7 +22,7 @@ vectorOutput <- function(phenTestResult)
     if (phenTestResult$method=="MM") {
         equation <- switch(phenTestResult$equation,withoutWeight = {"Eq1"},withWeight = {"Eq2"})
         
-        classificationValue <- classificationTag(phenTestResult,interactionMode=FALSE)
+        classificationValue <- classificationTag(phenTestResult,userMode="vectorOutput")
         
         vectorOutput <- c(equation,phenTestResult$depVariable, phenTestResult$model.effect.batch, 
                 phenTestResult$model.effect.variance, 
