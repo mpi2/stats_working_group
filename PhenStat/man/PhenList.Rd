@@ -3,7 +3,7 @@
 \title{Method "PhenList"}
 \description{
     Create PhenList object, check data integrity, rename columns when requested, 
-    provide simple statistics about dataset.
+    provides simple statistics about dataset.
     Return an instance of the PhenList object created from the data file. 
     Dataset is cleaned to ensure there is a maximum two gender levels and there are exactly two levels for genotype.
     Data cleaning can be switched off by defining the argument "dataset.clean" as FALSE.

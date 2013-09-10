@@ -8,7 +8,7 @@
     modelFormula(equation, numberofgenders, depVariable)
 }
 \arguments{
-    \item{equation}{a character string defining the equation to use; mandatory argument}
+    \item{equation}{a character string defining the equation to use (withWeight or withoutWeight); mandatory argument}
     \item{numberofgenders}{a numerical value for levels of gender in the dataset (1 or 2); mandatory argument} 
     \item{depVariable}{a character string defining the dependent variable of interest; mandatory argument}
 }

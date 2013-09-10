@@ -24,7 +24,7 @@
     \item{equation}{a character string defining the equation to use. Possible values "withWeight" (default),"withoutWeight"}
     \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages; default value TRUE}        
     \item{pThreshold}{a numerical value for the p-value threshold to use in tests, default value 0.05}    
-    \item{method}{a character string defining the method to use for model building, default value "MM" mixed model}
+    \item{method}{a character string ("MM" or "FE") defining the method to use for model building, default value "MM" mixed model}
     \item{callAll}{flag: "FALSE" value to run only the first method (framework) function; "TRUE" value (default) to run all methods (framework) functions}        
     \item{keepList}{a logical vector defining the significance of different model effects: keep_batch, keep_equalvar,
         keep_weight, keep_gender, keep_interaction; default value NULL}
