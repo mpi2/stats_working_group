@@ -271,7 +271,7 @@ checkDataset <- function(dataset, testGenotype, refGenotype="+/+", outputMessage
         # Check of genotype and gender levels after cleaning
         if (length(Genotype_levels)!=2)  {
             pass <- FALSE
-            message <- paste(message,"\nCheck failed:\nDataset's 'Genotype' column has to have two values.\nYou can define 'testGenotype' and 'refGenotype' arguments to automatically filter out records with genotype values other than specified. Alternatively you can define 'hemiGenotype' and 'testGenotype' arguments to relabel hemizygotes to homozygotes.\n",sep="")
+            message <- paste(message,"\nCheck failed:\nDataset's 'Genotype' column has to have two values.\nYou can define 'testGenotype' and 'refGenotype' arguments to automatically filter out records with genotype values other than specified when dataset.clean is set to TRUE. Alternatively you can define 'hemiGenotype' and 'testGenotype' arguments to relabel hemizygotes to homozygotes.\n",sep="")
         }      
         
         

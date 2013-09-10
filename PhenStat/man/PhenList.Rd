@@ -53,4 +53,6 @@
     test2 <- PhenList(dataset=read.csv("./PhenStat/extdata/MAAJ_CCdata.csv"),
             testGenotype="Arid4a/Arid4a",refGenotype="+/+",hemiGenotype="Arid4a/+",
             dataset.colname.weight="Weight.Value")
+    test3<-PhenList(dataset=read.csv("./PhenStat/extdata/data_genderas1or2.csv"), dataset.clean=TRUE, dataset.values.female=1, dataset.values.male=2, testGenotype="Mysm1/+")
+    
 }
