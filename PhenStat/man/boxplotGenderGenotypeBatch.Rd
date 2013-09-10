@@ -3,7 +3,7 @@
 \title{Method "boxplotGenderGenotypeBatch"}
 \description{
     Create a box plot split by gender, genotype and batch. 
-    Note: the batches are not ordered but allow assessment of how the treatment groups lie relative to the normal control variation.
+    Note: the batches are not ordered with time but allow assessment of how the treatment groups lie relative to the normal control variation.
     
 }
 \usage{

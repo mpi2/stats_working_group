@@ -34,5 +34,5 @@
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
             testGenotype="Sparc/Sparc")
     result <- testDataset(test,depVariable="Lean.Mass")
-    classificationTag(result)
+    classificationTag(result, userMode="summaryOutput", phenotypeThreshold=0.001)
 }
