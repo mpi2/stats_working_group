@@ -2,21 +2,22 @@
 \alias{startModel}
 \title{Method "startModel"}
 \description{      
-    The first function to be run within MM framework. 
+    This is an internal function run within MM framework. It completes the testing stage of which effects are significant.  
+    As an internal function, it doesn't include extensive error testing of inputs. Please use cautiously if calling directly.  
     
     It creates start model and modify it after testing of different hypothesis (the model fixed effects).
     
     The model fixed effects are: 
     
-    -batch effect (random effect significance), 
+    -batch effect (TRUE if batch variation is significant, FALSE if not), 
     
     -variance effect (TRUE if residual variances for genotype groups are homogeneous and FALSE if they are heterogeneous), 
     
-    -interaction effect (genotype by gender interaction significance), 
+    -interaction effect (TRUE if genotype by gender interaction is significant), 
     
-    -gender effect (gender significance), 
+    -gender effect (TRUE if gender is significant), 
     
-    -weight effect (weight significance).
+    -weight effect (TRUE if weight is significant).
     
     If user would like to assign other TRUE/FALSE values to the fixed effects of the model 
     then he or she has to define keepList argument which is vector of TRUE/FALSE values.
