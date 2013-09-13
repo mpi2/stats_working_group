@@ -26,28 +26,49 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
     Genotype_levels=levels(x$Genotype)         
     depVariable_levels=levels(factor(x[,c(depVariable)]))  
     count_matrix_all <- matrix(0,2,length(depVariable_levels))
+    ES_matrix_all <- matrix(0,length(depVariable_levels),3)
     
     for (i in 1:length(Genotype_levels)){
         GenotypeSubset <- subset(x, x$Genotype==Genotype_levels[i])
         for (j in 1:length(depVariable_levels)){  
-            columnOfInterest <- GenotypeSubset[,c(depVariable)]
-            columnOfInterest <- columnOfInterest[columnOfInterest==depVariable_levels[j]]
-            nr <- length(columnOfInterest) 
-            if (is.null(nr)) nr<-0 
-            count_matrix_all[i,j]=nr
+                columnOfInterest <- GenotypeSubset[,c(depVariable)]
+                columnOfInterest <- columnOfInterest[columnOfInterest==depVariable_levels[j]]
+                nr <- length(columnOfInterest) 
+                if (is.null(nr)) nr<-0 
+                count_matrix_all[i,j]=nr
         }    
         
     }
     
-    model_all<-fisher.test(count_matrix_all)
+    for (i in 1:length(Genotype_levels)){
+        GenotypeSubset <- subset(x, x$Genotype==Genotype_levels[i])
+        for (j in 1:length(depVariable_levels)){  
+            ES_matrix_all[j,i]=(count_matrix_all[i,j]/rowSums(count_matrix_all)[i])*100
+        }    
+        
+    }
+    for (j in 1:length(depVariable_levels)){  
+        ES_matrix_all[j,3]=abs(ES_matrix_all[j,1]-ES_matrix_all[j,2])
+    }  
     
     rownames(count_matrix_all)<-Genotype_levels
     colnames(count_matrix_all)<-depVariable_levels
+    
+    colnames(ES_matrix_all)<-append(Genotype_levels,"ES change")
+    rownames(ES_matrix_all)<-depVariable_levels
+
+    ES_all <- round(max(ES_matrix_all[,3]),digits=0)
+    
+    model_all<-fisher.test(count_matrix_all)
+    
+
 
     
     if (numberofgenders==2){
         count_matrix_male <- matrix(0,2,length(depVariable_levels))
         count_matrix_female <- matrix(0,2,length(depVariable_levels))
+        ES_matrix_male <- matrix(0,length(depVariable_levels),3)
+        ES_matrix_female <- matrix(0,length(depVariable_levels),3)
         
         for (i in 1:length(Genotype_levels)){
             GenotypeSubset <- subset(x, x$Genotype==Genotype_levels[i])
@@ -69,6 +90,22 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
             
         } 
         
+        
+        for (i in 1:length(Genotype_levels)){
+            GenotypeSubset <- subset(x, x$Genotype==Genotype_levels[i])
+            for (j in 1:length(depVariable_levels)){  
+                ES_matrix_male[j,i]=(count_matrix_male[i,j]/rowSums(count_matrix_male)[i])*100
+                ES_matrix_female[j,i]=(count_matrix_female[i,j]/rowSums(count_matrix_female)[i])*100
+            }    
+            
+        }
+        for (j in 1:length(depVariable_levels)){  
+            ES_matrix_male[j,3]=abs(ES_matrix_male[j,1]-ES_matrix_male[j,2])
+            ES_matrix_female[j,3]=abs(ES_matrix_female[j,1]-ES_matrix_female[j,2])
+        }  
+        
+        ES_male <- round(max(ES_matrix_male[,3]),digits=0)
+        ES_female <- round(max(ES_matrix_female[,3]),digits=0)
        
         rownames(count_matrix_female)<-Genotype_levels
         rownames(count_matrix_male)<-Genotype_levels
@@ -90,8 +127,11 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
         model_female <- NULL
         count_matrix_female <-NULL
         count_matrix_male <- NULL
+        ES_male <- NULL
+        ES_female <- NULL
         stat_male <-NULL
         stat_female <- NULL
+        
     }    
     
     model_results <- c(model_all$p.value,model_all$alternative,paste(model_all$conf.int[1],model_all$conf.int[2],sep=" to "),model_all$estimate)
@@ -109,6 +149,9 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
     model$count_matrix_male <- count_matrix_male
     model$count_matrix_all <- count_matrix_all
     model$stat_all <- assocstats(count_matrix_all)
+    model$ES <- ES_all
+    model$ES_male <- ES_male
+    model$ES_female <- ES_female
     model$stat_male <- stat_male
     model$stat_female <- stat_female
     
