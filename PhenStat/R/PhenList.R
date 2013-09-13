@@ -19,7 +19,7 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
         outputMessages=TRUE, dataset.clean=TRUE, 
         dataset.colname.batch=NULL, dataset.colname.genotype=NULL, 
         dataset.colname.gender=NULL, dataset.colname.weight=NULL, dataset.values.missingValue=NULL, 
-        dataset.values.male=NULL, dataset.values.female=NULL, dataset.stat=NULL) 
+        dataset.values.male=NULL, dataset.values.female=NULL) 
 {
     dataset <- dataset[,order(names(dataset))]
     
@@ -271,7 +271,7 @@ checkDataset <- function(dataset, testGenotype, refGenotype="+/+", outputMessage
         # Check of genotype and gender levels after cleaning
         if (length(Genotype_levels)!=2)  {
             pass <- FALSE
-            message <- paste(message,"\nCheck failed:\nDataset's 'Genotype' column has to have two values.\nYou can define 'testGenotype' and 'refGenotype' arguments to automatically filter out records with genotype values other than specified when dataset.clean is set to TRUE. Alternatively you can define 'hemiGenotype' and 'testGenotype' arguments to relabel hemizygotes to homozygotes.\n",sep="")
+            message <- paste(message,"\nCheck failed:\nDataset's 'Genotype' column has to have two values.\nYou can define 'testGenotype' and 'refGenotype' arguments to automatically filter out records with genotype values other than specified. Alternatively you can define 'hemiGenotype' and 'testGenotype' arguments to relabel hemizygotes to homozygotes.\n",sep="")
         }      
         
         

@@ -110,15 +110,15 @@ testDataset <- function(phenList, depVariable, equation="withWeight", outputMess
     if (method=="MM")    { 
         
         if (outputMessages)
-        message(paste("Information:\nMethod: Mixed Model framework.\n",sep="")) 
+            message(paste("Information:\nMethod: Mixed Model framework.\n",sep="")) 
         
         result <- startModel(phenList, depVariable, equation, outputMessages, pThreshold, keepList)
         
         # Perform all framework methods 
         if (callAll){
             if (outputMessages)
-            message(paste("Information:\nPerform all MM framework methods: startModel and finalModel\n",sep=""))
-            result <- finalModel(phenList, result, outputMessages)
+                message(paste("Information:\nPerform all MM framework stages: startModel and finalModel\n",sep=""))
+            result <- finalModel(result, outputMessages)
         }
         
     }

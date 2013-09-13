@@ -22,7 +22,7 @@ vectorOutput <- function(phenTestResult)
     if (phenTestResult$method=="MM") {
         equation <- switch(phenTestResult$equation,withoutWeight = {"Eq1"},withWeight = {"Eq2"})
         
-        classificationValue <- classificationTag(phenTestResult,userMode="vectorOutput")
+        classificationValue <- classificationTag(phenTestResult,userMode="vectorOutput",outputMessages=FALSE)
         
         vectorOutput <- c(equation,phenTestResult$depVariable, phenTestResult$model.effect.batch, 
                 phenTestResult$model.effect.variance, 
@@ -48,6 +48,18 @@ vectorOutput <- function(phenTestResult)
                 phenTestResult$model.output.summary["gender_MvKO_SE"], 
                 phenTestResult$model.output.summary["gender_MvKO_p_value"],
                 classificationValue)
+        names(vectorOutput) <- c("Equation","DependentVariable","BatchEffectIsSignificant",
+                "ResidualVariancesAreHomogeneous","GenotypeContributionSignificance",
+                "GenotypeParameterEstimate","GenotypeStandardErrorEstimate","GenotypeEffectPVal"
+                "GenderParameterEstimate","GenderStandardErrorEstimate","GenderEffectPVal",
+                "WeightParameterEstimate","WeightStandardErrorEstimate","WeightEffectPVal",
+                "Gp1Genotype","Gp1ResidualsNormalityTest",
+                "Gp2Genotype","Gp2ResidualsNormalityTest","BlupsTest",
+                "RotatedResidualsNormalityTest",
+                "InterceptParameterEstimate","InterceptStandardErrorEstimate",
+                "InteractionIncluded","InteractionPVal",
+                "GenderFvKOEstimate","GenderFvKOStandardErrorEstimate","GenderFvKOPVal",
+                "GenderMvKOEstimate","GenderMvKOStandardErrorEstimate","GenderMvKOPVal")
     }
     else if (phenTestResult$method=="FE"){
         male_pval <- NA

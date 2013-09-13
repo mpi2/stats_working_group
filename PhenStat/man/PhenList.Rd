@@ -14,7 +14,7 @@
             dataset.colname.batch=NULL, dataset.colname.genotype=NULL, 
             dataset.colname.gender=NULL, dataset.colname.weight=NULL, 
             dataset.values.missingValue=NULL, dataset.values.male=NULL, 
-            dataset.values.female=NULL, dataset.stat=NULL)
+            dataset.values.female=NULL)
     
 }
 \arguments{
@@ -31,7 +31,6 @@
     \item{dataset.values.missingValue}{value used as missing value in the dataset}
     \item{dataset.values.male}{value used to label "males" in the dataset}
     \item{dataset.values.female}{value used to label "females" in the dataset}
-    \item{dataset.stat}{simple statistics obtained from the dataset}   
 }
 \value{
     Return an instance of the \code{\linkS4class{PhenList}} class.
@@ -53,6 +52,6 @@
     test2 <- PhenList(dataset=read.csv("./PhenStat/extdata/MAAJ_CCdata.csv"),
             testGenotype="Arid4a/Arid4a",refGenotype="+/+",hemiGenotype="Arid4a/+",
             dataset.colname.weight="Weight.Value")
-    test3<-PhenList(dataset=read.csv("./PhenStat/extdata/data_genderas1or2.csv"), dataset.clean=TRUE, dataset.values.female=1, dataset.values.male=2, testGenotype="Mysm1/+")
+    test3<-PhenList(dataset=read.csv("./PhenStat/extdata/MAHN_DEXAdata_genderas1or2.csv"), dataset.clean=TRUE, dataset.values.female=1, dataset.values.male=2, testGenotype="Mysm1/+")
     
 }

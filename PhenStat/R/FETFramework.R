@@ -19,6 +19,8 @@
 FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
 {    
 
+    require(vcd)
+    
     x <- phenList$dataset
     numberofgenders=length(levels(x$Gender))
     Genotype_levels=levels(x$Genotype)         
@@ -78,7 +80,8 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
         #names(model_male_results) <- c("Male p-value","Male alternative","Male confident interval","Male estimate")
         model_female_results <- c(model_female$p.value,model_female$alternative,paste(model_female$conf.int[1],model_female$conf.int[2],sep=" to "),model_female$estimate)  
         #names(model_female_results) <- c("Female p-value","Female alternative","Female confident interval","Female estimate")  
-        
+        stat_male <- assocstats(count_matrix_male)
+        stat_female <- assocstats(count_matrix_female)
     }
     else {
         model_male_results <- c(NA,NA,NA,NA,NA)
@@ -87,6 +90,8 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
         model_female <- NULL
         count_matrix_female <-NULL
         count_matrix_male <- NULL
+        stat_male <-NULL
+        stat_female <- NULL
     }    
     
     model_results <- c(model_all$p.value,model_all$alternative,paste(model_all$conf.int[1],model_all$conf.int[2],sep=" to "),model_all$estimate)
@@ -103,6 +108,9 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
     model$count_matrix_female <- count_matrix_female
     model$count_matrix_male <- count_matrix_male
     model$count_matrix_all <- count_matrix_all
+    model$stat_all <- assocstats(count_matrix_all)
+    model$stat_male <- stat_male
+    model$stat_female <- stat_female
     
     keep_weight <- NA
     keep_gender <- NA
@@ -110,6 +118,7 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
     keep_batch <- NA
     keep_equalvar <- NA
     interactionTest <- NA
+    
     
     result <- new("PhenTestResult",list(model.output=model,depVariable=depVariable,method="FE", 
                     model.effect.batch=keep_batch,model.effect.variance=keep_equalvar,model.effect.interaction=keep_interaction,

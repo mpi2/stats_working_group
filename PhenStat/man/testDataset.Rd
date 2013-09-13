@@ -10,7 +10,11 @@
     
     3. Each one genotype level should have more than one "depVariable" level
     (variability) for MM framework, otherwise recommends FE framework. 
+    
+    Run the stages of selected framework to analyse dependent variable. 
+    For instance, run startModel and finalModel for the MM framework if the argument "callAll" is set to TRUE.
 
+    If framework contains only one stage like in Fisher Exact Test case then run that one stage regardless "callAll" value.
 
 }    
 \usage{
@@ -25,7 +29,7 @@
     \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages; default value TRUE}        
     \item{pThreshold}{a numerical value for the p-value threshold to use in tests, default value 0.05}    
     \item{method}{a character string ("MM" or "FE") defining the method to use for model building, default value "MM" mixed model}
-    \item{callAll}{flag: "FALSE" value to run only the first method (framework) function; "TRUE" value (default) to run all methods (framework) functions}        
+    \item{callAll}{flag: "FALSE" value to run only the first stage of the selected framework; "TRUE" value (default) to run all stages of framework one after another}        
     \item{keepList}{a logical vector defining the significance of different model effects: keep_batch, keep_equalvar,
         keep_weight, keep_gender, keep_interaction; default value NULL}
 }

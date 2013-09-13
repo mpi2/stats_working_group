@@ -14,15 +14,14 @@
 #-----------------------------------------------------------------------------------
 # Diagnostictest.R contains testFinalModel function
 #-----------------------------------------------------------------------------------
-testFinalModel<-function(phenList, phenTestResult)
+testFinalModel<-function(phenTestResult)
 # Diagnostic test output for MM quality of fit. There are no arguments checks assuming that 
 # function is called internally from the buildFinalModel function. Otherwise should be used with precaution. 
 {
     require(nortest)
     
-    x <- phenList$dataset
     result <- phenTestResult
-    
+    x <- result$model.dataset
     depVariable <- result$depVariable
     equation <- result$equation
     keep_weight <- result$model.effect.weight

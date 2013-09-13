@@ -17,17 +17,11 @@
 # boxplotResidualBatch, qqplotRotatedResiduals 
 #-----------------------------------------------------------------------------------
 # Q-Q plot of residuals for each genotype
-qqplotGenotype<-function(phenList, phenTestResult){
+qqplotGenotype<-function(phenTestResult){
     
     # Checks
-    if(is(phenList,"PhenList")) {
-        x <- phenList$dataset     
-        
-    } else {
-        stop("Please create a PhenList object first.")
-    }
-    
     if(is(phenTestResult,"PhenTestResult")) {
+        x<-phenTestResult$model.dataset
         modeloutput=phenTestResult$model.output
     }
     else{
@@ -52,16 +46,11 @@ qqplotGenotype<-function(phenList, phenTestResult){
 
 #-------------------------------------------------------------------------
 # Predicted versus residual plots split by genotype
-plotResidualPredicted<-function(phenList, phenTestResult){
+plotResidualPredicted<-function(phenTestResult){
     
     # Checks
-    if(is(phenList,"PhenList")) {
-        x <- phenList$dataset     
-        
-    } else {
-        stop("Please create a PhenList object first.")
-    }
     if(is(phenTestResult,"PhenTestResult")) {
+        x<-phenTestResult$model.dataset
         modeloutput=phenTestResult$model.output
     }
     else{
@@ -86,16 +75,11 @@ plotResidualPredicted<-function(phenList, phenTestResult){
 
 #-----------------------------------------------------------------------------------
 # Q-Q plot of blups
-qqplotRandomEffects<-function(phenList, phenTestResult){
+qqplotRandomEffects<-function(phenTestResult){
     
     # Checks
-    if(is(phenList,"PhenList")) {
-        x <- phenList$dataset     
-        
-    } else {
-        stop("Please create a PhenList object first.")
-    }
     if(is(phenTestResult,"PhenTestResult")) {
+        x<-phenTestResult$model.dataset
         modeloutput=phenTestResult$model.output
         keep_batch <- phenTestResult$model.effect.batch
     }
@@ -118,16 +102,11 @@ qqplotRandomEffects<-function(phenList, phenTestResult){
 
 #----------------------------------------------------------------------------------------------------------
 # Residue versus batch split by genotype
-boxplotResidualBatch<-function(phenList, phenTestResult){
+boxplotResidualBatch<-function(phenTestResult){
     
     # Checks
-    if(is(phenList,"PhenList")) {
-        x <- phenList$dataset     
-        
-    } else {
-        stop("Please create a PhenList object first.")
-    }
     if(is(phenTestResult,"PhenTestResult")) {
+        x<-phenTestResult$model.dataset
         modeloutput=phenTestResult$model.output
     }
     else{
@@ -152,16 +131,11 @@ boxplotResidualBatch<-function(phenList, phenTestResult){
 
 #-------------------------------------------------------------------------------
 # Q-Q plot of rotated residuals
-qqplotRotatedResiduals<-function(phenList, phenTestResult){
+qqplotRotatedResiduals<-function(phenTestResult){
     
     # Checks
-    if(is(phenList,"PhenList")) {
-        x <- phenList$dataset     
-        
-    } else {
-        stop("Please create a PhenList object first.")
-    }
     if(is(phenTestResult,"PhenTestResult")) {
+        x<-phenTestResult$model.dataset
         modeloutput=phenTestResult$model.output
         keep_batch <- phenTestResult$model.effect.batch
     }

@@ -14,10 +14,14 @@
 #-----------------------------------------------------------------------------------
 # PhenTestResult.R contains PhenTestResult function
 #-----------------------------------------------------------------------------------
-PhenTestResult <- function(model.output=NULL, depVariable=NULL, equation="withWeight", method="MM", model.effect.batch=NULL, model.effect.variance=NULL, 
+PhenTestResult <- function(model.output=NULL, 
+        model.dataset=NULL,
+        depVariable=NULL, equation="withWeight", method="MM", 
+        model.effect.batch=NULL, model.effect.variance=NULL, 
         model.effect.gender=NULL, model.effect.interaction=NULL, model.output.interaction=NULL, model.effect.weight=NULL, numberGenders=NULL,
         pThreshold=0.05, model.formula.null=NULL, 
-        model.formula.genotype=NULL, model.output.genotype.nulltest.pVal=NULL, model.output.quality=NULL,model.output.summary=NULL) 
+        model.formula.genotype=NULL, model.output.genotype.nulltest.pVal=NULL, 
+        model.output.quality=NULL,model.output.summary=NULL) 
 
 # Construct PhenTestResult object from components
 
@@ -35,6 +39,7 @@ PhenTestResult <- function(model.output=NULL, depVariable=NULL, equation="withWe
     x$model.output.genotype.nulltest.pVal <- model.output.genotype.nulltest.pVal
     x$pThreshold <- pThreshold
     x$model.output <- model.output
+    x$model.dataset <- model.dataset
     x$model.output.quality <- model.output.quality
     x$model.output.summary <- model.output.summary
     x$model.output.interaction <- model.output.interaction

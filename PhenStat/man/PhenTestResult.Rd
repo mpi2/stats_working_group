@@ -6,7 +6,7 @@
     Return an instance of the \code{\linkS4class{PhenTestResult}} object. Internal function for the package. Not build for users to directly call.
 }
 \usage{
-    PhenTestResult(model.output=NULL, depVariable=NULL, equation="withWeight", 
+    PhenTestResult(model.output=NULL, model.dataset=NULL, depVariable=NULL, equation="withWeight", 
             method="MM", model.effect.batch=NULL, 
             model.effect.variance=NULL,model.effect.gender=NULL, 
             model.effect.interaction=NULL, model.output.interaction=NULL, 
@@ -17,6 +17,7 @@
 }
 \arguments{
     \item{model.output}{representing the model fit gls object or lme object}
+    \item{model.dataset}{dataset used for modeling}
     \item{depVariable}{depending variable in the model}
     \item{equation}{possible values: "withWeight" to include weight effect into model, "withoutWeight" to exclude weight effect from the model}
     \item{method}{possible values: "MM" to work with Mixed Model framework, "FE" to work with Fisher Exact Test framework}

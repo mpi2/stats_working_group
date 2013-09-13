@@ -5,11 +5,10 @@
     Create a Q-Q plot of rotated residuals
 }
 \usage{
-    qqplotRotatedResiduals(phenList, phenTestResult)
+    qqplotRotatedResiduals(phenTestResult)
 }
 \arguments{
-    \item{phenList}{instance of the \code{\linkS4class{PhenList}} class; mandatory argument}
-    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{testDataset} ; mandatory argument}
+    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{\link{testDataset}}; mandatory argument}
 }
 
 \references{
@@ -24,5 +23,5 @@
             dataset.colname.weight="Weight.Value",
             testGenotype="Arid4a/Arid4a",hemiGenotype="Arid4a/+")
     result <- testDataset(test,depVariable="Cl")
-    qqplotRotatedResiduals(test,result)
+    qqplotRotatedResiduals(result)
 }

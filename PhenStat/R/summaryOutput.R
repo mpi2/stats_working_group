@@ -47,16 +47,21 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
     else {
         message("Model output:")
         
-        message(paste("All data p-val: ",round(phenTestResult$model.output$all$p.val,digits=9),sep=""))
-       
+        message(paste("All data p-val: ",round(phenTestResult$model.output$all$p.val,digits=3),sep=""))
+        
+        message(paste("All data effect size: ",round(phenTestResult$model.output$stat_all$cramer,digits=3),sep=""))
+        
         if (!is.null(phenTestResult$model.output$male)){
-            message(paste("Males only p-val: ",round(phenTestResult$model.output$male$p.val,digits=9),sep=""))
+            message(paste("Males only p-val: ",round(phenTestResult$model.output$male$p.val,digits=3),sep=""))
+            message(paste("Males only effect size: ",round(phenTestResult$model.output$stat_male$cramer,digits=3),sep=""))
             
         }
         if (!is.null(phenTestResult$model.output$female)){
-            message(paste("Females only p-val: ",round(phenTestResult$model.output$female$p.val,digits=9),sep=""))
+            message(paste("Females only p-val: ",round(phenTestResult$model.output$female$p.val,digits=3),sep=""))
+            message(paste("Females only effect size: ",round(phenTestResult$model.output$stat_female$cramer,digits=3),sep=""))
            
         }
+        
     }
     
     
@@ -99,19 +104,19 @@ generateGraphs <- function(phenList, phenTestResult, dir, graphingName=NULL, typ
         #4
         graph_name=file.path(dir, "qqplotGenotype.png")
         png(graph_name,type=type)
-        qqplotGenotype(phenList,phenTestResult)
+        qqplotGenotype(phenTestResult)
         dev.off()
         
         #5
         graph_name=file.path(dir, "plotResidualPredicted.png")
         png(graph_name,type=type)
-        plotResidualPredicted(phenList,phenTestResult)
+        plotResidualPredicted(phenTestResult)
         dev.off()
         
         if (('Batch' %in% colnames(phenList$dataset)) && phenTestResult$model.effect.batch){
             graph_name=file.path(dir, "qqplotRandomEffects.png")
             png(graph_name,type=type)
-            qqplotRandomEffects(phenList,phenTestResult)
+            qqplotRandomEffects(phenTestResult)
             dev.off()
         }    
         
@@ -119,7 +124,7 @@ generateGraphs <- function(phenList, phenTestResult, dir, graphingName=NULL, typ
         if (('Batch' %in% colnames(phenList$dataset))){
             graph_name=file.path(dir, "boxplotResidualBatch.png")
             png(graph_name,type=type)
-            boxplotResidualBatch(phenList,phenTestResult)
+            boxplotResidualBatch(phenTestResult)
             dev.off()
         }    
         
@@ -127,7 +132,7 @@ generateGraphs <- function(phenList, phenTestResult, dir, graphingName=NULL, typ
         if (('Batch' %in% colnames(phenList$dataset)) && phenTestResult$model.effect.batch){
             graph_name=file.path(dir, "qqplotRotatedResiduals.png")
             png(graph_name,type=type)
-            qqplotRotatedResiduals(phenList,phenTestResult)
+            qqplotRotatedResiduals(phenTestResult)
             dev.off()
         }   
         

@@ -2,18 +2,19 @@
 \alias{classificationTag}
 \title{Method "classificationTag"}
 \description{
-    Returns a classification tag to assign a sexual dimorphism assessment of the phenotypic change
+    Return a classification tag to assign a sexual dimorphism assessment of the phenotypic change
 }
 \usage{
     classificationTag(phenTestResult, userMode = "summaryOutput", 
-            phenotypeThreshold = 0.01)
+            phenotypeThreshold = 0.01,outputMessages=TRUE)
 }
 \arguments{
-    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{testDataset} ; mandatory argument}
+    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{\link{testDataset}}; mandatory argument}
     \item{userMode}{flag: "vectorOuput" a sexual dimorphic classification is assigned with a proviso of later assessing 
         the overall statistical significance; "summaryOutput" the phenotypeThreshold is used to assess the overall statistical 
         significance and then if significant the sexual dimorphic classification determined; defaults to summaryOutput}
     \item{phenotypeThreshold}{a numerical value defining the significance threshold to use in assigning the classification tag; default value 0.01}
+    \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages; default value TRUE}        
 }
 \value{
     Return a classification tag to assign a sexual dimorphism assessment of the phenotypic change.  

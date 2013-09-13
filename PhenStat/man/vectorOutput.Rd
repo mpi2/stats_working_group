@@ -10,7 +10,7 @@
     vectorOutput(phenTestResult)
 }
 \arguments{
-    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{testDataset} ; mandatory argument}
+    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{\link{testDataset}}; mandatory argument}
 }
 \value{
     Return a vector with model fitting results: model output summary and other values

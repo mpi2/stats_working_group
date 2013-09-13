@@ -222,7 +222,7 @@ startModel <- function(phenList, depVariable, equation="withWeight", outputMessa
     message(paste("Information:\nEquation: '",equation,"'.\n",sep=""))   
     
     
-    result <- new("PhenTestResult",list(model.output=model,depVariable=depVariable,equation=equation,method="MM", 
+    result <- new("PhenTestResult",list(model.dataset=x, model.output=model,depVariable=depVariable,equation=equation,method="MM", 
                     model.effect.batch=keep_batch,model.effect.variance=keep_equalvar,model.effect.interaction=keep_interaction,
                     model.output.interaction=interactionTest,model.effect.gender=keep_gender,model.effect.weight=keep_weight,
                     numberGenders=numberofgenders,pThreshold=pThreshold))
@@ -258,7 +258,7 @@ modelFormula <- function(equation, numberofgenders, depVariable)
 }
 
 #-----------------------------------------------------------------------------------
-finalModel <- function(phenList, phenTestResult, outputMessages=TRUE)
+finalModel <- function(phenTestResult, outputMessages=TRUE)
 
 # Works with PhenTestResult object created by testDataset function. 
 # Builds final model based on the significance of different model effects, depVariable and equation 
@@ -271,18 +271,10 @@ finalModel <- function(phenList, phenTestResult, outputMessages=TRUE)
     # Checks and stop messages
     stop_message <- ""
     
-    # Check PhenList object
-    if(is(phenList,"PhenList")) {
-        x <- phenList$dataset  
-        
-    } else {
-        stop_message <- "Error:\nPlease create a PhenList object first.\n"
-    }
-
-    
     # Check PhenTestResult object
     if(is(phenTestResult,"PhenTestResult")) {
         result<-phenTestResult
+        x<-result$model.dataset
         depVariable <- result$depVariable
         equation <- result$equation
         keep_weight <- result$model.effect.weight
@@ -290,6 +282,10 @@ finalModel <- function(phenList, phenTestResult, outputMessages=TRUE)
         keep_interaction <- result$model.effect.interaction
         keep_batch <- result$model.effect.batch
         keep_equalvar <- result$model.effect.variance
+
+        # Stop function if there are no datasets to work with
+        if(is.null(x))
+            stop_message <- "Error:\nPlease create a PhenList object first and run function 'testDataset'.\n"
         
         # Stop function if there are no enough input parameters      
         if (is.null(equation) || is.null(depVariable) || is.null(keep_batch) || is.null(keep_equalvar) 
@@ -433,7 +429,7 @@ finalModel <- function(phenList, phenTestResult, outputMessages=TRUE)
     result$model.formula.genotype=model_genotype.formula
     
     # Assign MM quality of fit
-    result$model.output.quality=testFinalModel(phenList,result)
+    result$model.output.quality=testFinalModel(result)
     
     # Parse modeloutput and choose output depending on model 
     result$model.output.summary = parserOutputSummary(result)
