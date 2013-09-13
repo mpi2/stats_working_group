@@ -24,7 +24,7 @@ vectorOutput <- function(phenTestResult)
         
         classificationValue <- classificationTag(phenTestResult,userMode="vectorOutput",outputMessages=FALSE)
         
-        vectorOutput <- c(equation,phenTestResult$depVariable, phenTestResult$model.effect.batch, 
+        vectorOutput <- c(paste("MM - ",equation,sep=""),phenTestResult$depVariable, phenTestResult$model.effect.batch, 
                 phenTestResult$model.effect.variance, 
                 phenTestResult$model.output.genotype.nulltest.pVal, 
                 phenTestResult$model.output.summary["genotype_estimate"], 
@@ -48,18 +48,19 @@ vectorOutput <- function(phenTestResult)
                 phenTestResult$model.output.summary["gender_MvKO_SE"], 
                 phenTestResult$model.output.summary["gender_MvKO_p_value"],
                 classificationValue)
-        names(vectorOutput) <- c("Equation","DependentVariable","BatchEffectIsSignificant",
-                "ResidualVariancesAreHomogeneous","GenotypeContributionSignificance",
-                "GenotypeParameterEstimate","GenotypeStandardErrorEstimate","GenotypeEffectPVal"
-                "GenderParameterEstimate","GenderStandardErrorEstimate","GenderEffectPVal",
-                "WeightParameterEstimate","WeightStandardErrorEstimate","WeightEffectPVal",
-                "Gp1Genotype","Gp1ResidualsNormalityTest",
-                "Gp2Genotype","Gp2ResidualsNormalityTest","BlupsTest",
-                "RotatedResidualsNormalityTest",
-                "InterceptParameterEstimate","InterceptStandardErrorEstimate",
-                "InteractionIncluded","InteractionPVal",
-                "GenderFvKOEstimate","GenderFvKOStandardErrorEstimate","GenderFvKOPVal",
-                "GenderMvKOEstimate","GenderMvKOStandardErrorEstimate","GenderMvKOPVal")
+        names(vectorOutput) <- c("Method and equation","Dependent variable","Batch included",
+                "Residual variances homogeneity","Genotype contribution",
+                "Genotype estimate","Genotype standard error","Genotype p-Val",
+                "Gender estimate","Gender standard error","Gender p-val",
+                "Weight estimate","Weight standard error","Weight p-val",
+                "Gp1 genotype","Gp1 Residuals normality test",
+                "Gp2 genotype","Gp2 Residuals normality test","Blups test",
+                "Rotated residuals normality test",
+                "Intercept estimate","Intercept standard error",
+                "Interaction included","Interaction p-val",
+                "Gender FvKO estimate","Gender FvKO standard error","Gender FvKO p-val",
+                "Gender MvKO estimate","Gender MvKO standard error","Gender MvKO p-val",
+                "Classification tag")
     }
     else if (phenTestResult$method=="FE"){
         male_pval <- NA
@@ -71,8 +72,9 @@ vectorOutput <- function(phenTestResult)
             female_pval<-round(phenTestResult$model.output$female$p.val,digits=3)
         }
         
-        vectorOutput <- c("Fisher Exact Test",phenTestResult$depVariable, phenTestResult$model.effect.batch, 
-                phenTestResult$model.effect.variance,
+        vectorOutput <- c("Fisher Exact Test",phenTestResult$depVariable, 
+                NA, 
+                NA,
                 round(phenTestResult$model.output$all$p.val,digits=3),
                 NA, 
                 NA,  
@@ -95,7 +97,22 @@ vectorOutput <- function(phenTestResult)
                 NA, 
                 male_pval,
                 NA)
+        names(vectorOutput) <- c("Method","Dependent variable",
+                "Batch included",
+                "Residual variances homogeneity",
+                "Genotype contribution",
+                "Genotype estimate","Genotype standard error","Genotype p-Val",
+                "Gender estimate","Gender standard error","Gender p-val",
+                "Weight estimate","Weight standard error","Weight p-val",
+                "Gp1 genotype","Gp1 Residuals normality test",
+                "Gp2 genotype","Gp2 Residuals normality test","Blups test",
+                "Rotated residuals normality test",
+                "Intercept estimate","Intercept standard error",
+                "Interaction included","Interaction p-val",
+                "Gender FvKO estimate","Gender FvKO standard error","Gender FvKO p-val",
+                "Gender MvKO estimate","Gender MvKO standard error","Gender MvKO p-val",
+                "Classification tag")
     }
-    names(vectorOutput)<-NULL
+    #names(vectorOutput)<-NULL
     return(vectorOutput)
 }
