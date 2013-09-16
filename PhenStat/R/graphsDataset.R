@@ -1,4 +1,4 @@
-# Copyright © 2011-2013 EMBL - European Bioinformatics Institute
+# Copyright ï¿½ 2011-2013 EMBL - European Bioinformatics Institute
 # 
 # Licensed under the Apache License, Version 2.0 (the "License"); 
 # you may not use this file except in compliance with the License.  
@@ -119,62 +119,4 @@ scatterplotGenotypeWeight<-function(phenList, depVariable, graphingName){
     model.formula <- as.formula(paste(depVariable, "~", paste("Weight", "Genotype", sep= "|")))
     scatterplot(data=x, model.formula, ylab=graphingName)
 }
-
-
-#-----------------------------------------------------------------------------------
-#Stacked bar plot of count data for a variable
-categoricalBarplot<-function(phenList, phenTestResult, depVariable){
-	
-	# Checks inputs have the correct structure
-	if(is(phenList,"PhenList")) {
-		x <- phenList$dataset     
-		
-	} else {
-		stop("Please create a PhenList object first.")
-	}
-	
-	if(is(phenTestResult,"PhenTestResult")) {
-		modeloutput=phenTestResult$model.output
-	}
-	else{
-		stop("Please create a PhenTestResult object first.")
-	}
-	
-	#Checks depVariable name exists in dataset
-	if (!(depVariable %in% colnames(x))){
-		message <- paste("Error:\nDependent variable column '",depVariable,"' is missed in the dataset.\n",sep="")
-		stop(message)
-	}
-	# Test: depVariable is categorical variable
-	columnOfInterest <- x[,c(depVariable)]
-	if(is.numeric(columnOfInterest)){
-		if ((length(unique(columnOfInterest))>10)){
-			message<-paste("Warning: Dependent variable '",depVariable,"'  has greater than 10 different numeric values.  This graph is for categorical variables.  The high level of possible variation, raises the question as to whether a Mixed Model analysis could be a better way to do the analysis.\n",sep="") 
-			stop(message)
-		}
-	}
-	
-	#needs a check that the depVariable is the one used in the phenTestResult
-	if(phenTestResult$depVariable != depVariable){
-		message <- paste("Error:\nThe depVariable provided as an argument does not match the depVariable used in generating the PhenTestResult Object.\n", sep="")
-		stop(message)
-	}
-	# Produces graphs 
-	numberofgenders=phenTestResult$numberGenders
-	
-	if(numberofgenders==2){
-		par(mfrow=c(1,3)) 
-		barplot(phenTestResult$model.output$count_matrix_all, main="All data", beside=FALSE, legend=rownames(phenTestResult$model.output$count_matrix_all), xlab="Genotype", ylab="Percentage", col=c(1:dim(phenTestResult$model.output$count_matrix_all)[1]))
-		barplot(phenTestResult$model.output$count_matrix_male, main="Male animals only", beside=FALSE, legend=rownames(phenTestResult$model.output$count_matrix_all), xlab="Genotype", ylab="Percentage", col=c(1:dim(phenTestResult$model.output$count_matrix_all)[1]))
-		barplot(phenTestResult$model.output$count_matrix_female, main="Female animals only", beside=FALSE, legend=rownames(phenTestResult$model.output$count_matrix_all), xlab="Genotype", ylab="Percentage", col=c(1:dim(phenTestResult$model.output$count_matrix_all)[1]))
-		
-		
-	}else{
-		par(mfrow=c(1,1))
-		barplot(phenTestResult$model.output$count_matrix_all, main="All data", beside=FALSE, legend=rownames(phenTestResult$model.output$count_matrix_all), xlab="Genotype", ylab="Percentage", col=c(1:dim(phenTestResult$model.output$count_matrix_all)[1]))
-		
-	}
-}
-
-
-
+#-------------------------------------------------------------------------------

@@ -26,6 +26,6 @@
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
             testGenotype="Sparc/Sparc")
     result <- testDataset(test,depVariable="Lean.Mass",callAll=FALSE)
-    result <- finalModel(test,result)
-    testFinalModel(test,result)
+    result <- finalModel(result)
+    testFinalModel(result)
 }

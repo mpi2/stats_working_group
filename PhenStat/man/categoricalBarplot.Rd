@@ -6,12 +6,10 @@
     Graphs are created for all data and also for each gender individually.
 }
 \usage{
-    categoricalBarplot(phenList, phenTestResult, depVariable)
+    categoricalBarplot(phenTestResult)
 }
 \arguments{
-    \item{phenList}{instance of the \code{\linkS4class{PhenList}} class; mandatory argument}
     \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{testDataset}; mandatory argument}
-    \item{depVariable}{a character string defining the dependent variable of interest; mandatory argument}
 }
 \references{
     Karp N, Melvin D, Sanger Mouse Genetics Project, Mott R (2012): Robust and Sensitive Analysis of Mouse Knockout Phenotypes. \emph{PLoS ONE} \bold{7}(12): e52410. doi:10.1371/journal.pone.0052410
@@ -21,9 +19,9 @@
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenList}}}
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/categorical_example1_aff3_Xray.csv"),
+    test <- PhenList(dataset=read.csv("./PhenStat/extdata/categorical_example 1_aff3_Xray.csv"),
             testGenotype="Aff3/Aff3")
     result <- testDataset(test,depVariable="Thoracic.Processes")       
-    categoricalBarplot(test, result, depVariable="Thoracic.Processes")
+    categoricalBarplot(result)
     
-    }
+}

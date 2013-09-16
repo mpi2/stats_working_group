@@ -46,7 +46,9 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
         if(!is.null(dataset.colname.weight)) colnames(dataset)[colnames(dataset) == dataset.colname.weight] <-'Weight'
         
         # Replace missing values specified in the user format with NA if needed 
-        if(!is.null(dataset.values.missingValue)) dataset[dataset == dataset.values.missingValue] <- NA 
+        if(!is.null(dataset.values.missingValue)) dataset[dataset == dataset.values.missingValue] <- NA
+        # Reaplace empty strings with NA
+        dataset[dataset == ""] <- NA  
         
         if ('Weight' %in% colnames(dataset)){ 
                 if (is.numeric(dataset$Weight)){

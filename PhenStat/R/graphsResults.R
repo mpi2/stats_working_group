@@ -170,7 +170,38 @@ qqplotRotatedResiduals<-function(phenTestResult){
         message("Diagnostics on rotated residues not relevant as variation between batches was not significant.")
     }
 }
+
+#-----------------------------------------------------------------------------------
+#Stacked bar plot of count data for a variable
+categoricalBarplot<-function(phenTestResult){
+    
+    if(is(phenTestResult,"PhenTestResult")) {
+        x<-phenTestResult$model.dataset
+        modeloutput=phenTestResult$model.output
+    }
+    else{
+        stop("Please create a PhenTestResult object first.")
+    }
+
+    # Produces graphs 
+    numberofgenders=phenTestResult$numberGenders
+    
+    if(numberofgenders==2){
+        par(mfrow=c(1,3)) 
+        barplot(phenTestResult$model.output$count_matrix_all, main="All data", beside=FALSE, legend=rownames(phenTestResult$model.output$count_matrix_all), xlab="Genotype", ylab="Percentage", col=c(1:dim(phenTestResult$model.output$count_matrix_all)[1]))
+        barplot(phenTestResult$model.output$count_matrix_male, main="Male animals only", beside=FALSE, legend=rownames(phenTestResult$model.output$count_matrix_all), xlab="Genotype", ylab="Percentage", col=c(1:dim(phenTestResult$model.output$count_matrix_all)[1]))
+        barplot(phenTestResult$model.output$count_matrix_female, main="Female animals only", beside=FALSE, legend=rownames(phenTestResult$model.output$count_matrix_all), xlab="Genotype", ylab="Percentage", col=c(1:dim(phenTestResult$model.output$count_matrix_all)[1]))
+        
+        
+    }else{
+        par(mfrow=c(1,1))
+        barplot(phenTestResult$model.output$count_matrix_all, main="All data", beside=FALSE, legend=rownames(phenTestResult$model.output$count_matrix_all), xlab="Genotype", ylab="Percentage", col=c(1:dim(phenTestResult$model.output$count_matrix_all)[1]))
+        
+    }
+}
+
 #-------------------------------------------------------------------------------
+
 
 
 

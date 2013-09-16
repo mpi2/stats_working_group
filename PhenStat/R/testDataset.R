@@ -37,68 +37,81 @@ testDataset <- function(phenList, depVariable, equation="withWeight", outputMess
     if(is(phenList,"PhenList")) {
         x <- phenList$dataset    
         
+        if (!(depVariable %in% colnames(x)))
+            stop_message <- paste("Error:\nDependent variable column '",depVariable,"' is missed in the dataset.\n",sep="")
+        else {
+            columnOfInterest <- x[,c(depVariable)]
+            
+            # Test: depVariable is numeric in MM framework
+            if(is.numeric(columnOfInterest)){
+                
+                # Test: depVariable is continuous variable in MM framework (sufficcient variablity)   
+                if ((length(unique(columnOfInterest))/length(columnOfInterest)<0.05) && method=="MM") 
+                stop_message <- paste(stop_message,"Error:\nInsufficient variability in the dependent variable '",depVariable,"' for MM framework. Fisher Exact Test can be better way to do the analysis.\n",sep="") 
+            }
+            else if (method=="MM"){
+                method="FE"
+                if (outputMessages)
+                message(paste("Warning:\nDependent variable '",depVariable,"' is not numeric. Fisher Exact Test will be used for the analysis of this dependent variable.",sep=""))
+            }
+            
+            if (method=="MM"){
+                # Test: depVariable variablity in Genotypes (require at least 2 levels)            
+                Genotype_levels=levels(x$Genotype)
+                Gender_levels=levels(x$Gender)  
+                
+                passed<-TRUE
+                for (i in 1:length(Genotype_levels)){
+                    GenotypeSubset <- subset(x, x$Genotype==Genotype_levels[i])
+                    for (j in 1:length(Gender_levels)){           
+                        GenotypeGenderSubset <- subset(GenotypeSubset, GenotypeSubset$Gender==Gender_levels[j]) 
+                        columnOfInterest <- GenotypeGenderSubset[,c(depVariable)]
+                        if (length(unique(columnOfInterest))==1){
+                            passed<-FALSE
+                        }
+                    }                
+                }
+                if (!passed)
+                    stop_message <- paste(stop_message,"Error:\nInsufficient variability in the dependent variable '",depVariable,"' for genotype/gender combinations to allow the application of Mixed Model.\n",sep="")             
+           }
+           else if (method=="FE") {
+                # Test: depVariable number of levels is at least 2
+                if (length(levels(factor(columnOfInterest,exclude=NA)))<2){
+                   stop_message <- paste("Error:\nInsufficient variability in the dependent variable '",depVariable,"' to allow the application of Fisher Exact test framework.\n",sep="") 
+                }
+           }     
+        }
+        
     } else {
         stop_message <- "Error:\nPlease create a PhenList object first.\n"
     }    
     
-    if (!(depVariable %in% colnames(x)))
-        stop_message <- paste("Error:\nDependent variable column '",depVariable,"' is missed in the dataset.\n",sep="")
-    
     
     if (!(equation %in% c("withWeight","withoutWeight")) && method=="MM")
-        stop_message <- "Error:\nPlease define equation you would like to use from the following options: 'withWeight', 'withoutWeight'\n."
+        stop_message <- paste(stop_message,"Error:\nPlease define equation you would like to use from the following options: 'withWeight', 'withoutWeight'.\n",sep="")
     
-    if (!('Weight' %in% colnames(x)) && equation=="withWeight" && method=="MM"){
-        if (outputMessages)
-        message("Warning:\nWeight column is missed in the dataset. Equation 'withWeight' can't be used and has been replaced to 'withoutWeight'.")
-        equation="withoutWeight"
+    # Dealing with provided significance values
+    if (!is.null(keepList)){
+        # Stop function if there are no enough needed input parameters
+        if ((length(keepList[keepList==TRUE]) + length(keepList[keepList==FALSE])) !=5) 
+        stop_message <- paste(stop_message,
+                "Error:\nPlease define the values for 'keepList' list, where for each effect/part of the model TRUE/FALSE value defines to keep it in the model or not, for instance: 
+'keepList=c(keepBatch=TRUE,keepVariance=TRUE,keepWeight=FALSE,keepGender=TRUE,keepInteraction=TRUE)'.\n",sep="")
+        
     }
-    
-    if (nchar(stop_message)==0){
-    
-        # Test: depVariable is continuous variable
-        
-        columnOfInterest <- x[,c(depVariable)]
-        
-        if(is.numeric(columnOfInterest)){
-            if ((length(unique(columnOfInterest))/length(columnOfInterest)<0.05) && outputMessages && method=="MM") 
-            message(paste("Warning: Dependent variable '",depVariable,"' is numeric but seemed to be categorical because there is little variation. Fisher Exact Test can be better way to do the analysis than Mixed Models.\n",sep="")) 
-        }
-        else if (method=="MM"){
-            method="FE"
-            if (outputMessages)
-            message(paste("Warning:\nDependent variable '",depVariable,"' is not numeric. Fisher Exact Test will be used for the analysis of this dependent variable.\n",sep=""))
-        }
-        # Test: depVariable variablity in Genotypes (require at least 2 levels)
-        
-        Genotype_levels=levels(x$Genotype)
-        Gender_levels=levels(x$Gender)  
-        
-        for (i in 1:length(Genotype_levels)){
-            GenotypeSubset <- subset(x, x$Genotype==Genotype_levels[i])
-            for (j in 1:length(Gender_levels)){           
-                GenotypeGenderSubset <- subset(GenotypeSubset, GenotypeSubset$Gender==Gender_levels[j]) 
-                columnOfInterest <- GenotypeGenderSubset[,c(depVariable)]
-                if (length(unique(columnOfInterest))==1)
-                stop_message <- paste("Error:\nInsufficient variability in the dependent variable '",depVariable,"' for genotype/gender combinations to allow the application of Mixed Model or Fisher Exact test framework.\n",sep="")
-            }                
-        }  
-        
-        # Dealing with provided significance values
-        if (!is.null(keepList)){
-            # Stop function if there are no enough needed input parameters
-            if (length(keepList)!=5) 
-            stop_message <- "Error:\nPlease define the values for 'keepList' list, where for each effect/part of the model TRUE/FALSE value defines to keep it in the model or not: 
-            'keepList=c(keepBatch,keepVariance,keepWeight,keepGender,keepInteraction)'.\n"
-            
-        }
-    }    
-    else{
+
+    if (nchar(stop_message)>0){
         if (outputMessages)   
             message(stop_message)
         opt <- options(show.error.messages=FALSE)
         on.exit(options(opt))      
         stop()
+    }
+    
+    if (!('Weight' %in% colnames(x)) && equation=="withWeight" && method=="MM"){
+        if (outputMessages)
+        message("Warning:\nWeight column is missed in the dataset. Equation 'withWeight' can't be used and has been replaced to 'withoutWeight'.")
+        equation="withoutWeight"
     }
     
     # END Checks and stop messages
