@@ -35,7 +35,7 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
                 columnOfInterest <- columnOfInterest[columnOfInterest==depVariable_levels[j]]
                 nr <- length(columnOfInterest) 
                 if (is.null(nr)) nr<-0 
-                count_matrix_all[i,j]=nr
+                count_matrix_all[j,i]=nr
         }    
         
     }
@@ -43,7 +43,7 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
     for (i in 1:length(Genotype_levels)){
         GenotypeSubset <- subset(x, x$Genotype==Genotype_levels[i])
         for (j in 1:length(depVariable_levels)){  
-            ES_matrix_all[j,i]=(count_matrix_all[i,j]/rowSums(count_matrix_all)[i])*100
+            ES_matrix_all[j,i]=(count_matrix_all[j,i]/colSums(count_matrix_all)[i])*100
         }    
         
     }
@@ -51,8 +51,8 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
         ES_matrix_all[j,3]=abs(ES_matrix_all[j,1]-ES_matrix_all[j,2])
     }  
     
-    rownames(count_matrix_all)<-Genotype_levels
-    colnames(count_matrix_all)<-depVariable_levels
+    colnames(count_matrix_all)<-Genotype_levels
+    rownames(count_matrix_all)<-depVariable_levels
     
     colnames(ES_matrix_all)<-append(Genotype_levels,"ES change")
     rownames(ES_matrix_all)<-depVariable_levels
@@ -79,13 +79,13 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
                 columnOfInterest_male <- columnOfInterest_male[columnOfInterest_male==depVariable_levels[j]]
                 m_nr <- length(columnOfInterest_male) 
                 if (is.null(m_nr) || is.na(m_nr)) m_nr<-0 
-                count_matrix_male[i,j]=m_nr
+                count_matrix_male[j,i]=m_nr
                 
                 columnOfInterest_female <- GenotypeSubset_female[,c(depVariable)]
                 columnOfInterest_female <- columnOfInterest_female[columnOfInterest_female==depVariable_levels[j]]
                 f_nr <- length(columnOfInterest_female) 
                 if (is.null(f_nr)) f_nr<-0 
-                count_matrix_female[i,j]=f_nr
+                count_matrix_female[j,i]=f_nr
             }    
             
         } 
@@ -94,8 +94,8 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
         for (i in 1:length(Genotype_levels)){
             GenotypeSubset <- subset(x, x$Genotype==Genotype_levels[i])
             for (j in 1:length(depVariable_levels)){  
-                ES_matrix_male[j,i]=(count_matrix_male[i,j]/rowSums(count_matrix_male)[i])*100
-                ES_matrix_female[j,i]=(count_matrix_female[i,j]/rowSums(count_matrix_female)[i])*100
+                ES_matrix_male[j,i]=(count_matrix_male[j,i]/colSums(count_matrix_male)[i])*100
+                ES_matrix_female[j,i]=(count_matrix_female[j,i]/colSums(count_matrix_female)[i])*100
             }    
             
         }
@@ -107,10 +107,16 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
         ES_male <- round(max(ES_matrix_male[,3]),digits=0)
         ES_female <- round(max(ES_matrix_female[,3]),digits=0)
        
-        rownames(count_matrix_female)<-Genotype_levels
-        rownames(count_matrix_male)<-Genotype_levels
-        colnames(count_matrix_female)<-depVariable_levels
-        colnames(count_matrix_male)<-depVariable_levels
+        colnames(count_matrix_female)<-Genotype_levels
+        colnames(count_matrix_male)<-Genotype_levels
+        rownames(count_matrix_female)<-depVariable_levels
+        rownames(count_matrix_male)<-depVariable_levels
+        
+        colnames(ES_matrix_male)<-append(Genotype_levels,"ES change")
+        colnames(ES_matrix_female)<-append(Genotype_levels,"ES change")
+        rownames(ES_matrix_male)<-depVariable_levels
+        rownames(ES_matrix_female)<-depVariable_levels
+        
         model_male<-fisher.test(count_matrix_male)
         model_female<-fisher.test(count_matrix_female)
         model_male_results <- c(model_male$p.value,model_male$alternative,paste(model_male$conf.int[1],model_male$conf.int[2],sep=" to "),model_male$estimate)
@@ -129,6 +135,8 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
         count_matrix_male <- NULL
         ES_male <- NULL
         ES_female <- NULL
+        ES_matrix_male<-NULL
+        ES_matrix_female<-NULL
         stat_male <-NULL
         stat_female <- NULL
         
@@ -152,6 +160,9 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
     model$ES <- ES_all
     model$ES_male <- ES_male
     model$ES_female <- ES_female
+    model$percentage_matrix_all <-ES_matrix_all
+    model$percentage_matrix_male <-ES_matrix_male
+    model$percentage_matrix_female <-ES_matrix_female
     model$stat_male <- stat_male
     model$stat_female <- stat_female
     
