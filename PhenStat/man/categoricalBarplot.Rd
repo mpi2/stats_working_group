@@ -19,9 +19,9 @@
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenList}}}
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/categorical_example 1_aff3_Xray.csv"),
+    test <- PhenList(dataset=read.csv("./PhenStat/extdata/categorical_example1_aff3_Xray.csv"),
             testGenotype="Aff3/Aff3")
-    result <- testDataset(test,depVariable="Thoracic.Processes")       
+    result <- testDataset(test,depVariable="Thoracic.Processes",method="FE")       
     categoricalBarplot(result)
     
 }

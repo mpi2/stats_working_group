@@ -25,7 +25,7 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
     numberofgenders=length(levels(x$Gender))
     Genotype_levels=levels(x$Genotype)         
     depVariable_levels=levels(factor(x[,c(depVariable)]))  
-    count_matrix_all <- matrix(0,2,length(depVariable_levels))
+    count_matrix_all <- matrix(0,length(depVariable_levels),2)
     ES_matrix_all <- matrix(0,length(depVariable_levels),3)
     
     for (i in 1:length(Genotype_levels)){
@@ -65,8 +65,8 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
 
     
     if (numberofgenders==2){
-        count_matrix_male <- matrix(0,2,length(depVariable_levels))
-        count_matrix_female <- matrix(0,2,length(depVariable_levels))
+        count_matrix_male <- matrix(0,length(depVariable_levels),2)
+        count_matrix_female <- matrix(0,length(depVariable_levels),2)
         ES_matrix_male <- matrix(0,length(depVariable_levels),3)
         ES_matrix_female <- matrix(0,length(depVariable_levels),3)
         
