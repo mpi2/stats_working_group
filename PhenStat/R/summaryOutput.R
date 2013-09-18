@@ -44,29 +44,48 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
         summary(phenTestResult$model.output)$tTable
     }
     
-    else {
+    else if (phenTestResult$method=="FE"){
         message("Model output:")
         
-        message(paste("All data p-val: ",round(phenTestResult$model.output$all$p.val,digits=3),sep=""))
+        message(paste("All data p-val: ",phenTestResult$model.output$all$p.val,sep=""))
         
-        message(paste("All data effect size: ",round(phenTestResult$model.output$stat_all$cramer,digits=3),sep=""))
+        message(paste("All data effect size: ",phenTestResult$model.output$ES,"%",sep=""))
         
         if (!is.null(phenTestResult$model.output$male)){
-            message(paste("Males only p-val: ",round(phenTestResult$model.output$male$p.val,digits=3),sep=""))
-            message(paste("Males only effect size: ",round(phenTestResult$model.output$stat_male$cramer,digits=3),sep=""))
-            
+            message(paste("Males only p-val: ",phenTestResult$model.output$male$p.val,sep=""))
+            message(paste("Males only effect size: ",phenTestResult$model.output$ES_male,"%",sep=""))
         }
         if (!is.null(phenTestResult$model.output$female)){
-            message(paste("Females only p-val: ",round(phenTestResult$model.output$female$p.val,digits=3),sep=""))
-            message(paste("Females only effect size: ",round(phenTestResult$model.output$stat_female$cramer,digits=3),sep=""))
-           
+            message(paste("Females only p-val: ",phenTestResult$model.output$female$p.va,sep=""))
+            message(paste("Females only effect size: ",phenTestResult$model.output$ES_female,"%",sep=""))            
         }
         
-    }
-    
-    
-    
-    
+        # Matrices and statistics
+        message("\nMatrix 'all':")
+        print(phenTestResult$model.output$count_matrix_all)
+        message("\nPercentage matrix 'all' statistics:")
+        print(phenTestResult$model.output$percentage_matrix_all)
+        message("\nMatrix 'all' statistics:")
+        print(phenTestResult$model.output$stat_all)
+
+        if (!is.null(phenTestResult$model.output$male)){
+            message("\nMatrix 'males only':")
+            print(phenTestResult$model.output$count_matrix_male)
+            message("\nPercentage matrix 'males only' statistics:")
+            print(phenTestResult$model.output$percentage_matrix_male)
+            message("\nMatrix 'males only' statistics:")
+            print(phenTestResult$model.output$stat_male)  
+        
+        }
+        if (!is.null(phenTestResult$model.output$female)){
+            message("\nMatrix 'females only':")
+            print(phenTestResult$model.output$count_matrix_female)
+            message("\nPercentage matrix 'females only' statistics:")
+            print(phenTestResult$model.output$percentage_matrix_female)
+            message("\nMatrix 'females only' statistics:")
+            print(phenTestResult$model.output$stat_female) 
+        }
+    }    
 }
 #-----------------------------------------------------------------------------------
 generateGraphs <- function(phenList, phenTestResult, dir, graphingName=NULL, type="Xlib")

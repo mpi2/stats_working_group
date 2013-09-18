@@ -43,7 +43,7 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
     for (i in 1:length(Genotype_levels)){
         GenotypeSubset <- subset(x, x$Genotype==Genotype_levels[i])
         for (j in 1:length(depVariable_levels)){  
-            ES_matrix_all[j,i]=(count_matrix_all[j,i]/colSums(count_matrix_all)[i])*100
+            ES_matrix_all[j,i]=round((count_matrix_all[j,i]/colSums(count_matrix_all)[i])*100,digits=0)
         }    
         
     }
@@ -94,8 +94,8 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
         for (i in 1:length(Genotype_levels)){
             GenotypeSubset <- subset(x, x$Genotype==Genotype_levels[i])
             for (j in 1:length(depVariable_levels)){  
-                ES_matrix_male[j,i]=(count_matrix_male[j,i]/colSums(count_matrix_male)[i])*100
-                ES_matrix_female[j,i]=(count_matrix_female[j,i]/colSums(count_matrix_female)[i])*100
+                ES_matrix_male[j,i]=round((count_matrix_male[j,i]/colSums(count_matrix_male)[i])*100,digits=0)
+                ES_matrix_female[j,i]=round((count_matrix_female[j,i]/colSums(count_matrix_female)[i])*100,digits=0)
             }    
             
         }

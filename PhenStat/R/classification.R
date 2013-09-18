@@ -29,11 +29,16 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput", phenotypeT
         keep_interaction <- result$model.effect.interaction
         keep_batch <- result$model.effect.batch
         keep_equalvar <- result$model.effect.variance
+        model.output <- result$model.output
         
-        # Stop function if there are no enough input parameters      
-        if (is.null(equation) || is.null(depVariable) || is.null(keep_batch) || is.null(keep_equalvar) 
-                || is.null(keep_gender) || is.null(keep_interaction)) 
-        stop_message <- "Error:\nPlease run function 'testDataset' first.\n"
+        # Stop function if there are no enough input parameters    
+        if (phenTestResult$method=="MM"){
+            if (is.null(equation) || is.null(depVariable) || is.null(keep_batch) || is.null(keep_equalvar) 
+                || is.null(keep_gender) || is.null(keep_interaction)) {
+                stop_message <- "Error:\nPlease run function 'testDataset' first.\n"}}
+        else
+            if (is.null(model.output))
+                stop_message <- "Error:\nPlease run function 'testDataset' first.\n"
     }
     else{
         stop_message <- "Error:\nPlease create a PhenTestResult object first by using function 'testDataset'.\n"        
@@ -110,18 +115,41 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput", phenotypeT
                     ChangeClassification=paste("If phenotype is significant - different direction for the sexes")
                 }                                        
             
-        }
-        return(ChangeClassification)
+        }        
       }
       else {
-            return(NA)
-            #TODO
-            #if (userMode=="summaryOutput") 
-                
-            #else {
-                
-            #}
-      }              
+            if (!is.null(phenTestResult$model.output$male)){
+                male_p.value <- result$model.output$male$p.value
+            }
+            else {
+                male_p.value <- 10
+            }
+            if (!is.null(phenTestResult$model.output$female)){
+                female_p.value <- result$model.output$female$p.value
+            }
+            else {
+                female_p.value <- 10
+            }
+            
+            if (result$model.output$all$p.value >= 0.05 && male_p.value >= 0.05 && female_p.value >= 0.05){
+                    ChangeClassification=paste("No significant change")
+            } 
+            else { 
+                if(female_p.value>=0.05 && male_p.value>=0.05){
+                    ChangeClassification=paste("Significant change - cannot classify effect")
+                }else if(female_p.value<0.05 &&  male_p.value>=0.05){
+                    ChangeClassification=paste("Significant change - females only")
+                }else if(female_p.value>=0.05 &&  male_p.value<0.05){
+                    ChangeClassification=paste("Significant change - males only")
+                }
+                else 
+                    ChangeClassification="Significant change - both sexes equally" 
+            } 
+            
+ 
+       }
+       return(ChangeClassification) 
+
     }
 }
 

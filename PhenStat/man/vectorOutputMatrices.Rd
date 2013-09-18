@@ -1,18 +1,18 @@
-\name{summaryOutput}
-\alias{summaryOutput}
-\title{Method "summaryOutput"}
+\name{vectorOutputMatrices}
+\alias{vectorOutputMatrices}
+\title{Method "vectorOutputMatrices"}
 \description{
-    Wrapper for the model fitting results. Return model fitting and testing results in a user friendly format
+    Return count matrices from Fisher Exact Test framework in a vector form.
+    Maximum supported number of dependent variable levels is 10.
 }
 \usage{
-    summaryOutput(phenTestResult, phenotypeThreshold = 0.01)
+    vectorOutputMatrices(phenTestResult)
 }
 \arguments{
     \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{\link{testDataset}}; mandatory argument}
-    \item{phenotypeThreshold}{a numerical value defining the threshold to use in classification tag; ; default value 0.01}
 }
 \value{
-    Return model fitting results in a text format for the screen
+    Return a vector with count values.
 }
 
 \references{
@@ -23,13 +23,8 @@
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenTestResult}}}
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
-            testGenotype="Sparc/Sparc")
-    result <- testDataset(test,depVariable="Lean.Mass")
-    summaryOutput(result)
-    
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/categorical_example1_aff3_Xray.csv"),
             testGenotype="Aff3/Aff3")
     result <- testDataset(test,depVariable="Thoracic.Processes",method="FE")  
-    summaryOutput(result)
+    vectorOutputMatrices(result)
 }
