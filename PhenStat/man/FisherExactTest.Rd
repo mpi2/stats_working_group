@@ -15,7 +15,7 @@
     
     Together with count matrices creates percentage matrices, calculates effect sizes and statistics for count matrices.
      
-    The funciton is called from testDataset function when "method" argument is set to "FE" meaning "Fisher Exact Test".
+    The function is called from testDataset function when "method" argument is set to "FE" meaning "Fisher Exact Test".
     
     As the result PhenTestResult object that contains Fisher tests output is created.  
 }

@@ -115,10 +115,10 @@
     result$equation
     result$numberGenders
     result$model.effect.batch # Batch effect is significant
-    result$model.effect.variance # Variance homogeneosity
+    result$model.effect.variance # homogeneity of variance  
     result$model.effect.weight # Weight effect is significant
-    result$model.effect.interaction # Gender effect is significant 
-    result$model.output.interaction # Gender effect p-value - the result of the test
+    result$model.effect.interaction # Gender*Genotype effect is significant (Y/N) 
+    result$model.output.interaction # Gender*Genotype effect p-value - the result of the test
     result$model.output.genotype.nulltest.pVal # Genotype effect p-value    
     result$model.formula.genotype # Final model formula with genotype
     result$model.formula.null # Final model formula without genotype    

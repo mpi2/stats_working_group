@@ -3,7 +3,7 @@
 \title{Method "categoricalBarplot"}
 \description{
     Graph function for the Fisher Exact Test framework's results. Creates stacked bar plot(s) to compare proportions seen in a categorical variable between different genotypes. 
-    Graphs are created for all data and also for each gender individually.
+    Graphs are created for all data and also for each sex individually.
 }
 \usage{
     categoricalBarplot(phenTestResult)

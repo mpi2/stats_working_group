@@ -30,7 +30,7 @@
 
 # If user has defined fixed effects (keepList argument) then function prints out calculated and user defined effects 
 # (only when outputMessages argument is set to TRUE), checks user defined effects for consistency 
-# (for instance, if there are no "Weight" column in the dataset then weigth effect can't be assigned to TRUE, etc.)
+# (for instance, if there are no "Weight" column in the dataset then weight effect can't be assigned to TRUE, etc.)
 # and modifies start model according to user defined effects. 
 
 # As the result PhenTestResult object that contains calculated or user defined model effects and MM start model is created. 

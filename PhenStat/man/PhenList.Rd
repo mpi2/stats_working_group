@@ -28,9 +28,9 @@
     \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages; assigned default value is TRUE}
     \item{dataset.clean}{flag: "FALSE" value for no modification of the dataset; "TRUE" value to clean dataset if needed; assigned default value is TRUE}
     \item{dataset.colname.batch}{column name within dataset for the batch effect}
-    \item{dataset.colname.genotype}{column name within dataset for the genotype info}
-    \item{dataset.colname.gender}{column name within dataset for the gender info}
-    \item{dataset.colname.weight}{column name within dataset for the weight info}
+    \item{dataset.colname.genotype}{column name within dataset for the genotype information}
+    \item{dataset.colname.gender}{column name within dataset for the gender information}
+    \item{dataset.colname.weight}{column name within dataset for the weight information}
     \item{dataset.values.missingValue}{value used as missing value in the dataset}
     \item{dataset.values.male}{value used to label "males" in the dataset}
     \item{dataset.values.female}{value used to label "females" in the dataset}
