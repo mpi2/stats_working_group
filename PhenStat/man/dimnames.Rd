@@ -27,3 +27,4 @@
     \code{\link[base]{dimnames}} in the base package.
 }
 
+\keyword{internal}

@@ -2,7 +2,7 @@
 \alias{scatterplotGenotypeWeight}
 \title{Method "scatterplotGenotypeWeight"}
 \description{
-    Create a scatter plot body weight versus dependent variable.
+    Graph function for the phenotypic dataset. Creates a scatter plot body weight versus dependent variable.
     
     Both a regression line and a loess line (locally weighted line) is fitted for each genotype.
 }

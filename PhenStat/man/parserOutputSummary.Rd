@@ -2,7 +2,7 @@
 \alias{parserOutputSummary}
 \title{Method "parserOutputSummary"}
 \description{
-    Parser model output summary and returns it in readable named vector format
+    Parsers model output summary and returns it in readable named vector format
 }
 \usage{
     parserOutputSummary(phenTestResult)
@@ -11,7 +11,7 @@
     \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{\link{testDataset}}; mandatory argument}
 }
 \value{
-    Return a named vector with model output summary results
+    Returns a named vector with model output summary results
 }
 
 \references{

@@ -20,3 +20,4 @@
     method.PhenTestResult(result)
 }
 
+\keyword{internal}

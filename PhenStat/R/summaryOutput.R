@@ -61,7 +61,7 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
         }
         
         # Matrices and statistics
-        message("\nCount Matrix 'all':")
+        message("\nMatrix 'all':")
         print(phenTestResult$model.output$count_matrix_all)
         message("\nPercentage matrix 'all' statistics:")
         print(phenTestResult$model.output$percentage_matrix_all)
@@ -69,7 +69,7 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
         print(phenTestResult$model.output$stat_all)
 
         if (!is.null(phenTestResult$model.output$male)){
-            message("\nCount Matrix 'males only':")
+            message("\nMatrix 'males only':")
             print(phenTestResult$model.output$count_matrix_male)
             message("\nPercentage matrix 'males only' statistics:")
             print(phenTestResult$model.output$percentage_matrix_male)
@@ -78,7 +78,7 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
         
         }
         if (!is.null(phenTestResult$model.output$female)){
-            message("\nCount Matrix 'females only':")
+            message("\nMatrix 'females only':")
             print(phenTestResult$model.output$count_matrix_female)
             message("\nPercentage matrix 'females only' statistics:")
             print(phenTestResult$model.output$percentage_matrix_female)

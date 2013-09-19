@@ -2,7 +2,7 @@
 \alias{testDataset}
 \title{Method "testDataset"}
 \description{      
-    Perform the following checks for dependent variable:
+    Performs the following checks for dependent variable:
     
     1. "depVariable" column should present in the dataset
     
@@ -11,10 +11,11 @@
     3. Each one genotype level should have more than one "depVariable" level
     (variability) for MM framework, otherwise recommends FE framework. 
     
-    Run the stages of selected framework to analyse dependent variable. 
-    For instance, run startModel and finalModel for the MM framework if the argument "callAll" is set to TRUE.
+    Runs the stages of selected framework to analyse dependent variable. 
+    
+    For instance, runs startModel and finalModel for the MM framework if the argument "callAll" is set to TRUE.
 
-    If framework contains only one stage like in Fisher Exact Test case then run that one stage regardless "callAll" value.
+    If framework contains only one stage like in Fisher Exact Test case then runs that one stage regardless "callAll" value.
 
 }    
 \usage{
@@ -34,7 +35,7 @@
         keep_weight, keep_gender, keep_interaction; default value NULL}
 }
 \value{
-    Return results stored in instance of the \code{\linkS4class{PhenTestResult}} class
+    Returns results stored in instance of the \code{\linkS4class{PhenTestResult}} class
 }
 
 \references{

@@ -2,8 +2,8 @@
 \alias{PhenTestResult}
 \title{Method "PhenTestResult"}
 \description{
-    Create \code{\linkS4class{PhenTestResult}} object, based on test results or model building results. 
-    Return an instance of the \code{\linkS4class{PhenTestResult}} object. Internal function for the package. Not build for users to directly call.
+    Creates \code{\linkS4class{PhenTestResult}} object based on test results or model building results. 
+    Internal function for the package. Not build for users to directly call.
 }
 \usage{
     PhenTestResult(model.output=NULL, model.dataset=NULL, depVariable=NULL, equation="withWeight", 
@@ -36,7 +36,7 @@
     \item{model.output.summary}{named vector that contains summary of the model output}
 }
 \value{
-    Return an instance of the \code{\linkS4class{PhenTestResult}} class.
+    Returns an instance of the \code{\linkS4class{PhenTestResult}} class.
 }
 \references{
     Karp N, Melvin D, Sanger Mouse Genetics Project, Mott R (2012): Robust and Sensitive Analysis of Mouse Knockout Phenotypes. \emph{PLoS ONE} \bold{7}(12): e52410. doi:10.1371/journal.pone.0052410
@@ -45,11 +45,11 @@
 }
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 
-\seealso{\code{\linkS4class{PhenList}}}
+\seealso{\code{\linkS4class{PhenTestResult}}}
 
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
             testGenotype="Sparc/Sparc")
-    result <- testDataset(test,equation="withoutWeight",depVariable="Lean.Mass")
+    result <- testDataset(test,equation="withoutWeight",depVariable="Lean.Mass") # calls PhenTestResult function internally
     class(result)
 }

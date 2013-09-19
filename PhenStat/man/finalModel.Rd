@@ -5,9 +5,9 @@
     This is an internal function run within MM framework. It completes the final stage of the MM framework, which builds the final model and estimates effects.  
     As an internal function, it doesn't include extensive error testing of inputs. Please use cautiously if calling directly.  
         
-    Work with PhenTestResult object created by startModel function. 
+    Works with \code{\linkS4class{PhenTestResult}} object created by "startModel" function. 
     The creation of MM final model is based on the significance of different fixed effects, depVariable and equation values 
-    stored in phenTestResult object.
+    stored in \code{\linkS4class{PhenTestResult}} object.
 }
 \usage{
     finalModel(phenTestResult, outputMessages = TRUE)
@@ -18,7 +18,7 @@
 
 }
 \value{
-    Return results stored in instance of the \code{\linkS4class{PhenTestResult}} class
+    Returns results stored in instance of the \code{\linkS4class{PhenTestResult}} class
 }
 
 \references{

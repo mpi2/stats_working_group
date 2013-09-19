@@ -2,7 +2,7 @@
 \alias{boxplotGenderGenotype}
 \title{Method "boxplotGenderGenotype"}
 \description{
-    Create a box plot split by gender and genotype.
+    Graph function for the phenotypic dataset. Creates a box plot split by gender and genotype.
 }
 \usage{
     boxplotGenderGenotype(phenList,depVariable,graphingName)

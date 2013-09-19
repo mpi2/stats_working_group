@@ -2,7 +2,7 @@
 \alias{generateGraphs}
 \title{Method "generateGraphs"}
 \description{
-    Generate different graphs and store them in the defined directory
+    Function generates graphs for the Mixed Model framework's results and stores generated graphs in the defined directory.
 }
 \usage{
     generateGraphs(phenList, phenTestResult, dir, 

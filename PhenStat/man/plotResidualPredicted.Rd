@@ -2,7 +2,7 @@
 \alias{plotResidualPredicted}
 \title{Method "plotResidualPredicted"}
 \description{
-    Create predicted versus residual values plots split by genotype.
+    Graph function for the Mixed Model framework's results. Creates predicted versus residual values plots split by genotype.
 }
 \usage{
     plotResidualPredicted(phenTestResult)

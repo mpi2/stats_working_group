@@ -2,18 +2,20 @@
 \alias{FisherExactTest}
 \title{Method "FisherExactTest"}
 \description{
-    Create two times n tables with record counts, where two rows represent genotype levels; n columns 
-    represent dependent variable levels. Perform Fisher Exact Tests.
+    The main function of the Fisher Exact Test framework. Creates n times 2 matrices with record counts, where n rows 
+    represent dependent variable levels and two columns represent genotype levels. Performs Fisher Exact Tests on calculated count matrices.
     
-    Three tables can be created and three tests can be potentially perform depending on the dataset:
+    Three matrices can be created and three tests can be potentially perform depending on the dataset:
     
-    - all records together regardless the gender values, 
+    - all records together regardless the gender values - combined dataset, 
     
-    - records where gender value is "Male" (if such exists),
+    - records where gender value is "Male" (if such exists) - males only dataset,
     
-    - records where gender value is "Female" (if such exists).
+    - records where gender value is "Female" (if such exists) - females only dataset.
     
-    Is called from testDataset function when "method" argument is set to "FE" (Fisher Exact Test).
+    Together with count matrices creates percentage matrices, calculates effect sizes and statistics for count matrices.
+     
+    The funciton is called from testDataset function when "method" argument is set to "FE" meaning "Fisher Exact Test".
     
     As the result PhenTestResult object that contains Fisher tests output is created.  
 }
@@ -27,7 +29,7 @@
     
 }
 \value{
-    Return results stored in instance of the \code{\linkS4class{PhenTestResult}} class
+    Returns results stored in instance of the \code{\linkS4class{PhenTestResult}} class
 }
 
 \references{
@@ -40,6 +42,6 @@
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/categorical_example1_aff3_Xray.csv"),
             testGenotype="Aff3/Aff3")
-    result <- testDataset(test,depVariable="Thoracic.Processes",method="FE")  
+    result <- testDataset(test,depVariable="Thoracic.Processes",method="FE")  # FisherExactTest function is called from testDataset function.
     summaryOutput(result)
 }

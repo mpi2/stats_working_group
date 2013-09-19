@@ -24,3 +24,4 @@
     \code{\link{as.matrix}} in the base package.
 }
 
+\keyword{internal}

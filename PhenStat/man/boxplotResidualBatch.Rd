@@ -2,7 +2,7 @@
 \alias{boxplotResidualBatch}
 \title{Method "boxplotResidualBatch"}
 \description{
-    Create a box plot with residue versus batch split by genotype.
+    Graph function for the Mixed Model framework's results. Creates a box plot with residue versus batch split by genotype.
 }
 \usage{
     boxplotResidualBatch(phenTestResult)

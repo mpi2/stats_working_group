@@ -2,7 +2,7 @@
 \alias{modelFormula}
 \title{Method "modelFormula"}
 \description{
-    Create formula for the start Mixed Model based on equation and number of genders in the data
+    Creates formula for the start Mixed Model based on equation and number of genders in the data.
 }
 \usage{    
     modelFormula(equation, numberofgenders, depVariable)
@@ -13,7 +13,7 @@
     \item{depVariable}{a character string defining the dependent variable of interest; mandatory argument}
 }
 \value{
-    Return start model
+    Returns formula to use.
 }
 
 \references{

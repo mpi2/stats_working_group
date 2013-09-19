@@ -2,8 +2,8 @@
 \alias{testFinalModel}
 \title{Method "testFinalModel"}
 \description{
-    Perform diagnostic tests for Mixed Model quality of fit. There are no arguments checks assuming that 
-    function is called internally from the buildFinalModel function. Otherwise should be used with precaution. 
+    Performs diagnostic tests for Mixed Model quality of fit. There are no arguments checks assuming that 
+    function is called internally from the "testDataset" function. Otherwise should be used with precaution. 
 }
 \usage{
     testFinalModel(phenTestResult)
@@ -12,7 +12,7 @@
     \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{testDataset} ; mandatory argument}
 }
 \value{
-    Return a vector with model fitting results
+    Returns a vector with model fitting results
 }
 
 \references{

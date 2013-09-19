@@ -27,4 +27,5 @@
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),testGenotype="Sparc/Sparc")
     dim(test)
 }
+\keyword{internal}
 

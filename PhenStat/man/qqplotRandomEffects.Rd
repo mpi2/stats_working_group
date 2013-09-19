@@ -2,7 +2,7 @@
 \alias{qqplotRandomEffects}
 \title{Method "qqplotRandomEffects"}
 \description{
-    Create a Q-Q plot of blups
+    Graph function for the Mixed Model framework's results. Creates a Q-Q plot of blups (best linear unbiased predictions).
 }
 \usage{
     qqplotRandomEffects(phenTestResult)

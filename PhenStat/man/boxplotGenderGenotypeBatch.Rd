@@ -2,7 +2,8 @@
 \alias{boxplotGenderGenotypeBatch}
 \title{Method "boxplotGenderGenotypeBatch"}
 \description{
-    Create a box plot split by gender, genotype and batch. 
+    Graph function for the phenotypic dataset. Creates a box plot split by gender, genotype and batch. 
+    
     Note: the batches are not ordered with time but allow assessment of how the treatment groups lie relative to the normal control variation.
     
 }

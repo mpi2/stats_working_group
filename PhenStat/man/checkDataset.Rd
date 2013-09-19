@@ -2,7 +2,7 @@
 \alias{checkDataset}
 \title{Method "checkDataset"}
 \description{
-    Check dataset for the minimum required info:
+    Checks dataset for the minimum required info:
     
     1. Column names should present
     
@@ -28,9 +28,9 @@
     
     - presence of Batch column (Assay.Date).
     
-    Warning given in case of missed data indicating that you can only fit a glm or to use MM equation 'withoutWeight'.
+    Warning given in case of missed data indicating that you can only fit a glm or to use MM equation "withoutWeight".
     
-    Is called from PhenList method. 
+    Is called from "PhenList" method. 
 }
 \usage{
     checkDataset(dataset, testGenotype, refGenotype="+/+", 
@@ -46,7 +46,7 @@
       
 }
 \value{
-    Return an instance of the \code{\linkS4class{PhenList}} class.
+    Returns an instance of the \code{\linkS4class{PhenList}} class.
 }
 
 
@@ -61,6 +61,6 @@
 
 \examples{    
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
-            testGenotype="Sparc/Sparc")
+            testGenotype="Sparc/Sparc")    # checkDataset is called internally
     
 }

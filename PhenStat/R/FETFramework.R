@@ -61,10 +61,21 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
     
     model_all<-fisher.test(count_matrix_all)
     
-
+    model_male_results <- c(NA,NA,NA,NA,NA)
+    model_female_results <- c(NA,NA,NA,NA) 
+    model_male <- NULL
+    model_female <- NULL
+    count_matrix_female <-NULL
+    count_matrix_male <- NULL
+    ES_male <- NULL
+    ES_female <- NULL
+    ES_matrix_male<-NULL
+    ES_matrix_female<-NULL
+    stat_male <-NULL
+    stat_female <- NULL
 
     
-    if (numberofgenders==2){
+    if(numberofgenders==2){
         count_matrix_male <- matrix(0,length(depVariable_levels),2)
         count_matrix_female <- matrix(0,length(depVariable_levels),2)
         ES_matrix_male <- matrix(0,length(depVariable_levels),3)
@@ -126,21 +137,6 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
         stat_male <- assocstats(count_matrix_male)
         stat_female <- assocstats(count_matrix_female)
     }
-    else {
-        model_male_results <- c(NA,NA,NA,NA,NA)
-        model_female_results <- c(NA,NA,NA,NA) 
-        model_male <- NULL
-        model_female <- NULL
-        count_matrix_female <-NULL
-        count_matrix_male <- NULL
-        ES_male <- NULL
-        ES_female <- NULL
-        ES_matrix_male<-NULL
-        ES_matrix_female<-NULL
-        stat_male <-NULL
-        stat_female <- NULL
-        
-    }    
     
     model_results <- c(model_all$p.value,model_all$alternative,paste(model_all$conf.int[1],model_all$conf.int[2],sep=" to "),model_all$estimate)
     #names(model_results) <- c("All p-value","All alternative","All confident interval","All estimate")

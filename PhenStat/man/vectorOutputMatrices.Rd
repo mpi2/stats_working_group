@@ -2,8 +2,9 @@
 \alias{vectorOutputMatrices}
 \title{Method "vectorOutputMatrices"}
 \description{
-    Return count matrices from Fisher Exact Test framework in a vector form.
-    Maximum supported number of dependent variable levels is 10.
+    Returns count matrices from Fisher Exact Test framework in a vector form.
+    
+    Note: Maximal supported number of dependent variable levels is 10.
 }
 \usage{
     vectorOutputMatrices(phenTestResult)
@@ -12,7 +13,7 @@
     \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{\link{testDataset}}; mandatory argument}
 }
 \value{
-    Return a vector with count values.
+    Returns a vector with count values.
 }
 
 \references{

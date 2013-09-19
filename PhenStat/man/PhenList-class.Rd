@@ -1,37 +1,60 @@
 \name{PhenList-class}
 \docType{class}
 \alias{PhenList-class}
-\alias{testDataset,PhenList,character,character,numeric,character-method}
-\alias{scatterplotGenotypeWeight,PhenList,character-method}
-\alias{boxplotGenderGenotypeBatch,PhenList,character-method}
-\alias{boxplotGenderGenotype,PhenList,character-method}  
 
 \title{Class "PhenList"}
 
-\description{A list-based S4 class for storing phenotypic data. Help to support data integrity checks and statistics calculation.}
+\description{A list-based S4 class for storing phenotypic data. Helps to support data integrity checks and statistics calculation.}
 
 \section{Create PhenList object}{
     The appropriate way to create PhenList object is via \code{\link{PhenList}} function.
 }
-\section{Dataset graphs}{
-    The appropriate way to check the dataset properties is via \code{\link{boxplotGenderGenotype}}, 
-    \code{\link{boxplotGenderGenotypeBatch}} and \code{\link{scatterplotGenotypeWeight}} functions.
+\section{Explore PhenList object}{
+    PhenList object instance contains the following sections:
+    
+    1. "dataset" where cleaned and checked dataset is stored: \code{phenList$dataset}
+    
+    2. "testGenotype" where the genotype level to test is stored:  \code{phenList$testGenotype}
+    
+    3. "refGenotype" where reference genotype  value is stored with default value set to "+/+":  \code{phenList$refGenotype}
+    
+    4. "dataset.stat" where simple dataset statistics is stored: \code{phenList$dataset.stat}
+    
+    5. "hemiGenotype" if defined contains the genotype value for hemizygous:   \code{phenList$hemiGenotype}
+    
+    6. "outputMessages" flag value is stored, see \code{\link{PhenList}} for more details
+    
+    7. "dataset.clean" flag value is stored,  see \code{\link{PhenList}} for more details
+    
+    8. "dataset.colname" if defined contains dataset column names that have been renamed:
+    
+        - "dataset.colname.batch" column name for batch values
+       
+        - "dataset.colname.genotype" column name for genotype values
+    
+        - "dataset.colname.gender" column name for gender values
+    
+        - "dataset.colname.weight" column name for weight values
+        
+    9. "dataset.values" if defined contains dataset values that have been changed during dataset cleaning process:
+    
+        - "dataset.values.missingValue" value used as missing value in the orginal dataset
+        
+        - "dataset.values.male" value used to label "males" in the original dataset
+        
+        - "dataset.values.female" value used to label "females" in the original dataset
+    
+
 }
-\section{Methods}{
-    \describe{
-        \item{testDataset}{\code{signature(object = "PhenList", equation = "character",depVariable = "character",
-                pThreshold = "numeric",method = "character", keepList = "logical vector")}: Tests the fixed effects of the model}
-        \item{scatterplotGenotypeWeight}{\code{signature(object = "PhenList", depVariable = "character")}: Creates a scatter plot body weight versus dependant variable}
-        \item{boxplotGenderGenotypeBatch}{\code{signature(object = "PhenList", depVariable = "character")}: Creates a box plot split by gender, genotype and batch}
-        \item{boxplotGenderGenotype}{\code{signature(object = "PhenList", depVariable = "character")}: Creates a box plot split by gender and genotype}              
-    }
-}
+
 \references{
     Karp N, Melvin D, Sanger Mouse Genetics Project, Mott R (2012): Robust and Sensitive Analysis of Mouse Knockout Phenotypes. \emph{PLoS ONE} \bold{7}(12): e52410. doi:10.1371/journal.pone.0052410
     
     West B, Welch K, Galecki A (2007): Linear Mixed Models: A practical guide using statistical software  \emph{New York: Chapman & Hall/CRC} 353 p.
 }
+
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
+
 \seealso{\code{\link{PhenList}}}
 
 \examples{
@@ -42,6 +65,11 @@
             testGenotype="Arid4a/Arid4a",refGenotype="+/+",hemiGenotype="Arid4a/+",
             dataset.colname.weight="Weight.Value")
     test2$dataset.stat
+    test2$testGenotype
+    test2$refGenotype
+    test2$hemiGenotype
+    test2$outputMessages
+    test2$dataset.colname.weight
 }
 
 

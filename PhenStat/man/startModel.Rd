@@ -44,7 +44,7 @@
         keep_weight, keep_gender, keep_interaction; default value NULL}
 }
 \value{
-    Return results stored in instance of the \code{\linkS4class{PhenTestResult}} class
+    Returns results stored in instance of the \code{\linkS4class{PhenTestResult}} class
 }
 
 \references{

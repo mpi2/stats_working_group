@@ -2,92 +2,102 @@
 \docType{class}
 
 \alias{PhenTestResult-class}
-\alias{buildFinalModel,PhenList,PhenTestResult,character,character,numerical-method}
-\alias{testFinalModel,PhenList,PhenTestResult-method}
-\alias{qqplotGenotype,PhenList,PhenTestResult-method}
-\alias{plotResidualPredicted,PhenList,PhenTestResult-method}
-\alias{qqplotRandomEffects,PhenList,PhenTestResult,logical-method}
-\alias{boxplotResidualBatch,PhenList,PhenTestResult-method}
-\alias{qqplotRotatedResiduals,PhenList,PhenTestResult,logical-method}
-\alias{parserOutputSummary,PhenTestResult-method}
-\alias{simpleOutput,PhenTestResult-method}
-\alias{vectorOutput,PhenTestResult-method}
-\alias{outputLength,PhenTestResult-method}
 
 \title{Class "PhenTestResult"}
 
 \description{A list-based S4 class for storing of model fitting results and other information like dependent variable, method used to build a model, etc.
-    Help to support operations needed for model fitting process. }
+    Helps to support operations needed for model fitting process and modelling/testing results storage. }
 
-\section{Create PhenTestResult object}{
-    The appropriate way to create PhenTestResult object is via \code{\link{testDataset}} function.
-}
-\section{Explore PhenTestResultObject}{
-    Modelling/testing results are stored in the object section model.output. The contents depend on framework that was used.
-    The results of MM framework:
-    To get was batch effect significant or not: \code{phenTestResult$model.effect.batch}    
-    To get was variance equal or not: \code{phenTestResult$model.effect.variance} 
-    To get was weight effect significant or not: \code{phenTestResult$model.effect.weight} 
-    To get was gender effect significant or not: \code{phenTestResult$model.effect.interaction}     
-    To get the evidence of gender effect: \code{phenTestResult$model.output.interaction}
-    To get genotype effect: \code{phenTestResult$model.output.genotype.nulltest.pVal}
+\section{Explore PhenTestResult object}{
+    PhenTestResults object instance contains the following sections:
     
-    To get the final model: \code{phenTestResult$model.formula.genotype}
-    To get the final null model: \code{phenTestResult$model.formula.null}
+    1. "model.dataset" contains cleaned and checked dataset that was used for the modelling/testing.
     
-    To get the model fitting output: \code{phenTestResult$model.output}
-    To get the model fitting summary: \code{summary(phenTestResult$model.output)$tTable}
+    2. "depVariable" contains dependent variable that was tested.
     
-    The results of FET framework.
-    FET framework output contains matrices, statistics about matrices and Fisher Exact Tests results.
-    Count matrices.
-    To get count matrix for all data regarding dependent variable: \code{phenTestResult$model.output$count_matrix_all}
-    To get count matrix for male only data regarding dependent variable: \code{phenTestResult$model.output$count_matrix_male}
-    To get count matrix for female only data regarding dependent variable: \code{phenTestResult$model.output$count_matrix_female}
+    3. "equation" is specific for the Mixed Model framework and contains equation that was used for modelling: "withWeight" or "withoutWeight".
     
-    Percentage matrices.
-    To get percentage matrix for all data regarding dependent variable: \code{phenTestResult$model.output$percentage_matrix_all}
-    To get percentage matrix for male only data regarding dependent variable: \code{phenTestResult$model.output$percentage_matrix_male}
-    To get percentage matrix for female only data regarding dependent variable: \code{phenTestResult$model.output$percentage_matrix_female}
+    4. "pThreshold" contains p-value threshold with default value set to 0.05.
+    
+    5. "numberGenders" contains the number of sexes in the dataset: \code{phenTestResult$numberGenders}
+    
+    Modelling/testing results are stored in the sections "model.output", "model.formula" and "model.effect". The last two are specific for Mixed Model framework.
+    
+    The contents of the result sections depend on framework that was used.
+    
+    The results of Mixed Models framework:
+    
+    1. Batch effect significance: \code{phenTestResult$model.effect.batch}    
+    
+    2. Variance equality: \code{phenTestResult$model.effect.variance} 
+    
+    3. Weight effect significance: \code{phenTestResult$model.effect.weight} 
+    
+    4. Gender effect significance: \code{phenTestResult$model.effect.interaction}     
+    
+    5. Evidence of gender effect (p-value): \code{phenTestResult$model.output.interaction}
+    
+    6. Evidence of genotype effect (p-value): \code{phenTestResult$model.output.genotype.nulltest.pVal}
+    
+    7. Formula for the final genotype model: \code{phenTestResult$model.formula.genotype}
+    
+    8. Formula for the final null model: \code{phenTestResult$model.formula.null}
+    
+    9. Model fitting output: \code{phenTestResult$model.output}
+    
+    10. Model fitting summary: \code{summary(phenTestResult$model.output)$tTable}
+    
+    The results of Fisher Exact Test framework.
+    
+    Fisher Exact Test framework output contains matrices, statistics about matrices and Fisher Exact Tests results.
+    
+    1. Count matrices.
+    
+        1.1 Count matrix for combined dataset: \code{phenTestResult$model.output$count_matrix_all}
+    
+        1.2 Count matrix for males only dataset: \code{phenTestResult$model.output$count_matrix_male}
+    
+        1.3 Count matrix for female only dataset: \code{phenTestResult$model.output$count_matrix_female}
+    
+    2. Percentage matrices.
+    
+        2.1 Percentage matrix for combined dataset: \code{phenTestResult$model.output$percentage_matrix_all}
+    
+        2.2 Percentage matrix for males only dataset: \code{phenTestResult$model.output$percentage_matrix_male}
+    
+        2.3 Percentage matrix for females only dataset: \code{phenTestResult$model.output$percentage_matrix_female}
 
-    Statistics.
-    To get statistics for matrix for all data regarding dependent variable: \code{phenTestResult$model.output$stat_all}
-    To get statistics for matrix for male only data regarding dependent variable: \code{phenTestResult$model.output$stat_male}
-    To get statistics for matrix for female only data regarding dependent variable: \code{phenTestResult$model.output$stat_female}
+    3. Statistics.
+    
+        3.1 Statistics for matrix for combined dataset: \code{phenTestResult$model.output$stat_all}
+    
+        3.2 Statistics for matrix for males only dataset: \code{phenTestResult$model.output$stat_male}
+    
+        3.3 Statistics for matrix for females only dataset: \code{phenTestResult$model.output$stat_female}
 
-    Effect sizes.
-    To get effect size for all data regarding dependent variable: \code{phenTestResult$model.output$ES_all}
-    To get effect size for male only data regarding dependent variable: \code{phenTestResult$model.output$ES_male}
-    To get effect size for female only data regarding dependent variable: \code{phenTestResult$model.output$ES_female}
+    4. Effect sizes.
+    
+        4.1 Effect size for combined dataset: \code{phenTestResult$model.output$ES_all}
+    
+        4.2 Effect size for males only dataset: \code{phenTestResult$model.output$ES_male}
+    
+        4.3 Effect size for females only dataset: \code{phenTestResult$model.output$ES_female}
  
-    Fisher Exact Test results. 
-    To get test results for all data regarding dependent variable: \code{phenTestResult$model.output$all}
-    To get test results for male only data regarding dependent variable: \code{phenTestResult$model.output$male}
-    To get test results for female only data regarding dependent variable: \code{phenTestResult$model.output$female}
-    To get p-value only for all data regarding dependent variable: \code{phenTestResult$model.output$all$p.value} 
-    To get p-value only for male only records regarding dependent variable: \code{phenTestResult$model.output$male$p.value}
-    To get p-value only for female only records regarding dependent variable: \code{phenTestResult$model.output$female$p.value}
+    5. Fisher Exact Test results. 
+    
+        5.1 Fisher Exact Test results for combined dataset: \code{phenTestResult$model.output$all}
+    
+        5.2 Fisher Exact Test results for males only dataset: \code{phenTestResult$model.output$male}
+    
+        5.3 Fisher Exact Test results for females only dataset: \code{phenTestResult$model.output$female}
+    
+        5.4 P-value for combined dataset: \code{phenTestResult$model.output$all$p.value} 
+    
+        5.5 P-value for males only dataset: \code{phenTestResult$model.output$male$p.value}
+    
+        5.6 P-value for females only dataset: \code{phenTestResult$model.output$female$p.value}
 }
-\section{Dataset results graphs}{
-    The appropriate way to check the dataset properties is vie \code{\link{boxplotGenderGenotype}}, 
-    \code{\link{boxplotGenderGenotypeBatch}} and \code{\link{scatterplotGenotypeWeight}} functions.
-}
-\section{Methods}{
-    \describe{
-        \item{buildFinalModel}{\code{signature(object1 = "PhenList", object2 = "PhenTestResult", equation = "character",depVariable = "character",
-                        pThreshold = "numeric")}: Build final mixed model}
-        \item{testFinalModel}{\code{signature(object1 = "PhenList", object2 = "PhenTestResult")}: Diagnostic test for mixed model quality of fit}
-        \item{qqplotGenotype}{\code{signature(object1 = "PhenList", object2 = "PhenTestResult")}: Creates a Q-Q plot of residuals for each genotype}
-        \item{plotResidualPredicted}{\code{signature(object1 = "PhenList", object2 = "PhenTestResult")}: Creates predicted versus residual values plots split by genotype}
-        \item{qqplotRandomEffects}{\code{signature(object1 = "PhenList", object2 = "PhenTestResult",keep_batch = "logical")}: Creates a Q-Q plot of blups}
-        \item{boxplotResidualBatch}{\code{signature(object1 = "PhenList", object2 = "PhenTestResult")}: Creates a box plot with residue versus batch split by genotype}
-        \item{qqplotRotatedResiduals}{\code{signature(object1 = "PhenList", object2 = "PhenTestResult",keep_batch = "logical")}: Creates a Q-Q plot of rotated residuals}
-        \item{parserOutputSummary}{\code{signature(object = "PhenTestResult")}: Parsers model output summary and returns it in readable named vector format}
-        \item{simpleOutput}{\code{signature(object = "PhenTestResult")}: Returns model fitting and testing results in a user friendly format}
-        \item{vectorOutput}{\code{signature(object = "PhenTestResult")}: Returns model fitting and testing results in a vector format}
-        \item{outputLength}{\code{signature(object = "PhenTestResult")}: Calculates table length based on used model}        
-    }
-}
+
 \references{
     Karp N, Melvin D, Sanger Mouse Genetics Project, Mott R (2012): Robust and Sensitive Analysis of Mouse Knockout Phenotypes. \emph{PLoS ONE} \bold{7}(12): e52410. doi:10.1371/journal.pone.0052410
     
@@ -95,10 +105,15 @@
 }
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 
+\seealso{\code{\link{FisherExactTest}}, \code{\link{startModel}}, \code{\link{finalModel}} and \code{\link{PhenTestResult}}}  
+ 
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
             testGenotype="Sparc/Sparc")
     result <- testDataset(test,equation="withoutWeight",depVariable="Bone.Area")
+    result$depVariable
+    result$equation
+    result$numberGenders
     result$model.effect.batch # Batch effect is significant
     result$model.effect.variance # Variance homogeneosity
     result$model.effect.weight # Weight effect is significant
@@ -115,17 +130,17 @@
     result <- testDataset(test,depVariable="Thoracic.Processes",method="FE")  
     
     result$model.output$count_matrix_all # Count matrix for all data
-    result$model.output$count_matrix_male # Count matrix for male only records
-    result$model.output$count_matrix_female # Count matrix for female only records
+    result$model.output$count_matrix_male # Count matrix for males only records
+    result$model.output$count_matrix_female # Count matrix for females only records
     result$model.output$percentage_matrix_all # Percentage matrix for all data
-    result$model.output$percentage_matrix_male # Percentage matrix for male only records
-    result$model.output$percentage_matrix_female # Percentage matrix for female only records
+    result$model.output$percentage_matrix_male # Percentage matrix for males only records
+    result$model.output$percentage_matrix_female # Percentage matrix for females only records
     result$model.output$stat_all # Matrix statistics for all data
-    result$model.output$stat_male # Matrix statistics for male only records
-    result$model.output$stat_female # Matrix statistics for female only records
+    result$model.output$stat_male # Matrix statistics for males only records
+    result$model.output$stat_female # Matrix statistics for females only records
     result$model.output$ES_all # Effect size for all data
-    result$model.output$ES_male # Effect size for male only records
-    result$model.output$ES_female # Effect size for female only records
+    result$model.output$ES_male # Effect size for males only records
+    result$model.output$ES_female # Effect size for females only records
     result$model.output$all #Fisher Exact Test results for all data
     result$model.output$all$p.value #p-value for all data
 }

@@ -2,7 +2,7 @@
 \alias{classificationTag}
 \title{Method "classificationTag"}
 \description{
-    Return a classification tag to assign a sexual dimorphism assessment of the phenotypic change
+    Returns a classification tag to assign a sexual dimorphism assessment of the phenotypic change.
 }
 \usage{
     classificationTag(phenTestResult, userMode = "summaryOutput", 
@@ -17,10 +17,11 @@
     \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages; default value TRUE}        
 }
 \value{
-    Return a classification tag to assign a sexual dimorphism assessment of the phenotypic change.  
-    If you are working interactively with the data,  the userMode summaryOutput will use the phenotypeThreshold 
-    and use the threshold to assess statistical significance of the genotype effect and if significant then assign 
-    a sexual dimorphic classification.  Alternatively, in the userMode of vectorMode, 
+    Returns a classification tag to assign a sexual dimorphism assessment of the phenotypic change.  
+    
+    If you are working interactively with the data,  the argument "userMode" set to the value "summaryOutput" will use the "phenotypeThreshold" argument's value 
+    to assess statistical significance of the genotype effect and if significant then assign 
+    a sexual dimorphic classification.  Alternatively, in the "userMode" set to the value "vectorMode", 
     a sexual dimorphic classification will be returned where later you can globally assess whether the variable had a significant genotype effect. 
 }
 

@@ -2,9 +2,9 @@
 \alias{vectorOutput}
 \title{Method "vectorOutput"}
 \description{
-    Wrapper for the model fitting results. Return model fitting and testing results in a vector format. 
-    Assume that modelling results are stored in the phenTestResult object 
-    (output from functions testDataset and buildFinalModel).
+    Wrapper for the model fitting results. Returns model fitting and testing results in a vector format. 
+    Assumes that modelling results are stored in the \code{\linkS4class{PhenTestResult}} object 
+    (output from function "testDataset").
 }
 \usage{
     vectorOutput(phenTestResult)
@@ -13,7 +13,7 @@
     \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{\link{testDataset}}; mandatory argument}
 }
 \value{
-    Return a vector with model fitting results: model output summary and other values
+    Returns a vector with model fitting results: model output summary and other values
 }
 
 \references{

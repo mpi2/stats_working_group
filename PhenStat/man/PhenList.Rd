@@ -2,11 +2,14 @@
 \alias{PhenList}
 \title{Method "PhenList"}
 \description{
-    Create PhenList object, check data integrity, rename columns when requested, 
+    Creates  \code{\linkS4class{PhenList}} object, checks data integrity, renames columns when requested, 
     provides simple statistics about dataset.
-    Return an instance of the PhenList object created from the data file. 
+    
+    Returns an instance of the PhenList object created from the data file. 
+    
     Dataset is cleaned to ensure there is a maximum two gender levels and there are exactly two levels for genotype.
     Data cleaning can be switched off by defining the argument "dataset.clean" as FALSE.
+
 }
 \usage{
     PhenList(dataset, testGenotype, refGenotype="+/+", hemiGenotype=NULL, 
@@ -33,7 +36,7 @@
     \item{dataset.values.female}{value used to label "females" in the dataset}
 }
 \value{
-    Return an instance of the \code{\linkS4class{PhenList}} class.
+    Returns an instance of the \code{\linkS4class{PhenList}} class.
 }
 
 
@@ -44,7 +47,7 @@
 }
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 
-\seealso{\code{\linkS4class{PhenTestResult}}}
+\seealso{\code{\linkS4class{PhenList}}}
 
 \examples{
     test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),

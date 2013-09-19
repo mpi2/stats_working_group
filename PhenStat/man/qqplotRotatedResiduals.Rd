@@ -2,7 +2,7 @@
 \alias{qqplotRotatedResiduals}
 \title{Method "qqplotRotatedResiduals"}
 \description{
-    Create a Q-Q plot of rotated residuals
+    Graph function for the Mixed Model framework's results. Creates a Q-Q plot of rotated residuals.
 }
 \usage{
     qqplotRotatedResiduals(phenTestResult)

@@ -2,7 +2,7 @@
 \alias{qqplotGenotype}
 \title{Method "qqplotGenotype"}
 \description{
-    Create a Q-Q plot of residuals for each genotype
+    Graph function for the Mixed Model framework's results. Creates a Q-Q plot of residuals for each genotype.
 }
 \usage{
     qqplotGenotype(phenTestResult)

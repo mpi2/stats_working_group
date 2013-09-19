@@ -7,7 +7,7 @@
 
 \title{Class "LargeDataObject"}
 
-\description{A list-based S4 class for storing large data objects}
+\description{Internal class. A list-based S4 class for storing large data objects.}
 
 \section{Methods}{
     \describe{
@@ -21,3 +21,5 @@
 \author{Gordon Smyth}
 
 \keyword{classes}
+
+\keyword{internal}
