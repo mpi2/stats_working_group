@@ -2,14 +2,14 @@
 \alias{summaryOutput}
 \title{Method "summaryOutput"}
 \description{
-    Wrapper for the model fitting results. Return model fitting and testing results in a user friendly format
+    Wrapper for the model fitting results. Return model fitting and testing results in a user friendly format.
 }
 \usage{
     summaryOutput(phenTestResult, phenotypeThreshold = 0.01)
 }
 \arguments{
     \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{\link{testDataset}}; mandatory argument}
-    \item{phenotypeThreshold}{a numerical value defining the threshold to use in classification tag; ; default value 0.01}
+    \item{phenotypeThreshold}{a numerical value defining the threshold to use in classificationTag; ; default value 0.01}
 }
 \value{
     Return model fitting results in a text format for the screen
