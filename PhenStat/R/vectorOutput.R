@@ -68,12 +68,12 @@ vectorOutput <- function(phenTestResult)
         male_ES <- NA
         female_ES <- NA
         if (!is.null(phenTestResult$model.output$male)){
-            male_pval<-phenTestResult$model.output$male$p.val
-            male_pval<-phenTestResult$model.output$ES_male
+            male_pval<-as.numeric(phenTestResult$model.output$male$p.val)
+            male_ES<-as.numeric(phenTestResult$model.output$ES_male)
         }
         if (!is.null(phenTestResult$model.output$female)){
-            female_pval<-phenTestResult$model.output$female$p.val
-            male_pval<-phenTestResult$model.output$ES_female
+            female_pval<-as.numeric(phenTestResult$model.output$female$p.val)
+            female_ES<-as.numeric(phenTestResult$model.output$ES_female)
         }
         
         vectorOutput <- c("Fisher Exact Test",
@@ -81,9 +81,9 @@ vectorOutput <- function(phenTestResult)
                 NA, 
                 NA,
                 NA,
-                phenTestResult$model.output$ES,
+                as.numeric(phenTestResult$model.output$ES),
                 NA,  
-                phenTestResult$model.output$all$p.val,
+                as.numeric(phenTestResult$model.output$all$p.val),
                 NA, 
                 NA, #10 
                 NA, 
@@ -150,34 +150,39 @@ vectorOutputMatrices <- function(phenTestResult){
             stop("Too many levels for dependent variable")
         }
         else{
-            vectorOutput<-c(colnames(phenTestResult$model.output$count_matrix_all)[1], 
+            vectorOutput<-c(phenTestResult$depVariable, colnames(phenTestResult$model.output$count_matrix_all)[1], 
                     colnames(phenTestResult$model.output$count_matrix_all)[2],rownames(phenTestResult$model.output$count_matrix_all))
             add_levels <- vector()
             if (levels<10){            
                 add_levels<-rep(NA,each=(10-levels))
                 vectorOutput<-c(vectorOutput,add_levels)
             }
-            all<-as.vector(phenTestResult$model.output$count_matrix_all)
+            add_levels2 <-rep(NA,each=20)
+            all<-as.vector(t(phenTestResult$model.output$count_matrix_all))
             
             vectorOutput<-c(vectorOutput,all,add_levels,add_levels)
             
             if (!is.null(phenTestResult$model.output$male)){
-                males<-as.vector(phenTestResult$model.output$count_matrix_male)
+                males<-as.vector(t(phenTestResult$model.output$count_matrix_male))
                 vectorOutput<-c(vectorOutput,males,add_levels,add_levels)
             }
             else{
-            }
+                vectorOutput<-c(vectorOutput,add_levels2)  
+            }   
             if (!is.null(phenTestResult$model.output$female)){
-                females<-as.vector(phenTestResult$model.output$count_matrix_female)
+                females<-as.vector(t(phenTestResult$model.output$count_matrix_female))
                 vectorOutput<-c(vectorOutput,females,add_levels,add_levels)
             }
+            else {
+                vectorOutput<-c(vectorOutput,add_levels2)  
+            }
             
-            names(vectorOutput)<-c("Gp1 Genotype (g1)","Gp2 Genotype (g2)",
-                    "Gp1 Dependent Variable (l1)","Gp2 Dependent Variable (l2)",
-                    "Gp3 Dependent Variable (l3)","Gp4 Dependent Variable (l4)",
-                    "Gp4 Dependent Variable (l5)","Gp6 Dependent Variable (l6)",
-                    "Gp7 Dependent Variable (l7)","Gp8 Dependent Variable (l8)",
-                    "Gp9 Dependent Variable (l9)","Gp10 Dependent Variable (l10)",
+            names(vectorOutput)<-c("Dependent variable","Gp1 Genotype (g1)","Gp2 Genotype (g2)",
+                    "Dependent variable level1 (l1)","Dependent variable level2 (l2)",
+                    "Dependent variable level3 (l3)","Dependent variable level4 (l4)",
+                    "Dependent variable level5 (l5)","Dependent variable level6 (l6)",
+                    "Dependent variable level7 (l7)","Dependent variable level18 (l8)",
+                    "Dependent variable level9","Dependent variable level10 (l10)",
                     "Value g1_l1","Value g2_l1",
                     "Value g1_l2","Value g2_l2",
                     "Value g1_l3","Value g2_l3",

@@ -117,7 +117,7 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput", phenotypeT
             
         }        
       }
-      else {
+      else if (phenTestResult$method=="FE"){
             if (!is.null(phenTestResult$model.output$male)){
                 male_p.value <- result$model.output$male$p.value
             }
@@ -130,21 +130,26 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput", phenotypeT
             else {
                 female_p.value <- 10
             }
+            all_p.value <- result$model.output$all$p.value
             
-            if (result$model.output$all$p.value >= 0.05 && male_p.value >= 0.05 && female_p.value >= 0.05){
-                    ChangeClassification=paste("No significant change")
-            } 
-            else { 
-                if(female_p.value>=0.05 && male_p.value>=0.05){
-                    ChangeClassification=paste("Significant change - cannot classify effect")
-                }else if(female_p.value<0.05 &&  male_p.value>=0.05){
-                    ChangeClassification=paste("Significant change - females only")
-                }else if(female_p.value>=0.05 &&  male_p.value<0.05){
-                    ChangeClassification=paste("Significant change - males only")
-                }
-                else 
-                    ChangeClassification="Significant change - both sexes equally" 
-            } 
+            ChangeClassification=paste("Not significant")
+            # Tag
+            if(all_p.value < 0.05 && male_p.value < 0.05 && female_p.value < 0.05)
+                    ChangeClassification=paste("Significant in male, female and in combined dataset")
+                
+            if(all_p.value < 0.05 && male_p.value < 0.05 && female_p.value >= 0.05)
+                ChangeClassification=paste("Significant in male and in combined dataset")
+            if(all_p.value < 0.05 && male_p.value >= 0.05 && female_p.value >= 0.05)
+                ChangeClassification=paste("Significant in female and in combined dataset")
+            if(all_p.value < 0.05 && male_p.value >= 0.05 && female_p.value >= 0.05)
+                ChangeClassification=paste("Significant in combined dataset only")
+            if(all_p.value >= 0.05 && male_p.value < 0.05 && female_p.value < 0.05)
+                ChangeClassification=paste("Significant in male and in female datasets")
+            if(all_p.value >= 0.05 && male_p.value < 0.05 && female_p.value >= 0.05)
+                ChangeClassification=paste("Significant in male dataset only")
+            if(all_p.value >= 0.05 && male_p.value >= 0.05 && female_p.value < 0.05)
+                ChangeClassification=paste("Significant in female dataset only")
+         
             
  
        }
