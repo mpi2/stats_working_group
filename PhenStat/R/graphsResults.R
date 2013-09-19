@@ -193,14 +193,14 @@ categoricalBarplot<-function(phenTestResult){
 		barplot(phenTestResult$model.output$percentage_matrix_male[ ,1:2], main="Male animals only", beside=FALSE,  xlab="Genotype", ylab="Percentage", col=c(1:dim(phenTestResult$model.output$count_matrix_male)[1]))
 		barplot(phenTestResult$model.output$percentage_matrix_female[ ,1:2], main="Female animals only", beside=FALSE,  xlab="Genotype", ylab="Percentage", col=c(1:dim(phenTestResult$model.output$count_matrix_female)[1]))
 		plot(1, type="n", axes=FALSE, xlab="", ylab="")
-		legend("center", legend = rownames(phenTestResult$model.output$count_matrix_all), fill=c(1:dim(phenTestResult$model.output$count_matrix_all)[1]), title="legend for All data")
-		legend("topright", legend = rownames(phenTestResult$model.output$count_matrix_male), fill=c(1:dim(phenTestResult$model.output$count_matrix_male)[1]),  title="legend for male animals only")  
-		legend("bottomright", legend = rownames(phenTestResult$model.output$count_matrix_female), fill=c(1:dim(phenTestResult$model.output$count_matrix_female)[1]),  col=c("black","red"),title="legend for female animals only") 
+		legend("center", legend = rownames(phenTestResult$model.output$count_matrix_all), fill=c(1:dim(phenTestResult$model.output$count_matrix_all)[1]),bty="n", title="All data")
+		legend("topleft", legend = rownames(phenTestResult$model.output$count_matrix_male), fill=c(1:dim(phenTestResult$model.output$count_matrix_male)[1]), bty="n", title="Male animals")  
+		legend("bottomleft", legend = rownames(phenTestResult$model.output$count_matrix_female), fill=c(1:dim(phenTestResult$model.output$count_matrix_female)[1]), bty="n", col=c("black","red"),title="Female animals") 
 	}else{
 		par(mfrow=c(1,2))
 		barplot(phenTestResult$model.output$percentage_matrix_all[ ,1:2], main="All data", beside=FALSE, xlab="Genotype", ylab="Percentage", col=c(1:dim(phenTestResult$model.output$count_matrix_all)[1]))
 		plot(1, type="n", axes=FALSE, xlab="", ylab="")
-		legend("topright", legend = rownames(phenTestResult$model.output$count_matrix_all), fill=TRUE,  title="legend for All data")
+		legend("topleft", legend = rownames(phenTestResult$model.output$count_matrix_all),bty="n", fill=TRUE,  title="All data")
 	}
 	
 }
