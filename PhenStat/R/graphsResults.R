@@ -174,35 +174,34 @@ qqplotRotatedResiduals<-function(phenTestResult){
 #-----------------------------------------------------------------------------------
 #Stacked bar plot of count data for a variable
 categoricalBarplot<-function(phenTestResult){
-	
-	if(is(phenTestResult,"PhenTestResult")) {
-		x<-phenTestResult$model.dataset
-		modeloutput=phenTestResult$model.output
-	}
-	else{
-		stop("Please create a PhenTestResult object first.")
-	}
-	
-	# Produces graphs 
-	numberofgenders=phenTestResult$numberGenders
-	
-	if(numberofgenders==2){
-		
-		par(mfrow=c(1,4)) 
-		barplot(phenTestResult$model.output$percentage_matrix_all[ ,1:2], main="All data", beside=FALSE, xlab="Genotype", ylab="Percentage", col=c(1:dim(phenTestResult$model.output$count_matrix_all)[1]))
-		barplot(phenTestResult$model.output$percentage_matrix_male[ ,1:2], main="Male animals only", beside=FALSE,  xlab="Genotype", ylab="Percentage", col=c(1:dim(phenTestResult$model.output$count_matrix_male)[1]))
-		barplot(phenTestResult$model.output$percentage_matrix_female[ ,1:2], main="Female animals only", beside=FALSE,  xlab="Genotype", ylab="Percentage", col=c(1:dim(phenTestResult$model.output$count_matrix_female)[1]))
-		plot(1, type="n", axes=FALSE, xlab="", ylab="")
-		legend("center", legend = rownames(phenTestResult$model.output$count_matrix_all), fill=c(1:dim(phenTestResult$model.output$count_matrix_all)[1]),bty="n", title="All data")
-		legend("topleft", legend = rownames(phenTestResult$model.output$count_matrix_male), fill=c(1:dim(phenTestResult$model.output$count_matrix_male)[1]), bty="n", title="Male animals")  
-		legend("bottomleft", legend = rownames(phenTestResult$model.output$count_matrix_female), fill=c(1:dim(phenTestResult$model.output$count_matrix_female)[1]), bty="n", col=c("black","red"),title="Female animals") 
-	}else{
-		par(mfrow=c(1,2))
-		barplot(phenTestResult$model.output$percentage_matrix_all[ ,1:2], main="All data", beside=FALSE, xlab="Genotype", ylab="Percentage", col=c(1:dim(phenTestResult$model.output$count_matrix_all)[1]))
-		plot(1, type="n", axes=FALSE, xlab="", ylab="")
-		legend("topleft", legend = rownames(phenTestResult$model.output$count_matrix_all),bty="n", fill=TRUE,  title="All data")
-	}
-	
+    
+    if(is(phenTestResult,"PhenTestResult")) {
+        x<-phenTestResult$model.dataset
+        modeloutput=phenTestResult$model.output
+    }
+    else{
+        stop("Please create a PhenTestResult object first.")
+    }
+    
+    # Produces graphs 
+    numberofgenders=phenTestResult$numberGenders
+    # Colors for the plot and legends
+    plot_col <- c(1:dim(phenTestResult$model.output$count_matrix_all)[1])
+    if(numberofgenders==2){
+        
+        par(mfrow=c(1,4)) 
+        barplot(phenTestResult$model.output$percentage_matrix_all[ ,1:2], main="All data", beside=FALSE, xlab="Genotype", ylab="Percentage", col=plot_col)
+        barplot(phenTestResult$model.output$percentage_matrix_male[ ,1:2], main="Male animals only", beside=FALSE,  xlab="Genotype", ylab="Percentage", col=plot_col)
+        barplot(phenTestResult$model.output$percentage_matrix_female[ ,1:2], main="Female animals only", beside=FALSE,  xlab="Genotype", ylab="Percentage", col=plot_col)
+        plot(1, type = "n", axes=FALSE, xlab="", ylab="")
+        legend("topleft", legend = rownames(phenTestResult$model.output$count_matrix_all), fill=plot_col, title="Legend",bty="n")       
+    }else{
+        par(mfrow=c(1,2))
+        barplot(phenTestResult$model.output$percentage_matrix_all[ ,1:2], main="All data", beside=FALSE, xlab="Genotype", ylab="Percentage", col=plot_col)
+        plot(1, type="n", axes=FALSE, xlab="", ylab="")
+        legend("topright", legend = rownames(phenTestResult$model.output$count_matrix_all), fill=plot_col,  title="Legend", bty="n")
+    }
+    
 }
 
 #----------------------------------------------------------------------------------------
