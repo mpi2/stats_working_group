@@ -412,7 +412,7 @@ the statistical significance is assessed, the biological significance through an
 Package's function \textit{testDataset}  works as a manager for different statistical analyses methods. It checks the dependent variable, runs the selected statistical analysis framework and
  returns back modelling\slash testing results in the \textit{PhenTestResult} object (see Figure \ref{fig:01}). 
 
-\subsection{ Manager for Analysis Methods -- \textit{testDataset} function}
+\subsection{Manager for Analysis Methods -- \textit{testDataset} function}
 The \textit{testDataset} function's argument \textit{phenList} defines the dataset stored in \textit{PhenList} object.
 
 Function's argument \textit{depVariable} defines dependent variable.
@@ -1170,14 +1170,14 @@ There is only one graphical output for FE framework: categorical bar plots. This
 \end{verbatim}
 \endgroup 
 
-The example of bar plot is shown in Figure \ref{fig:05}.
+The example of bar plot is shown in Figure \ref{fig:05}. This graph allows a visual representation of the genotype effect for the variable of interest.
 \begin{figure}[!htpb]%figure01
 \centerline{\includegraphics[scale=0.5]{categoricalBarPlot.png}}
 \caption{The PhenStat package's graphical output: categorical bar plot.}\label{fig:05}
 \end{figure}
 
-\subsection{Graphics for Continous Data}
-There is a bunch of graphic functions for the MM framework results. They can be divided into two main categories: dataset based graphs, results based graphs.
+\subsection{Graphics for Continuous Data}
+There is a bunch of graphic functions for the MM framework results. They can be divided into two types: dataset based graphs and results based graphs.
 There are three functions in the dataset based graphs category:
 \begin{itemize}
 \item \textit{boxplotGenderGenotype} creates a box plot split by gender and genotype.
@@ -1189,24 +1189,24 @@ There are three functions in the dataset based graphs category:
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
 > boxplotGenderGenotype(test,depVariable="Lean.Mass",graphingName="Lean Mass")
-> boxplotGenderGenotypeBatch(test,depVariable="Bone.Area",graphingName="Bone Area")
+> boxplotGenderGenotypeBatch(test,depVariable="Lean.Mass",graphingName="Lean Mass")
 > scatterplotGenotypeWeight(test,depVariable="Bone.Mineral.Content",graphingName="BMC")
 \end{verbatim}
 \endgroup 
 
-The example of bar plot split by gender and genotype is shown in Figure \ref{fig:06}.
+The example of box plot split by gender and genotype is shown in Figure \ref{fig:06}. Outliers are shown as independent data points beyond the fences (“whiskers”) of the boxplot.  An outlier is defined as a data point that is 1.5 times the interquartile range above the upper quartile and bellow the lower quartile.
 \begin{figure}[!htpb]%figure01
 \centerline{\includegraphics[scale=0.5]{boxplotGenderGenotype.png}}
 \caption{The PhenStat package's graphical output: box plot split by gender and genotype.}\label{fig:06}
 \end{figure}
 
-The example of bar plot split by gender, genotype and batch is shown in Figure \ref{fig:07}.
+The example of box plot split by gender, genotype and batch is shown in Figure \ref{fig:07}. This allows a visualisation of variation of dependent variable with time. The MM framework assumes this variation is random and conforms the normal distribution. Then the genotype distribution can be of relative to natural variation. 
 \begin{figure}[!htpb]%figure01
 \centerline{\includegraphics[scale=0.5]{boxplotGenderGenotypeBatch.png}}
 \caption{The PhenStat package's graphical output: box plot split by gender, genotype and batch.}\label{fig:07}
 \end{figure}
 
-The example of scatter plot of body weight versus dependent variable is shown in Figure \ref{fig:08}.
+The example of scatter plot of body weight versus dependent variable is shown in Figure \ref{fig:08}. When weight is included in the model MM framework assumes a linear relationship between dependent variable and body weight. This graph allows an assessment of this showing both regression line and a loess line (locally weighted line) fitted for each genotype.
 \begin{figure}[!htpb]%figure01
 \centerline{\includegraphics[scale=0.5]{scatterplotGenotypeWeight.png}}
 \caption{The PhenStat package's graphical output: scatter plot of body weight versus dependent variable.}\label{fig:08}
@@ -1232,23 +1232,21 @@ There are five functions in the results based graphs category:
 \end{verbatim}
 \endgroup 
 
-The example of Q-Q plot of residuals for each genotype is shown in Figure \ref{fig:09}.
+The example of Q-Q plot of residuals for each genotype is shown in Figure \ref{fig:09}. The MM framework assumes residuals are normally distributed. Residuals are the differences between the real values observed for a dependent variable and the fitted values from the model. Q-Q plot assesses this assumption (residuals will be randomly arranged around the line if normally distributed). 
 \begin{figure}[!tpb]%figure01
 \centerline{\includegraphics[scale=0.5]{qqplotGenotype.png}}
 \caption{The PhenStat package's graphical output: Q-Q plot of residuals for each genotype.}\label{fig:09}
 \end{figure}
 
 
-The example of Q-Q plot of blups (best linear unbiased predictions) is shown in Figure \ref{fig:10}.
-
-BLUP in statistics is best linear unbiased prediction and is used in linear mixed models for the estimation of random effects. See tutorial \href{http://www.extension.org/pages/61006/the-solcap-tomato-phenotypic-data:-estimating-heritability-and-blups-for-traits#.Ui4zjWRgYXc}{BLUPs} for more details.
+The example of Q-Q plot of BLUPs (best linear unbiased predictions) is shown in Figure \ref{fig:10}. The MM framework assumes the BLUPs are normally distributed. This graph assesses for this assumption by plotting BLUPs and the ideal normal line (large deviations from the line can be an indicator of problems with the model fit). BLUPs are best linear unbiased predictions and are used for the estimation of batch effects. See tutorial \href{http://www.extension.org/pages/61006/the-solcap-tomato-phenotypic-data:-estimating-heritability-and-blups-for-traits#.Ui4zjWRgYXc}{BLUPs} for more details.
 
 \begin{figure}[!htpb]%figure01
 \centerline{\includegraphics[scale=0.5]{qqplotRandomEffects.png}}
-\caption{The PhenStat package's graphical output: Q-Q plot of blups (best linear unbiased predictions).}\label{fig:10}
+\caption{The PhenStat package's graphical output: Q-Q plot of BLUPs (best linear unbiased predictions).}\label{fig:10}
 \end{figure}
 
-The example of Q-Q plot of rotated residuals is shown in Figure \ref{fig:11}.
+Another method to assess the model fit is to consider the normality of the "rotated" and "unrotated" residuals. The example of Q-Q plot of "rotated" residuals is shown in Figure \ref{fig:11}. 
 
 "Rotated" residuals are constructed by multiplying the estimated marginal residual vector by
 the Cholesky decomposition of the inverse of the estimated marginal variance
@@ -1256,7 +1254,7 @@ matrix. The resulting “rotated” residuals are used to construct an empirical
 \href{http://biostats.bepress.com/cgi/viewcontent.cgi?article=1019&context=harvardbiostat}{Cholesky Residuals for Assessing Normal
 Errors in a Linear Model with Correlated
 Outcomes: Technical Report} 
- for more details about "rotated" residuals.
+ for more details about "rotated" and "unrotated" residuals.
 
 \begin{figure}[!htpb]%figure01
 \centerline{\includegraphics[scale=0.5]{qqplotRotatedResiduals.png}}
@@ -1385,9 +1383,11 @@ Gentleman,R. (2008) R Programming for Bioinformatics. Chapman \& Hall$\backslash
 \bibitem[Hahne \textit{et~al}., 2008]{Hahne08}
 Hahne,F., Huber,W., Gentleman,R., Falcon,S. (2008). Bioconductor Case Studies. Springer.  ISBN 978-0-387-77239-4.
 
-\bibitem[Karp {\it et~al}., 2012]{MM12} Karp,N., Melvin,D., Sanger Mouse Genetics Project, Mott,R. (2012) Robust and Sensitive Analysis of Mouse Knockout Phenotypes, {\it PLoS ONE},, {\bf 7}(12), e52410, doi:10.1371/journal.pone.0052410.
+\bibitem[Karp {\it et~al}., 2012]{MM12} Karp,N., Melvin,D., Sanger Mouse Genetics Project, Mott,R. (2012) Robust and Sensitive Analysis of Mouse Knockout Phenotypes, {\it PLoS ONE}, {\bf 7}(12), e52410, doi:10.1371/journal.pone.0052410.
 
 \bibitem[West {\it et~al}., 2007]{MM07}  West,B., Welch,K., Galecki,A. (2007) Linear Mixed Models: A practical guide using statistical software. Chapman \& Hall$\backslash$CRC. ISBN 978-1-584-88480-4.
+
+\bibitem[Houseman {\it et~al}]{RotatedResiduals04} E. Andrés Houseman, Louise M. Ryan and Brent A. Coull (2004) Cholesky Residuals for Assessing Normal Errors in a Linear Model with Correlated Outcomes, {\it Journal of the American Statistical Association}, {\bf Vol. 99, No. 466}, 383-394
 
 \end{thebibliography}
 
