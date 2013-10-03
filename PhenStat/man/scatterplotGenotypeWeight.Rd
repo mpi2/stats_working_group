@@ -23,12 +23,16 @@
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenList}}}
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
+    test <- PhenList(dataset=read.csv("./PhenStat/extdata/test.csv"),
             testGenotype="Sparc/Sparc")
-    scatterplotGenotypeWeight(test,depVariable="Bone.Mineral.Content",
+    scatterplotGenotypeWeight(test,
+            depVariable="Bone.Mineral.Content",
             graphingName="BMC" )
-    dataFile <- read.csv("./PhenStat/extdata/MAHN_DEXAdata_1Gender.csv")
-    test_1gender <- PhenList(dataset=dataFile,testGenotype="Mysm1/+")
-    scatterplotGenotypeWeight(test_1gender,depVariable="Lean.Mass", 
+    
+    dataFile <- read.csv("./PhenStat/extdata/test4.csv")
+    test_1gender <- PhenList(dataset=dataFile,
+            testGenotype="Mysm1/+")
+    scatterplotGenotypeWeight(test_1gender,
+            depVariable="Lean.Mass", 
             graphingName="Lean Mass")
 }

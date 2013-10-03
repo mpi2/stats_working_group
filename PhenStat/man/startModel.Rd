@@ -55,7 +55,22 @@
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenList}}}
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
+    test <- PhenList(dataset=read.csv("./PhenStat/extdata/test.csv"),
             testGenotype="Sparc/Sparc")
-    result <- testDataset(test,depVariable="Lean.Mass",callAll=FALSE)
+    # when "testDataset" function's argument "callAll" is set to FALSE 
+    # only "startModel" function is called - the first step of MM framework
+    result <- testDataset(test,
+            depVariable="Lean.Mass",
+            callAll=FALSE)
+    # print out formula that has been created
+    result$model.formula.genotype
+    # print out batch effect's significance 
+    result$model.effect.batch
+    # change the model
+    result <- testDataset(test,
+            depVariable="Lean.Mass",
+            equation="withWeight",
+            callAll=FALSE) 
+    # print out new formula
+    result$model.formula.genotype
 }

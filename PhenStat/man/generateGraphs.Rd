@@ -5,11 +5,10 @@
     Function generates graphs for the Mixed Model framework's results and stores generated graphs in the defined directory.
 }
 \usage{
-    generateGraphs(phenList, phenTestResult, dir, 
+    generateGraphs(phenTestResult, dir, 
             graphingName=NULL, type="Xlib")
 }
 \arguments{
-    \item{phenList}{instance of the \code{\linkS4class{PhenList}} class; mandatory argument}
     \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{\link{testDataset}}; mandatory argument}
     \item{dir}{directory where to store generated graphs; mandatory argument}
     \item{graphingName}{a character string defining the name to be used on the graph for the dependent variable; defaults to NULL then the depVariable name will be plotted}

@@ -3,7 +3,7 @@
 \title{Method "categoricalBarplot"}
 \description{
     Graph function for the Fisher Exact Test framework's results. Creates stacked bar plot(s) to compare proportions seen in a categorical variable between different genotypes. 
-    Graphs are created for all data and also for each sex individually.
+    Graphs are created for all data and also for each gender individually.
 }
 \usage{
     categoricalBarplot(phenTestResult)
@@ -19,9 +19,11 @@
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenList}}}
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/categorical_example1_aff3_Xray.csv"),
+    test <- PhenList(dataset=read.csv("./PhenStat/extdata/test_categorical.csv"),
             testGenotype="Aff3/Aff3")
-    result <- testDataset(test,depVariable="Thoracic.Processes",method="FE")       
+    result <- testDataset(test,
+            depVariable="Thoracic.Processes",
+            method="FE")       
     categoricalBarplot(result)
     
 }

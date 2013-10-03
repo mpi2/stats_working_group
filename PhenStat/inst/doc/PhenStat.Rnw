@@ -1,0 +1,39 @@
+%\VignetteIndexEntry{PhenStat Vignette}
+%\VignetteKeywords{statistical analysis, phenotypic data, Mixed Models, Fisher Exact Test}
+%\VignettePackage{PhenStat}
+\documentclass[12pt]{article}
+
+\textwidth=6.2in
+\textheight=8.5in
+\oddsidemargin=0.2in
+\evensidemargin=0.2in
+\headheight=0in
+\headsep=0in
+
+\begin{document}
+
+\title{PhenStat: statistical analysis of phenotypic data using Mixed Models and Fisher Exact Test}
+\author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
+\date{Modified: 20 September, 2013. Compiled: \today}
+
+\maketitle
+
+PhenStat is a package that provides statistical methods for the identification of abnormal phenotypes. 
+The package contains dataset checks and cleaning in preparation for the analysis. For continuous data, an iterative fitting process is used to fit a regression model that is the most appropriate for the data, whilst for categorical data, a Fisher Exact Test is implemented. 
+
+Depending on the user needs, the output can either be interactive where the user can view the graphical output and analysis summary or for a database impelementation the output consists of a vector of output and saved graphical files. 
+PhenStat has been tested and demonstrated with an application of XX lines of historic mouse phenotyping data. 
+
+The full PhenStat User's Guide is available as part of the online documentation.
+To reach the User's Guide, install the PhenStat package and load it into an R session by \texttt{library(PhenStat)}.
+In R for Windows, the User's Guide will then be available from the drop-down menu called ``Vignettes''.
+In other operating systems, type
+\begin{Schunk}
+\begin{Sinput}
+> library(PhenStat)
+> PhenStatUsersGuide()
+\end{Sinput}
+\end{Schunk}
+at the R prompt to open the User's Guide in a pdf viewer.
+
+\end{document}

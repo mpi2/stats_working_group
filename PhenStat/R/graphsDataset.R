@@ -22,7 +22,7 @@ boxplotGenderGenotype<-function(phenList, depVariable, graphingName){
     if(is(phenList,"PhenList")) {
         x <- phenList$dataset               
     } else {
-        stop("Please create a PhenList object first.")
+        x <- phenList
     }
     if (is.null(depVariable)) 
         stop("Please define dependent variable 'depVariable'.")
@@ -54,7 +54,7 @@ boxplotGenderGenotypeBatch<-function(phenList, depVariable, graphingName){
         x <- phenList$dataset
         refGenotype <- phenList$refGenotype        
     } else {
-        stop("Please create a PhenList object first.")
+        x <- phenList
     }
     if (is.null(depVariable)) 
         stop("Please define dependent variable 'depVariable'.")
@@ -67,8 +67,10 @@ boxplotGenderGenotypeBatch<-function(phenList, depVariable, graphingName){
     
     # Plot creation
     numberofgenders=length(levels(x$Gender))
-    y_range=c(min(x[ ,depVariable], na.rm=TRUE), max((x[ ,depVariable]), na.rm=TRUE))
-
+    if (is.numeric(x[ ,depVariable]))   
+        y_range=c(min(x[ ,depVariable], na.rm=TRUE), max((x[ ,depVariable]), na.rm=TRUE))
+    else
+        y_range=c(1, length(levels(x[ ,depVariable])))
     
     if(numberofgenders==2){
         Male = subset(x, x$Gender=="Male")
@@ -104,7 +106,7 @@ scatterplotGenotypeWeight<-function(phenList, depVariable, graphingName){
         x <- phenList$dataset     
         
     } else {
-        stop("Please create a PhenList object first.")
+        x <- phenList
     }
     if (is.null(depVariable)) 
         stop("Please define dependent variable 'depVariable'.")

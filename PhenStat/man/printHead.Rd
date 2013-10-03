@@ -20,7 +20,7 @@
 }
 \author{Gordon Smyth}
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
+    test <- PhenList(dataset=read.csv("./PhenStat/extdata/test.csv"),
             testGenotype="Sparc/Sparc")
     printHead(test)
     test

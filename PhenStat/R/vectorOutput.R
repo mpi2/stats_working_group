@@ -48,7 +48,7 @@ vectorOutput <- function(phenTestResult)
                 phenTestResult$model.output.summary["gender_MvKO_SE"], 
                 phenTestResult$model.output.summary["gender_MvKO_p_value"],
                 classificationValue)
-        names(vectorOutput) <- c("Method and equation","Dependent variable","Batch included",
+        names(vectorOutput) <- c("Method","Dependent variable","Batch included",
                 "Residual variances homogeneity","Genotype contribution",
                 "Genotype estimate","Genotype standard error","Genotype p-Val",
                 "Gender estimate","Gender standard error","Gender p-val",
@@ -75,7 +75,7 @@ vectorOutput <- function(phenTestResult)
             female_pval<-as.numeric(phenTestResult$model.output$female$p.val)
             female_ES<-as.numeric(phenTestResult$model.output$ES_female)
         }
-        
+
         vectorOutput <- c("Fisher Exact Test",
                 phenTestResult$depVariable, 
                 NA, 

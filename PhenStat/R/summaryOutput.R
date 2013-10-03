@@ -88,37 +88,38 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
     }    
 }
 #-----------------------------------------------------------------------------------
-generateGraphs <- function(phenList, phenTestResult, dir, graphingName=NULL, type="Xlib")
+generateGraphs <- function(phenTestResult, dir, graphingName=NULL, type="Xlib")
 # Generate all possible graphs and store them in the defined directory
 {
-    # ADD graphing name and call all graphs 
-    if (is.null(graphingName))
-        graphingName = phenTestResult$depVariable
-
-    
-    #1
-    graph_name=file.path(dir, "boxplotGenderGenotype.png")
-    png(graph_name,type=type)
-    boxplotGenderGenotype(phenList,phenTestResult$depVariable, graphingName=graphingName)
-    dev.off()
-    
-    #2
-    if (('Batch' %in% colnames(phenList$dataset))){
-        graph_name=file.path(dir, "boxplotGenderGenotypeBatch.png")
-        png(graph_name,type=type)
-        boxplotGenderGenotypeBatch(phenList,phenTestResult$depVariable, graphingName=graphingName)
-        dev.off()
-    }
-    
-    #3
-    if (('Weight' %in% colnames(phenList$dataset))){
-        graph_name=file.path(dir, "scatterplotGenotypeWeight.png")
-        png(graph_name,type=type)
-        scatterplotGenotypeWeight(phenList,phenTestResult$depVariable, graphingName=graphingName)
-        dev.off()
-    }
-    
     if (phenTestResult$method=="MM"){
+         
+        if (is.null(graphingName))
+            graphingName = phenTestResult$depVariable
+        
+        
+        #1
+        graph_name=file.path(dir, "boxplotGenderGenotype.png")
+        png(graph_name,type=type)
+        boxplotGenderGenotype(phenTestResult$model.dataset,phenTestResult$depVariable, graphingName=graphingName)
+        dev.off()
+        
+        #2
+        if (('Batch' %in% colnames(phenTestResult$model.dataset))){
+            graph_name=file.path(dir, "boxplotGenderGenotypeBatch.png")
+            png(graph_name,type=type)
+            boxplotGenderGenotypeBatch(phenTestResult$model.dataset,phenTestResult$depVariable, graphingName=graphingName)
+            dev.off()
+        }
+        
+        #3
+        if (('Weight' %in% colnames(phenTestResult$model.dataset))){
+            graph_name=file.path(dir, "scatterplotGenotypeWeight.png")
+            png(graph_name,type=type)
+            scatterplotGenotypeWeight(phenTestResult$model.dataset,phenTestResult$depVariable, graphingName=graphingName)
+            dev.off()
+        }
+        
+   
     
         #4
         graph_name=file.path(dir, "qqplotGenotype.png")
@@ -132,7 +133,7 @@ generateGraphs <- function(phenList, phenTestResult, dir, graphingName=NULL, typ
         plotResidualPredicted(phenTestResult)
         dev.off()
         
-        if (('Batch' %in% colnames(phenList$dataset)) && phenTestResult$model.effect.batch){
+        if (('Batch' %in% colnames(phenTestResult$model.dataset)) && phenTestResult$model.effect.batch){
             graph_name=file.path(dir, "qqplotRandomEffects.png")
             png(graph_name,type=type)
             qqplotRandomEffects(phenTestResult)
@@ -140,7 +141,7 @@ generateGraphs <- function(phenList, phenTestResult, dir, graphingName=NULL, typ
         }    
         
         #7
-        if (('Batch' %in% colnames(phenList$dataset))){
+        if (('Batch' %in% colnames(phenTestResult$model.dataset))){
             graph_name=file.path(dir, "boxplotResidualBatch.png")
             png(graph_name,type=type)
             boxplotResidualBatch(phenTestResult)
@@ -148,13 +149,19 @@ generateGraphs <- function(phenList, phenTestResult, dir, graphingName=NULL, typ
         }    
         
         #8
-        if (('Batch' %in% colnames(phenList$dataset)) && phenTestResult$model.effect.batch){
+        if (('Batch' %in% colnames(phenTestResult$model.dataset)) && phenTestResult$model.effect.batch){
             graph_name=file.path(dir, "qqplotRotatedResiduals.png")
             png(graph_name,type=type)
             qqplotRotatedResiduals(phenTestResult)
             dev.off()
         }   
         
+    }
+    else {
+        graph_name=file.path(dir, "categoricalBarPlot.png")
+        png(graph_name,type=type)
+        categoricalBarplot(phenTestResult)
+        dev.off()
     } 
     
     

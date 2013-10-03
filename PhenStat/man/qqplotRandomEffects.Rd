@@ -19,8 +19,9 @@
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenList}} and \code{\linkS4class{PhenTestResult}}}
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
+    test <- PhenList(dataset=read.csv("./PhenStat/extdata/test.csv"),
             testGenotype="Sparc/Sparc")
-    result <- testDataset(test,depVariable="Lean.Mass")
+    result <- testDataset(test,
+            depVariable="Lean.Mass")
     qqplotRandomEffects(result)
 }

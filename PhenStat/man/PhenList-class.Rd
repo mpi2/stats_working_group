@@ -4,11 +4,9 @@
 
 \title{Class "PhenList"}
 
-\description{A list-based S4 class for storing phenotypic data. Helps to support data integrity checks and statistics calculation.}
+\description{A list-based S4 class for storing phenotypic data. Helps to support data integrity checks and statistics calculation.
+The PhenList object can be created by using function \code{\link{PhenList}}.}
 
-\section{Create PhenList object}{
-    The appropriate way to create PhenList object is via \code{\link{PhenList}} function.
-}
 \section{Explore PhenList object}{
     PhenList object instance contains the following sections:
     
@@ -16,33 +14,35 @@
     
     2. "testGenotype" where the genotype level to test is stored:  \code{phenList$testGenotype}
     
-    3. "refGenotype" where reference genotype  value is stored with default value set to "+/+":  \code{phenList$refGenotype}
+    3. "refGenotype" where reference genotype  value is stored with default value set to "+/+":  
+    
+    \code{phenList$refGenotype}
     
     4. "dataset.stat" where simple dataset statistics is stored: \code{phenList$dataset.stat}
     
-    5. "hemiGenotype" if defined contains the genotype value for hemizygous:   \code{phenList$hemiGenotype}
+    5. "hemiGenotype" if defined contains the genotype value for hemizygous: \code{phenList$hemiGenotype}
     
-    6. "outputMessages" flag value is stored, see \code{\link{PhenList}} for more details
+    6. "dataset.clean" flag value is stored,  see \code{\link{PhenList}} for more details:
     
-    7. "dataset.clean" flag value is stored,  see \code{\link{PhenList}} for more details
+    \code{phenList$dataset.clean}
     
-    8. "dataset.colname" if defined contains dataset column names that have been renamed:
+    7. "dataset.colname" if defined contains dataset column names that have been renamed:
     
-        - "dataset.colname.batch" column name for batch values
+        - \code{phenList$dataset.colname.batch} column name for batch values
        
-        - "dataset.colname.genotype" column name for genotype values
+        - \code{phenList$dataset.colname.genotype} column name for genotype values
     
-        - "dataset.colname.gender" column name for gender values
+        - \code{phenList$dataset.colname.gender} column name for gender values
     
-        - "dataset.colname.weight" column name for weight values
+        - \code{phenList$dataset.colname.weight} column name for weight values
         
-    9. "dataset.values" if defined contains dataset values that have been changed during dataset cleaning process:
+    8. "dataset.values" if defined contains dataset values that have been changed during dataset cleaning process:
     
-        - "dataset.values.missingValue" value used as missing value in the orginal dataset
+        - \code{phenList$dataset.values.missingValue} value used as missing value in the orginal dataset
         
-        - "dataset.values.male" value used to label "males" in the original dataset
+        - \code{phenList$dataset.values.male} value used to label "males" in the original dataset
         
-        - "dataset.values.female" value used to label "females" in the original dataset
+        - \code{phenList$dataset.values.female} value used to label "females" in the original dataset
     
 
 }
@@ -58,17 +58,19 @@
 \seealso{\code{\link{PhenList}}}
 
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
+    test <- PhenList(dataset=read.csv("./PhenStat/extdata/test.csv"),
             testGenotype="Sparc/Sparc")
     class(test)
-    test2 <- PhenList(dataset=read.csv("./PhenStat/extdata/MAAJ_CCdata.csv"),
-            testGenotype="Arid4a/Arid4a",refGenotype="+/+",hemiGenotype="Arid4a/+",
+    
+    test2 <- PhenList(dataset=read.csv("./PhenStat/extdata/test2.csv"),
+            testGenotype="Arid4a/Arid4a",
+            refGenotype="+/+",
+            hemiGenotype="Arid4a/+",
             dataset.colname.weight="Weight.Value")
     test2$dataset.stat
     test2$testGenotype
     test2$refGenotype
     test2$hemiGenotype
-    test2$outputMessages
     test2$dataset.colname.weight
 }
 

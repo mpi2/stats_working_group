@@ -2,10 +2,10 @@
 \alias{PhenList}
 \title{Method "PhenList"}
 \description{
-    Creates  \code{\linkS4class{PhenList}} object, checks data integrity, renames columns when requested, 
+    Creates \code{\linkS4class{PhenList}} object, checks data integrity, renames columns when requested, 
     provides simple statistics about dataset.
     
-    Returns an instance of the PhenList object created from the data file. 
+    Returns an instance of the \code{\linkS4class{PhenList}} object created from the data file. 
     
     Dataset is cleaned to ensure there is a maximum two gender levels and there are exactly two levels for genotype.
     Data cleaning can be switched off by defining the argument "dataset.clean" as FALSE.
@@ -28,9 +28,9 @@
     \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages; assigned default value is TRUE}
     \item{dataset.clean}{flag: "FALSE" value for no modification of the dataset; "TRUE" value to clean dataset if needed; assigned default value is TRUE}
     \item{dataset.colname.batch}{column name within dataset for the batch effect}
-    \item{dataset.colname.genotype}{column name within dataset for the genotype information}
-    \item{dataset.colname.gender}{column name within dataset for the gender information}
-    \item{dataset.colname.weight}{column name within dataset for the weight information}
+    \item{dataset.colname.genotype}{column name within dataset for the genotype info}
+    \item{dataset.colname.gender}{column name within dataset for the gender info}
+    \item{dataset.colname.weight}{column name within dataset for the weight info}
     \item{dataset.values.missingValue}{value used as missing value in the dataset}
     \item{dataset.values.male}{value used to label "males" in the dataset}
     \item{dataset.values.female}{value used to label "females" in the dataset}
@@ -50,11 +50,19 @@
 \seealso{\code{\linkS4class{PhenList}}}
 
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
+    test <- PhenList(dataset=read.csv("./PhenStat/extdata/test.csv"),
             testGenotype="Sparc/Sparc")
-    test2 <- PhenList(dataset=read.csv("./PhenStat/extdata/MAAJ_CCdata.csv"),
-            testGenotype="Arid4a/Arid4a",refGenotype="+/+",hemiGenotype="Arid4a/+",
+    
+    test2 <- PhenList(dataset=read.csv("./PhenStat/extdata/test2.csv"),
+            testGenotype="Arid4a/Arid4a",
+            refGenotype="+/+",
+            hemiGenotype="Arid4a/+",
             dataset.colname.weight="Weight.Value")
-    test3<-PhenList(dataset=read.csv("./PhenStat/extdata/MAHN_DEXAdata_genderas1or2.csv"), dataset.clean=TRUE, dataset.values.female=1, dataset.values.male=2, testGenotype="Mysm1/+")
+    
+    test3 <- PhenList(dataset=read.csv("./PhenStat/extdata/test3.csv"), 
+            dataset.clean=TRUE, 
+            dataset.values.female=1, 
+            dataset.values.male=2, 
+            testGenotype="Mysm1/+")
     
 }

@@ -3,7 +3,7 @@
 \title{Method "testFinalModel"}
 \description{
     Performs diagnostic tests for Mixed Model quality of fit. There are no arguments checks assuming that 
-    function is called internally from the "testDataset" function. Otherwise should be used with precaution. 
+    function is called internally from the "finalModel" function. Otherwise should be used with precaution. 
 }
 \usage{
     testFinalModel(phenTestResult)
@@ -23,9 +23,9 @@
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenTestResult}}}
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
+    test <- PhenList(dataset=read.csv("./PhenStat/extdata/test.csv"),
             testGenotype="Sparc/Sparc")
-    result <- testDataset(test,depVariable="Lean.Mass",callAll=FALSE)
-    result <- finalModel(result)
+    result <- testDataset(test,
+            depVariable="Lean.Mass")
     testFinalModel(result)
 }

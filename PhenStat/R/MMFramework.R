@@ -1,4 +1,4 @@
-# Copyright © 2011-2013 EMBL - European Bioinformatics Institute
+# Copyright \u00a9 2011-2013 EMBL - European Bioinformatics Institute
 # 
 # Licensed under the Apache License, Version 2.0 (the "License"); 
 # you may not use this file except in compliance with the License.  
@@ -30,7 +30,7 @@
 
 # If user has defined fixed effects (keepList argument) then function prints out calculated and user defined effects 
 # (only when outputMessages argument is set to TRUE), checks user defined effects for consistency 
-# (for instance, if there are no "Weight" column in the dataset then weight effect can't be assigned to TRUE, etc.)
+# (for instance, if there are no "Weight" column in the dataset then weigth effect can't be assigned to TRUE, etc.)
 # and modifies start model according to user defined effects. 
 
 # As the result PhenTestResult object that contains calculated or user defined model effects and MM start model is created. 
@@ -41,26 +41,26 @@ startModel <- function(phenList, depVariable, equation="withWeight", outputMessa
     x <- phenList$dataset
     
     if (!is.null(keepList)){
-        
-        if (!('Weight' %in% colnames(x)) && keep_weight){
-            if (outputMessages)
-            message("Warning:\nWeight column is missed in the dataset. 'keepWeight' is set to FALSE.")
-            user_keep_weight=FALSE
-        }
-        
-        if (!('Batch' %in% colnames(x)) && (keep_batch || keep_equalvar)){
-            if (outputMessages)
-            message("Warning:\nBatch column is missed in the dataset. 'keepBatch' and 'keepVariance' are set to FALSE.")
-            user_keep_batch=FALSE
-            user_keep_equalvar=FALSE
-        }
-        
         # User's values for effects
         user_keep_weight <- keepList[3]
         user_keep_gender <- keepList[4]
         user_keep_interaction <- keepList[5]
         user_keep_batch <- keepList[1]
         user_keep_equalvar <- keepList[2]
+        
+        if (!('Weight' %in% colnames(x)) && user_keep_weight){
+            if (outputMessages)
+            message("Warning:\nWeight column is missed in the dataset. 'keepWeight' is set to FALSE.")
+            user_keep_weight=FALSE
+        }
+        
+        if (!('Batch' %in% colnames(x)) && user_keep_batch){
+            if (outputMessages)
+            message("Warning:\nBatch column is missed in the dataset. 'keepBatch' and 'keepVariance' are set to FALSE.")
+            user_keep_batch=FALSE
+        }
+        
+
         
         if (outputMessages)
         message(paste("Information:\nUser's values for model effects are: keepBatch=",user_keep_batch,
@@ -282,10 +282,10 @@ finalModel <- function(phenTestResult, outputMessages=TRUE)
         keep_interaction <- result$model.effect.interaction
         keep_batch <- result$model.effect.batch
         keep_equalvar <- result$model.effect.variance
-
+        
         # Stop function if there are no datasets to work with
         if(is.null(x))
-            stop_message <- "Error:\nPlease create a PhenList object first and run function 'testDataset'.\n"
+        stop_message <- "Error:\nPlease create a PhenList object first and run function 'testDataset'.\n"
         
         # Stop function if there are no enough input parameters      
         if (is.null(equation) || is.null(depVariable) || is.null(keep_batch) || is.null(keep_equalvar) 
@@ -296,7 +296,7 @@ finalModel <- function(phenTestResult, outputMessages=TRUE)
         stop_message <- "Error:\nPlease create a PhenTestResult object first.\n"        
     }
     
-     
+    
     if (nchar(stop_message)>1){
         if (outputMessages)   
         message(stop_message)

@@ -31,7 +31,7 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
             if ('Assay.Date' %in% colnames(dataset)){
                 colnames(dataset)[colnames(dataset) == 'Assay.Date'] <-'Batch'
                 if (outputMessages)
-                    message("Warning:\nDataset's column 'Assay.Date' has been renamed to 'Batch' and will be used for the batch effect modeling.\n")
+                    message("Warning:\nDataset's column 'Assay.Date' has been renamed to 'Batch' and will be used for the batch effect modelling.\n")
             }
             else          
                     
@@ -79,7 +79,7 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
             if (length(rownames(dataset[dataset$Genotype==hemiGenotype,]))>0) {
                 levels(dataset$Genotype)[levels(dataset$Genotype)==hemiGenotype] <- testGenotype                                
                 if (outputMessages)
-                    message(paste("Warning:\nHemizygotes '",hemiGenotype,"' have been relabeled to test genotype '",testGenotype,"'.\nIf you don't want this behaviour then don't define 'hemiGenotype' argument.\n",sep=""))
+                    message(paste("Warning:\nHemizygotes '",hemiGenotype,"' have been relabelled to test genotype '",testGenotype,"'.\nIf you don't want this behaviour then don't define 'hemiGenotype' argument.\n",sep=""))
             }
         }
         

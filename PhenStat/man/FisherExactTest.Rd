@@ -13,11 +13,11 @@
     
     - records where gender value is "Female" (if such exists) - females only dataset.
     
-    Together with count matrices creates percentage matrices, calculates effect sizes and statistics for count matrices.
-     
-    The function is called from testDataset function when "method" argument is set to "FE" meaning "Fisher Exact Test".
+    Together with count matrices creates percentage matrices, calculates effect sizes and statistics for count matrices. Performs Fisher Exact Tests. 
     
-    As the result PhenTestResult object that contains Fisher tests output is created.  
+    The results (matrices, statistics and Fisher Exact Test outputs) are stored in \code{\linkS4class{PhenTestResult}} object.
+     
+    The funciton is called from "testDataset" function when "method" argument is set to "FE" meaning "Fisher Exact Test".
 }
 \usage{
     FisherExactTest(phenList, depVariable, outputMessages=TRUE)
@@ -40,8 +40,10 @@
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenTestResult}}}
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/categorical_example1_aff3_Xray.csv"),
+    test <- PhenList(dataset=read.csv("./PhenStat/extdata/test_categorical.csv"),
             testGenotype="Aff3/Aff3")
-    result <- testDataset(test,depVariable="Thoracic.Processes",method="FE")  # FisherExactTest function is called from testDataset function.
+    # "FisherExactTest" function is called from "testDataset" function.
+    result <- testDataset(test,depVariable="Thoracic.Processes",method="FE")  
+    # Fisher Exact Test results can be printed out using function "summaryOutput"
     summaryOutput(result)
 }

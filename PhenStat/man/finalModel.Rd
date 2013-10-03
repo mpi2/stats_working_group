@@ -5,7 +5,7 @@
     This is an internal function run within MM framework. It completes the final stage of the MM framework, which builds the final model and estimates effects.  
     As an internal function, it doesn't include extensive error testing of inputs. Please use cautiously if calling directly.  
         
-    Works with \code{\linkS4class{PhenTestResult}} object created by "startModel" function. 
+    Works with \code{\linkS4class{PhenTestResult}} object created by \code{\link{startModel}} function. 
     The creation of MM final model is based on the significance of different fixed effects, depVariable and equation values 
     stored in \code{\linkS4class{PhenTestResult}} object.
 }
@@ -29,8 +29,25 @@
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenTestResult}} and \code{\link{testDataset}}}
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
+    test <- PhenList(dataset=read.csv("./PhenStat/extdata/test.csv"),
             testGenotype="Sparc/Sparc")
-    result <- testDataset(test,depVariable="Lean.Mass",equation="withoutWeight",callAll=FALSE) #as callAll FALSE the result only includes StartModel output
+    # when "testDataset" function's argument "callAll" is set to FALSE 
+    # only "startModel" function is called - the first step of MM framework
+    result <- testDataset(test,
+            depVariable="Lean.Mass",
+            equation="withoutWeight",
+            callAll=FALSE) 
+    # print out formula that has been created
+    result$model.formula.genotype
+    # print out batch effect's significance 
+    result$model.effect.batch
+    # change the model
+    result <- testDataset(test,
+            depVariable="Lean.Mass",
+            equation="withWeight",
+            callAll=FALSE) 
+    # print out new formula
+    result$model.formula.genotype
+    # run the final model fitting when statisfied with the model
     result <- finalModel(result)
 }

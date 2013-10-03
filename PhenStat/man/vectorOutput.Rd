@@ -4,7 +4,7 @@
 \description{
     Wrapper for the model fitting results. Returns model fitting and testing results in a vector format. 
     Assumes that modelling results are stored in the \code{\linkS4class{PhenTestResult}} object 
-    (output from function "testDataset").
+    (output from function \code{\link{testDataset}}).
 }
 \usage{
     vectorOutput(phenTestResult)
@@ -24,8 +24,18 @@
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenTestResult}}}
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
+    # Mixed Model framework
+    test <- PhenList(dataset=read.csv("./PhenStat/extdata/test.csv"),
             testGenotype="Sparc/Sparc")
-    result <- testDataset(test,depVariable="Lean.Mass")
+    result <- testDataset(test,
+            depVariable="Lean.Mass")
     vectorOutput(result)
+    
+    # Fishe Exact Test framework
+    test2 <- PhenList(dataset=read.csv("./PhenStat/extdata/test_categorical.csv"),
+            testGenotype="Aff3/Aff3")
+    result2 <- testDataset(test2,
+            depVariable="Thoracic.Processes",
+            method="FE")  
+    vectorOutput(result2)
 }

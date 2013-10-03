@@ -30,7 +30,7 @@
     
     Warning given in case of missed data indicating that you can only fit a glm or to use MM equation "withoutWeight".
     
-    Is called from "PhenList" method. 
+    Function \code{\link{checkDataset}} is called from \code{\link{PhenList}} function. 
 }
 \usage{
     checkDataset(dataset, testGenotype, refGenotype="+/+", 
@@ -60,7 +60,8 @@
 \seealso{\code{\linkS4class{PhenTestResult}}}
 
 \examples{    
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
-            testGenotype="Sparc/Sparc")    # checkDataset is called internally
+    # "checkDataset" is called internally from "PhenList" function
+    test <- PhenList(dataset=read.csv("./PhenStat/extdata/test.csv"),
+            testGenotype="Sparc/Sparc")    
     
 }

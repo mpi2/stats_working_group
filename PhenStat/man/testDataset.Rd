@@ -46,7 +46,33 @@
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenList}}}
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
+    # Mixed Model framework
+    test <- PhenList(dataset=read.csv("./PhenStat/extdata/test.csv"),
             testGenotype="Sparc/Sparc")
-    result <- testDataset(test,depVariable="Lean.Mass")
+    result <- testDataset(test,
+            depVariable="Lean.Mass")
+    # print out formula that has been created
+    result$model.formula.genotype
+    summaryOutput(result)
+    
+    # Mixed Model framework with user defined effects
+    user_defined_effects <- c(keep_batch=TRUE,
+            keep_equalvar=TRUE,
+            keep_weight=TRUE,
+            keep_gender=TRUE,
+            keep_interaction=TRUE)
+    result3 <- testDataset(test,
+            depVariable="Lean.Mass",
+            keepList=user_defined_effects)
+    # print out formula that has been created
+    result3$model.formula.genotype
+    summaryOutput(result3)
+    
+    # Fisher Exact Test framework
+    test2 <- PhenList(dataset=read.csv("./PhenStat/extdata/test_categorical.csv"),
+            testGenotype="Aff3/Aff3")
+    result2 <- testDataset(test2,
+            depVariable="Thoracic.Processes",
+            method="FE") 
+    summaryOutput(result2) 
 }

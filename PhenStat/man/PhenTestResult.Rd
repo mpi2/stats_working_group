@@ -48,8 +48,11 @@
 \seealso{\code{\linkS4class{PhenTestResult}}}
 
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
+    test <- PhenList(dataset=read.csv("./PhenStat/extdata/test.csv"),
             testGenotype="Sparc/Sparc")
-    result <- testDataset(test,equation="withoutWeight",depVariable="Lean.Mass") # calls PhenTestResult function internally
+    # "testDataset" function calls "PhenTestResult" function internally
+    result <- testDataset(test,
+            equation="withoutWeight",
+            depVariable="Lean.Mass")
     class(result)
 }

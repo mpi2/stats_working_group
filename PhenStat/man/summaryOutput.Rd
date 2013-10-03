@@ -23,13 +23,18 @@
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenTestResult}}}
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/MBAU_data.csv"),
+    # Mixed Model framework
+    test <- PhenList(dataset=read.csv("./PhenStat/extdata/test.csv"),
             testGenotype="Sparc/Sparc")
-    result <- testDataset(test,depVariable="Lean.Mass")
+    result <- testDataset(test,
+            depVariable="Lean.Mass")
     summaryOutput(result)
     
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/categorical_example1_aff3_Xray.csv"),
+    # Fishe Exact Test framework
+    test2 <- PhenList(dataset=read.csv("./PhenStat/extdata/test_categorical.csv"),
             testGenotype="Aff3/Aff3")
-    result <- testDataset(test,depVariable="Thoracic.Processes",method="FE")  
-    summaryOutput(result)
+    result2 <- testDataset(test2,
+            depVariable="Thoracic.Processes",
+            method="FE")  
+    summaryOutput(result2)
 }

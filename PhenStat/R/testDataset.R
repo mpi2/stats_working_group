@@ -76,9 +76,12 @@ testDataset <- function(phenList, depVariable, equation="withWeight", outputMess
            }
            else if (method=="FE") {
                 # Test: depVariable number of levels is at least 2
-                if (length(levels(factor(columnOfInterest,exclude=NA)))==0){
+                if (length(levels(factor(columnOfInterest,exclude=NA)))<2){
                    stop_message <- paste("Error:\nInsufficient data in the dependent variable '",depVariable,"' to allow the application of Fisher Exact test framework.\n",sep="") 
                 }
+                if (length(levels(factor(columnOfInterest,exclude=NA)))>10){
+                    stop_message <- paste("Error:\nPackage supports up to 10 levels in dependent variable in FE framework. The variable '",depVariable,"' has more than 10 levels.\n",sep="") 
+                }    
            }     
         }
         

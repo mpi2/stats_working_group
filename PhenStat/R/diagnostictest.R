@@ -16,7 +16,7 @@
 #-----------------------------------------------------------------------------------
 testFinalModel<-function(phenTestResult)
 # Diagnostic test output for MM quality of fit. There are no arguments checks assuming that 
-# function is called internally from the buildFinalModel function. Otherwise should be used with precaution. 
+# function is called internally from the finalModel function. Otherwise should be used with precaution. 
 {
     require(nortest)
     
