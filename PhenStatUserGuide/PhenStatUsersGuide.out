@@ -1,0 +1,24 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Data Processing with PhenList Function}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{Terminology Unification}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.2}{Filtering}{section.2}% 4
+\BOOKMARK [2][-]{subsection.2.3}{Dataset Checks}{section.2}% 5
+\BOOKMARK [2][-]{subsection.2.4}{PhenList Object}{section.2}% 6
+\BOOKMARK [1][-]{section.3}{Statistical Analysis}{}% 7
+\BOOKMARK [2][-]{subsection.3.1}{ Manager for Analysis Methods \205 testDataset function}{section.3}% 8
+\BOOKMARK [2][-]{subsection.3.2}{Mixed Model Framework}{section.3}% 9
+\BOOKMARK [3][-]{subsubsection.3.2.1}{Theory}{subsection.3.2}% 10
+\BOOKMARK [3][-]{subsubsection.3.2.2}{Implementation}{subsection.3.2}% 11
+\BOOKMARK [3][-]{subsubsection.3.2.3}{Diagnostics}{subsection.3.2}% 12
+\BOOKMARK [3][-]{subsubsection.3.2.4}{Classification Tag}{subsection.3.2}% 13
+\BOOKMARK [2][-]{subsection.3.3}{Fisher Exact Test Framework}{section.3}% 14
+\BOOKMARK [1][-]{section.4}{Output of Results}{}% 15
+\BOOKMARK [2][-]{subsection.4.1}{Summary Output}{section.4}% 16
+\BOOKMARK [2][-]{subsection.4.2}{Vector Format}{section.4}% 17
+\BOOKMARK [2][-]{subsection.4.3}{Count Matrices in Vector Format}{section.4}% 18
+\BOOKMARK [1][-]{section.5}{Graphics}{}% 19
+\BOOKMARK [2][-]{subsection.5.1}{Graphics for Categorical Data}{section.5}% 20
+\BOOKMARK [2][-]{subsection.5.2}{Graphics for Continous Data}{section.5}% 21
+\BOOKMARK [1][-]{section.6}{Case Studies}{}% 22
+\BOOKMARK [2][-]{subsection.6.1}{PhenStat Integration with Database}{section.6}% 23
+\BOOKMARK [2][-]{subsection.6.2}{PhenStat Example Using Cluster}{section.6}% 24
