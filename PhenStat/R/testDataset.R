@@ -99,7 +99,7 @@ testDataset <- function(phenList, depVariable, equation="withWeight", outputMess
         if ((length(keepList[keepList==TRUE]) + length(keepList[keepList==FALSE])) !=5) 
         stop_message <- paste(stop_message,
                 "Error:\nPlease define the values for 'keepList' list, where for each effect/part of the model TRUE/FALSE value defines to keep it in the model or not, for instance: 
-'keepList=c(keepBatch=TRUE,keepVariance=TRUE,keepWeight=FALSE,keepGender=TRUE,keepInteraction=TRUE)'.\n",sep="")
+'keepList=c(keepBatch=TRUE,keepEqualVariance=TRUE,keepWeight=FALSE,keepGender=TRUE,keepInteraction=TRUE)'.\n",sep="")
         
     }
 
@@ -113,7 +113,7 @@ testDataset <- function(phenList, depVariable, equation="withWeight", outputMess
     
     if (!('Weight' %in% colnames(x)) && equation=="withWeight" && method=="MM"){
         if (outputMessages)
-        message("Warning:\nWeight column is missed in the dataset. Equation 'withWeight' can't be used and has been replaced to 'withoutWeight'.")
+        message("Warning:\nWeight column is missed in the dataset. Equation 'withWeight' can't be used and has been replaced to 'withoutWeight'.\n")
         equation="withoutWeight"
     }
     
@@ -133,7 +133,7 @@ testDataset <- function(phenList, depVariable, equation="withWeight", outputMess
         # Perform all framework methods 
         if (callAll){
             if (outputMessages)
-                message(paste("Information:\nPerform all MM framework stages: startModel and finalModel\n",sep=""))
+                message(paste("Information:\nPerform all MM framework stages: startModel and finalModel.\n",sep=""))
             result <- finalModel(result, outputMessages)
         }
         

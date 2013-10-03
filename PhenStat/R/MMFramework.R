@@ -50,24 +50,16 @@ startModel <- function(phenList, depVariable, equation="withWeight", outputMessa
         
         if (!('Weight' %in% colnames(x)) && user_keep_weight){
             if (outputMessages)
-            message("Warning:\nWeight column is missed in the dataset. 'keepWeight' is set to FALSE.")
+                message("Warning:\nWeight column is missed in the dataset. 'keepWeight' is set to FALSE.")
             user_keep_weight=FALSE
         }
         
         if (!('Batch' %in% colnames(x)) && user_keep_batch){
             if (outputMessages)
-            message("Warning:\nBatch column is missed in the dataset. 'keepBatch' and 'keepVariance' are set to FALSE.")
+                message("Warning:\nBatch column is missed in the dataset. 'keepBatch' is set to FALSE.")
             user_keep_batch=FALSE
         }
-        
-
-        
-        if (outputMessages)
-        message(paste("Information:\nUser's values for model effects are: keepBatch=",user_keep_batch,
-                        ", keepVariance=",user_keep_equalvar,
-                        ", keepWeight=",user_keep_weight,
-                        ", keepGender=",user_keep_gender, 
-                        ", keepInteraction=",user_keep_interaction,".\n",sep=""))     
+         
     }
     
     numberofgenders=length(levels(x$Gender))
@@ -78,37 +70,117 @@ startModel <- function(phenList, depVariable, equation="withWeight", outputMessa
     
     if ('Batch' %in% colnames(x)){
         
-        # MM fit of model formula (with random effects)
-        # Model 1 (model_MM)
-        model_MM = do.call("lme", args = list(model.formula, random=~1|Batch, data = x, na.action="na.omit", method="REML"))
-        # GLS fit of model formula  (no random effects)
+        
+        # GLS fit of model formula (no random effects)
         # Model 1A (model_withoutbatch)
         model_withoutbatch <- do.call("gls", args=list(model.formula, x, na.action="na.omit"))
+        # MM fit of model formula (with random effects)
+        # Model 1 (model_MM)
+        model_MM <-
+        tryCatch(               
+                model_MM <- do.call("lme", args = list(model.formula, random=~1|Batch, data = x, na.action="na.omit", method="REML")),
+                error=function(error_mes) {
+                    if (outputMessages)
+                        message("Warning:\nMixed model with batch effect as random effect is not fitting - false convergence.\nMixed model with no random effects is used instead.\n")
+                    #message(error_mes)
+                    # Choose a return value in case of error
+                    model_MM <- NULL
+                }
+         )
         # Test: the random effects associated with batch intercepts can be ommited from model
         # Hypothesis 1
         # Null Hypothesis: variance of batch = 0
         # Alternative Hypothesis: variance of batch > 0 
         # For the division by 2 explanations see p.80 of "Linear Mixed Models"...
-        p.value.batch <-(anova(model_MM, model_withoutbatch)$p[2])/2
-        # The result of the test for Hypothesis 1 will help to select the structure for random effects
-        keep_batch= p.value.batch<pThreshold
+        if (!is.null(model_MM)) {
+            p.value.batch <-(anova(model_MM, model_withoutbatch)$p[2])/2
+            # The result of the test for Hypothesis 1 will help to select the structure for random effects
+            keep_batch= p.value.batch<pThreshold
+
+        }
+        else {
+            keep_batch <- FALSE
+            if (!is.null(keepList)){                
+                if (outputMessages && user_defined_batch)
+                    message("Warning:\n'keepBatch' is set to FALSE otherwise the model can't be fitted - false convergence.\n")
+                user_defined_batch <- FALSE
+            }
+            model_MM <- model_withoutbatch
+        }
         
         # MM fit of model formula with heterogeneous residual variances for genotype groups
         # Model 1 assumes homogeneous residual variances
         # Model 2 with heterogeneous residual variances 
-        model_hetvariance= do.call("lme", args=list(model.formula, random=~1|Batch, x, weights=varIdent(form=~1|Genotype), na.action="na.omit", method="REML"))
-        # Test: the variance of the residuals is the same (homogeneous) for all genotype groups
-        # Hypothesis 2
-        # Null Hypothesis: all residual variances are equal
-        # Alternative Hypothesis: the residue variance is not equal    
-        p.value.variance=(anova(model_MM, model_hetvariance)$p[2])
-        # The result of the test for Hypothesis 2 will help to select a covariance structure for the residuals
-        keep_equalvar= p.value.variance>pThreshold
+        model_hetvariance <- 
+        tryCatch(               
+                model_hetvariance <- do.call("lme", args=list(model.formula, random=~1|Batch, x, weights=varIdent(form=~1|Genotype), na.action="na.omit", method="REML")),
+                error=function(error_mes) {
+                    if (outputMessages)
+                        message("Warning:\nMixed model with heterogeneous residual variances for genotype groups is not fitting - false convergence.\nMixed model with homogeneous residual variances is used instead.\n")
+                    
+                    model_hetvariance <- NULL
+                }
+         )
+            
+        if (!is.null(model_hetvariance)) {
+            #model_hetvariance= do.call("lme", args=list(model.formula, random=~1|Batch, x, weights=varIdent(form=~1|Genotype), na.action="na.omit", method="REML"))
+            # Test: the variance of the residuals is the same (homogeneous) for all genotype groups
+            # Hypothesis 2
+            # Null Hypothesis: all residual variances are equal
+            # Alternative Hypothesis: the residue variance is not equal    
+            p.value.variance=(anova(model_MM, model_hetvariance)$p[2])
+            # The result of the test for Hypothesis 2 will help to select a covariance structure for the residuals
+            keep_equalvar= p.value.variance>pThreshold
+        }
+        else {
+            keep_equalvar <- TRUE
+            if (!is.null(keepList)){
+                if (outputMessages && !user_keep_equalvar)
+                    message("Warning:\n'keepEqualVariance' is set to TRUE otherwise the model can't be fitted - false convergence.\n")
+                user_keep_equalvar <- TRUE
+            }
+        }
     }
     else {
         # No Batch effects
-        keep_batch = FALSE
-        keep_equalvar = FALSE
+        keep_batch <- FALSE
+
+        # Model 1A (model_withoutbatch)
+        model_MM <- do.call("gls", args=list(model.formula, x, na.action="na.omit"))
+        
+        # MM fit of model formula with heterogeneous residual variances for genotype groups
+        # Model 1 assumes homogeneous residual variances
+        # Model 2 with heterogeneous residual variances 
+        model_hetvariance <- 
+        tryCatch(               
+                model_hetvariance <- do.call("gls", args=list(model.formula, x, weights=varIdent(form=~1|Genotype), na.action="na.omit")),
+                error=function(error_mes) {
+                    if (outputMessages)
+                        message("Warning:\nMixed model with heterogeneous residual variances for genotype groups is not fitting - false convergence.\nMixed model with homogeneous residual variances is used instead.\n")
+                    
+                    model_hetvariance <- NULL
+                }
+                )
+        
+        if (!is.null(model_hetvariance)) {
+            #model_hetvariance= do.call("lme", args=list(model.formula, random=~1|Batch, x, weights=varIdent(form=~1|Genotype), na.action="na.omit", method="REML"))
+            # Test: the variance of the residuals is the same (homogeneous) for all genotype groups
+            # Hypothesis 2
+            # Null Hypothesis: all residual variances are equal
+            # Alternative Hypothesis: the residue variance is not equal    
+            p.value.variance=(anova(model_MM, model_hetvariance)$p[2])
+            # The result of the test for Hypothesis 2 will help to select a covariance structure for the residuals
+            keep_equalvar= p.value.variance>pThreshold
+        }
+        else {
+            keep_equalvar=TRUE
+            if (!is.null(keepList)){
+                if (outputMessages && !user_keep_equalvar)
+                    message("Warning:\n'keepEqualVariance' is set to TRUE otherwise the model can't be fitted - false convergence.\n")
+                user_keep_equalvar <- TRUE
+            }
+        }
+        
     }
     
     
@@ -171,13 +243,19 @@ startModel <- function(phenList, depVariable, equation="withWeight", outputMessa
     
     if (outputMessages)
     message(paste("Information:\nCalculated values for model effects are: keepBatch=",keep_batch,
-                    ", keepVariance=",keep_equalvar,
+                    ", keepEqualVariance=",keep_equalvar,
                     ", keepWeight=",keep_weight,
                     ", keepGender=",keep_gender, 
                     ", keepInteraction=",keep_interaction,".\n",sep=""))  
     
     # Results for user defined model effects values
     if (!is.null(keepList)){
+        if (outputMessages)
+            message(paste("Information:\nUser's values for model effects are: keepBatch=",user_keep_batch,
+                        ", keepEqualVariance=",user_keep_equalvar,
+                        ", keepWeight=",user_keep_weight,
+                        ", keepGender=",user_keep_gender, 
+                        ", keepInteraction=",user_keep_interaction,".\n",sep=""))   
         # Model fit is selected according to user defined model effects    
         if(user_keep_batch && user_keep_equalvar){
             # Model 1

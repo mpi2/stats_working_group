@@ -24,15 +24,22 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
     x <- phenList$dataset
     numberofgenders=length(levels(x$Gender))
     Genotype_levels=levels(x$Genotype)         
-    depVariable_levels=levels(factor(x[,c(depVariable)]))  
+    depVariable_levels=levels(factor(x[,c(depVariable)])) 
+    
+    if (length(depVariable_levels)==1){
+        depVariable_levels <- c(depVariable_levels,"Other")
+    }
+     
     count_matrix_all <- matrix(0,length(depVariable_levels),2)
     ES_matrix_all <- matrix(0,length(depVariable_levels),3)
+
     
     for (i in 1:length(Genotype_levels)){
         GenotypeSubset <- subset(x, x$Genotype==Genotype_levels[i])
         for (j in 1:length(depVariable_levels)){  
                 columnOfInterest <- GenotypeSubset[,c(depVariable)]
-                columnOfInterest <- columnOfInterest[columnOfInterest==depVariable_levels[j]]
+                columnOfInterest <- columnOfInterest[columnOfInterest==depVariable_levels[j]]    
+                columnOfInterest <- na.omit(columnOfInterest)
                 nr <- length(columnOfInterest) 
                 if (is.null(nr)) nr<-0 
                 count_matrix_all[j,i]=nr
@@ -88,12 +95,14 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
             for (j in 1:length(depVariable_levels)){  
                 columnOfInterest_male <- GenotypeSubset_male[,c(depVariable)]
                 columnOfInterest_male <- columnOfInterest_male[columnOfInterest_male==depVariable_levels[j]]
+                columnOfInterest_male <- na.omit(columnOfInterest_male)
                 m_nr <- length(columnOfInterest_male) 
                 if (is.null(m_nr) || is.na(m_nr)) m_nr<-0 
                 count_matrix_male[j,i]=m_nr
                 
                 columnOfInterest_female <- GenotypeSubset_female[,c(depVariable)]
                 columnOfInterest_female <- columnOfInterest_female[columnOfInterest_female==depVariable_levels[j]]
+                columnOfInterest_female <- na.omit(columnOfInterest_female)
                 f_nr <- length(columnOfInterest_female) 
                 if (is.null(f_nr)) f_nr<-0 
                 count_matrix_female[j,i]=f_nr
