@@ -19,31 +19,31 @@
 \tableofcontents
 \newpage
 \section{Introduction}
-High-throughput phenotyping generates large volumes of varied data including both categorical and continuous data. Operational and cost constraints can lead to a work-flow that precludes the traditional analysis methods. Furthermore, for a high throughput environment, a robust automated statistical pipeline that alleviates manual intervention is required.
-PhenStat is a package that provides statistical methods for the identification of abnormal phenotypes. The package contains dataset checks and cleaning in preparation for the analysis. For continuous data, an iterative fitting process is used to fit a regression model that is the most appropriate for the data (Mixed Model framework), whilst for categorical data; a Fisher Exact Test is implemented (Fisher Exact Test framework).  
+High-throughput phenotyping generates large volumes of varied data including both categorical and continuous data. Operational and cost constraints can lead to a work-flow that precludes traditional analysis methods. Furthermore, for a high throughput environment, a robust automated statistical pipeline that alleviates manual intervention is required. 
+PhenStat is a package that provides statistical methods for the identification of abnormal phenotypes. The package contains dataset checks and cleaning in preparation for the analysis. For continuous data, an iterative fitting process is used to fit a regression model that is the most appropriate for the data (Mixed Model framework), whilst for categorical data; a Fisher Exact Test is implemented (Fisher Exact Test framework). 
 The Mixed Model (MM) framework is an iterative process to select the best model for the data which considers both the best modelling approach (mixed model or general linear regression) and which factors to include in the model. There is also user control functionality on whether to include body weight in the modelling process. The MM output includes model fit assessments (graphical and testing output). Both analysis frameworks output a statistical significance measure, an effect size measure, model diagnostics (when appropriate), and graphical visualisation of the genotype effect. 
 
-The statistical analysis generates measures of statistical significance, effect size estimates, model diagnostics where applicable and visualisation of data. Depending on the user needs, the output can either be interactive where the user can view the graphical output and analysis summary or for a database implementation the output consists of a vector of output and saved graphical files.
+The statistical analysis generates measures of statistical significance, effect size estimates, model diagnostics where applicable and visualisation of data. Depending on the user needs, the output can either be interactive where the user can view the graphical output and analysis summary or for a database implementation the output consists of a vector of output and saved graphical files. 
 
-This package has been tested and demonstrated with an application of XX lines of historic mouse phenotyping data.
+This package has been tested and demonstrated with an application of 420 lines of historic mouse phenotyping data. 
 \\
 
 \begin{figure}[!htpb]%figure01
 \centerline{\includegraphics[scale=0.5]{PhenStat.png}}
-\caption{The PhenStat package's three stage structure: dataset processing, analysis and result output. Dotted boxes show the place-holders for new functions that could implement other methods for data analysis and/or output of results.}\label{fig:01}
+\caption{The PhenStat package's three stage structure: dataset processing, analysis, and result output. Dotted boxes show the place-holders for new functions that could implement other methods for data analysis and/or output of results.}\label{fig:01}
 \end{figure}
 
 The package consists of three stages as shown in Figure \ref{fig:01}:
 \begin{enumerate}
-\item Dataset processing: includes checking, cleaning and terminology unification procedures and is completed by function \textit{PhenList} which creates a \textit{PhenList} object.
-\item Statistical analysis: is managed by function \textit{testDataset} and consists of Mixed Model or a Fisher Exact framework implementations. The results are stored in \textit{PhenTestResult} object. 
-Potentially this layer can be extended adding new statical methods (shown as dotted box in Figure \ref{fig:01}).
+\item Dataset processing: includes checking, cleaning and terminology unification procedures and is completed by function \textit{PhenList} which creates a \textit{PhenList} object. 
+\item Statistical analysis: is managed by function \textit{testDataset} and consists of Mixed Model or Fisher Exact framework implementations. The results are stored in \textit{PhenTestResult} object. 
+Potentially this layer can be extended adding new statical methods (shown as dotted box in Figure \ref{fig:01}). 
 \item Results Output: depending on user needs there are two functions for the test results output: \textit{summaryOutput} 
-and \textit{vectorOutput} that present data from \textit{PhenTestResult} object in a particular format. The output layer is also easily extendible (shown as dotted box in Figure \ref{fig:01}). 
+and \textit{vectorOutput} that present data from \textit{PhenTestResult} object in a particular format. The output layer is also easily extendible (shown as dotted box in Figure \ref{fig:01}).
 \end{enumerate}
 
 \section{Data Processing with PhenList Function}
-\textit{PhenList} function performs data processing and creates \textit{PhenList} object. 
+\textit{PhenList} function performs data processing and creates a \textit{PhenList} object. 
 As input \textit{PhenList} function requires dataset of phenotypic data that can be presented as data frame. For instance, it can be dataset stored in csv or txt file. We expect column names to represent variables.
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
@@ -53,18 +53,18 @@ As input \textit{PhenList} function requires dataset of phenotypic data that can
 \end{verbatim}
 \endgroup
 
-The main tasks performed by the PhenStat package's function \textit{PhenList} are: 
+The main tasks performed by the PhenStat package's function \textit{PhenList} are:
 \begin{itemize}
 \item terminology unification,
-\item filtering out undesirable records (only when function's argument \textit{dataset.clean} is set to TRUE),
+\item filtering out undesirable records (when the argument \textit{dataset.clean} is set to TRUE),
 \item and checking if the dataset can be used for the statistical analysis.
 \end{itemize}
 
 All tasks are accompanied by messages with errors, warnings and/or information: error messages explain why function stopped, 
-warning messages require user's attention (for instance, user is notified that column was renamed in the dataset), information messages provide some details (for instance, Genotype levels).
+warning messages require user's attention (for instance, user is notified that column was renamed in the dataset), information messages provide some details (for instance, Genotype levels). 
 If the observed is not desirable \textit{PhenList} function's argument \textit{outputMessages} can be set to FALSE meaning there will be no messages.
 
-Here is an example when the user is setting out-messages to FALSE: 
+Here is an example when the user sets out-messages to FALSE: 
 
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
@@ -96,18 +96,18 @@ Dataset's 'Gender' column has following value(s): 'Female', 'Male'
 \subsection{Terminology Unification}
 Under the term "terminology unification" we mean the matching of the terminology for the data (variables) that are essential for the analysis. 
 The PhenStat package uses the following nomenclature for the names of columns: "Gender", "Genotype", "Batch" or "Assay.Date", "Weight". In addition expected gender values are "Male" and "Female", missing value -- NA. 
-\textit{PhenList} function firstly creates a copy of the dataset and then uses special arguments that help to map columns and values from user's naming system into the package's nomenclature. 
+\textit{PhenList} function creates a copy of the dataset and then uses internal arguments that help to map columns and values from user's naming system into the package's nomenclature. 
 The original file with the dataset stays unchanged since all changes take place within \textit{PhenList} object.  "Assay.Date" is renamed to "Batch" automatically.
 
 The following \textit{PhenList} function's arguments have to be specified when the other names of columns or gender values are used within the user's dataset:
 \begin{itemize}
-\item \textit{dataset.colname.batch} allows to define column name within dataset for the batch effect if this column name is other than "Batch" or "Assay.Date", 
-\item \textit{dataset.colname.genotype} allows to define column name within dataset for the genotype info if this column name is other than "Genotype", 
-\item \textit{dataset.colname.gender} allows to define column name within dataset for the gender info if this column name is other than "Gender" in the dataset, 
-\item \textit{dataset.colname.weight}  allows to specify column name within dataset for the weight info if this column name is other than "Weight" in the dataset, 
-\item \textit{dataset.values.missingValue}  allows to specify value used as missing value in the dataset if other than NA,
-\item \textit{dataset.values.male} allows to define value used to label "males" in the dataset if other than "Male", 
-\item \textit{dataset.values.female} allows to specify value used to label "females" in the dataset if other than "Female" value has been used.
+\item \textit{dataset.colname.batch} allows the user to define column name within dataset for the batch effect if this column name is other than "Batch" or "Assay.Date", 
+\item \textit{dataset.colname.genotype} allows the user to define column name within dataset for the genotype info if this column name is other than "Genotype", 
+\item \textit{dataset.colname.gender} allows the user to define column name within dataset for the gender info if this column name is other than "Gender" in the dataset, 
+\item \textit{dataset.colname.weight}  allows the user to specify column name within dataset for the weight info if this column name is other than "Weight" in the dataset, 
+\item \textit{dataset.values.missingValue}  allows the user to specify value used as missing value in the dataset if other than NA,
+\item \textit{dataset.values.male} allows the user to define value used to label "males" in the dataset if other than "Male", 
+\item \textit{dataset.values.female} allows the user to specify value used to label "females" in the dataset if other than "Female" value has been used.
 \end{itemize} 
 
 In the example above dataset's values for females and males are 1 and 2 accordingly. Those values are changed to "Female" and "Male".  
@@ -137,9 +137,9 @@ Dataset's 'Gender' column has following value(s): 'Female', 'Male'
 \label{section:Filtering}
 Filtering is required, as the statistical analysis requires there to be only two genotype groups for comparison (e.g. wild-type versus knockout). 
 Thus the function \textit{PhenList} requires users to define the reference genotype (default value is \textit{refGenotype} = "+\slash+") and test genotype (\textit{testGenotype}). 
-If \textit{PhenList} function is in the cleaning mode then all records with genotype values others than reference or test genotype are filtered out. 
-Another option for a user is to specify hemizygotes genotype value (\textit{hemiGenotype}) then hemizygotes are treated as test genotype. 
-This is necessary to manage sex linked genes, where the genotype will be described differently depending on the sex but biologically then should be equivalent.
+If the \textit{PhenList} function argument \textit{dataset.clean} is set then all records with genotype values others than reference or test genotype are filtered out. 
+The user may also specify hemizygotes genotype value (\textit{hemiGenotype}) then hemizygotes are treated as test genotype. 
+This is necessary to manage sex linked genes, where the genotype will be described differently depending on the sex but biologically then should be equivalent. 
 Consider the following example of the genotype values in the dataset:
 \begin{table}[!h]
 \caption{Example of the dataset with sex linked genes}\label{table:01}
@@ -181,7 +181,7 @@ Dataset's 'Gender' column has following value(s): 'Female', 'Male'
 \endgroup
 
 If user would like to switch off filtering (s)he can set \textit{PhenList} function's argument \textit{dataset.clean} to FALSE. By default the value of this argument is set to TRUE. 
-In the following example the same dataset is processed successfully passing the checks procedures (see section \ref{section:DatasetChecks}) when \textit{dataset.clean}  is set to TRUE and fails at checks otherwise.
+In the following example the same dataset is processed successfully passing the checks procedures (see section \ref{section:DatasetChecks}) when \textit{dataset.clean} is set to TRUE and fails at checks otherwise.
 
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
@@ -231,7 +231,7 @@ Alternatively you can define 'hemiGenotype' and 'testGenotype' arguments to rela
 \end{verbatim}
 \endgroup
 
-Filtering take place also when there are records that do not have at least one more another record in the dataset with the same genotype and gender values.
+Filtering also takes place when there are records that do not have at least two records in the dataset with the same genotype and gender values. 
 
 Consider the following example of the genotype and gender values in the dataset:
 \begin{table}[!h]
@@ -259,7 +259,7 @@ After terminology unification and filtering tasks, \textit{PhenList} function ch
 \item there are at least two records for each genotype\slash gender values combination.
 \end{itemize}
 
-If one of the checks fails function stops and the PhenList object is not created. In the following example "Gender" column is missed in the dataset and checks fail.
+If one of the checks fails function stops and the PhenList object is not created. In the following example "Gender" column is missed in the dataset and checks fail. 
 
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
@@ -279,7 +279,7 @@ Dataset's 'Gender' column is missed.
 \end{verbatim}
 \endgroup
 
-Next example is showing the dataset described in the previous section \ref{section:Filtering} : three gender values and not enough records for the "unsexed" gender and both genotype values.
+Next example shows the results of the dataset described in the previous section \ref{section:Filtering} : three gender values and not enough records for the "unsexed" gender and both genotype values.
 
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
@@ -321,12 +321,12 @@ At the moment there are no enough data points for the following combination(s):
 \end{verbatim}
 \endgroup
 
-We believe that a lot of checking failures are avoided when \textit{dataset.clean} argument of the \textit{PhenList} funciton is set to TRUE (default value). Few examples are given in this and in the previous section \ref{section:Filtering}.
+Many checking failures are avoided when \textit{dataset.clean} argument of the \textit{PhenList} function is set to TRUE (default value). A few examples are given in this and in the previous section \ref{section:Filtering}.
 
 \subsection{PhenList Object}
-The output of the \textit{PhenList} function is \textit{PhenList} object that contains cleaned dataset (\textit{PhenList} object's section \textit{dataset}), simple statistics about dataset columns and additional information.
+The output of the \textit{PhenList} function is \textit{PhenList} object that contains cleaned dataset (\textit{PhenList} object's section \textit{dataset}), simple statistics about dataset columns and additional information. 
 
-The example below is showing how to print out the whole cleaned dataset and how to view the statistics about it (output is shown in Table \ref{table:03}). 
+The example below shows how to print out the whole cleaned dataset and how to view the statistics about it (output is shown in Table \ref{table:03}). 
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -341,7 +341,7 @@ The example below is showing how to print out the whole cleaned dataset and how 
 ...
 \end{verbatim}
 \endgroup
-Table \ref{table:03} shows the content of the \textit{dataset.stat} section and describes the data focusing on the columns of the dataset. Each column will now be a variable with summary description. 
+Table \ref{table:03} shows the content of the \textit{dataset.stat} section and describes the data focusing on the columns of the dataset. Each column is a variable with summary description. 
 The description includes: whether variable is numerical or not, whether variable is continuous or not (variability is more than 5\%), number of levels, number of data points, for the numerical variables: mean, standard deviation, minimal and maximal values.
 
 \begin{table}[!h]
@@ -378,10 +378,10 @@ Weight&TRUE&TRUE&183&468&34.95&5.09&20.4&48.4\\
 \end{tabular}
 \end{center}
 \end{table}
-\textit{PhenList} object has stored many characteristics of data: reference genotype, test genotype, hemizygotes genotype, original column names, etc.
+\textit{PhenList} object has stored many characteristics about the data: reference genotype, test genotype, hemizygotes genotype, original column names, etc.
 Note: reference and test genotypes are always defined. Other information can be missed if was not provided at the moment of \textit{PhenList} object creation. 
 
-Example of some of characteristics is given below.
+An example is given below.
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -405,17 +405,17 @@ dataset.colname.weight="Weight.Value")
 \endgroup
 
 \section{Statistical Analysis}
-The PhenStat package provides two methods (frameworks) for the statistical analysis: Linear Mixed Models and Fisher Exact Test for categorical data. For both the MM and FE framework, 
+The PhenStat package provides two methods (frameworks) for statistical analysis: Linear Mixed Models and Fisher Exact Test for categorical data. For both the MM and FE framework, 
 the statistical significance is assessed, the biological significance through an effect size estimate and finally the genotype effect is classified e.g. "If phenotype is significant - both sexes equally".  
 
 
-Package's function \textit{testDataset}  works as a manager for different statistical analyses methods. It checks the dependent variable, runs the selected statistical analysis framework and
- returns back modelling\slash testing results in the \textit{PhenTestResult} object (see Figure \ref{fig:01}). 
+PhenStat's function \textit{testDataset} works as a manager for the different statistical analyses methods. It checks the dependent variable, runs the selected statistical analysis framework and
+ returns modelling\slash testing results in the \textit{PhenTestResult} object (see Figure \ref{fig:01}). 
 
 \subsection{Manager for Analysis Methods -- \textit{testDataset} function}
 The \textit{testDataset} function's argument \textit{phenList} defines the dataset stored in \textit{PhenList} object.
 
-Function's argument \textit{depVariable} defines dependent variable.
+Function's argument \textit{depVariable} defines the dependent variable.
 
 Function's argument \textit{method} defines which statistical analysis framework to use. 
 The default value is "MM" which stands for mixed model framework. To perform Fisher Exact Test, the argument \textit{method} is set to "FE". 
@@ -432,12 +432,12 @@ The \textit{testDataset} function performs basic checks which ensure the statist
 If issues are identified, clear guidance is returned to the user. 
 After the checking procedures \textit{testDataset} function runs the selected framework to analyse dependent variable. 
 
-To ensure flexibility and debugging potential framework can comprise of more than 1 stage. For instance, MM framework have two stages.
+To ensure flexibility and debugging, the framework can comprise of more than one stage. For instance, MM framework has two stages.
 
-\textit{testDataset} function's argument \textit{callAll} allows to run all stages of the framework one after another when set to TRUE (default behaviour). 
-However, when \textit{callAll} flag is set to FALSE it indicates \textit{testDataset} function to run only the first stage of the selected framework.
+\textit{testDataset} function's argument \textit{callAll} instructs the package to run all stages of the framework one after another when set to TRUE (default behaviour). 
+However, when \textit{callAll} flag is set to FALSE it instructs the \textit{testDataset} function to run only the first stage of the selected framework.
 For instance, \textit{testDataset} function runs \textit{startModel} and after that \textit{finalModel} functions of the MM framework if the argument \textit{callAll} is set to TRUE. 
-If framework contains only one stage like in Fisher Exact Test case then \textit{testDataset} function runs that one stage regardless the \textit{callAll} argument's value. 
+If framework contains only one stage (such as the Fisher Exact Test case) then \textit{testDataset} function runs that single stage regardless of the \textit{callAll} argument's value. 
 See example of \textit{callAll} argument in the section \ref{sec:MMImplementation}.
 The example how to call MM and FE framework is given below.
 \begingroup
@@ -464,11 +464,11 @@ First, we will describe the mixed models top-down methodology which starts with 
 \subsubsection{Theory}
 There are two possible start models, depending on whether weight is included as a factor (see \ref{Eq1}. for the model including weight and \ref{Eq2}. for the model without weight).
 
-\[ 
+\[
 depVariable \backsim Genotype + Gender +
 Genotype*Gender \tag{Eq1}\label{Eq1}
 \]
-\[ 
+\[
 depVariable \backsim Genotype + Gender +
 Genotype*Gender + Weight \tag{Eq2}\label{Eq2}
 \]
@@ -476,7 +476,7 @@ Genotype*Gender + Weight \tag{Eq2}\label{Eq2}
 We reference to the \ref{Eq1} and \ref{Eq2} as to the models with "loaded" mean structure and random batch-specific intercepts or fully loaded model (see Figure \ref{fig:02}).
 
 The final model construct is influenced by a number of criteria. 
-All these criteria such as fixed effects, batch effect and the structure of residual variances can be either evaluated from the dataset or defined by user (see Figure \ref{fig:03}).
+These criteria, such as fixed effects, batch effect and the structure of residual variances, can be either evaluated from the dataset or defined by user (see Figure \ref{fig:03}).
 The following criteria (effects) are considered:
 \begin{itemize}
 \item Batch effect (batch variation). Considered only when batch column is present in the dataset. 
@@ -486,7 +486,7 @@ The following criteria (effects) are considered:
 \item Genotype by gender interaction effect. Considered only when there are more than one gender in the dataset. 
 \end{itemize}
 
-The selection of model rest on a batch effect (random effects) --- is it in the dataset and if so is it significant or not --- and a covariance structure for the residuals that can be homogeneous or heterogeneous (see Figure \ref{fig:02} Step 1-3).
+The selection of model is influenced by the batch effect (random effects) --- is batch in the dataset, and if so, is it significant --- and a covariance structure for the residuals that can be homogeneous or heterogeneous (see Figure \ref{fig:02} Step 1-3).
 The selected model is modified by reducing non-significant effects (see Figure \ref{fig:02} Step 4 and Figure \ref{fig:03}).
 
 \begin{figure}[!tpb]%figure02
@@ -514,7 +514,7 @@ There are two functions in the PhenStat package that implements the mixed model 
 \item \textit{finalModel} function builds the final model using the model's criteria from \textit{PhenTestResult} object and fits the model using restricted maximum likelihood method (REML). 
 \end{itemize}
 
-By default, both functions will be called from \textit{testDataset} manager one after another that is why \textit{startModel} function's arguments and specific for MM method \textit{testDataset} function's arguments concur.
+By default, both functions will be called from \textit{testDataset} manager sequentially, that is why \textit{startModel} function's arguments and specific for MM method \textit{testDataset} function's arguments concur.
 In the text above we mention \textit{startModel} function's arguments only. 
 
 The equation type is defined by \textit{startModel} function's argument \textit{equation} that can take value "withWeight" which is default one and "withoutWeight". The argument defines the presence or absence of body weight effect in the model (see \ref{Eq1} and \ref{Eq2}). 
@@ -523,7 +523,7 @@ In case when there are no body weight records in the dataset \textit{startModel}
 
 \textit{startModel} function creates start fully loaded model and modifies it after testing of different hypothesis. 
 As was described in the previous theory section the model view is influenced by the number of criteria. 
-Each one criteria or effect (body weight effect, residual variances homogeneity, gender effect, genotype by gender interaction effect, batch effect) is evaluated 
+Each criteria or effect (body weight effect, residual variances homogeneity, gender effect, genotype by gender interaction effect, batch effect) is evaluated individually
 and TRUE/FALSE values are assigned to the appropriate sections of \textit{PhenTestResult} object based on evaluation results. 
 TRUE value means that effect is significant and will be modelled. FALSE value means deletion of the effect from the model.
 
@@ -545,9 +545,9 @@ The results are added into the \textit{PhenTestResult} object.  \textit{PhenTest
 By default both functions (\textit{startModel} and \textit{finalModel}) will be called from \textit{testDataset} manager one after another. 
 We've made this logical separation of functionality in order to add more flexibility for the statisticians. 
 Basically, it means that a user can check the evaluation of fixed effects and the selected model before final model fitting. 
-This kind of "debugging" functionality allows to change some of the arguments of functions and start the model building process from scratch if needed.
+This kind of "debugging" functionality allows the user to change some of the arguments of functions and start the model building process from scratch if needed.
 
-We believe that described above possibility to change mixed models framework behaviour will help users to go deeper into details of the modelling process, do debugging and compare the results from different models. 
+We believe that the possibility to change mixed models framework behaviour as described above will help users to go deeper into details of the modelling process, as well as debug and compare the results from different models. 
 
 
 \begingroup
@@ -634,10 +634,9 @@ Equation: 'withoutWeight'.
 \endgroup
 
 \subsubsection{Diagnostics}
-There are two functions we've implemented for the diagnostics and classification of MM framework results: \textit{testFinalModel} and \textit{classificationTag} accordingly.
- 
-The first one performs diagnostic test for MM quality of fit: normality test (Cramer-von Mises test) for the two genotype levels residuals, BLUPs (best linear unbiased prediction) normality test, rotated residual test (last two if applicable). There is only one argument of the function which is \textit{PhenTestResult} object. There are no arguments checks assuming that 
-function is called internally from the \textit{finalModel} function. Otherwise should be used with precaution. 
+There are two functions we've implemented for the diagnostics and classification of MM framework results: \textit{testFinalModel} and \textit{classificationTag}.
+
+The first one performs diagnostic test for MM quality of fit: normality test (Cramer-von Mises test) for the two genotype levels residuals, BLUPs (best linear unbiased prediction) normality test, rotated residual test (last two if applicable). There is only one argument of the function which is \textit{PhenTestResult} object. There is no argument checking. We assume that this function is called internally from the \textit{finalModel} function. This should be used with precaution. 
 
  \textit{testFinalModel} returns list of the following values:
  \begin{itemize}
@@ -656,8 +655,7 @@ the Cholesky decomposition of the inverse of the estimated marginal variance
 matrix. The resulting “rotated” residuals are used to construct an empirical cumulative distribution function and pointwise standard errors. See
 \href{http://biostats.bepress.com/cgi/viewcontent.cgi?article=1019&context=harvardbiostat}{Cholesky Residuals for Assessing Normal
 Errors in a Linear Model with Correlated
-Outcomes: Technical Report} 
- for more details about "rotated" residuals.
+Outcomes: Technical Report} for more details about "rotated" residuals.
 
 
 \subsubsection{Classification Tag}
@@ -679,7 +677,7 @@ Outcomes: Technical Report}
 \label{section:FET}
 The Fisher Exact Test is implemented with basic R functions from the stats package after the construction of count matrices (also called chi squared tables) from the dataset. 
 
-Together with count matrices we calculate also percentage matrices and statistics for the chi squared tables (using "vcd" R package "Visualizing Categorical Data").  As a measure of change we calculate the maximum effect sizes. 
+Together with count matrices we also calculate percentage matrices and statistics for the chi squared tables (using "vcd" R package "Visualizing Categorical Data").  As a measure of change we calculate the maximum effect sizes. 
 
 From the chi squared table statistical significance is assessed using a Fisher Exact Test whilst the biological significance is estimated by an effect size.
 
@@ -984,7 +982,7 @@ Vectors data contains the following values in the defined order:
 
 % Change into table and provide examples, data type, explanations?
 
-As was mentioned above \textit{vectorOutput} format is the same for both frameworks. However, in case of "FE" a lot of values are not defined. For example:
+As was mentioned above \textit{vectorOutput} format is the same for both frameworks. However, in case of "FE" many values are not defined. For example:
 
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
@@ -1177,7 +1175,7 @@ The example of bar plot is shown in Figure \ref{fig:05}. This graph allows a vis
 \end{figure}
 
 \subsection{Graphics for Continuous Data}
-There is a bunch of graphic functions for the MM framework results. They can be divided into two types: dataset based graphs and results based graphs.
+There are many graphic functions for the MM framework results. They can be divided into two types: dataset based graphs and results based graphs.
 There are three functions in the dataset based graphs category:
 \begin{itemize}
 \item \textit{boxplotGenderGenotype} creates a box plot split by gender and genotype.
@@ -1194,7 +1192,7 @@ There are three functions in the dataset based graphs category:
 \end{verbatim}
 \endgroup 
 
-The example of box plot split by gender and genotype is shown in Figure \ref{fig:06}. Outliers are shown as independent data points beyond the fences (“whiskers”) of the boxplot.  An outlier is defined as a data point that is 1.5 times the interquartile range above the upper quartile and bellow the lower quartile.
+The example of box plot split by gender and genotype is shown in Figure \ref{fig:06}. Outliers are shown as independent data points beyond the fences (``whiskers'') of the boxplot. An outlier is defined as a data point that is 1.5 times the interquartile range above the upper quartile and bellow the lower quartile.
 \begin{figure}[!htpb]%figure01
 \centerline{\includegraphics[scale=0.5]{boxplotGenderGenotype.png}}
 \caption{The PhenStat package's graphical output: box plot split by gender and genotype.}\label{fig:06}
@@ -1316,7 +1314,7 @@ PhenStatCluster<-function(phenList,i){
 \end{verbatim}
 \endgroup
 
-We are planning to analyse each one variable of the dataset by using a cluster. Each one cluster node has to have sourced function \textit{PhenStatCluster} and loaded \textit{PhenStat} library. 
+We are planning to analyse every individual variable of the dataset using a cluster. Each one cluster node has to have sourced function \textit{PhenStatCluster} and loaded \textit{PhenStat} library. 
 \textit{PhenList} object with datatset to analyse should also be available for every cluster node.
 \begingroup
 \fontsize{8pt}{12pt}\selectfont
