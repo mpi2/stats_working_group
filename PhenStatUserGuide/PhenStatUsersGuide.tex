@@ -8,6 +8,8 @@
 \usepackage{hyperref}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{multirow}
+\usepackage{float}
 %opening
 \title{PhenStat: statistical analysis of phenotypic data using Linear Mixed Models \\and Fisher Exact Test}
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
@@ -142,7 +144,6 @@ The user may also specify hemizygotes genotype value (\textit{hemiGenotype}) the
 This is necessary to manage sex linked genes, where the genotype will be described differently depending on the sex but biologically then should be equivalent. 
 Consider the following example of the genotype values in the dataset:
 \begin{table}[!h]
-\caption{Example of the dataset with sex linked genes}\label{table:01}
 \begin{center}
 \begin{tabular}{| l | l | l | l |}
   \hline
@@ -151,6 +152,7 @@ Female&+\slash +&KO\slash KO&+\slash KO\\
 Male&+\slash +&KO\slash Y& \\
 \hline  
 \end{tabular}
+\caption{Example of the dataset with sex linked genes}\label{table:01}
 \end{center}
 \end{table}
 
@@ -235,7 +237,6 @@ Filtering also takes place when there are records that do not have at least two 
 
 Consider the following example of the genotype and gender values in the dataset:
 \begin{table}[!h]
-\caption{Example of the dataset with 3 gender values}\label{table:02}
 \begin{center}
 \begin{tabular}{| l | l | l | }
   \hline
@@ -245,6 +246,7 @@ Male&+\slash +&Mysm1\slash +\\
 unsexed& &Mysm1\slash + (1 record only)\\
 \hline  
 \end{tabular}
+\caption{Example of the dataset with 3 gender values}\label{table:02}
 \end{center}
 \end{table}
 
@@ -345,7 +347,6 @@ Table \ref{table:03} shows the content of the \textit{dataset.stat} section and 
 The description includes: whether variable is numerical or not, whether variable is continuous or not (variability is more than 5\%), number of levels, number of data points, for the numerical variables: mean, standard deviation, minimal and maximal values.
 
 \begin{table}[!h]
-\caption{Simple statistics about dataset variables -- \textit{dataset.stat} content}\label{table:03}
 \begin{center}
 \begin{tabular}{|l|l| l | l | l | l | l | l | l |}
   \hline
@@ -376,6 +377,7 @@ Strain&FALSE&FALSE&2&468&NA&NA&NA&NA\\
 Weight&TRUE&TRUE&183&468&34.95&5.09&20.4&48.4\\
 \hline  
 \end{tabular}
+\caption{Simple statistics about dataset variables -- \textit{dataset.stat} content}\label{table:03}
 \end{center}
 \end{table}
 \textit{PhenList} object has stored many characteristics about the data: reference genotype, test genotype, hemizygotes genotype, original column names, etc.
@@ -538,6 +540,8 @@ in turn keepList=c(FALSE, FALSE, TRUE, TRUE, TRUE) defines the fully loaded mode
 and prints out both calculated and user defined effects (only when \textit{outputMessages} argument is set to TRUE) for the user's convenience. Note: user defined effects have a priority over calculated (evaluated) effects.
 
 The result of the \textit{startModel} function is MM start model with reduced non-significant effects stored in the \textit{PhenTestResult} object together with the evaluated or user defined effects.
+It is important to mention here the convergency problem. If for some reason selected model is failing to converge we simplify it by selecting the similar but simplier model and try to fit again. 
+For instance, if model with heterogeneous residuals is not converging then model with homogeneous residuals will be selected.
 
 The next step of MM framework: evaluation of genotype effect and fitting of selected model using REML is implemented in package's function \textit{finalModel}. 
 The results are added into the \textit{PhenTestResult} object.  \textit{PhenTestResult} object at the end of the MM framework contains model formula, significances of the effects, genotype evaluation results and model fitting results including effect sizes.
@@ -634,9 +638,11 @@ Equation: 'withoutWeight'.
 \endgroup
 
 \subsubsection{Diagnostics}
-There are two functions we've implemented for the diagnostics and classification of MM framework results: \textit{testFinalModel} and \textit{classificationTag}.
-
-The first one performs diagnostic test for MM quality of fit: normality test (Cramer-von Mises test) for the two genotype levels residuals, BLUPs (best linear unbiased prediction) normality test, rotated residual test (last two if applicable). There is only one argument of the function which is \textit{PhenTestResult} object. There is no argument checking. We assume that this function is called internally from the \textit{finalModel} function. This should be used with precaution. 
+There are two functions we've implemented for the diagnostics and classification of MM framework results: \textit{testFinalModel} and \textit{classificationTag} accordingly.
+ 
+The first one performs diagnostic test for MM quality of fit: normality test (Cramer-von Mises test) for the two genotype levels residuals, BLUPs (best linear unbiased prediction) normality test, 
+"rotated" residuals normality test (last two only if applicable). There is only one argument of the function which is \textit{PhenTestResult} object. There are no arguments checks assuming that 
+function is called internally from the \textit{finalModel} function. Otherwise should be used with precaution. 
 
  \textit{testFinalModel} returns list of the following values:
  \begin{itemize}
@@ -644,11 +650,12 @@ The first one performs diagnostic test for MM quality of fit: normality test (Cr
   \item Normality test result (p-value) for the reference genotype's residuals.
   \item Test genotype value.
   \item Normality test result (p-value) for the test genotype's residuals.
-  \item BLUPs normality test result (p-value); applicable only when there is batch random effects in the model.
-  \item "Rotated" residuals normality test result (p-value); applicable only when there is batch random effects in the model.
+  \item BLUPs normality test result (p-value); applicable only when there is batch random effects in the model, otherwise set to NA.
+  \item "Rotated" residuals normality test result (p-value); applicable only when there is batch random effects in the model, otherwise set to NA.
  \end{itemize}
 
-BLUP in statistics is best linear unbiased prediction and is used in linear mixed models for the estimation of random effects. See tutorial \href{http://www.extension.org/pages/61006/the-solcap-tomato-phenotypic-data:-estimating-heritability-and-blups-for-traits#.Ui4zjWRgYXc}{BLUPs} for more details.
+BLUP in statistics is best linear unbiased prediction and is used in linear mixed models for the estimation of random effects. 
+See tutorial \href{http://www.extension.org/pages/61006/the-solcap-tomato-phenotypic-data:-estimating-heritability-and-blups-for-traits#.Ui4zjWRgYXc}{BLUPs} for more details.
 
 "Rotated" residuals are constructed by multiplying the estimated marginal residual vector by
 the Cholesky decomposition of the inverse of the estimated marginal variance
@@ -657,6 +664,7 @@ matrix. The resulting “rotated” residuals are used to construct an empirical
 Errors in a Linear Model with Correlated
 Outcomes: Technical Report} for more details about "rotated" residuals.
 
+Both BLUPs and "rotated" residuals tests are used for the model fit estimation.
 
 \subsubsection{Classification Tag}
 \textit{classificationTag} function returns a classification tag to assign a sexual dimorphism assessment of the phenotypic change from the results of MM framework.
@@ -816,6 +824,67 @@ odds ratio
 
 The same data as shown in examples can be obtained by using output functions of the package: \textit{summaryOutput}, \textit{vectorOutput} and \textit{vectorOutputMatrices}. See section \ref{section:Results} for more details.
 
+If there is only one level for the dependent variable in the dataset e.g. "Normal`` then the package will add level "Other'' into the count matrices for consistency. All values for this level will be set to 0.
+The following is an example of such case:
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> test2 <- PhenList(dataset=read.csv("test_categorical_normal.csv"),
+> result2 <- testDataset(test2,depVariable="Thoracic.Processes", method="FE")
+> levels(result2$model.dataset$Thoracic.Processes)
+[1] "Normal"
+> summaryOutput(result2)
+
+Test for dependent variable: Thoracic.Processes
+Method: Fisher Exact Test framework
+
+Model output:
+All data p-val: 1
+All data effect size: 0%
+Males only p-val: 1
+Males only effect size: 0%
+Females only p-val: 1
+Females only effect size: 0%
+
+Matrix 'all':
+       +/+ Aff3/Aff3
+Normal 895        13
+Other    0         0
+
+Percentage matrix 'all' statistics:
+       +/+ Aff3/Aff3 ES change
+Normal 100       100         0
+Other    0         0         0
+
+...
+\end{verbatim}
+\endgroup
+\subsubsection{Classification Tag}
+We've implemented the function \textit{classificationTag} also for the FE framework. 
+However, in the case of Fisher Exact Test it is not sexual dimorphism classification, but rather the overall estimation of the signals significance.
+
+In the Table \ref{table:04} classification tags and observed p-values classification is based on are presented.
+
+\begin{table}[!h]
+\begin{center}
+\begin{tabular}{| l | l | l | l |}
+  \hline
+Males only&Females only&All&Classification Tag\\\hline
+$\textless$ 0.05&$\textless$ 0.05 &$\textless$ 0.05&Significant in males, females and in combined dataset\\
+$\textless$ 0.05&$\geq$ 0.05&$\textless$ 0.05&Significant in males and in combined dataset\\
+$\textless$ 0.05&$\textless$ 0.05&$\geq$ 0.05&Significant in males and in females datasets\\
+$\textless$ 0.05&$\geq$ 0.05&$\geq$ 0.05&Significant in males dataset only\\
+$\geq$ 0.05&$\textless$ 0.05&$\textless$ 0.05&Significant in females and in combined dataset\\
+$\geq$ 0.05&$\textless$ 0.05&$\geq$ 0.05&Significant in females dataset only\\
+$\geq$ 0.05&$\geq$ 0.05&$\textless$ 0.05&Significant in combined dataset only\\
+$\geq$ 0.05&$\geq$ 0.05&$\geq$ 0.05&Not significant\\
+
+\hline  
+\end{tabular}
+\caption{p-values from Fisher Exact Tests and classification tag}\label{table:04}
+\end{center}
+\end{table}
+
 \section{Output of Results}
 \label{section:Results}
 The PhenStat package stores the results of statistical analyses in the \textit{PhenTestResult} object.  
@@ -855,7 +924,21 @@ Weight               0.3430502 0.01808121 411 18.9727422 4.147891e-58
 \end{verbatim}
 \endgroup
 
-% Explain the table
+The summary output for MM framework contains metrics indicating the quality of the fit:
+\begin{itemize}
+ \item \textbf{Value} stands for the estimated coefficient that describes the value of slope calculated by the regression. 
+It might seem a little confusing that the Intercept also has a value, but just think of it as a slope that is always multiplied by 1. 
+This number will obviously vary based on the magnitude of the variable your are inputting into the regression, but it's always good to spot check this number to make sure it seems reasonable.
+
+\item \textbf{Std.Error} is a standard error of the coefficient estimate -- measure of the variability in the estimate for the coefficient.
+Lower means better but this number is relative to the value for the coefficient. 
+
+\item \textbf{DF} stands for the ``Degrees of Freedom'' which is the difference between the number of observations included in training sample and the number of variables used in model (intercept counts as a variable).
+
+\item \textbf{t-value} of the coefficient estimate is a score that measures whether or not the coefficient for this variable is meaningful for the model. It is used to calculate the p-value.
+
+\item \textbf{p-value} is variable p-value that represents the probability the variable is NOT relevant. The smaller is number the more important is variable (model part). If the number is really small, R will display it in scientific notation.
+\end{itemize}
 
 For the "FE" framework results \textit{summaryOutput} function's output includes count matrices, statistics and effect size measures.
 
@@ -1279,6 +1362,545 @@ The example of box plot with residue versus batch split by genotype is shown in 
 \end{figure}
    
 \section{Case Studies}
+\subsection{PhenStat Usage Example Continuous Data}
+The following dataset, provided by Wellcome Trust Sanger Institute (WTSI) Mouse Genetics Project (\href{http://www.sanger.ac.uk/resources/mouse/}{MPG}) 
+is Dual-energy X-ray absorptiometry data obtained for a study on gene knockout mice carrying the Akt2$\textless$tm1Wcs$\textgreater$ targeted allele which were created by blastocyst 
+injection of targeted ES cells, and bred on the 129S5\/SvEvBrd genetic background.  
+Data was collected on a high throughput pipeline following a multi-batch workflow, where regular control animals are collected and when knockout animals are the correct age they are issued to the pipeline as they arise.  
+
+\begin{table}[!h]
+\begin{center}
+\begin{tabular}{| l | l | c | c |}
+  \hline
+Genotype&Gender&Number Animals&Number Batches\\\hline
+\multirow{2}{*}{Homozygote}&Female&12&3\\
+			    &Male&14&3\\
+			    \hline
+\multirow{2}{*}{Wild type}&Female&574&96\\
+			    &Male&572&97\\
+
+\hline  
+\end{tabular}
+\caption{Number of animals and number of batches in the Akt2 dataset}\label{table:05}
+\end{center}
+\end{table}
+
+\subsubsection{Loading the data and initial steps of analysis}
+Initial steps focus on loading the data, using the PhenStat tools to generate the PhenList object, and then the result object.  
+We can then explore the data and fitted results using the visualisation and output functions.   
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> DEXAdata=read.csv("WTSI_AKt2_data.csv")
+> test <- PhenList(dataset=DEXAdata,testGenotype="Akt2/Akt2",  
+  refGenotype="WT",
+  dataset.colname.batch="dateOfExperiment", 
+  dataset.values.female="female", 
+  dataset.values.male="male" )
+> result <- testDataset(test,depVariable="Lean.Mass",method="MM",equation="withoutWeight")
+\end{verbatim}
+\endgroup 
+
+
+
+\subsubsection{Exploring and understanding the output}
+\label{cs1_output}
+The first two lines of the \textit{summaryOutput} confirm the statistical framework used and the dependent variable studied.   
+The next section of the output clarifies the final fitted model details. As the MM framework is an optimisation process exploring the data to fit the best model to the data, 
+the final fitted model details will vary. We can see that batch variation, the variation in readings between different assay dates, 
+were found to be statistical significant and hence a mixed model will have been fitted where batch is treated as a random effect.  
+If it was not significant, then the model would have reverted to a simpler linear model.  
+The next line of output, “was variance equal?”, indicating whether the model assumes equal variance between genotype groups or unequal.  
+In this case, the variance was not found to be equal and therefore the final model estimated the variance for each group separately. 
+
+The next stage of the output, indicates whether there was evidence of sexual dimorphism (i.e. the genotype effect was found to be dependent on sexes).  
+In this case, the statistical test of sexual dimorphism was non-significant (p-value = 0.899) hence the final model would not assess the genotypes for each sex separately.  
+The following line indicate which main effects were included in the final model; 
+for this variable and dataset we can see that gender was significant in explaining variation in the data and hence is included in the final model. 
+
+The final stage of the output gives information on the final model details.  
+The “Genotype effect” reports the statistical significance for the genotype effect and is assessed by comparing a treatment model (final fitted model) with a null model where a null model 
+has no genotype effects in the model but all other significant main effects.  
+In this example the null model would thus be Lean.Mass $\sim$ Gender. Looking at the output the “Genotype effect” is highly statistical significant as a 0 value is reported.  
+We can then look at the model fitting details in the final output of the function by examining the table to see how the main effects contributed to the variation in the dependent variables. 
+
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> summaryOutput(result)
+
+Test for dependent variable: Lean.Mass
+Method: Mixed Model framework
+
+Was batch significant? TRUE
+Was variance equal? FALSE
+Was there evidence of sexual dimorphism? no (p-value 0.906)
+Final fitted model: Lean.Mass ~ Genotype + Gender
+Model output:
+Genotype effect: 0
+Classification tag: With phenotype threshold value 0.01 - both sexes equally
+                      Value Std.Error   DF   t-value       p-value
+(Intercept)       18.525264 0.1936360 1048 95.670550  0.000000e+00
+GenotypeAkt2/Akt2 -3.527111 0.4866433 1048 -7.247836  8.204401e-13
+GenderMale         4.620361 0.1581236 1048 29.219943 8.940893e-138
+
+\end{verbatim}
+\endgroup 
+
+A regression model estimates each component of the model, by isolating how that effect influences the dependent variable (i.e. lean mass) as though all other parts of the model had been fixed and isolated.   
+From the table of output, we can see that the intercept (the expected reading for lean mass for female reference genotype (aka female wild type animals) is 18.5.  
+Then we can see the effect of the genotype is -3.5 in that knockout animals are predicted to have 3.5 grams less lean mass relative to the control animals.  
+Finally we can see that being a male animals leads to an increase of 4.6 grams.  
+As there was no evidence for sexual dimorphism, and thus the genotype effect was estimated independently of gender, then a classification tag “both sexes equally” has been assigned.  
+These estimates are in agreement with the visualisation of the data (see section \ref{AssesingModelFit}). 
+
+\subsubsection{Assessment of raw data and distribution characteristics}
+To assess model fit, graphical tools are ideal.  They focus on two areas:
+\begin{enumerate}
+ \item Assessment of raw data and distribution characteristics
+ \item Assessment of model fit
+\end{enumerate}
+\label{AssesingModelFit}
+
+The function, \textit{boxplotGenderGenotype}, allows the genotype effect to be visualised for each gender group. 
+For the Akt2 example, we can conclude that there looks to be a significant genotype effect that is seen in both genders. 
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> boxplotGenderGenotype(result, "Lean.Mass", "Lean Mass (g)")
+\end{verbatim}
+\endgroup 
+
+\begin{figure}[H]%figure01
+\centerline{\includegraphics[scale=0.5]{cs1_boxplotGenderGenotype.png}}
+\caption{\textit{boxplotGenderGenotype} function for Akt2 example.}\label{fig:14}
+\end{figure}
+
+A second function, \textit{boxplotGenderGenotypeBatch}, allows the comparison between genotype as a function of batch and gender.  
+This plot allows the user to visualise the batch variation and assess how the treatment measures look relative to the batch variation. 
+It is important to note that as dates can be entered in many forms, the batches are not ordered with time. 
+For the Akt2 lean mass example, we can see that there is significant batch variation, which explains why a mixed model was fitted.
+
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> boxplotGenderGenotypeBatch(test, "Lean.Mass", "Lean Mass (g)")
+\end{verbatim}
+\endgroup 
+
+\begin{figure}[H]%figure01
+\centerline{\includegraphics[scale=0.5]{cs1_boxplotBatchGenotype.jpg}}
+\caption{\textit{boxplotGenderGenotypeBatch} function for Akt2 example.}\label{fig:15}
+\end{figure}
+
+\subsubsection{Assessment of model fit}
+
+Five functions are available and they focus on looking at residual behaviour. 
+A residual, is the difference between the estimated dependent variable from the final model estimates and the actual measured dependent variable response. 
+A model is a good fit, when the residuals are normally distributed and there is no systematic pattern in the distribution of the residuals relative to the dependent variable. 
+
+The \textit{vectorOutput} function includes statistical tests for normality on the residuals for the wild type, residuals for the knockout, the blups and rotated residuals. 
+These normality tests are provide to assist in the building automated tools for assessing model fit, 
+however when there is a lot of data (e.g. in a dataset where the wild type arises from a high throughput program with a running baseline), 
+the statistical test can be overall sensitive to departures from normality and when the number of data points is low (e.g. in many knockout groups), the test can lack ability to detect deviations from normality. 
+
+\begin{itemize}
+ \item \textbf{qqplotGenotype} 
+ 
+This function assesses the normality of the residuals are assessed for each genotype through plotting a normal Q-Q plot. 
+Q-Q plots are a means of comparing two distributions. To test normality, we plot the residuals against a normal distribution and see if they match. 
+If the two distributions are similar the points on a QQ plot will fall along the y=x line (unity). Thus we are looking for a random distribution of points along the lines.  
+
+Looking at the Akt2 lean mass example, the residuals on the HOM group are near perfect showing the model is fitting this data well.  
+The residuals on the WT group are deviating in a way (systematic below at one end and systematic above at the other) which indicates that we have long tails to our distribution. 
+This is not concerning as we have a very large control dataset and we do have outliers in the data.  
+
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> qqplotGenotype(result)
+\end{verbatim}
+\endgroup 
+
+\begin{figure}[H]%figure01
+\centerline{\includegraphics[scale=0.5]{cs1_qqplotGenotype.png}}
+\caption{\textit{qqplotGenotype} function for Akt2 example.}\label{fig:16}
+\end{figure}
+
+\item \textbf{boxplotResidualBatch} 
+
+This function allows visualisation to assist the user to assess whether the deviation in the residual is consistent across all the batches and similar in size between the wild type and knockout line. 
+For the Akt2 example, we can see that the variation in residual is consistent across all the batches and similar in size between the knockout and wild type group.
+
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> boxplotResidualBatch(result)
+\end{verbatim}
+\endgroup 
+
+\begin{figure}[H]%figure01
+\centerline{\includegraphics[scale=0.5]{cs1_boxplotResidualBatch.png}}
+\caption{\textit{boxplotResidualBatch} function for Akt2 example.}\label{fig:17}
+\end{figure}
+
+
+\item \textbf{plotResidualPredicted} 
+
+This function plots the residuals against the predicted readings for both genotypes.  The predicted readings are the values the model would estimate for the dependent variable.  
+As a user, you are looking to see that the model is fitting the data well over the entire data range. 
+Looking at the akt2 data, we can see that there spread of the residuals is fairly consistent, 
+however there are some data points that are not being fit well by the model, the good news is that they are in the control set but they should be considered further to see if a reason for their poor fit can be ascertained.  
+
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> plotResidualPredicted(result)
+\end{verbatim}
+\endgroup 
+
+\begin{figure}[H]%figure01
+\centerline{\includegraphics[scale=0.5]{cs1_plotResidualPredicted.png}}
+\caption{\textit{plotResidualPredicted} function for Akt2 example.}\label{fig:18}
+\end{figure}
+
+\item \textbf{qqplotRandomEffects} 
+
+This function is assessing the assumption that the batch effects are normally distributed. 
+The estimates of the random effects, aka the estimates of the batch effects in this scenario, are called best linear unbiased prediction BLUPs. 
+Here a normal Q-Q plot is used to plot the estimated BLUPs against a normal distribution. 
+So looking at the Akt2 lean mass example, the majority of the data points are distrbuted along the line. 
+There is some systematic deviation at the tails but it is a small percentage of the points and as it is above and below the line it indicates long tails (ie outliers) 
+and so we can conclude the distribution is not too far from the ideal and the model is a good representation of the data. 
+
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> qqplotRandomEffects(result)
+\end{verbatim}
+\endgroup 
+
+\begin{figure}[H]%figure01
+\centerline{\includegraphics[scale=0.5]{cs1_qqplotRandomEffects.png}}
+\caption{\textit{qqplotRandomEffects} function for Akt2 example.}\label{fig:19}
+\end{figure}
+
+\item \textbf{qqplotRotatedResiduals}
+
+This function, allows the user to consider the normality of the “rotated” and “unrotated” residuals and have been recommended to assess model fit success with mixed models (\cite{RotatedResiduals04}). 
+So looking at the Akt2 lean mass example, the majority of the data points are distributed along the line. 
+There is some systematic deviation at the tails but it is a small percentage of the points and as it is above and below the line it indicates long tails (i.e. outliers) 
+and so we can conclude the distribution is not too far from the ideal and the model is a good representation of the data. 
+
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> qqplotRotatedResiduals(result)
+\end{verbatim}
+\endgroup 
+
+\begin{figure}[H]%figure01
+\centerline{\includegraphics[scale=0.5]{cs1_qqplotRotatedResiduals.png}}
+\caption{\textit{qqplotRotatedResiduals} function for Akt2 example.}\label{fig:20}
+\end{figure}
+
+\end{itemize}
+
+
+
+\subsubsection{Including weight as a covariate in the model fitting process}
+What is the value to including body weight in the model?
+
+Weight is included in the initial model via the \textit{testDataset} function equation argument being set to either “withWeight” or “withoutWeight”.  
+When weight is included as a covariate, the model is assuming that the dependent variable (e.g. lean mass) has a linear relationship with body weight. 
+If weight is not found to be statistical significant in explaining the variation in the dependent variable, 
+then weight as a covariate will drop out of the final model and the equation will automatically revert to an equation type “withoutWeight”.  
+
+There are two advantages to including weight:
+\begin{enumerate}
+ \item \textbf{Increase in sensitivity.}  
+If differences in animal weight lead to greater variability in the dependent variable, then by adding weight and accounting for this variability then the statistical model will be more sensitive to a genotype effect. 
+
+ \item \textbf{Adjusting for weight differences between the knockout and control group.}  
+When there is a weight difference between the knockout and wild type animals, the genotype effect is confounded by the weight effect in that there is a difference in the dependent variable but you cannot assess whether it is due to the differences in body weight of the knockout and control animals or genotype differences between the knockout and control animals. When weight is included in the equation, the genotype effect is then testing for a genotype difference after adjusting for the weight difference.
+
+\end{enumerate}
+
+We have found that the majority of continuous phenotypic variables monitored in the WTSI Mouse Genetics Project (\href{http://www.sanger.ac.uk/resources/mouse/}{MPG}) have a relationship with body weight. 
+Looking at the Akt2 dataset we can see that there is a difference in body weight between the wild type and knockout group and thus body weight can be a confounding factor to isolating the genotype effect.   
+
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> boxplotGenderGenotype(test, "Weight", "Body Weight (g)")
+\end{verbatim}
+\endgroup 
+
+\begin{figure}[H]%figure01
+\centerline{\includegraphics[scale=0.5]{cs1_bodyweight.png}}
+\caption{\textit{boxplotGenderGenotype} function for Akt2 example to show the body weight impact.}\label{fig:21}
+\end{figure}
+
+
+What is the impact of including weight on the \textit{summaryOutput}?
+
+When body weight is included, the inclusion can be seen in the final fitted model as weight is listed as a covariate and then in the final model output table, where the influence of weight on the fitted model is shown.  
+With weight included the genotype effect is estimating the impact of genotype after adjusting for weight differences in the animals. 
+
+Looking at the \textit{summaryOutput} for the Akt2 example, the table shows that for each gram of body weight the lean mass increased by 0.32g.  
+When weight is included in the equation it changes the definition of the intercept from the lean mass value of a wild type female animal to the lean mass value of a wild type female animal of zero body weight. 
+This happens as the model is estimating each of these terms influences in isolation of the other terms. 
+In contrast to the earlier fitted results (section \ref{cs1_output}), when weight is included in the model, the classification tag identifies the change as “no significant change” 
+as the global genotype test is now not significant with a p-value of 0.64.  
+This means the statistically difference observed with the fitted model “withoutWeight” was entirely due to a body weight differences between the knockout and control animals.  
+So whilst there is a fundamental differences in lean mass between the knockout and control this is due to the knockout animals being smaller than the control animals. 
+
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> summaryOutput(result)
+
+Test for dependent variable: Lean.Mass
+Method: Mixed Model framework
+
+Was batch significant? TRUE
+Was variance equal? FALSE
+Was there evidence of sexual dimorphism? no (p-value 0.105)
+Final fitted model: Lean.Mass ~ Genotype + Gender + Weight
+Model output:
+Genotype effect: 0.639989841
+Classification tag: With phenotype threshold value 0.01 - no significant change
+                       Value  Std.Error   DF    t-value      p-value
+(Intercept)        7.6201046 0.52150631 1047 14.6117207 3.827390e-44
+GenotypeAkt2/Akt2 -0.1924952 0.41201772 1047 -0.4672012 6.404531e-01
+GenderMale         2.1550868 0.17386173 1047 12.3954067 5.056608e-33
+Weight             0.3541522 0.01623164 1047 21.8186332 2.718321e-87
+
+\end{verbatim}
+\endgroup
+
+
+\subsubsection{Additional model diagnostics when weight is included}
+In addition to the diagnostic discussed in previous section, when weight is included in the model, it is important to consider whether the linear relationship between body weight and the dependent variable is a valid assumption. 
+This can be assessed with the \textit{scatterplotGenotypeWeight} function. 
+In this plot, for each genotype a regression line is fitted to assess the relationship between the dependent variable and body weight. 
+Then a locally weight line (loess line) is plotted. 
+The loess line allows assessment that the regression line fits all the data well.
+Note the loess line can be distorted by a few data points so if it deviates strongly but for only a few data points, this is not concerning.  
+This graph is used to assess whether a linear relationship exists and whether it is the same for both genotypes.  
+
+In the Akt2 example, it can be clearly seen that a common linear relationship exists between lean mass and body weight, such that as the weight increases so does the lean mass. 
+It can also be seen that the knockout animals have a lower body weight and subsequently lower lean mass but the drop in lean mass is entirely in accordance with the drop in body weight. 
+
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> scatterplotGenotypeWeight(test, depVariable="Lean.Mass")
+\end{verbatim}
+\endgroup 
+
+\begin{figure}[H]%figure01
+\centerline{\includegraphics[scale=0.5]{cs1_scatterplotGenotypeWeight.png}}
+\caption{\textit{scatterplotGenotypeWeight} function for Akt2 example.}\label{fig:22}
+\end{figure}
+
+\subsection{PhenStat Usage Example Categorical Data}
+The following dataset, provided by Wellcome Trust Sanger Institute (WTSI) Mouse Genetics Project (\href{http://www.sanger.ac.uk/resources/mouse/}{MPG}) of high resolution X-ray data obtained from 
+a study on gene knockout mice carrying the Aff3tm1a(EUCOMM)Wtsi targeted allele which were created by blastocyst injection of targeted ES cells, and bred on the B6N genetic background. 
+Data was collected on a high throughput pipeline following a multi-batch workflow, where regular control animals are collected and when knockout animals are the correct age they are issued to the pipeline as they arise. 
+At WTSI, batch to batch variation has not been found to be significant for these rare event categorical variables. 
+Consequently, we ignore batch and combine data for the same genetic background when collected with the same protocol and housing and husbandry conditions. 
+This increases the sensitivity of the analysis as we have more accuracy on the estimate of the prevalence of the condition in the wild type population.
+
+\begin{table}[!h]
+\begin{center}
+\begin{tabular}{| l | l | c | c |}
+  \hline
+Genotype&Gender&Number Animals&Number Batches\\\hline
+\multirow{2}{*}{Homozygote}&Female&7&4\\
+			    &Male&6&4\\
+			    \hline
+\multirow{2}{*}{Wild type}&Female&446&70\\
+			    &Male&451&70\\
+
+\hline  
+\end{tabular}
+\caption{Number of animals and number of batches in the Aff3 dataset}\label{table:06}
+\end{center}
+\end{table}
+
+\subsubsection{Loading the data and initial steps of analysis}
+Initial steps focus on loading the data, using the PhenStat tools to generate the PhenList object, and then the result object.  We can then explore the data and fitted results using the visualisation and output functions.   
+
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> aff3data=read.csv("categorical_example 1_aff3_Xray.csv")
+> test <- PhenList(dataset=aff3data,testGenotype="Aff3/Aff3", 
+  refGenotype="+/+", dataset.colname.batch="Assay.Date")
+> result <- testDataset(test, depVariable="Thoracic.Processes", method="FE")
+\end{verbatim}
+\endgroup 
+
+\subsubsection{Visualisation of data}
+The function \textit{categoricalBarplot} has been provided to visualise the categorical data as summary percentage data. 
+It reports the percentage of each classification observed for up to three datasets: all data, male only and female only.  
+It is important to note that percentage accuracy is very dependent on the number of readings so it is important to consider the dataset size when interpreting these graphs.  
+Therefore tables showing both the percentage and count values are included in the \textit{summaryOutput}. 
+
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+>  categoricalBarplot(result)
+\end{verbatim}
+\endgroup 
+
+\begin{figure}[H]%figure01
+\centerline{\includegraphics[scale=0.5]{cs2_categoricalBarplot.jpg}}
+\caption{\textit{categoricalBarplot} function for Aff3 example.}\label{fig:23}
+\end{figure}
+
+\subsubsection{Understanding the \textit{summaryOutput}}
+
+The first two lines of the \textit{summaryOutput} confirm the statistical framework used and the dependent variable studied.  
+The next section of the output reports the summary of statistical assessment. Two measures are provided for each dataset considered. 
+First a test of statistical significance assessed using a Fisher Exact Test and then a measure of biological significance, the maximum effect size. 
+The final section of the output provides tables showing the counts and percentage calculated for each group and possible level. 
+
+The following is reported for dependent variable thoracic processes for the Aff3 dataset and we can see that for all datasets, there is a statistically significant change with a large effect size. 
+
+The \textit{summaryOutput} function shows the model fitted and the model output for the analysis of the thoracic processes for the aff3 dataset. 
+The example is showing the summary tables provided for the composite (male and female data) for the thoracic processes for the aff3 dataset. 
+
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+>  summaryOutput(result)
+
+...
+Model output:
+All data p-val: 4.35745946092922e-09
+All data effect size: 76%
+Males only p-val: 0.00025633944344021
+Males only effect size: 70%
+Females only p-val: 1.00779809539594e-05
+Females only effect size: 81%
+
+Matrix 'all':
+         +/+ Aff3/Aff3
+Abnormal 142        12
+Normal   753         1
+
+Percentage matrix 'all' statistics:
+         +/+ Aff3/Aff3 ES change
+Abnormal  16        92        76
+Normal    84         8        76
+
+Matrix 'all' statistics:
+                    X^2 df   P(> X^2)
+Likelihood Ratio 36.678  1 1.3931e-09
+Pearson          53.164  1 3.0675e-13
+
+Phi-Coefficient   : 0.242 
+Contingency Coeff.: 0.235 
+Cramer's V        : 0.242 
+...
+
+\end{verbatim}
+\endgroup 
+
+
+\subsubsection{Understanding the maximum effect size reported}
+The maximum effect size is the maximum percentage change seen for an observation type. 
+Below is a table showing an artificial example where the majority of the wild type are normal but the abnormality is spread across multiple levels in the knockout. 
+For each trait level (i.e. the observed phenotype), the change in percentage effect size is seen by subtracting the percentage observed in the knockout from the wild type. 
+Then across all the observed levels, the maximum percentage change is selected after ignoring the direction of the change. 
+Thus in the example below, the maximum effect size would be 86.5\% which indicates that there has been 86.5\% change in how often a level is observed.
+
+\begin{table}[!h]
+\begin{center}
+\begin{tabular}{| l | l | l | l | l | l | l| }
+  \hline
+\multirow{2}{*}{Trait level}&\multicolumn{2}{c}{wild type}&\multicolumn{2}{c}{knockout}&\multirow{2}{*}{Effect size calculation}&\multirow{2}{*}{Effect size}\\
+		     &count& \%			    &count& \%                   &                                        &\\\hline 
+Normal &198& 99			    &1& 12.5                   &          99-12.5                              &86.5\\ 
+Abnormal left eye&0& 0			    &0& 0                   &          0                              &0\\ 
+Abnormal right eye&1& 0.5			    &4& 50                   &          0.5-50                             &49.5\\ 
+Abnormal both eye&1& 0.5			    &3& 37.5                   &          0.5-37.5                             &37\\ 
+\hline  
+\end{tabular}
+\caption{Number of animals and number of batches in the Aff3 dataset}\label{table:06}
+\end{center}
+\end{table}
+
+\subsubsection{A dependent variable with little variation}
+
+Within the IMPC pipeline, there are a number of dependent variables which have little variation but are numeric. 
+For example, no of digits, or number of caudal vertebrae etc.  
+If you try to process these variables through a mixed model framework the analysis will stop and an error will report that there is insufficient variability in the data. 
+
+For our example dataset, the number of ribs is a dependent variable with little variation as shown by plotting the data with the \textit{categoricalBarplot} function.
+
+\begin{figure}[H]%figure01
+\centerline{\includegraphics[scale=0.5]{cs2_noRibsRight_percentageplot.jpg}}
+\caption{\textit{categoricalBarplot} function for Aff3 example with number of ribs as dependent variable.}\label{fig:24}
+\end{figure}
+
+
+If we try and process this variable through a mixed model framework the following output is obtained: 
+
+
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> result<-testDataset(test,depVariable="Number.Of.Ribs.Left",method="MM")
+
+Error:
+Insufficient variability in the dependent variable 'Number.Of.Ribs.Left' for MM framework. 
+Fisher Exact Test can be better way to do the analysis.
+Error:
+Insufficient variability in the dependent variable 'Number.Of.Ribs.Left' for genotype/gender 
+combinations to allow the application of Mixed Model.
+\end{verbatim}
+\endgroup 
+
+Instead the dependent variable should be treated as a categorical variable which each numeric output possible treated as a level allowing 
+a statistical comparison of how the levels are distributed between the knockout and wild type groups.  
+Thus for our example the following summary output and count table is obtained: 
+
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> summaryOutput(result)
+
+Test for dependent variable: Number.Of.Ribs.Left
+Method: Fisher Exact Test framework
+
+Model output:
+All data p-val: 1
+All data effect size: 0%
+Males only p-val: 1
+Males only effect size: 0%
+Females only p-val: 1
+Females only effect size: 0%
+
+Matrix 'all':
+   +/+ Aff3/Aff3
+12   1         0
+13 893        13
+14   1         0
+
+Percentage matrix 'all' statistics:
+   +/+ Aff3/Aff3 ES change
+12   0         0         0
+13 100       100         0
+14   0         0         0
+
+\end{verbatim}
+\endgroup 
+
+
+
 \subsection{PhenStat Integration with Database}
 \subsection{PhenStat Example Using Cluster}
 If someone would like to analyse all variables in the dataset and has a cluster available for such kind of job then here is an example of PhenStat package usage.
@@ -1341,7 +1963,7 @@ cluster = makeCluster(length(tasks), type="...") # type values: MPI, RCLOUD, etc
 clusterEvalQ(cluster, setwd("/some/folder/where/you/do/processing"))
 
 # create logs and forward output to the log files
-clusterEvalQ(cluster, try({ fn = paste(getwd(), "/logs/", Sys.info()[4], "-", Sys.getpid(), ".log", sep=""); 
+clusterEvalQ(cluster, try({ fn = paste(getwd(), "./", Sys.info()[4], "-", Sys.getpid(), ".log", sep=""); 
 o <- file(fn, open = "w"); sink(o); sink(o, type = "message"); }))
 
 # test output is routed to the logs
