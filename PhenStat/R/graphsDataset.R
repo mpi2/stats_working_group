@@ -28,7 +28,15 @@ boxplotGenderGenotype<-function(phenList, depVariable, graphingName){
         stop("Please define dependent variable 'depVariable'.")
     
     if (!(depVariable %in% colnames(x)))
-        stop(paste(depVariable,"column is missed in the dataset"))
+        stop(paste(depVariable,"column is missed in the dataset."))
+    else {
+        columnOfInterest <- x[,c(depVariable)]
+        
+        # Test: depVariable is numeric 
+        if(!is.numeric(columnOfInterest))
+            stop(paste(depVariable,"variable is not numeric. Can't create a plot based on it."))
+     }       
+            
     
     # Plot creation
     numberofgenders=length(levels(x$Gender))
@@ -59,8 +67,17 @@ boxplotGenderGenotypeBatch<-function(phenList, depVariable, graphingName){
     if (is.null(depVariable)) 
         stop("Please define dependent variable 'depVariable'.")
     
+    
     if (!(depVariable %in% colnames(x)))
         stop(paste(depVariable,"column is missed in the dataset."))
+    else {
+        columnOfInterest <- x[,c(depVariable)]
+        
+        # Test: depVariable is numeric 
+        if(!is.numeric(columnOfInterest))
+        stop(paste(depVariable,"variable is not numeric. Can't create a plot based on it."))
+    }       
+    
     
     if (!('Batch' %in% colnames(x)))
         stop(paste("Batch column is missed in the dataset."))
@@ -111,8 +128,16 @@ scatterplotGenotypeWeight<-function(phenList, depVariable, graphingName){
     if (is.null(depVariable)) 
         stop("Please define dependent variable 'depVariable'.")
     
+    
     if (!(depVariable %in% colnames(x)))
         stop(paste(depVariable,"column is missed in the dataset."))
+    else {
+        columnOfInterest <- x[,c(depVariable)]        
+        # Test: depVariable is numeric 
+        if(!is.numeric(columnOfInterest))
+        stop(paste(depVariable,"variable is not numeric. Can't create a plot based on it."))
+    }       
+    
     
     if (!('Weight' %in% colnames(x)))
         stop("Weight is missed in the dataset.")

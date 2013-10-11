@@ -183,6 +183,9 @@ categoricalBarplot<-function(phenTestResult){
         stop("Please create a PhenTestResult object first.")
     }
     
+    if (!phenTestResult$method=="FE")
+        stop("Categorical bar plot can be created only within Fisher Exact Test framework.")
+    
     # Produces graphs 
     numberofgenders=phenTestResult$numberGenders
     # Colors for the plot and legends

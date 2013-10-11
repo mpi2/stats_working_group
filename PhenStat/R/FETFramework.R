@@ -179,7 +179,7 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
     interactionTest <- NA
     
     
-    result <- new("PhenTestResult",list(model.output=model,depVariable=depVariable,method="FE", 
+    result <- new("PhenTestResult",list(model.dataset=x, model.output=model,depVariable=depVariable,method="FE", 
                     model.effect.batch=keep_batch,model.effect.variance=keep_equalvar,model.effect.interaction=keep_interaction,
                     model.output.interaction=interactionTest,model.effect.gender=keep_gender,model.effect.weight=keep_weight,
                     numberGenders=numberofgenders))

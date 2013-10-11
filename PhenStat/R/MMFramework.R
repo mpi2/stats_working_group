@@ -502,6 +502,7 @@ finalModel <- function(phenTestResult, outputMessages=TRUE)
     
     # Store the results      
     result$model.output=model_genotype
+    result$model.null=model_null
     result$model.output.genotype.nulltest.pVal=p.value
     result$model.formula.null=model_null.formula
     result$model.formula.genotype=model_genotype.formula
