@@ -47,7 +47,8 @@ vectorOutput <- function(phenTestResult)
                 phenTestResult$model.output.summary["gender_MvKO_estimate"],  
                 phenTestResult$model.output.summary["gender_MvKO_SE"], 
                 phenTestResult$model.output.summary["gender_MvKO_p_value"],
-                classificationValue)
+                classificationValue,
+                Cohenf(phenTestResult))
         names(vectorOutput) <- c("Method","Dependent variable","Batch included",
                 "Residual variances homogeneity","Genotype contribution",
                 "Genotype estimate","Genotype standard error","Genotype p-Val",
@@ -60,7 +61,8 @@ vectorOutput <- function(phenTestResult)
                 "Interaction included","Interaction p-val",
                 "Gender FvKO estimate","Gender FvKO standard error","Gender FvKO p-val",
                 "Gender MvKO estimate","Gender MvKO standard error","Gender MvKO p-val",
-                "Classification tag")
+                "Classification tag",
+                "Cohen's f squared")
     }
     else if (phenTestResult$method=="FE"){
         male_pval <- NA
@@ -106,7 +108,8 @@ vectorOutput <- function(phenTestResult)
                 male_ES,  
                 NA,  
                 male_pval, #30
-                classificationTag(phenTestResult))
+                classificationTag(phenTestResult),
+                NA)
         names(vectorOutput) <- c("Method",
                 "Dependent variable",
                 "Batch included",
@@ -137,7 +140,8 @@ vectorOutput <- function(phenTestResult)
                 "Gender MvKO estimate",
                 "Gender MvKO standard error",
                 "Gender MvKO p-val",
-                "Classification tag")
+                "Classification tag",
+                "Cohen's f squared")
     }
     #names(vectorOutput)<-NULL
     return(vectorOutput)

@@ -10,6 +10,10 @@
 \usepackage{amssymb}
 \usepackage{multirow}
 \usepackage{float}
+\usepackage{rotating}
+\usepackage{array}
+
+
 %opening
 \title{PhenStat: statistical analysis of phenotypic data using Linear Mixed Models \\and Fisher Exact Test}
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
@@ -39,10 +43,12 @@ The package consists of three stages as shown in Figure \ref{fig:01}:
 \begin{enumerate}
 \item Dataset processing: includes checking, cleaning and terminology unification procedures and is completed by function \textit{PhenList} which creates a \textit{PhenList} object. 
 \item Statistical analysis: is managed by function \textit{testDataset} and consists of Mixed Model or Fisher Exact framework implementations. The results are stored in \textit{PhenTestResult} object. 
-Potentially this layer can be extended adding new statical methods (shown as dotted box in Figure \ref{fig:01}). 
+Potentially this layer can be extended adding new statical methods (dotted box in Figure \ref{fig:01}). 
 \item Results Output: depending on user needs there are two functions for the test results output: \textit{summaryOutput} 
 and \textit{vectorOutput} that present data from \textit{PhenTestResult} object in a particular format. The output layer is also easily extendible (shown as dotted box in Figure \ref{fig:01}).
 \end{enumerate}
+
+The estimates of the package run time depends a lot on a size of a dataset used for analysis. In average the analysis \textbf{run time} regardless the method used and the size of the dataset is \textbf{1.34 seconds}. 
 
 \section{Data Processing with PhenList Function}
 \textit{PhenList} function performs data processing and creates a \textit{PhenList} object. 
@@ -437,8 +443,10 @@ After the checking procedures \textit{testDataset} function runs the selected fr
 To ensure flexibility and debugging, the framework can comprise of more than one stage. For instance, MM framework has two stages.
 
 \textit{testDataset} function's argument \textit{callAll} instructs the package to run all stages of the framework one after another when set to TRUE (default behaviour). 
+
 However, when \textit{callAll} flag is set to FALSE it instructs the \textit{testDataset} function to run only the first stage of the selected framework.
 For instance, \textit{testDataset} function runs \textit{startModel} and after that \textit{finalModel} functions of the MM framework if the argument \textit{callAll} is set to TRUE. 
+
 If framework contains only one stage (such as the Fisher Exact Test case) then \textit{testDataset} function runs that single stage regardless of the \textit{callAll} argument's value. 
 See example of \textit{callAll} argument in the section \ref{sec:MMImplementation}.
 The example how to call MM and FE framework is given below.
@@ -522,7 +530,6 @@ In the text above we mention \textit{startModel} function's arguments only.
 The equation type is defined by \textit{startModel} function's argument \textit{equation} that can take value "withWeight" which is default one and "withoutWeight". The argument defines the presence or absence of body weight effect in the model (see \ref{Eq1} and \ref{Eq2}). 
 In case when there are no body weight records in the dataset \textit{startModel} sets \textit{equation} argument to "withoutWeight" automatically.
 
-
 \textit{startModel} function creates start fully loaded model and modifies it after testing of different hypothesis. 
 As was described in the previous theory section the model view is influenced by the number of criteria. 
 Each criteria or effect (body weight effect, residual variances homogeneity, gender effect, genotype by gender interaction effect, batch effect) is evaluated individually
@@ -551,12 +558,15 @@ We've made this logical separation of functionality in order to add more flexibi
 Basically, it means that a user can check the evaluation of fixed effects and the selected model before final model fitting. 
 This kind of "debugging" functionality allows the user to change some of the arguments of functions and start the model building process from scratch if needed.
 
-We believe that the possibility to change mixed models framework behaviour as described above will help users to go deeper into details of the modelling process, as well as debug and compare the results from different models. 
+We believe that the possibility to change mixed models framework behaviour as described above will help users to go deeper into details of the modelling process, 
+as well as debug and compare the results from different models. 
+
 
 
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
+
 # Default behaviour
 > result <- testDataset(test,depVariable="Bone.Area", equation="withoutWeight")
 Information:
@@ -638,10 +648,11 @@ Equation: 'withoutWeight'.
 \endgroup
 
 \subsubsection{Diagnostics}
+\label{Diagnostics}
 There are two functions we've implemented for the diagnostics and classification of MM framework results: \textit{testFinalModel} and \textit{classificationTag} accordingly.
  
 The first one performs diagnostic test for MM quality of fit: normality test (Cramer-von Mises test) for the two genotype levels residuals, BLUPs (best linear unbiased prediction) normality test, 
-"rotated" residuals normality test (last two only if applicable). There is only one argument of the function which is \textit{PhenTestResult} object. There are no arguments checks assuming that 
+``rotated'' residuals (\cite{RotatedResiduals04}) normality test (last two only if applicable). There is only one argument of the function which is \textit{PhenTestResult} object. There are no arguments checks assuming that 
 function is called internally from the \textit{finalModel} function. Otherwise should be used with precaution. 
 
  \textit{testFinalModel} returns list of the following values:
@@ -651,20 +662,20 @@ function is called internally from the \textit{finalModel} function. Otherwise s
   \item Test genotype value.
   \item Normality test result (p-value) for the test genotype's residuals.
   \item BLUPs normality test result (p-value); applicable only when there is batch random effects in the model, otherwise set to NA.
-  \item "Rotated" residuals normality test result (p-value); applicable only when there is batch random effects in the model, otherwise set to NA.
+  \item ``Rotated'' residuals normality test result (p-value); applicable only when there is batch random effects in the model, otherwise set to NA.
  \end{itemize}
 
 BLUP in statistics is best linear unbiased prediction and is used in linear mixed models for the estimation of random effects. 
 See tutorial \href{http://www.extension.org/pages/61006/the-solcap-tomato-phenotypic-data:-estimating-heritability-and-blups-for-traits#.Ui4zjWRgYXc}{BLUPs} for more details.
 
-"Rotated" residuals are constructed by multiplying the estimated marginal residual vector by
+``Rotated'' residuals are constructed by multiplying the estimated marginal residual vector by
 the Cholesky decomposition of the inverse of the estimated marginal variance
-matrix. The resulting “rotated” residuals are used to construct an empirical cumulative distribution function and pointwise standard errors. See
+matrix. The resulting ``rotated'' residuals are used to construct an empirical cumulative distribution function and pointwise standard errors. See
 \href{http://biostats.bepress.com/cgi/viewcontent.cgi?article=1019&context=harvardbiostat}{Cholesky Residuals for Assessing Normal
 Errors in a Linear Model with Correlated
-Outcomes: Technical Report} for more details about "rotated" residuals.
+Outcomes: Technical Report} for more details about ``rotated'' residuals.
 
-Both BLUPs and "rotated" residuals tests are used for the model fit estimation.
+Both BLUPs and ``rotated'' residuals tests are used for the model fit estimation.
 
 \subsubsection{Classification Tag}
 \textit{classificationTag} function returns a classification tag to assign a sexual dimorphism assessment of the phenotypic change from the results of MM framework.
@@ -679,7 +690,10 @@ Both BLUPs and "rotated" residuals tests are used for the model fit estimation.
 \end{verbatim}
 \endgroup
 
-% Image showing the decision tree of classification goes here.
+\begin{figure}[!tpb]%figure04
+\centerline{\includegraphics[scale=0.4]{classificationTagMM.png}}
+\caption{Diagram of classification tag assignment from the results of MM framework to assess a sexual dimorphism of the phenotypic change.}\label{fig:05}
+\end{figure}
 
 \subsection{Fisher Exact Test Framework}
 \label{section:FET}
@@ -867,7 +881,7 @@ In the Table \ref{table:04} classification tags and observed p-values classifica
 
 \begin{table}[!h]
 \begin{center}
-\begin{tabular}{| l | l | l | l |}
+\begin{tabular}{| l | l | l | p{8cm} |}
   \hline
 Males only&Females only&All&Classification Tag\\\hline
 $\textless$ 0.05&$\textless$ 0.05 &$\textless$ 0.05&Significant in males, females and in combined dataset\\
@@ -893,6 +907,7 @@ For numeric summary of the analysis, there are two functions to present \textit{
 These output forms were generated for differing users needs. 
 
 \subsection{Summary Output}
+\label{SummaryOutput}
 The \textit{summaryOutput} function supports interactive analysis of the data and prints results on the screen.
 
 The following is an example of summary output of MM framework:
@@ -994,7 +1009,7 @@ The main idea here is that vector format is specified and is the same regardless
 
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
-\begin{verbatim}
+\begin{verbatim}Genotype
 > vectorOutput(result)
                                           Method 
                                         "MM - Eq2" 
@@ -1028,42 +1043,57 @@ The main idea here is that vector format is specified and is the same regardless
 \end{verbatim}
 \endgroup
 
-Vectors data contains the following values in the defined order:
-\begin{enumerate}
- \item "Method", 
- \item "Dependent variable",
- \item "Batch included",
- \item "Residual variances homogeneity",
- \item "Genotype contribution",
- \item "Genotype estimate",
- \item "Genotype standard error",
- \item "Genotype p-Val",
- \item "Gender estimate",
- \item "Gender standard error",
- \item "Gender p-val", 
- \item "Weight estimate",
- \item "Weight standard error",
- \item "Weight p-val",
- \item "Gp1 genotype",
- \item "Gp1 Residuals normality test", 
- \item "Gp2 genotype",
- \item "Gp2 Residuals normality test",
- \item "Blups test",
- \item "Rotated residuals normality test", 
- \item "Intercept estimate",
- \item "Intercept standard error",
- \item "Interaction included",
- \item "Interaction p-val",
- \item "Gender FvKO estimate",
- \item "Gender FvKO standard error",
- \item "Gender FvKO p-val",
- \item "Gender MvKO estimate",
- \item "Gender MvKO standard error",
- \item "Gender MvKO p-val",
- \item "Classification tag".
-\end{enumerate}
 
-% Change into table and provide examples, data type, explanations?
+In the Table \ref{table:05} vector output values are described.
+\begin{sidewaystable}
+ 
+\begin{tabular}{| l | l | l | l | p{10cm} |}
+  \hline
+\#&Name&Value&Framework&Description\\\hline
+1&Method&String&MM and FE&Possible values: "FE", "MM - Eq1" (mixed model without body weight effect), "MM - Eq2" (mixed model with body weight effect).\\
+2&Dependent variable&String&MM and FE&Name of the dependent variable.\\
+3&Batch included&TRUE/FALSE&MM&Was batch significant in MM?\\
+4&Residual variances homogeneity&TRUE/FALSE&MM&Was variance equal in MM?\\
+5&Genotype contribution&Numeric&MM and FE&p-value indicating genotype contribution.\\
+6&Genotype estimate&Numeric&MM and FE&Estimated coefficient that describes genotype value calculated by MM or effect size estimates in FE.\\
+7&Genotype standard error&Numeric&MM&Standard error of the coefficient estimate for genotype in MM.\\
+8&Genotype p-Val&Numeric&MM&Genotype p-value that represents the probability the genotype is NOT relevant in MM.\\
+9&Gender estimate&Numeric&MM&Estimated coefficient that describes gender value calculated by the MM.\\
+10&Gender standard error&Numeric&MM&Standard error of the coefficient estimate for gender in MM.\\
+11&Gender p-Val&Numeric&MM&Gender p-value that represents the probability the gender is NOT relevant in MM.\\
+12&Weight estimate&Numeric&MM&Estimated coefficient that describes weight value calculated by the MM.\\
+13&Weight standard error&Numeric&MM&Standard error of the coefficient estimate for weight in MM.\\
+14&Weight p-Val&Numeric&MM&Weight p-value that represents the probability the weight is NOT relevant in MM.\\
+15&Gp1 genotype&String&MM and FE&Value of reference genotype.\\
+16&Gp1 Residuals normality test&Numeric&MM&p-value that represents the probability the residuals in reference genotype subset are normally distributed.\\
+17&Gp2 genotype&String&MM and FE&Value of test genotype.\\
+18&Gp2 Residuals normality test&Numeric&MM&p-value that represents the probability the residuals in test genotype subset are normally distrbuted.\\
+19&Blups test&Numeric&MM&p-value that represents the probability the blups are normally distrbuted.\\
+\hline  
+\end{tabular}
+\end{sidewaystable}
+
+\begin{sidewaystable}
+ 
+\begin{tabular}{| l | l | l | l | p{10cm} |}
+  \hline
+\#&Name&Value&Framework&Description\\\hline
+20&Rotated residuals normality test&Numeric&MM&p-value that represents the probability the rotated residuals are normally distrbuted.\\
+21&Intercept estimate&Numeric&MM&Estimated coefficient that describes intercept value calculated by the MM.\\
+22&Intercept standard error&Numeric&MM&Standard error of the coefficient estimate for intercept in MM.\\
+23&Interaction included&TRUE/FALSE&MM&Indicates the inclusion of genotype by gender interaction effect into MM.\\
+24&Interaction p-Val&Numeric&MM&Interaction p-value that represents the probability the interaction is NOT relevant in MM.\\
+25&Gender FvKO estimate&Numeric&MM and FE&Estimated coefficient that describes value calculated by the MM for females in test genotype subset or effect size estimate calculated from chi table for females only subset in FE.\\
+26&Gender FvKO standard error&Numeric&MM&Standard error of the "Gender FvKO estimate" in MM.\\
+27&Gender FvKO p-val&Numeric&MM&p-value that represents the probability that females group from test genotype subset contribution into MM is NOT relevant.\\
+28&Gender MvKO estimate&Numeric&MM and FE&Estimated coefficient that describes value calculated by the MM for males in test genotype subset or effect size estimate calculated from chi table for males only subset in FE.\\
+29&Gender MvKO standard error&Numeric&MM&Standard error of the "Gender MvKO estimate" in MM.\\
+30&Gender MvKO p-val&Numeric&MM&p-value that represents the probability that males group from test genotype subset contribution into MM is NOT relevant.\\
+31&Classification tag&String&MM and FE&A sexual dimorphism assessment of the phenotypic change from the results of MM or the overall estimation of the signals significance in FE.\\
+\hline  
+\end{tabular}
+\caption{Vector output description.}\label{table:05}
+\end{sidewaystable}
 
 As was mentioned above \textit{vectorOutput} format is the same for both frameworks. However, in case of "FE" many values are not defined. For example:
 
@@ -1251,10 +1281,10 @@ There is only one graphical output for FE framework: categorical bar plots. This
 \end{verbatim}
 \endgroup 
 
-The example of bar plot is shown in Figure \ref{fig:05}. This graph allows a visual representation of the genotype effect for the variable of interest.
+The example of bar plot is shown in Figure \ref{fig:06}. This graph allows a visual representation of the genotype effect for the variable of interest.
 \begin{figure}[!htpb]%figure01
 \centerline{\includegraphics[scale=0.5]{categoricalBarPlot.png}}
-\caption{The PhenStat package's graphical output: categorical bar plot.}\label{fig:05}
+\caption{The PhenStat package's graphical output: categorical bar plot.}\label{fig:06}
 \end{figure}
 
 \subsection{Graphics for Continuous Data}
@@ -1275,29 +1305,29 @@ There are three functions in the dataset based graphs category:
 \end{verbatim}
 \endgroup 
 
-The example of box plot split by gender and genotype is shown in Figure \ref{fig:06}. Outliers are shown as independent data points beyond the fences (``whiskers'') of the boxplot. An outlier is defined as a data point that is 1.5 times the interquartile range above the upper quartile and bellow the lower quartile.
+The example of box plot split by gender and genotype is shown in Figure \ref{fig:07}. Outliers are shown as independent data points beyond the fences (``whiskers'') of the boxplot. An outlier is defined as a data point that is 1.5 times the interquartile range above the upper quartile and bellow the lower quartile.
 \begin{figure}[!htpb]%figure01
 \centerline{\includegraphics[scale=0.5]{boxplotGenderGenotype.png}}
-\caption{The PhenStat package's graphical output: box plot split by gender and genotype.}\label{fig:06}
+\caption{The PhenStat package's graphical output: box plot split by gender and genotype.}\label{fig:07}
 \end{figure}
 
-The example of box plot split by gender, genotype and batch is shown in Figure \ref{fig:07}. This allows a visualisation of variation of dependent variable with time. The MM framework assumes this variation is random and conforms the normal distribution. Then the genotype distribution can be of relative to natural variation. 
+The example of box plot split by gender, genotype and batch is shown in Figure \ref{fig:08}. This allows a visualisation of variation of dependent variable with time. The MM framework assumes this variation is random and conforms the normal distribution. Then the genotype distribution can be of relative to natural variation. 
 \begin{figure}[!htpb]%figure01
 \centerline{\includegraphics[scale=0.5]{boxplotGenderGenotypeBatch.png}}
-\caption{The PhenStat package's graphical output: box plot split by gender, genotype and batch.}\label{fig:07}
+\caption{The PhenStat package's graphical output: box plot split by gender, genotype and batch.}\label{fig:08}
 \end{figure}
 
-The example of scatter plot of body weight versus dependent variable is shown in Figure \ref{fig:08}. When weight is included in the model MM framework assumes a linear relationship between dependent variable and body weight. This graph allows an assessment of this showing both regression line and a loess line (locally weighted line) fitted for each genotype.
+The example of scatter plot of body weight versus dependent variable is shown in Figure \ref{fig:09}. When weight is included in the model MM framework assumes a linear relationship between dependent variable and body weight. This graph allows an assessment of this showing both regression line and a loess line (locally weighted line) fitted for each genotype.
 \begin{figure}[!htpb]%figure01
 \centerline{\includegraphics[scale=0.5]{scatterplotGenotypeWeight.png}}
-\caption{The PhenStat package's graphical output: scatter plot of body weight versus dependent variable.}\label{fig:08}
+\caption{The PhenStat package's graphical output: scatter plot of body weight versus dependent variable.}\label{fig:09}
 \end{figure}
 
 There are five functions in the results based graphs category:
 \begin{itemize}
 \item \textit{qqplotGenotype} creates a Q-Q plot of residuals for each genotype.
 \item \textit{qqplotRandomEffects} creates a Q-Q plot of blups (best linear unbiased predictions).
-\item \textit{qqplotRotatedResiduals} creates a Q-Q plot of rotated residuals.
+\item \textit{qqplotRotatedResiduals} creates a Q-Q plot of ``rotated'' residuals.
 \item \textit{plotResidualPredicted} creates predicted versus residual values plots split by genotype.
 \item \textit{boxplotResidualBatch} creates a box plot with residue versus batch split by genotype.
 \end{itemize}
@@ -1313,36 +1343,30 @@ There are five functions in the results based graphs category:
 \end{verbatim}
 \endgroup 
 
-The example of Q-Q plot of residuals for each genotype is shown in Figure \ref{fig:09}. The MM framework assumes residuals are normally distributed. Residuals are the differences between the real values observed for a dependent variable and the fitted values from the model. Q-Q plot assesses this assumption (residuals will be randomly arranged around the line if normally distributed). 
+The example of Q-Q plot of residuals for each genotype is shown in Figure \ref{fig:10}. The MM framework assumes residuals are normally distributed. Residuals are the differences between the real values observed for a dependent variable and the fitted values from the model. Q-Q plot assesses this assumption (residuals will be randomly arranged around the line if normally distributed). 
 \begin{figure}[!tpb]%figure01
 \centerline{\includegraphics[scale=0.5]{qqplotGenotype.png}}
-\caption{The PhenStat package's graphical output: Q-Q plot of residuals for each genotype.}\label{fig:09}
+\caption{The PhenStat package's graphical output: Q-Q plot of residuals for each genotype.}\label{fig:10}
 \end{figure}
 
 
-The example of Q-Q plot of BLUPs (best linear unbiased predictions) is shown in Figure \ref{fig:10}. The MM framework assumes the BLUPs are normally distributed. This graph assesses for this assumption by plotting BLUPs and the ideal normal line (large deviations from the line can be an indicator of problems with the model fit). BLUPs are best linear unbiased predictions and are used for the estimation of batch effects. See tutorial \href{http://www.extension.org/pages/61006/the-solcap-tomato-phenotypic-data:-estimating-heritability-and-blups-for-traits#.Ui4zjWRgYXc}{BLUPs} for more details.
+The example of Q-Q plot of BLUPs (best linear unbiased predictions) is shown in Figure \ref{fig:11}. The MM framework assumes the BLUPs are normally distributed. This graph assesses for this assumption by plotting BLUPs and the ideal normal line (large deviations from the line can be an indicator of problems with the model fit). BLUPs are best linear unbiased predictions and are used for the estimation of batch effects. See tutorial \href{http://www.extension.org/pages/61006/the-solcap-tomato-phenotypic-data:-estimating-heritability-and-blups-for-traits#.Ui4zjWRgYXc}{BLUPs} for more details.
 
 \begin{figure}[!htpb]%figure01
 \centerline{\includegraphics[scale=0.5]{qqplotRandomEffects.png}}
-\caption{The PhenStat package's graphical output: Q-Q plot of BLUPs (best linear unbiased predictions).}\label{fig:10}
+\caption{The PhenStat package's graphical output: Q-Q plot of BLUPs (best linear unbiased predictions).}\label{fig:11}
 \end{figure}
 
-Another method to assess the model fit is to consider the normality of the "rotated" and "unrotated" residuals. The example of Q-Q plot of "rotated" residuals is shown in Figure \ref{fig:11}. 
-
-"Rotated" residuals are constructed by multiplying the estimated marginal residual vector by
-the Cholesky decomposition of the inverse of the estimated marginal variance
-matrix. The resulting “rotated” residuals are used to construct an empirical cumulative distribution function and pointwise standard errors. See
-\href{http://biostats.bepress.com/cgi/viewcontent.cgi?article=1019&context=harvardbiostat}{Cholesky Residuals for Assessing Normal
-Errors in a Linear Model with Correlated
-Outcomes: Technical Report} 
- for more details about "rotated" and "unrotated" residuals.
+Another method to assess the model fit is to consider the normality of the ``rotated'' and ``unrotated'' residuals. The example of Q-Q plot of ``rotated'' residuals is shown in Figure \ref{fig:12}. 
+See section \ref{Diagnostics} for the details about ``rotated'' residuals.
 
 \begin{figure}[!htpb]%figure01
 \centerline{\includegraphics[scale=0.5]{qqplotRotatedResiduals.png}}
-\caption{The PhenStat package's graphical output: Q-Q plot of "rotated" residuals.}\label{fig:11}
+\caption{The PhenStat package's graphical output: Q-Q plot of ``rotated'' residuals.}\label{fig:12}
 \end{figure}
 
-The example of residual-by-predicted plot is shown in Figure \ref{fig:12}. Residuals, differences between fitted and real values, are plotted against the prediced (fitted) values of dependent varibale.  A residual-by-predicted plot can be used to diagnose nonlinearity or nonconstant error variance. It is also can be used to find outliers. 
+The example of residual-by-predicted plot is shown in Figure \ref{fig:13}. Residuals, differences between fitted and real values, are plotted against the prediced (fitted) values of dependent varibale.  
+A residual-by-predicted plot can be used to diagnose nonlinearity or nonconstant error variance. It is also can be used to find outliers. 
 
 Here are the characteristics of a residual-by-predicted plot when model fitness is close to the ideal and what they suggest about the appropriateness of the model:
 \begin{itemize}
@@ -1352,13 +1376,13 @@ Here are the characteristics of a residual-by-predicted plot when model fitness 
 \end{itemize}
 \begin{figure}[!htpb]%figure01
 \centerline{\includegraphics[scale=0.5]{plotResidualPredicted.png}}
-\caption{The PhenStat package's graphical output: residual-by-predicted plot split by genotype.}\label{fig:12}
+\caption{The PhenStat package's graphical output: residual-by-predicted plot split by genotype.}\label{fig:13}
 \end{figure}
 
-The example of box plot with residue versus batch split by genotype is shown in Figure \ref{fig:13}. This allows assessment that the residual behaviour for all batches is within natural deviation but do not differ a lot and the model is fitting the data well.
+The example of box plot with residue versus batch split by genotype is shown in Figure \ref{fig:14}. This allows assessment that the residual behaviour for all batches is within natural deviation but do not differ a lot and the model is fitting the data well.
 \begin{figure}[!htpb]%figure01
 \centerline{\includegraphics[scale=0.5]{boxplotResidualBatch.png}}
-\caption{The PhenStat package's graphical output: box plot with residue versus batch split by genotype.}\label{fig:13}
+\caption{The PhenStat package's graphical output: box plot with residue versus batch split by genotype.}\label{fig:14}
 \end{figure}
    
 \section{Case Studies}
@@ -1381,7 +1405,7 @@ Genotype&Gender&Number Animals&Number Batches\\\hline
 
 \hline  
 \end{tabular}
-\caption{Number of animals and number of batches in the Akt2 dataset}\label{table:05}
+\caption{Number of animals and number of batches in the Akt2 dataset}\label{table:06}
 \end{center}
 \end{table}
 
@@ -1473,7 +1497,7 @@ For the Akt2 example, we can conclude that there looks to be a significant genot
 
 \begin{figure}[H]%figure01
 \centerline{\includegraphics[scale=0.5]{cs1_boxplotGenderGenotype.png}}
-\caption{\textit{boxplotGenderGenotype} function for Akt2 example.}\label{fig:14}
+\caption{\textit{boxplotGenderGenotype} function for Akt2 example.}\label{fig:15}
 \end{figure}
 
 A second function, \textit{boxplotGenderGenotypeBatch}, allows the comparison between genotype as a function of batch and gender.  
@@ -1490,7 +1514,7 @@ For the Akt2 lean mass example, we can see that there is significant batch varia
 
 \begin{figure}[H]%figure01
 \centerline{\includegraphics[scale=0.5]{cs1_boxplotBatchGenotype.jpg}}
-\caption{\textit{boxplotGenderGenotypeBatch} function for Akt2 example.}\label{fig:15}
+\caption{\textit{boxplotGenderGenotypeBatch} function for Akt2 example.}\label{fig:16}
 \end{figure}
 
 \subsubsection{Assessment of model fit}
@@ -1499,7 +1523,7 @@ Five functions are available and they focus on looking at residual behaviour.
 A residual, is the difference between the estimated dependent variable from the final model estimates and the actual measured dependent variable response. 
 A model is a good fit, when the residuals are normally distributed and there is no systematic pattern in the distribution of the residuals relative to the dependent variable. 
 
-The \textit{vectorOutput} function includes statistical tests for normality on the residuals for the wild type, residuals for the knockout, the blups and rotated residuals. 
+The \textit{vectorOutput} function includes statistical tests for normality on the residuals for the wild type, residuals for the knockout, the blups and ``rotated'' residuals (see section \ref{Diagnostics}). 
 These normality tests are provide to assist in the building automated tools for assessing model fit, 
 however when there is a lot of data (e.g. in a dataset where the wild type arises from a high throughput program with a running baseline), 
 the statistical test can be overall sensitive to departures from normality and when the number of data points is low (e.g. in many knockout groups), the test can lack ability to detect deviations from normality. 
@@ -1524,7 +1548,7 @@ This is not concerning as we have a very large control dataset and we do have ou
 
 \begin{figure}[H]%figure01
 \centerline{\includegraphics[scale=0.5]{cs1_qqplotGenotype.png}}
-\caption{\textit{qqplotGenotype} function for Akt2 example.}\label{fig:16}
+\caption{\textit{qqplotGenotype} function for Akt2 example.}\label{fig:17}
 \end{figure}
 
 \item \textbf{boxplotResidualBatch} 
@@ -1541,7 +1565,7 @@ For the Akt2 example, we can see that the variation in residual is consistent ac
 
 \begin{figure}[H]%figure01
 \centerline{\includegraphics[scale=0.5]{cs1_boxplotResidualBatch.png}}
-\caption{\textit{boxplotResidualBatch} function for Akt2 example.}\label{fig:17}
+\caption{\textit{boxplotResidualBatch} function for Akt2 example.}\label{fig:18}
 \end{figure}
 
 
@@ -1561,7 +1585,7 @@ however there are some data points that are not being fit well by the model, the
 
 \begin{figure}[H]%figure01
 \centerline{\includegraphics[scale=0.5]{cs1_plotResidualPredicted.png}}
-\caption{\textit{plotResidualPredicted} function for Akt2 example.}\label{fig:18}
+\caption{\textit{plotResidualPredicted} function for Akt2 example.}\label{fig:19}
 \end{figure}
 
 \item \textbf{qqplotRandomEffects} 
@@ -1582,12 +1606,13 @@ and so we can conclude the distribution is not too far from the ideal and the mo
 
 \begin{figure}[H]%figure01
 \centerline{\includegraphics[scale=0.5]{cs1_qqplotRandomEffects.png}}
-\caption{\textit{qqplotRandomEffects} function for Akt2 example.}\label{fig:19}
+\caption{\textit{qqplotRandomEffects} function for Akt2 example.}\label{fig:20}
 \end{figure}
 
 \item \textbf{qqplotRotatedResiduals}
 
-This function, allows the user to consider the normality of the “rotated” and “unrotated” residuals and have been recommended to assess model fit success with mixed models (\cite{RotatedResiduals04}). 
+This function, allows the user to consider the normality of the ``rotated'' and ``unrotated'' residuals and have been recommended to assess model fit success with mixed models (\cite{RotatedResiduals04}). 
+See section \ref{Diagnostics} for more details. 
 So looking at the Akt2 lean mass example, the majority of the data points are distributed along the line. 
 There is some systematic deviation at the tails but it is a small percentage of the points and as it is above and below the line it indicates long tails (i.e. outliers) 
 and so we can conclude the distribution is not too far from the ideal and the model is a good representation of the data. 
@@ -1601,7 +1626,7 @@ and so we can conclude the distribution is not too far from the ideal and the mo
 
 \begin{figure}[H]%figure01
 \centerline{\includegraphics[scale=0.5]{cs1_qqplotRotatedResiduals.png}}
-\caption{\textit{qqplotRotatedResiduals} function for Akt2 example.}\label{fig:20}
+\caption{\textit{qqplotRotatedResiduals} function for Akt2 example.}\label{fig:21}
 \end{figure}
 
 \end{itemize}
@@ -1638,7 +1663,7 @@ Looking at the Akt2 dataset we can see that there is a difference in body weight
 
 \begin{figure}[H]%figure01
 \centerline{\includegraphics[scale=0.5]{cs1_bodyweight.png}}
-\caption{\textit{boxplotGenderGenotype} function for Akt2 example to show the body weight impact.}\label{fig:21}
+\caption{\textit{boxplotGenderGenotype} function for Akt2 example to show the body weight impact.}\label{fig:22}
 \end{figure}
 
 
@@ -1701,7 +1726,7 @@ It can also be seen that the knockout animals have a lower body weight and subse
 
 \begin{figure}[H]%figure01
 \centerline{\includegraphics[scale=0.5]{cs1_scatterplotGenotypeWeight.png}}
-\caption{\textit{scatterplotGenotypeWeight} function for Akt2 example.}\label{fig:22}
+\caption{\textit{scatterplotGenotypeWeight} function for Akt2 example.}\label{fig:23}
 \end{figure}
 
 \subsection{PhenStat Usage Example Categorical Data}
@@ -1725,7 +1750,7 @@ Genotype&Gender&Number Animals&Number Batches\\\hline
 
 \hline  
 \end{tabular}
-\caption{Number of animals and number of batches in the Aff3 dataset}\label{table:06}
+\caption{Number of animals and number of batches in the Aff3 dataset}\label{table:07}
 \end{center}
 \end{table}
 
@@ -1757,7 +1782,7 @@ Therefore tables showing both the percentage and count values are included in th
 
 \begin{figure}[H]%figure01
 \centerline{\includegraphics[scale=0.5]{cs2_categoricalBarplot.jpg}}
-\caption{\textit{categoricalBarplot} function for Aff3 example.}\label{fig:23}
+\caption{\textit{categoricalBarplot} function for Aff3 example.}\label{fig:24}
 \end{figure}
 
 \subsubsection{Understanding the \textit{summaryOutput}}
@@ -1829,7 +1854,7 @@ Abnormal right eye&1& 0.5			    &4& 50                   &          0.5-50      
 Abnormal both eye&1& 0.5			    &3& 37.5                   &          0.5-37.5                             &37\\ 
 \hline  
 \end{tabular}
-\caption{Number of animals and number of batches in the Aff3 dataset}\label{table:06}
+\caption{Number of animals and number of batches in the Aff3 dataset}\label{table:08}
 \end{center}
 \end{table}
 
@@ -1843,7 +1868,7 @@ For our example dataset, the number of ribs is a dependent variable with little 
 
 \begin{figure}[H]%figure01
 \centerline{\includegraphics[scale=0.5]{cs2_noRibsRight_percentageplot.jpg}}
-\caption{\textit{categoricalBarplot} function for Aff3 example with number of ribs as dependent variable.}\label{fig:24}
+\caption{\textit{categoricalBarplot} function for Aff3 example with number of ribs as dependent variable.}\label{fig:25}
 \end{figure}
 
 
@@ -1899,9 +1924,8 @@ Percentage matrix 'all' statistics:
 \end{verbatim}
 \endgroup 
 
+%\subsection{PhenStat Integration with Database}
 
-
-\subsection{PhenStat Integration with Database}
 \subsection{PhenStat Example Using Cluster}
 If someone would like to analyse all variables in the dataset and has a cluster available for such kind of job then here is an example of PhenStat package usage.
 
@@ -2007,8 +2031,13 @@ Hahne,F., Huber,W., Gentleman,R., Falcon,S. (2008). Bioconductor Case Studies. S
 
 \bibitem[West {\it et~al}., 2007]{MM07}  West,B., Welch,K., Galecki,A. (2007) Linear Mixed Models: A practical guide using statistical software. Chapman \& Hall$\backslash$CRC. ISBN 978-1-584-88480-4.
 
-\bibitem[Houseman {\it et~al}]{RotatedResiduals04} E. Andrés Houseman, Louise M. Ryan and Brent A. Coull (2004) Cholesky Residuals for Assessing Normal Errors in a Linear Model with Correlated Outcomes, {\it Journal of the American Statistical Association}, {\bf Vol. 99, No. 466}, 383-394
+\bibitem[Houseman {\it et~al}., 2004]{RotatedResiduals04} E. Andrés Houseman, Louise M. Ryan and Brent A. Coull (2004) Cholesky Residuals for Assessing Normal Errors in a Linear Model with Correlated Outcomes, {\it Journal of the American Statistical Association}, {\bf 99} (466), 383-394
 
+%%An R2 statistic for fixed effects in the linear mixed model
+
+%Lloyd J. Edwards1,*, Keith E. Muller2, Russell D. Wolfinger3, Bahjat F. Qaqish1, Oliver Schabenberger3 (2008) DOI: 10.1002/sim.3429
+%Statistics in Medicine
+%Volume 27, Issue 29, pages 6137–6157, 20 December 2008
 \end{thebibliography}
 
 

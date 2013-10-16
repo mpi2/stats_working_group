@@ -51,26 +51,26 @@ testFinalModel<-function(phenTestResult)
         if(keep_batch && No_batches >7 && outputnumeric){
 
             blups=ranef(result$model.output)
-            blups_test= cvm.test(blups [ ,1])$p.value
+            blups_test= suppressWarnings(cvm.test(blups [ ,1])$p.value)
             sdests = exp(attr(result$model.output$apVar, "Pars"))           #extract variance estimates
             Zbat = model.matrix(~ Batch, model.frame( ~ Batch, result$model.output$groups))    #create random effects design matrix
             ycov = (Zbat %*% t(Zbat)) * sdests["reStruct.Batch"]^2 + diag(rep(1,nrow(result$model.output$groups))) * sdests["lSigma"]^2    #create estimated cov(y)
             Lt = chol(solve(ycov))  #Cholesky decomposition of inverse of cov(y) (see Houseman '04 eq. (2))
             rotres = Lt %*%  result$model.output$residuals[, "fixed"]    #rotated residuals
-            rotated_residual_test=cvm.test(rotres)$p.value
+            rotated_residual_test=suppressWarnings(cvm.test(rotres)$p.value)
         }else{
             blups_test=NA
             rotated_residual_test=NA
         }   
         
         if(No_Gp1>7){
-            gp1_norm_res= cvm.test(Gp1$res)$p.value
+            gp1_norm_res= suppressWarnings(cvm.test(Gp1$res)$p.value)
         }else{
             gp1_norm_res= NA
         }    
         
         if(No_Gp2>7){
-            gp2_norm_res= cvm.test(Gp2$res)$p.value
+            gp2_norm_res= suppressWarnings(cvm.test(Gp2$res)$p.value)
         }else{
             gp2_norm_res= NA
         }    

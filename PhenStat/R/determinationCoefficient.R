@@ -14,34 +14,10 @@
 #-----------------------------------------------------------------------------------
 # determinationCoefficient.R contains rsquared and Cohenf functions
 #-----------------------------------------------------------------------------------
-rsquared <- function(i)
-# Coefficient of determination (R2) is a useful and intuitive tool for ascertaining 
-# whether a model describes the data well: 
-# it's the variance explained by the model. 
-# R2 is 1 - the ratio of the unexplained variance by the model
-# (residual variance, difference between observed and predicted values) over the total observed variance.
+rsquared.lme <- function(i) 
 {
-    #For models fit using lm
-    if(class(i)=="lm") {
-        Rsquared.mat=data.frame(Class=class(i),Marginal=summary(i)$r.squared,
-                Conditional=NA,AIC=AIC(i)) } 
-    #For models fit using lme4
-    else if(inherits(i,"merMod") | class(i)=="merLmerTest") {
-        #Get variance of fixed effects by multiplying coefficients by design matrix
-        VarF=var(as.vector(fixef(i) %*% t(i@pp$X))) 
-        #Get variance of random effects by extracting variance components
-        VarRand=colSums(do.call(rbind,lapply(VarCorr(i),function(j) j[1])))
-        #Get residual variance
-        VarResid=attr(VarCorr(i),"sc")^2
-        #Calculate marginal R-squared (fixed effects/total variance)
-        Rm=VarF/(VarF+VarRand+VarResid)
-        #Calculate conditional R-squared (fixed effects+random effects/total variance)
-        Rc=(VarF+VarRand)/(VarF+VarRand+VarResid)
-        #Bind R^2s into a matrix and return with AIC values
-        Rsquared.mat=data.frame(Class=class(i),Marginal=Rm,Conditional=Rc,
-                AIC=AIC(update(i,REML=F))) } 
-    #For model fit using nlme  
-    else if(class(i)=="lme") {
+    if(class(i)=="lme"){
+        
         #Get design matrix of fixed effects from model
         Fmat=model.matrix(eval(i$call$fixed)[-2],i$data)
         #Get variance of fixed effects by multiplying coefficients by design matrix
@@ -55,27 +31,36 @@ rsquared <- function(i)
         Rm=VarF/(VarF+VarRand+VarResid)
         #Calculate conditional R-squared (fixed effects+random effects/total variance)
         Rc=(VarF+VarRand)/(VarF+VarRand+VarResid)
-        #Bind R^2s into a matrix and return with AIC values
-        Rsquared.mat=data.frame(Class=class(i),Marginal=Rm,Conditional=Rc,
-                AIC=AIC(update(i,method="ML")))
-    } else if(class(i)=="gls") {
-        Rsquared = cor((i$fitted-i$residuals),i$fitted)^2
-        Rsquared.mat=data.frame(Class=class(i),Marginal=Rsquared,
-                Conditional=Rsquared,AIC=AIC(i)) 
-    }    
-    else
-    { 
-        stop("Function requires models of class lm, lme, mer, merMod or gls") 
-    } 
-    return (Rsquared.mat)
+        #Bind R^2s into a matrix
+        rsquared =data.frame(Class=class(i),Marginal=Rm,Conditional=Rc)
+        
+        return(rsquared)
+    }
+    else stop("Not lme")
+}              
+                
+# The McFadden pseudo R2                
+rsquared.gls <- function(phenTestResult)    
+{
+  return(1-(as.numeric(logLik(phenTestResult$model.output)/logLik(phenTestResult$model.null))))                  
 }
-
-Cohenf <- function(phenTestResult){
+                
+    
+Cohenf <- function(phenTestResult)
+{
 # Local Effect Size
+# Cohen's f^2 = variance among group means/pooled within group variance
     if (phenTestResult$method=="MM") {
-        R2_genotype <- rsquared(phenTestResult$model.output)$Marginal
-        R2_null <- rsquared(phenTestResult$model.null)$Marginal
-        Cohenf <- abs((R2_genotype-R2_null)/(1-R2_genotype))
+        if (class(phenTestResult$model.output)=="lme"){
+                            R2_genotype <- rsquared.lme(phenTestResult$model.output)$Conditional
+                            R2_null <- rsquared.lme(phenTestResult$model.null)$Conditional
+                            Cohenf <- abs((R2_genotype-R2_null)/(1-R2_genotype))
+        }
+        else
+            if(class(phenTestResult$model.output)=="gls"){
+                            val=rsquared.gls(phenTestResult)
+                            Cohenf=val/(1-val)
+            }
         return(Cohenf)
     }
     else
