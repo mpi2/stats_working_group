@@ -40,9 +40,12 @@ rsquared.lme <- function(i)
 }              
                 
 # The McFadden pseudo R2                
-rsquared.gls <- function(phenTestResult)    
+rsquared.gls <- function(i,base_level_model)    
 {
-  return(1-(as.numeric(logLik(phenTestResult$model.output)/logLik(phenTestResult$model.null))))                  
+  if(class(i)=="gls"){
+        return(1-(as.numeric(logLik(i)/logLik(base_level_model))))   
+  }
+  else stop("Not gls")               
 }
                 
     
@@ -58,8 +61,10 @@ Cohenf <- function(phenTestResult)
         }
         else
             if(class(phenTestResult$model.output)=="gls"){
-                            val=rsquared.gls(phenTestResult)
-                            Cohenf=val/(1-val)
+                intercept_only_model = do.call("gls", args = list(as.formula(paste(phenTestResult$depVariable," ~ 1")),  phenTestResult$model.dataset, na.action="na.exclude"))    
+                R2_genotype <- rsquared.gls(phenTestResult$model.output,intercept_only_model)
+                R2_null <- rsquared.gls(phenTestResult$model.null,intercept_only_model)
+                Cohenf <- abs((R2_genotype-R2_null)/(1-R2_genotype))
             }
         return(Cohenf)
     }
