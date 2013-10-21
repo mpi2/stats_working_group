@@ -443,30 +443,30 @@ The description includes: whether variable is numerical or not, whether variable
 
 \begin{table}[!h]
 \begin{center}
-\begin{tabular}{|l|l| l | l | l | l | l | l | l |}
+\begin{tabular}{|p{13mm}|l| l | l | l | l | l | l | l |}
   \hline
 Variable&Num&Cont&Levels&\#&Mean&StdDev&Min&Max\\\hline
-Age.In.Weeks&TRUE&FALSE&10&468&14&0.21&13.1&14.6\\
+Age.In.\newline Weeks&TRUE&FALSE&10&468&14&0.21&13.1&14.6\\
 Batch&FALSE&FALSE&49&468&NA&NA&NA&NA\\
-Birth.Date&FALSE&FALSE&111&468&NA&NA&NA&NA\\
-Bone.Area&TRUE&TRUE&248&463&9.6&0.84&7.46&11.73\\
-Bone.Mineral.Content&TRUE&TRUE&405&463&0.48&0.06&0.31&0.64\\
-Bone.Mineral.Density&TRUE&TRUE&120&463&0.05&0&0.04&0.06\\
-Cohort.Name&FALSE&FALSE&59&468&NA&NA&NA&NA\\
-Colony.Name&FALSE&FALSE&76&468&NA&NA&NA&NA\\
-Colony.Prefix&FALSE&FALSE&76&468&NA&NA&NA&NA\\
-Core.Strain&FALSE&FALSE&1&468&NA&NA&NA&NA\\
-Tissue.Mass&TRUE&TRUE&427&463&35.22&5.3&20.44&49.86\\
-Fat.Mass&TRUE&TRUE&385&463&14.92&3.35&4.52&23.21\\
-Fat.Percentage&TRUE&TRUE&403&463&42.01&5.16&19.26&55.21\\
-Full.Strain&FALSE&FALSE&9&468&NA&NA&NA&NA\\
+Birth.\newline Date&FALSE&FALSE&111&468&NA&NA&NA&NA\\
+Bone.\newline Area&TRUE&TRUE&248&463&9.6&0.84&7.46&11.73\\
+Bone.\newline Mineral.\newline Content&TRUE&TRUE&405&463&0.48&0.06&0.31&0.64\\
+Bone.\newline Mineral.\newline Density&TRUE&TRUE&120&463&0.05&0&0.04&0.06\\
+Cohort.\newline Name&FALSE&FALSE&59&468&NA&NA&NA&NA\\
+Colony.\newline Name&FALSE&FALSE&76&468&NA&NA&NA&NA\\
+Colony.\newline Prefix&FALSE&FALSE&76&468&NA&NA&NA&NA\\
+Core.\newline Strain&FALSE&FALSE&1&468&NA&NA&NA&NA\\
+Tissue.\newline Mass&TRUE&TRUE&427&463&35.22&5.3&20.44&49.86\\
+Fat.\newline Mass&TRUE&TRUE&385&463&14.92&3.35&4.52&23.21\\
+Fat.\newline Percentage&TRUE&TRUE&403&463&42.01&5.16&19.26&55.21\\
+Full.\newline Strain&FALSE&FALSE&9&468&NA&NA&NA&NA\\
 Gender&FALSE&FALSE&2&468&NA&NA&NA&NA\\
-Gene.Name&FALSE&FALSE&76&468&NA&NA&NA&NA\\
+Gene.\newline Name&FALSE&FALSE&76&468&NA&NA&NA&NA\\
 Genotype&FALSE&FALSE&2&468&NA&NA&NA&NA\\
-Lean.Mass&TRUE&TRUE&369&463&20.31&2.81&14.84&28.8\\
+Lean.\newline Mass&TRUE&TRUE&369&463&20.31&2.81&14.84&28.8\\
 Mouse&FALSE&FALSE&468&468&NA&NA&NA&NA\\
-Mouse.Name&FALSE&FALSE&468&468&NA&NA&NA&NA\\
-Base.Length&TRUE&FALSE&17&468&10.19&0.32&9.3&10.9\\
+Mouse.\newline Name&FALSE&FALSE&468&468&NA&NA&NA&NA\\
+Base.\newline Length&TRUE&FALSE&17&468&10.19&0.32&9.3&10.9\\
 Pipeline&FALSE&FALSE&1&468&NA&NA&NA&NA\\
 Strain&FALSE&FALSE&2&468&NA&NA&NA&NA\\
 Weight&TRUE&TRUE&183&468&34.95&5.09&20.4&48.4\\
