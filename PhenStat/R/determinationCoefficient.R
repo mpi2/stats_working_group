@@ -49,7 +49,7 @@ rsquared.gls <- function(i,base_level_model)
 }
                 
     
-Cohenf <- function(phenTestResult)
+CohenfConditional <- function(phenTestResult)
 {
 # Local Effect Size
 # Cohen's f^2 = variance among group means/pooled within group variance
@@ -70,4 +70,27 @@ Cohenf <- function(phenTestResult)
     }
     else
         stop("Implemented only for the MM framework results")
+}
+
+CohenfMarginal<- function(phenTestResult)
+{
+    # Local Effect Size
+    # Cohen's f^2 = variance among group means/pooled within group variance
+    if (phenTestResult$method=="MM") {
+        if (class(phenTestResult$model.output)=="lme"){
+            R2_genotype <- rsquared.lme(phenTestResult$model.output)$Marginal
+            R2_null <- rsquared.lme(phenTestResult$model.null)$Marginal
+            Cohenf <- abs((R2_genotype-R2_null)/(1-R2_genotype))
+        }
+        else
+        if(class(phenTestResult$model.output)=="gls"){
+            intercept_only_model = do.call("gls", args = list(as.formula(paste(phenTestResult$depVariable," ~ 1")),  phenTestResult$model.dataset, na.action="na.exclude"))    
+            R2_genotype <- rsquared.gls(phenTestResult$model.output,intercept_only_model)
+            R2_null <- rsquared.gls(phenTestResult$model.null,intercept_only_model)
+            Cohenf <- abs((R2_genotype-R2_null)/(1-R2_genotype))
+        }
+        return(Cohenf)
+    }
+    else
+    stop("Implemented only for the MM framework results")
 }

@@ -41,7 +41,8 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
         
         message(paste("Classification tag:", classificationTag(phenTestResult,phenotypeThreshold=phenotypeThreshold)))
         
-        message(paste("Cohen's f squared:", round(Cohenf(phenTestResult),digits=3)))
+        message(paste("Cohen's f squared (Conditional):", round(CohenfConditional(phenTestResult),digits=3)))
+        message(paste("Cohen's f squared (Marginal):", round(CohenfMarginal(phenTestResult),digits=3)))
         
         summary(phenTestResult$model.output)$tTable
     }

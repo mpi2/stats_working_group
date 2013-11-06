@@ -24,6 +24,33 @@ vectorOutput <- function(phenTestResult)
         
         classificationValue <- classificationTag(phenTestResult,userMode="vectorOutput",outputMessages=FALSE)
         
+        CohenfM = paste('"CohensF_Marginal":', round(CohenfMarginal(phenTestResult),digits=3),sep="")
+        CohenfC = paste('"CohensF_Conditional":', round(CohenfConditional(phenTestResult),digits=3),sep="")
+        
+        x = phenTestResult$model.dataset
+        columnOfInterest <- x[,c(phenTestResult$depVariable)]
+        variability = paste('"variability":', round(length(unique(columnOfInterest))/length(columnOfInterest),digits=3),sep="")
+        
+        Genotype_levels=levels(x$Genotype)
+        Gender_levels=levels(x$Gender)  
+        
+        DSsize = ""
+        
+        for (i in 1:length(Genotype_levels)){
+            GenotypeSubset <- subset(x, x$Genotype==Genotype_levels[i])
+            for (j in 1:length(Gender_levels)){           
+                GenotypeGenderSubset <- subset(GenotypeSubset, GenotypeSubset$Gender==Gender_levels[j]) 
+                columnOfInterest <- GenotypeGenderSubset[,c(phenTestResult$depVariable)]
+                DSsize = paste(DSsize,paste('"',paste(Genotype_levels[i],Gender_levels[j],sep="_"),'"',sep=""),sep="")
+                DSsize = paste(DSsize,":",sep="")
+                DSsize = paste(DSsize,length(columnOfInterest),",",sep="")
+            }                
+        }
+        
+        #DSsize = gsub("/","%2F",DSsize)
+        Cohenf = paste("{",DSsize,paste(CohenfC,CohenfM,variability,sep=","),"}",sep="")
+            
+        
         vectorOutput <- c(paste("MM - ",equation,sep=""),phenTestResult$depVariable, phenTestResult$model.effect.batch, 
                 phenTestResult$model.effect.variance, 
                 phenTestResult$model.output.genotype.nulltest.pVal, 
@@ -48,7 +75,7 @@ vectorOutput <- function(phenTestResult)
                 phenTestResult$model.output.summary["gender_MvKO_SE"], 
                 phenTestResult$model.output.summary["gender_MvKO_p_value"],
                 classificationValue,
-                Cohenf(phenTestResult))
+                Cohenf)
         names(vectorOutput) <- c("Method","Dependent variable","Batch included",
                 "Residual variances homogeneity","Genotype contribution",
                 "Genotype estimate","Genotype standard error","Genotype p-Val",

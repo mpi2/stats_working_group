@@ -45,9 +45,12 @@ testDataset <- function(phenList, depVariable, equation="withWeight", outputMess
             # Test: depVariable is numeric in MM framework
             if(is.numeric(columnOfInterest)){
                 
+                variability = length(unique(columnOfInterest))/length(columnOfInterest)
                 # Test: depVariable is continuous variable in MM framework (sufficcient variablity)   
-                if ((length(unique(columnOfInterest))/length(columnOfInterest)<0.005) && method=="MM") 
+                if ((variability<0.005) && method=="MM"){ 
+                    
                 stop_message <- paste(stop_message,"Error:\nInsufficient variability in the dependent variable '",depVariable,"' for MM framework. Fisher Exact Test can be better way to do the analysis.\n",sep="") 
+                }    
             }
             else if (method=="MM"){
                 method="FE"
