@@ -97,18 +97,18 @@ boxplotGenderGenotypeBatch<-function(phenList, depVariable, graphingName){
         
         par(mfrow=c(1,2)) 
         
-        boxplot(Male[ , depVariable]~Male$Genotype+Male$Batch, subset=(Male$Genotype=="+/+"), ylab=graphingName, ylim=y_range, xlab="Batch",  names=NULL)
-        boxplot(Male[ , depVariable]~Male$Genotype + Male$Batch, add=TRUE, subset=(Male$Genotype!="+/+"), ylim=y_range, ylab=graphingName, xlab="Batch",  col="red", names=NULL)
+        boxplot(Male[ , depVariable]~Male$Genotype+Male$Batch, subset=(Male$Genotype==phenList$refGenotype), ylab=graphingName, ylim=y_range, xlab="Batch",  names=NULL)
+        boxplot(Male[ , depVariable]~Male$Genotype + Male$Batch, add=TRUE, subset=(Male$Genotype!=phenList$refGenotype), ylim=y_range, ylab=graphingName, xlab="Batch",  col="red", names=NULL)
         legend("topright", "Male", cex=1.3, bty="n")
         
-        boxplot(Female[ , depVariable]~Female$Genotype + Female$Batch, subset=(Female$Genotype=="+/+"),ylim=y_range,ylab=graphingName, xlab="Batch",  names=NULL )
-        boxplot(Female[ , depVariable]~Female$Genotype + Female$Batch, add=TRUE, subset=(Female$Genotype!="+/+"),ylim=y_range, ylab=graphingName, xlab="Batch",  col="red",names=NULL)
+        boxplot(Female[ , depVariable]~Female$Genotype + Female$Batch, subset=(Female$Genotype==phenList$refGenotype),ylim=y_range,ylab=graphingName, xlab="Batch",  names=NULL )
+        boxplot(Female[ , depVariable]~Female$Genotype + Female$Batch, add=TRUE, subset=(Female$Genotype!=phenList$refGenotype),ylim=y_range, ylab=graphingName, xlab="Batch",  col="red",names=NULL)
         
         legend("topright", "Female", cex=1.3, bty="n")
     }else{
         par(mfrow=c(1,1))
-        boxplot(x[ ,depVariable]~x$Genotype+x$Batch,subset=(x$Genotype=="+/+"), ylab=graphingName, xlab="Batch", names=NULL) 
-        boxplot(x[ ,depVariable]~x$Genotype+x$Batch,subset=(x$Genotype!="+/+"), add=TRUE, ylab=graphingName, xlab="Batch",  col="red", names=NULL)    
+        boxplot(x[ ,depVariable]~x$Genotype+x$Batch,subset=(x$Genotype==phenList$refGenotype), ylab=graphingName, xlab="Batch", names=NULL) 
+        boxplot(x[ ,depVariable]~x$Genotype+x$Batch,subset=(x$Genotype!=phenList$refGenotype), add=TRUE, ylab=graphingName, xlab="Batch",  col="red", names=NULL)    
     }
     
 }    
