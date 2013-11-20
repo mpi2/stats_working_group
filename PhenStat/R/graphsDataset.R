@@ -116,7 +116,6 @@ boxplotGenderGenotypeBatch<-function(phenList, depVariable, graphingName){
 #-----------------------------------------------------------------------------------
 # Raw data scatterplot: body weight versus dependant variable
 scatterplotGenotypeWeight<-function(phenList, depVariable, graphingName){
-    require(car)
     
     # Checks
     if(is(phenList,"PhenList")) {

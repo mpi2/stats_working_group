@@ -120,6 +120,12 @@ testDataset <- function(phenList, depVariable, equation="withWeight", outputMess
         equation="withoutWeight"
     }
     
+    if (depVariable=='Weight' && equation=="withWeight" && method=="MM"){
+        if (outputMessages)
+        message("Warning:\nWeight is used as dependent variable. Equation 'withWeight' can't be used in such a case and has been replaced to 'withoutWeight'.\n")
+        equation="withoutWeight"
+    }
+    
     # END Checks and stop messages
     
     if (outputMessages)

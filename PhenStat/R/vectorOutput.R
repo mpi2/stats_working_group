@@ -24,8 +24,8 @@ vectorOutput <- function(phenTestResult)
         
         classificationValue <- classificationTag(phenTestResult,userMode="vectorOutput",outputMessages=FALSE)
         
-        CohenfM = paste('"CohensF_Marginal":', round(CohenfMarginal(phenTestResult),digits=3),sep="")
-        CohenfC = paste('"CohensF_Conditional":', round(CohenfConditional(phenTestResult),digits=3),sep="")
+        CohenfM = paste('"CohensF_Marginal":', round(Cohenf.Marginal(phenTestResult),digits=3),sep="")
+        CohenfC = paste('"CohensF_Conditional":', round(Cohenf.Conditional(phenTestResult),digits=3),sep="")
         
         x = phenTestResult$model.dataset
         columnOfInterest <- x[,c(phenTestResult$depVariable)]

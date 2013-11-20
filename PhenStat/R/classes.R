@@ -14,7 +14,6 @@
 #-----------------------------------------------------------------------------------
 # CLASSES.R defines classes that are used in PhenStat package: 
 # PhenList, PhenTestResult objects extends LargeDataObject of limma package
-require(methods)
 setClass("LargeDataObject")
 # LargeDataObject is the class from limma package developed by Gordon Smyth
 # Here we are using LargeDataObject for the storage of phenotype data and for the storage of model fitting results

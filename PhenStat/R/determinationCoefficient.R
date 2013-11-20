@@ -14,8 +14,10 @@
 #-----------------------------------------------------------------------------------
 # determinationCoefficient.R contains rsquared and Cohenf functions
 #-----------------------------------------------------------------------------------
-rsquared.lme <- function(i) 
+rsquared <- function(i,base_level_model=NULL) 
 {
+    rsquared = NULL
+    
     if(class(i)=="lme"){
         
         #Get design matrix of fixed effects from model
@@ -34,63 +36,55 @@ rsquared.lme <- function(i)
         #Bind R^2s into a matrix
         rsquared =data.frame(Class=class(i),Marginal=Rm,Conditional=Rc)
         
-        return(rsquared)
+       
     }
-    else stop("Not lme")
-}              
-                
-# The McFadden pseudo R2                
-rsquared.gls <- function(i,base_level_model)    
-{
-  if(class(i)=="gls"){
-        return(1-(as.numeric(logLik(i)/logLik(base_level_model))))   
-  }
-  else stop("Not gls")               
-}
-                
+    else if(class(i)=="gls" && !(is.null(base_level_model))){
+        # The McFadden pseudo R2 
+        rsquared = 1-(as.numeric(logLik(i)/logLik(base_level_model)))   
+    }   
     
-CohenfConditional <- function(phenTestResult)
+    return(rsquared)
+}              
+#-----------------------------------------------------------------------------------                
+Cohenf.Conditional <- function(phenTestResult)
 {
 # Local Effect Size
 # Cohen's f^2 = variance among group means/pooled within group variance
     if (phenTestResult$method=="MM") {
         if (class(phenTestResult$model.output)=="lme"){
-                            R2_genotype <- rsquared.lme(phenTestResult$model.output)$Conditional
-                            R2_null <- rsquared.lme(phenTestResult$model.null)$Conditional
+                            R2_genotype <- rsquared(phenTestResult$model.output)$Conditional
+                            R2_null <- rsquared(phenTestResult$model.null)$Conditional
                             Cohenf <- abs((R2_genotype-R2_null)/(1-R2_genotype))
         }
         else
             if(class(phenTestResult$model.output)=="gls"){
                 intercept_only_model = do.call("gls", args = list(as.formula(paste(phenTestResult$depVariable," ~ 1")),  phenTestResult$model.dataset, na.action="na.exclude"))    
-                R2_genotype <- rsquared.gls(phenTestResult$model.output,intercept_only_model)
-                R2_null <- rsquared.gls(phenTestResult$model.null,intercept_only_model)
+                R2_genotype <- rsquared(phenTestResult$model.output,intercept_only_model)
+                R2_null <- rsquared(phenTestResult$model.null,intercept_only_model)
                 Cohenf <- abs((R2_genotype-R2_null)/(1-R2_genotype))
             }
         return(Cohenf)
     }
-    else
-        stop("Implemented only for the MM framework results")
 }
-
-CohenfMarginal<- function(phenTestResult)
+#-----------------------------------------------------------------------------------
+Cohenf.Marginal<- function(phenTestResult)
 {
     # Local Effect Size
     # Cohen's f^2 = variance among group means/pooled within group variance
     if (phenTestResult$method=="MM") {
         if (class(phenTestResult$model.output)=="lme"){
-            R2_genotype <- rsquared.lme(phenTestResult$model.output)$Marginal
-            R2_null <- rsquared.lme(phenTestResult$model.null)$Marginal
+            R2_genotype <- rsquared(phenTestResult$model.output)$Marginal
+            R2_null <- rsquared(phenTestResult$model.null)$Marginal
             Cohenf <- abs((R2_genotype-R2_null)/(1-R2_genotype))
         }
         else
         if(class(phenTestResult$model.output)=="gls"){
             intercept_only_model = do.call("gls", args = list(as.formula(paste(phenTestResult$depVariable," ~ 1")),  phenTestResult$model.dataset, na.action="na.exclude"))    
-            R2_genotype <- rsquared.gls(phenTestResult$model.output,intercept_only_model)
-            R2_null <- rsquared.gls(phenTestResult$model.null,intercept_only_model)
+            R2_genotype <- rsquared(phenTestResult$model.output,intercept_only_model)
+            R2_null <- rsquared(phenTestResult$model.null,intercept_only_model)
             Cohenf <- abs((R2_genotype-R2_null)/(1-R2_genotype))
         }
         return(Cohenf)
     }
-    else
-    stop("Implemented only for the MM framework results")
 }
+#-----------------------------------------------------------------------------------

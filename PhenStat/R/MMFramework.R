@@ -36,8 +36,6 @@
 # As the result PhenTestResult object that contains calculated or user defined model effects and MM start model is created. 
 startModel <- function(phenList, depVariable, equation="withWeight", outputMessages=TRUE, pThreshold=0.05, keepList=NULL)
 {
-    require(nlme)
-    
     x <- phenList$dataset
     
     if (!is.null(keepList)){
@@ -343,9 +341,6 @@ finalModel <- function(phenTestResult, outputMessages=TRUE)
 # stored in phenTestResult object (see testDataset.R).
 
 {
-    require(nlme)
-    
-    
     # Checks and stop messages
     stop_message <- ""
     

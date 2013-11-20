@@ -18,9 +18,6 @@
 # represent dependent variable levels. Perform Fisher Exact test(s)
 FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
 {    
-
-    require(vcd)
-    
     x <- phenList$dataset
     numberofgenders=length(levels(x$Gender))
     Genotype_levels=levels(x$Genotype)         
