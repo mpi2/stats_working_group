@@ -58,11 +58,13 @@ The PhenList object can be created by using function \code{\link{PhenList}}.}
 \seealso{\code{\link{PhenList}}}
 
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/test1.csv"),
+    file <- system.file("extdata", "test1.csv", package="PhenStat")
+    test <- PhenList(dataset=read.csv(file),
             testGenotype="Sparc/Sparc")
     class(test)
     
-    test2 <- PhenList(dataset=read.csv("./PhenStat/extdata/test2.csv"),
+    file <- system.file("extdata", "test2.csv", package="PhenStat")
+    test2 <- PhenList(dataset=read.csv(file),
             testGenotype="Arid4a/Arid4a",
             refGenotype="+/+",
             hemiGenotype="Arid4a/+",

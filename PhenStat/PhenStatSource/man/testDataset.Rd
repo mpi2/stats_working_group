@@ -47,7 +47,8 @@
 \seealso{\code{\linkS4class{PhenList}}}
 \examples{
     # Mixed Model framework
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/test1.csv"),
+    file <- system.file("extdata", "test1.csv", package="PhenStat")
+    test <- PhenList(dataset=read.csv(file),
             testGenotype="Sparc/Sparc")
     result <- testDataset(test,
             depVariable="Lean.Mass")
@@ -69,7 +70,8 @@
     summaryOutput(result3)
     
     # Fisher Exact Test framework
-    test2 <- PhenList(dataset=read.csv("./PhenStat/extdata/test_categorical.csv"),
+    file <- system.file("extdata", "test_categorical.csv", package="PhenStat")
+    test2 <- PhenList(dataset=read.csv(file),
             testGenotype="Aff3/Aff3")
     result2 <- testDataset(test2,
             depVariable="Thoracic.Processes",

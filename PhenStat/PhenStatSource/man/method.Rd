@@ -15,7 +15,8 @@
 }
 \author{Natalja Kurbatova}
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/test1.csv"),
+    file <- system.file("extdata", "test1.csv", package="PhenStat")
+    test <- PhenList(dataset=read.csv(file),
             testGenotype="Sparc/Sparc")
     result <- testDataset(test,
             depVariable="Lean.Mass")

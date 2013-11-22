@@ -21,7 +21,8 @@
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenList}} and \code{\linkS4class{PhenTestResult}}}
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/test2.csv"),
+    file <- system.file("extdata", "test2.csv", package="PhenStat")
+    test <- PhenList(dataset=read.csv(file),
             dataset.colname.weight="Weight.Value",
             testGenotype="Arid4a/Arid4a",
             hemiGenotype="Arid4a/+")

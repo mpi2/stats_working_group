@@ -50,16 +50,19 @@
 \seealso{\code{\linkS4class{PhenList}}}
 
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/test1.csv"),
+    file <- system.file("extdata", "test1.csv", package="PhenStat")
+    test <- PhenList(dataset=read.csv(file),
             testGenotype="Sparc/Sparc")
     
-    test2 <- PhenList(dataset=read.csv("./PhenStat/extdata/test2.csv"),
+    file <- system.file("extdata", "test2.csv", package="PhenStat")
+    test2 <- PhenList(dataset=read.csv(file),
             testGenotype="Arid4a/Arid4a",
             refGenotype="+/+",
             hemiGenotype="Arid4a/+",
             dataset.colname.weight="Weight.Value")
     
-    test3 <- PhenList(dataset=read.csv("./PhenStat/extdata/test3.csv"), 
+    file <- system.file("extdata", "test3.csv", package="PhenStat")
+    test3 <- PhenList(dataset=read.csv(file),
             dataset.clean=TRUE, 
             dataset.values.female=1, 
             dataset.values.male=2, 

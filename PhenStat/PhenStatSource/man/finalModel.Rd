@@ -29,7 +29,8 @@
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenTestResult}} and \code{\link{testDataset}}}
 \examples{
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/test1.csv"),
+    file <- system.file("extdata", "test1.csv", package="PhenStat")
+    test <- PhenList(dataset=read.csv(file),
             testGenotype="Sparc/Sparc")
     # when "testDataset" function's argument "callAll" is set to FALSE 
     # only "startModel" function is called - the first step of MM framework
@@ -38,16 +39,16 @@
             equation="withoutWeight",
             callAll=FALSE) 
     # print out formula that has been created
-    result$model.formula.genotype
+    # result$model.formula.genotype
     # print out batch effect's significance 
-    result$model.effect.batch
+    # result$model.effect.batch
     # change the model
-    result <- testDataset(test,
-            depVariable="Lean.Mass",
-            equation="withWeight",
-            callAll=FALSE) 
+    # result <- testDataset(test,
+    #        depVariable="Lean.Mass",
+    #        equation="withWeight",
+    #        callAll=FALSE) 
     # print out new formula
-    result$model.formula.genotype
+    #result$model.formula.genotype
     # run the final model fitting when statisfied with the model
     result <- finalModel(result)
 }

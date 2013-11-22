@@ -128,7 +128,8 @@
  
 \examples{
     # Mixed Model framework
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/test1.csv"),
+    file <- system.file("extdata", "test1.csv", package="PhenStat")
+    test <- PhenList(dataset=read.csv(file),
             testGenotype="Sparc/Sparc")
     result <- testDataset(test,
             equation="withoutWeight",
@@ -154,12 +155,13 @@
     # Final model formula without genotype    
     result$model.formula.null 
     # Final model fitting output
-    result$model.output 
+    # result$model.output 
     # Final model fitting summary
-    summary(result$model.output)$tTable 
+    # summary(result$model.output)$tTable 
     
     # Fisher Exact Test framework
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/test_categorical.csv"),
+    file <- system.file("extdata", "test_categorical.csv", package="PhenStat")
+    test <- PhenList(dataset=read.csv(file),
             testGenotype="Aff3/Aff3")
     result <- testDataset(test,
             depVariable="Thoracic.Processes",
@@ -172,11 +174,11 @@
     # Count matrix for males only records
     result$model.output$count_matrix_male
     # Count matrix for females only records
-    result$model.output$count_matrix_female 
+    # result$model.output$count_matrix_female 
     # Percentage matrix for all data
     result$model.output$percentage_matrix_all 
     # Percentage matrix for males only records
-    result$model.output$percentage_matrix_male 
+    # result$model.output$percentage_matrix_male 
     # Percentage matrix for females only records
     result$model.output$percentage_matrix_female
     # Matrix statistics for all data

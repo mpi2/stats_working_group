@@ -61,7 +61,8 @@
 
 \examples{    
     # "checkDataset" is called internally from "PhenList" function
-    test <- PhenList(dataset=read.csv("./PhenStat/extdata/test1.csv"),
+    file <- system.file("extdata", "test1.csv", package="PhenStat")
+    test <- PhenList(dataset=read.csv(file),
             testGenotype="Sparc/Sparc")    
     
 }
