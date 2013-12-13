@@ -1,29 +1,39 @@
-# Copyright © 2011-2013 EMBL - European Bioinformatics Institute
-# 
-# Licensed under the Apache License, Version 2.0 (the "License"); 
-# you may not use this file except in compliance with the License.  
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#-----------------------------------------------------------------------------------
-# PhenTestResult.R contains PhenTestResult function
-#-----------------------------------------------------------------------------------
+## Copyright © 2011-2013 EMBL - European Bioinformatics Institute
+## 
+## Licensed under the Apache License, Version 2.0 (the "License"); 
+## you may not use this file except in compliance with the License.  
+## You may obtain a copy of the License at
+##
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
+##------------------------------------------------------------------------------
+## PhenTestResult.R contains PhenTestResult function
+##------------------------------------------------------------------------------
 PhenTestResult <- function(model.output=NULL, 
         model.dataset=NULL,
-        depVariable=NULL, equation="withWeight", method="MM", 
-        model.effect.batch=NULL, model.effect.variance=NULL, 
-        model.effect.gender=NULL, model.effect.interaction=NULL, model.output.interaction=NULL, model.effect.weight=NULL, numberGenders=NULL,
-        pThreshold=0.05, model.formula.null=NULL, 
-        model.formula.genotype=NULL, model.output.genotype.nulltest.pVal=NULL, 
-        model.output.quality=NULL,model.output.summary=NULL) 
+        depVariable=NULL, 
+        equation="withWeight", 
+        method="MM", 
+        model.effect.batch=NULL, 
+        model.effect.variance=NULL, 
+        model.effect.gender=NULL, 
+        model.effect.interaction=NULL, 
+        model.output.interaction=NULL, 
+        model.effect.weight=NULL, 
+        numberGenders=NULL,
+        pThreshold=0.05, 
+        model.formula.null=NULL, 
+        model.formula.genotype=NULL, 
+        model.output.genotype.nulltest.pVal=NULL, 
+        model.output.quality=NULL,
+        model.output.summary=NULL) 
 
-# Construct PhenTestResult object from components
+## Construct PhenTestResult object from components
 
 {    
     x <- new("PhenTestResult",list(model.output=model.output))
@@ -45,6 +55,4 @@ PhenTestResult <- function(model.output=NULL,
     x$model.output.interaction <- model.output.interaction
     x
 }
-
-
-
+##------------------------------------------------------------------------------
