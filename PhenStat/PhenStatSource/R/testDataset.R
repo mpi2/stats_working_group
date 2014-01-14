@@ -138,9 +138,22 @@ testDataset <- function(phenList, depVariable, equation="withWeight",
     
     if (depVariable=='Weight' && equation=="withWeight" && method=="MM"){
         if (outputMessages)
-        message("Warning:\nWeight is used as dependent variable. Equation 
-                'withWeight' can't be used in such a case and has been replaced to 'withoutWeight'.\n")
+        message("Warning:\nWeight is used as dependent variable. 
+Equation 'withWeight' can't be used in such a case and has been replaced to 'withoutWeight'.\n")
         equation <- "withoutWeight"
+    }
+    else {
+        #Check if dependent variable has the same values as Weight column
+        if (equation=="withWeight" && method=="MM"){
+            columnOfInterest <- x[,c(depVariable)]
+            if (sum(columnOfInterest-x$Weight) == 0){    
+                if (outputMessages)
+                message("Warning:\nWeight and dependent variable values seemed to be equivalent. 
+Equation 'withWeight' can't be used in such a case and has been replaced to 'withoutWeight'.\n")
+                equation <- "withoutWeight"
+            }
+            
+        }
     }
     
     ## END Checks and stop messages
