@@ -26,7 +26,7 @@
 ## FET framework consists of only one function FisherExactTest that creates 
 ## count matrix (matrices) and perform test(s).  
 testDataset <- function(phenList, depVariable, equation="withWeight", 
-        outputMessages=TRUE, pThreshold=0.05, method="MM", callAll=TRUE, keepList=NULL)
+        outputMessages=TRUE, pThreshold=0.05, method="MM", callAll=TRUE, keepList=NULL, dataPointsThreshold=4)
 {
     
     stop_message <- ""
@@ -35,6 +35,7 @@ testDataset <- function(phenList, depVariable, equation="withWeight",
     if(is(phenList,"PhenList")) {
         x <- phenList$dataset    
         
+        # Test: dependent variable presence 
         if (!(depVariable %in% colnames(x)))
         stop_message <- paste("Error:\nDependent variable column '",
                 depVariable,"' is missed in the dataset.\n",sep="")
@@ -72,7 +73,7 @@ testDataset <- function(phenList, depVariable, equation="withWeight",
                                 GenotypeSubset$Gender==Gender_levels[j]) 
                         
                         columnOfInterest <- GenotypeGenderSubset[,c(depVariable)]
-                        if (length(unique(columnOfInterest))==1){
+                        if (length(unique(columnOfInterest))<dataPointsThreshold){
                             passed<-FALSE
                         }
                     }                
@@ -80,11 +81,10 @@ testDataset <- function(phenList, depVariable, equation="withWeight",
                 if (!passed)
                 stop_message <- paste(stop_message,"Error:\nInsufficient 
                         variability in the dependent variable '",depVariable,
-                        "' for genotype/gender combinations to allow the application 
-                        of Mixed Model.\n",sep="")             
+                        "' for genotype/gender combinations to allow the application of Mixed Model.\n",sep="")             
             }
             else if (method=="FE") {
-                ## Test: depVariable number of levels is at least 2
+                ## Test: depVariable number of levels is at least 1
                 if (length(levels(factor(columnOfInterest,exclude=NA)))==0){
                     stop_message <- paste("Error:\nInsufficient data in the 
                             dependent variable '",depVariable,

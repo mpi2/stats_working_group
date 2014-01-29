@@ -21,7 +21,7 @@
 \usage{
     testDataset(phenList, depVariable, 
             equation="withWeight", outputMessages=TRUE, 
-            pThreshold=0.05, method="MM", callAll=TRUE, keepList=NULL)
+            pThreshold=0.05, method="MM", callAll=TRUE, keepList=NULL, dataPointsThreshold=4)
 }
 \arguments{
     \item{phenList}{instance of the \code{\linkS4class{PhenList}} class; mandatory argument}       
@@ -33,6 +33,7 @@
     \item{callAll}{flag: "FALSE" value to run only the first stage of the selected framework; "TRUE" value (default) to run all stages of framework one after another}        
     \item{keepList}{a logical vector defining the significance of different model effects: keep_batch, keep_equalvar,
         keep_weight, keep_gender, keep_interaction; default value NULL}
+    \item{dataPointsThreshold}{threshold for the number of data points in the MM framework}
 }
 \value{
     Returns results stored in instance of the \code{\linkS4class{PhenTestResult}} class
