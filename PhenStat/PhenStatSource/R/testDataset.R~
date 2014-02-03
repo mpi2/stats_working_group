@@ -26,7 +26,7 @@
 ## FET framework consists of only one function FisherExactTest that creates 
 ## count matrix (matrices) and perform test(s).  
 testDataset <- function(phenList, depVariable, equation="withWeight", 
-        outputMessages=TRUE, pThreshold=0.05, method="MM", callAll=TRUE, keepList=NULL, dataPointsThreshold=4)
+        outputMessages=TRUE, pThreshold=0.05, method="MM", callAll=TRUE, keepList=NULL)
 {
     
     stop_message <- ""
@@ -35,15 +35,8 @@ testDataset <- function(phenList, depVariable, equation="withWeight",
     if(is(phenList,"PhenList")) {
         x <- phenList$dataset    
         
-        if (dataPointsThreshold<2) {
-            dataPointsThreshold <- 2
-            if (outputMessages)
-            message("Warning:\nData points threshold is set to 2 (minimal value).\n")
-        }
-        
-        # Test: dependent variable presence 
         if (!(depVariable %in% colnames(x)))
-            stop_message <- paste("Error:\nDependent variable column '",
+        stop_message <- paste("Error:\nDependent variable column '",
                 depVariable,"' is missed in the dataset.\n",sep="")
         else {
             columnOfInterest <- x[,c(depVariable)]
@@ -52,7 +45,8 @@ testDataset <- function(phenList, depVariable, equation="withWeight",
                 variability <- length(unique(columnOfInterest))/length(columnOfInterest)
                 ## Test: depVariable is continuous variable in MM framework (sufficcient variablity)   
                 if ((variability<0.005) && method=="MM"){ 
-                    stop_message <- paste(stop_message,"Error:\nInsufficient variability in the dependent variable '",depVariable,
+                    stop_message <- paste(stop_message,"Error:\nInsufficient 
+                            variability in the dependent variable '",depVariable,
                             "' for MM framework. Fisher Exact Test can be better way to 
                             do the analysis.\n",sep="") 
                 }    
@@ -71,12 +65,6 @@ testDataset <- function(phenList, depVariable, equation="withWeight",
                 Gender_levels <- levels(x$Gender)  
                 
                 passed <- TRUE
-                
-                numberOfGroupsPassed <- length(Genotype_levels) + length(Gender_levels)
-                if (numberOfGroupsPassed == 4)
-                    numberOfGroupsPassed <- 3
-                numberOfGroupsChecked <- 0
-                
                 for (i in 1:length(Genotype_levels)){
                     GenotypeSubset <- subset(x, x$Genotype==Genotype_levels[i])
                     for (j in 1:length(Gender_levels)){           
@@ -84,21 +72,19 @@ testDataset <- function(phenList, depVariable, equation="withWeight",
                                 GenotypeSubset$Gender==Gender_levels[j]) 
                         
                         columnOfInterest <- GenotypeGenderSubset[,c(depVariable)]
-                        
-                        if (length(unique(columnOfInterest))>=dataPointsThreshold){
-                            numberOfGroupsChecked <- numberOfGroupsChecked+1
-                            #message(numberOfGroupsChecked)
+                        if (length(unique(columnOfInterest))==1){
+                            passed<-FALSE
                         }
                     }                
                 }
-                if (numberOfGroupsChecked < numberOfGroupsPassed)
-                    passed <- FALSE
                 if (!passed)
-                stop_message <- paste(stop_message,"Error:\nInsufficient variability in the dependent variable '",depVariable,
-                        "' for genotype/gender combinations to allow the application of Mixed Model.\n",sep="")             
+                stop_message <- paste(stop_message,"Error:\nInsufficient 
+                        variability in the dependent variable '",depVariable,
+                        "' for genotype/gender combinations to allow the application 
+                        of Mixed Model.\n",sep="")             
             }
             else if (method=="FE") {
-                ## Test: depVariable number of levels is at least 1
+                ## Test: depVariable number of levels is at least 2
                 if (length(levels(factor(columnOfInterest,exclude=NA)))==0){
                     stop_message <- paste("Error:\nInsufficient data in the 
                             dependent variable '",depVariable,
@@ -152,22 +138,9 @@ testDataset <- function(phenList, depVariable, equation="withWeight",
     
     if (depVariable=='Weight' && equation=="withWeight" && method=="MM"){
         if (outputMessages)
-        message("Warning:\nWeight is used as dependent variable. Equation 'withWeight' can't be used in such a case and has been replaced to 'withoutWeight'.\n")
+        message("Warning:\nWeight is used as dependent variable. Equation 
+                'withWeight' can't be used in such a case and has been replaced to 'withoutWeight'.\n")
         equation <- "withoutWeight"
-    }
-    else {
-        #Check if dependent variable has the same values as Weight column
-        if (equation=="withWeight" && method=="MM"){
-            columnOfInterest <- na.omit(x[,c(depVariable)])
-            columnOfWeight <- na.omit(x$Weight)
-            if (length(columnOfInterest) == length(columnOfWeight))
-                if (sum(columnOfInterest-x$Weight) == 0){    
-                 if (outputMessages)
-                  message("Warning:\nWeight and dependent variable values seemed to be equivalent. Equation 'withWeight' can't be used in such a case and has been replaced to 'withoutWeight'.\n")
-                 equation <- "withoutWeight"
-            }
-            
-        }
     }
     
     ## END Checks and stop messages

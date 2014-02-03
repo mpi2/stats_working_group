@@ -2,7 +2,14 @@
 \alias{PhenList}
 \title{Method "PhenList"}
 \description{
-    Creates \code{\linkS4class{PhenList}} object, checks data integrity, renames columns when requested, 
+    Function to create data object from the data frame. 
+    
+    In addition to dependent variable column (the variable of interest) mandatory columns that should present 
+    in the data frame are "Genotype" and "Gender". 
+    The "Assay.Date" column is used to model "Batch" effect if not specified differently. 
+    "Weight" column is used to model body weight effect.
+    
+    Function creates \code{\linkS4class{PhenList}} object, checks data integrity, renames columns when requested, 
     provides simple statistics about dataset.
     
     Returns an instance of the \code{\linkS4class{PhenList}} object created from the data file. 

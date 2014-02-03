@@ -43,6 +43,9 @@ qqplotGenotype<-function(phenTestResult){
     qqline(Gp2$res)
     legend("topleft", a[2], cex=1.3, bty="n")
     par(op)
+    
+    op_normal <- par(mfrow=c(1,1))
+    par(op_normal) 
 }
 
 ##------------------------------------------------------------------------------
@@ -72,6 +75,9 @@ plotResidualPredicted<-function(phenTestResult){
     plot(x=Gp2pred$pred, y=Gp2pred$res, xlab="Predicted", ylab="Residuals")
     legend("topleft", a[2], cex=1.3, bty="n")
     par(op)
+    
+    op_normal <- par(mfrow=c(1,1))
+    par(op_normal) 
 }  
 
 
@@ -131,6 +137,9 @@ boxplotResidualBatch<-function(phenTestResult){
     with(Gp2, boxplot(res~Batch, ylab="Residuals", xlab="Batch", names=NULL))
     legend("bottomleft", a[2], cex=1.3, bty="n")   
     par(op)
+    
+    op_normal <- par(mfrow=c(1,1))
+    par(op_normal) 
 }
 
 ##------------------------------------------------------------------------------
@@ -172,6 +181,9 @@ qqplotRotatedResiduals<-function(phenTestResult){
         qqnorm(rotres, main = "Rotated")
         qqline(rotres)
         par(op)
+        
+        op_normal <- par(mfrow=c(1,1))
+        par(op_normal) 
     }
     else{
         message("Diagnostics on rotated residues not relevant as variation 
@@ -231,6 +243,9 @@ categoricalBarplot<-function(phenTestResult){
                 fill=plot_col,  title="Legend", bty="n")
         par(op)
     }
+    
+    op_normal <- par(mfrow=c(1,1))
+    par(op_normal) 
     
 }
 ##------------------------------------------------------------------------------

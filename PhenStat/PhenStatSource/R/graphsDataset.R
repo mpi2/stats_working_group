@@ -17,7 +17,7 @@
 ## scatterplotGenotypeWeigh & categoricalBarplot
 ##------------------------------------------------------------------------------
 ## Raw data boxplot: split by gender and genotype
-boxplotGenderGenotype<-function(phenList, depVariable, graphingName){
+boxplotGenderGenotype<-function(phenList, depVariable=NULL, graphingName=NULL){
     
     ## Checks
     if(is(phenList,"PhenList")) {
@@ -26,7 +26,10 @@ boxplotGenderGenotype<-function(phenList, depVariable, graphingName){
         x <- phenList
     }
     if (is.null(depVariable)) 
-    stop("Please define dependent variable 'depVariable'.")
+        stop("Please define dependent variable 'depVariable'.")
+    
+    if (is.null(graphingName))
+        graphingName <- depVariable
     
     if (!(depVariable %in% colnames(x)))
     stop(paste(depVariable,"column is missed in the dataset."))
@@ -53,6 +56,8 @@ boxplotGenderGenotype<-function(phenList, depVariable, graphingName){
                 ylab=graphingName, xlab="Genotype")
         legend("topright", "Female", cex=1.3, bty="n")
         par(op) 
+        op_normal <- par(mfrow=c(1,1))
+        par(op_normal) 
     }else{
         op <- par(mfrow=c(1,1))
         boxplot(x[ ,depVariable]~x$Genotype, ylab=graphingName, xlab="Genotype")  
@@ -61,7 +66,7 @@ boxplotGenderGenotype<-function(phenList, depVariable, graphingName){
 }    
 ##------------------------------------------------------------------------------
 ## Raw data boxplot: split by gender,genotype and batch 
-boxplotGenderGenotypeBatch<-function(phenList, depVariable, graphingName){
+boxplotGenderGenotypeBatch<-function(phenList, depVariable=NULL, graphingName=NULL){
     
     ## Checks
     if(is(phenList,"PhenList")) {
@@ -70,8 +75,13 @@ boxplotGenderGenotypeBatch<-function(phenList, depVariable, graphingName){
     } else {
         x <- phenList
     }
+
+            
     if (is.null(depVariable)) 
-    stop("Please define dependent variable 'depVariable'.")
+            stop("Please define dependent variable 'depVariable'.")
+    
+    if (is.null(graphingName))
+            graphingName <- depVariable
     
     
     if (!(depVariable %in% colnames(x)))
@@ -126,6 +136,9 @@ boxplotGenderGenotypeBatch<-function(phenList, depVariable, graphingName){
         legend("topright", "Female", cex=1.3, bty="n")
         
         par(op)
+        
+        op_normal <- par(mfrow=c(1,1))
+        par(op_normal) 
     }else{
         op <- par(mfrow=c(1,1))
         boxplot(x[ ,depVariable]~x$Genotype+x$Batch,
@@ -143,7 +156,7 @@ boxplotGenderGenotypeBatch<-function(phenList, depVariable, graphingName){
 
 ##------------------------------------------------------------------------------
 ## Raw data scatterplot: body weight versus dependant variable
-scatterplotGenotypeWeight<-function(phenList, depVariable, graphingName){
+scatterplotGenotypeWeight<-function(phenList, depVariable=NULL, graphingName=NULL){
     
     ## Checks
     if(is(phenList,"PhenList")) {
@@ -153,7 +166,10 @@ scatterplotGenotypeWeight<-function(phenList, depVariable, graphingName){
         x <- phenList
     }
     if (is.null(depVariable)) 
-    stop("Please define dependent variable 'depVariable'.")
+        stop("Please define dependent variable 'depVariable'.")
+    
+    if (is.null(graphingName))
+        graphingName <- depVariable
     
     
     if (!(depVariable %in% colnames(x)))
