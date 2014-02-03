@@ -159,7 +159,8 @@ vectorOutput <- function(phenTestResult)
                 male_ES,  
                 NA,  
                 male_pval, #30
-                classificationTag(phenTestResult))
+                classificationTag(phenTestResult),
+                NA)
         
         names(vectorOutput) <- c("Method",
                 "Dependent variable",
@@ -191,7 +192,8 @@ vectorOutput <- function(phenTestResult)
                 "Gender MvKO estimate",
                 "Gender MvKO standard error",
                 "Gender MvKO p-val",
-                "Classification tag")
+                "Classification tag",
+                "Additional information")
     }
     return(vectorOutput)
 }
