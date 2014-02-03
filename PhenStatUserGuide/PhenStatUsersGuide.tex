@@ -516,12 +516,14 @@ Function's argument \textit{depVariable} defines the dependent variable.
 Function's argument \textit{method} defines which statistical analysis framework to use. 
 The default value is "MM" which stands for mixed model framework. To perform Fisher Exact Test, the argument \textit{method} is set to "FE". 
 
+Function's argument \textit{dataPointsThreshold} defines the required number of data points in a group (subsets per genotype and gender combinations) for a successful analysis within "MM". The default value is 4. The minimal value is 2.
+
 The \textit{testDataset} function performs basic checks which ensure the statistical analysis would be appropriate and successful:
 \begin{enumerate}
 \item \textit{depVariable} column is present in the dataset;
 \item \textit{depVariable} is numeric for Mixed Model (MM) framework, otherwise Fisher Exact Test (FE) is performed;
-\item \textit{depVariable} column values are variable enough (variability $\textgreater$ 0.5\%) for MM framework, otherwise  FE framework is recommended;
-\item Each one genotype level has more than one \textit{depVariable} level for MM framework, otherwise FE framework is recommended;
+\item Variability check 1 (whole column): \textit{depVariable} column values are variable enough (variability $\textgreater$ 0.5\%) for MM framework, otherwise  FE framework is recommended;
+\item Variability check 2 (variability within a group): there are enough data points in subsets per genotype/gender combinations. The number of different values from \textit{depVariable} column should exceed \textit{dataPointsThreshold} in 3 subsets when there are two sexes and in all subsets for one sex only dataset, otherwise FE framework is recommended;
 \item Number of \textit{depVariable} levels is 10 or less for the FE framework.
 \end{enumerate}
 
@@ -546,7 +548,8 @@ The example how to call MM and FE framework is given below.
 > test <- PhenList(dataset=dataset1,
   testGenotype="Sparc/Sparc", outputMessages=FALSE)
 
-> result_MM_Lean.Mass <- testDataset(test,depVariable="Lean.Mass", method="MM")
+> result_MM_Lean.Mass <- testDataset(test,depVariable="Lean.Mass", method="MM",
+  dataPointsThreshold=2)
 ...
 > result_FE_Length <- testDataset(test,depVariable="Nose.To.Tail.Base.Length", method="FE")
 ..
@@ -1128,7 +1131,7 @@ The main idea here is that vector format is specified and is the same regardless
 \begin{verbatim}Genotype
 > vectorOutput(result)
                                           Method 
-                                        "MM - Eq2" 
+"MM framework, linear mixed-effects model, equation with weight" 
                                 Dependent variable 
                                        "Lean.Mass" 
                                     Batch included 
@@ -1166,7 +1169,7 @@ In the Table \ref{table:07} vector output values are described.
 \begin{tabular}{| l | l | l | l | p{10cm} |}
   \hline
 \#&Name&Value&Framework&Description\\\hline
-1&Method&String&MM and FE&Possible values: "FE", "MM - Eq1" (mixed model without body weight effect), "MM - Eq2" (mixed model with body weight effect).\\
+1&Method&String&MM and FE&Possible values: "FE", "MM, linear mixed-effects model/generalized least squares, equation with weight/equation without weight".\\
 2&Dependent variable&String&MM and FE&Name of the dependent variable.\\
 3&Batch included&TRUE/FALSE&MM&Was batch significant in MM?\\
 4&Residual variances homogeneity&TRUE/FALSE&MM&Was variance equal in MM?\\
@@ -1206,6 +1209,7 @@ In the Table \ref{table:07} vector output values are described.
 29&Gender MvKO standard error&Numeric&MM&Standard error of the "Gender MvKO estimate" in MM.\\
 30&Gender MvKO p-val&Numeric&MM&p-value that represents the probability that males group from test genotype subset contribution into MM is NOT relevant.\\
 31&Classification tag&String&MM and FE&A sexual dimorphism assessment of the phenotypic change from the results of MM or the overall estimation of the signals significance in FE.\\
+32&Additional information&String&MM and FE&Additional info concerning dataset, for instance, subsets sizes for MM. String in JSON format.\\
 \hline  
 \end{tabular}
 \caption{Vector output description.}\label{table:07}
@@ -1280,6 +1284,8 @@ As was mentioned above \textit{vectorOutput} format is the same for both framewo
                                  "0.000286667802768362" 
                                      Classification tag 
 "Significant in males, females and in combined dataset"
+								Additional information
+													NA
 \end{verbatim}
 \endgroup
 
