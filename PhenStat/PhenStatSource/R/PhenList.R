@@ -63,13 +63,13 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
         dataset[dataset == ""] <- NA
         
         if ('Weight' %in% colnames(dataset)){
-            if (is.numeric(dataset$Weight)){
-                dataset$Weight<-as.numeric(dataset$Weight)
+            if (is.numeric(dataset$Weight) && (!all(sapply(dataset$Weight,is.na)))) {
+                dataset$Weight<-as.numeric(dataset$Weight)              
             }
             else {
                 colnames(dataset)[colnames(dataset) == 'Weight'] <-'Weight_labels'
                 if (outputMessages)
-                message("Warning:\nWeight column values are not numeric. 
+                message("Warning:\nWeight column values are not numeric or NA. 
                         In order to avoid erroneous execution of statistical 
                         functions column is renamed to 'Weight_labels'.\n")
                 
