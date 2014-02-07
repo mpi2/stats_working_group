@@ -24,9 +24,9 @@ vectorOutput <- function(phenTestResult)
         equation <- switch(phenTestResult$equation,
                 withoutWeight = {"equation without weight"},withWeight = {"equation with weight"})
         
-        fittingMethod <- "linear mixed-effects model, "
+        fittingMethod <- "generalized least squares, "
         if (phenTestResult$model.effect.batch)
-            fittingMethod <- "generalized least squares, "
+            fittingMethod <- "linear mixed-effects model, "
             
         classificationValue <- classificationTag(phenTestResult,
                 userMode="vectorOutput",outputMessages=FALSE)
