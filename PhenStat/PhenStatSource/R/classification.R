@@ -47,7 +47,8 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
     
     if (!(userMode %in% c("summaryOutput","vectorOutput"))) {
         stop_message <- paste(stop_message,
-                "Error:\nPlease define 'userMode' you would like to use from the following options: 'summaryOutout' or 'vectorOutput'.\n",sep="")
+                "Error:\nPlease define 'userMode' you would like to use from the following options:",
+                " 'summaryOutout' or 'vectorOutput'.\n",sep="")
     }
     
     if (nchar(stop_message)>0){

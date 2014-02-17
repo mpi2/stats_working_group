@@ -34,8 +34,8 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
             if ('Assay.Date' %in% colnames(dataset)){
                 colnames(dataset)[colnames(dataset) == 'Assay.Date'] <-'Batch'
                 if (outputMessages)
-                message("Warning:\nDataset's column 'Assay.Date' has been
-                        renamed to 'Batch' and will be used for the batch effect modelling.\n")
+                message(paste("Warning:\nDataset's column 'Assay.Date' has been ",
+                        "renamed to 'Batch' and will be used for the batch effect modelling.\n",sep=""))
             }
             else
             if (length(colnames(dataset)[grep("batch",
@@ -43,8 +43,8 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
                 batch_potential_columns<-paste(colnames(dataset)[grep
                                 ("batch", tolower(colnames(dataset)))], collapse="', '" )
                 
-                message(paste("Warning:\nDataset contains columns that might
-                                be used for Batch effect modeling, for instance '",
+                message(paste("Warning:\nDataset contains columns that might ",
+                                "be used for Batch effect modeling, for instance '",
                                 batch_potential_columns,"'.\n",sep=""))
             }
             
@@ -69,9 +69,9 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
             else {
                 colnames(dataset)[colnames(dataset) == 'Weight'] <-'Weight_labels'
                 if (outputMessages)
-                message("Warning:\nWeight column values are not numeric or NA. 
-                        In order to avoid erroneous execution of statistical 
-                        functions column is renamed to 'Weight_labels'.\n")
+                message(paste("Warning:\nWeight column values are not numeric or NA. ", 
+                              "In order to avoid erroneous execution of statistical ",
+                              "functions column is renamed to 'Weight_labels'.\n",sep=""))
                 
             }
         }
@@ -96,9 +96,9 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
                 levels(dataset$Genotype)[levels(dataset$Genotype)==hemiGenotype] <- testGenotype
                 if (outputMessages)
                 message(paste("Warning:\nHemizygotes '",hemiGenotype,
-                                "' have been relabelled to test genotype '",testGenotype,
-                                "'.\nIf you don't want this behaviour then don't define 
-                                'hemiGenotype' argument.\n",sep=""))
+                              "' have been relabelled to test genotype '",testGenotype,
+                              "'.\nIf you don't want this behaviour then don't define ", 
+                              "'hemiGenotype' argument.\n",sep=""))
             }
         }
         
@@ -107,10 +107,10 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
                                 rownames(dataset[dataset$Genotype %in% c(testGenotype,refGenotype),])))>0){
             dataset <- dataset[dataset$Genotype %in% c(testGenotype,refGenotype),]
             if (outputMessages)
-            message(paste("Warning:\nDataset has been cleaned by 
-                            filtering out records with genotype value other than test 
-                            genotype '", testGenotype,"' or reference genotype '",
-                            refGenotype,"'.\n",sep=""))
+            message(paste("Warning:\nDataset has been cleaned by ",
+                          "filtering out records with genotype value other than test ",
+                          "genotype '", testGenotype,"' or reference genotype '",
+                          refGenotype,"'.\n",sep=""))
             
         }
     }
@@ -209,16 +209,16 @@ checkDataset <- function(dataset, testGenotype, refGenotype="+/+",
     
     ## Check for other columns: Weight and Batch
     if (!('Weight' %in% colnames(dataset)) && outputMessages) {
-        message("Warning:\nDataset's 'Weight' column is missed.\n
-                You can define 'dataset.colname.weight' argument to specify column 
-                for the weight effect modeling. Otherwise you can only use mixed 
-                model equation 'withoutWeight'.\n")
+        message(paste("Warning:\nDataset's 'Weight' column is missed.\n",
+                      "You can define 'dataset.colname.weight' argument to specify column ", 
+                      "for the weight effect modeling.\nOtherwise you can only use Mixed ", 
+                      "Model framework with equation 'withoutWeight'.\n",sep=""))
     }
     
     if (!('Batch' %in% colnames(dataset))){
-        message("Warning:\nDataset's 'Batch' column is missed.\n
-                You can define 'dataset.colname.batch' argument to specify column 
-                for the batch effect modeling. Otherwise you can only fit a glm.\n")
+        message(paste("Warning:\nDataset's 'Batch' column is missed.\n",
+                "You can define 'dataset.colname.batch' argument to specify column ",
+                "for the batch effect modeling. Otherwise you can only fit a GLM.\n",sep=""))
     }
     
     if (('Gender' %in% colnames(dataset)) && ('Genotype' %in% colnames(dataset))){
@@ -284,17 +284,17 @@ checkDataset <- function(dataset, testGenotype, refGenotype="+/+",
             
             if (dataset.clean){
                 if (outputMessages)
-                message(paste("Warning:\nSince dataset has to have at least 
-                                two data points for each genotype/gender combination and 
-                                there are not enough records for the combination(s): ",
-                                filtered_list_combinations,", appropriate gender records 
-                                have been filtered out from the dataset.\n",sep=""))
+                message(paste("Warning:\nSince dataset has to have at least ", 
+                              "two data points for each genotype/gender combination and ",
+                              "there are not enough records for the combination(s): ",
+                               filtered_list_combinations,", appropriate gender records ",
+                              "have been filtered out from the dataset.\n",sep=""))
             }
             else
-            message_dp <- paste("\nCheck failed:\nDataset should have at 
-                    least two data points for each genotype/gender combination. 
-                    At the moment there are no enough data points for the following 
-                    combination(s): ",filtered_list_combinations,".\n",sep="")
+            message_dp <- paste("\nCheck failed:\nDataset should have at ", 
+                    "least two data points for each genotype/gender combination.\n",
+                    "At the moment there are no enough data points for the following ",
+                    "combination(s): ",filtered_list_combinations,".\n",sep="")
         }
         
         dataset <- dataset_filtered
@@ -314,29 +314,29 @@ checkDataset <- function(dataset, testGenotype, refGenotype="+/+",
         genotype_values <- paste(Genotype_levels, collapse="', '" )
         gender_values <- paste(Gender_levels, collapse="', '" )
         if (outputMessages){
-            message("Information:\nDataset's 'Genotype' 
-                    column has following values: '",genotype_values,"'\n",sep="")
-            message("Information:\nDataset's 'Gender' 
-                    column has following value(s): '",gender_values,"'\n",sep="")
+            message(paste("Information:\nDataset's 'Genotype' ", 
+                    "column has following values: '",genotype_values,"'\n",sep=""))
+            message(paste("Information:\nDataset's 'Gender' ", 
+                    "column has following value(s): '",gender_values,"'\n",sep=""))
         }
         
         ## Check of genotype and gender levels after cleaning
         if (length(Genotype_levels)!=2)  {
             pass <- FALSE
-            message <- paste(message,"\nCheck failed:\nDataset's 'Genotype' 
-                    column has to have two values.\nYou can define 'testGenotype' and
-                    'refGenotype' arguments to automatically filter out records with 
-                    genotype values other than specified. Alternatively you can define 
-                    'hemiGenotype' and 'testGenotype' arguments to relabel hemizygotes 
-                    to homozygotes.\n",sep="")
+            message <- paste(message,"\nCheck failed:\nDataset's 'Genotype' ",
+                    "column has to have two values.\nYou can define 'testGenotype' and ",
+                    "'refGenotype' arguments to automatically filter out records with ",
+                    "genotype values other than specified.\nAlternatively you can define ",
+                    "'hemiGenotype' and 'testGenotype' arguments to relabel hemizygotes ", 
+                    "to homozygotes.\n",sep="")
         }
         
         
         if (!(length(Gender_levels) %in% c(1,2))) {
             pass <- FALSE
-            message <- paste(message,"\nCheck failed:\nDataset's 'Gender' 
-                    column has to have one or two values and currently the data has 
-                    more than two.\n",sep="")
+            message <- paste(message,"\nCheck failed:\nDataset's 'Gender' ",
+                    "column has to have one or two values and currently the data has ", 
+                    "more than two.\n",sep="")
             
         }
         
@@ -347,18 +347,17 @@ checkDataset <- function(dataset, testGenotype, refGenotype="+/+",
         if (!length(wrong_gender_levels)==0){
             pass <- FALSE
             if (length(Gender_levels)<=2)
-            message <- paste(message, paste("\nCheck failed:\nDataset's 
-                            'Gender' column has '",gender_values,"' values instead of 
-                            'Female' and/or 'Male' values. You can define 
-                            'dataset.values.male' and 'dataset.values.female' 
-                            arguments to replace those values automatically.\n",sep=""),
-                    sep="")
+            message <- paste(message, "\nCheck failed:\nDataset's ",
+                            "'Gender' column has '",gender_values,"' values instead of ",
+                            "'Female' and/or 'Male' values. You can define ",
+                            "'dataset.values.male' and 'dataset.values.female' ", 
+                            "arguments to replace those values automatically.\n",sep="")
             else
-            message <- paste(message, paste("\nCheck failed:\nDataset's 
-                            'Gender' column has '",gender_values,"' values instead of 
-                            'Female' and/or 'Male' values only. 
-                            Please delete records with gender(s) '",wrong_gender_values,"' 
-                            from the dataset.\n",sep=""),sep="")
+            message <- paste(message,"\nCheck failed:\nDataset's ",
+                            "'Gender' column has '",gender_values,"' values instead of ", 
+                            "'Female' and/or 'Male' values only. ",
+                            "Please delete records with gender(s) '",wrong_gender_values,
+                            "' from the dataset.\n",sep="")
                 }
                 
                 
@@ -369,17 +368,17 @@ checkDataset <- function(dataset, testGenotype, refGenotype="+/+",
                 dataset$Genotype=relevel(dataset$Genotype, ref=refGenotype)
                 else {
                     pass <- FALSE
-                    message <- paste(message,paste("\nCheck failed:\nDataset with not 
-                                    enough records for statistical analysis with reference genotype '",
+                    message <- paste(message,paste("\nCheck failed:\nDataset with not ", 
+                                    "enough records for statistical analysis with reference genotype '",
                                     refGenotype,"'.\n",sep=""))
                 }
                 
                 ## Check for test genotype records
                 if (!(sum(grepl(testGenotype, Genotype_levels, fixed=TRUE))==1)){
                     pass <- FALSE
-                    message <- paste(message,paste("\nCheck failed:\nDataset 
-                                    with not enough records for statistical analysis with test 
-                                    genotype '",testGenotype,"'.\n",sep=""))
+                    message <- paste(message,"\nCheck failed:\nDataset ",
+                                    "with not enough records for statistical analysis with test ", 
+                                    "genotype '",testGenotype,"'.\n",sep="")
                 }
             }
             

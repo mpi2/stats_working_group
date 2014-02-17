@@ -56,16 +56,14 @@ startModel <- function(phenList, depVariable, equation="withWeight",
         
         if (!('Weight' %in% colnames(x)) && user_keep_weight){
             if (outputMessages)
-            message("Warning:\nWeight column is missed in the dataset.
-                    'keepWeight' is set to FALSE.")
+            message("Warning:\nWeight column is missed in the dataset. 'keepWeight' is set to FALSE.")
             
             user_keep_weight <- FALSE
         }
         
         if (!('Batch' %in% colnames(x)) && user_keep_batch){
             if (outputMessages)
-            message("Warning:\nBatch column is missed in the dataset.
-                    'keepBatch' is set to FALSE.")
+            message("Warning:\nBatch column is missed in the dataset. 'keepBatch' is set to FALSE.")
             
             user_keep_batch <- FALSE
         }
@@ -92,10 +90,9 @@ startModel <- function(phenList, depVariable, equation="withWeight",
                                 random=~1|Batch, data = x, na.action="na.omit", method="REML")),
                 error=function(error_mes) {
                     if (outputMessages)
-                    message("Warning:\nMixed model with batch effect
-                            as random effect is not fitting - false convergence.\n
-                            Mixed model with no random effects is used instead.\n")
-                    
+                    message(paste("Warning:\nMixed model with batch effect ",
+                    "as random effect is not fitting - false convergence.\n",
+                    "Mixed model with no random effects is used instead.\n",sep=""))                    
                     model_MM <- NULL
                 }
                 )
@@ -135,10 +132,10 @@ startModel <- function(phenList, depVariable, equation="withWeight",
                                 na.action="na.omit", method="REML")),
                 error=function(error_mes) {
                     if (outputMessages)
-                    message("Warning:\nMixed model with heterogeneous
-                            residual variances for genotype groups is not
-                            fitting - false convergence.\nMixed model with
-                            homogeneous residual variances is used instead.\n")
+                    message(paste("Warning:\nMixed model with heterogeneous ",
+                            "residual variances for genotype groups is not ",
+                            "fitting - false convergence.\nMixed model with ",
+                            "homogeneous residual variances is used instead.\n",sep=""))
                     
                     model_hetvariance <- NULL
                 }
@@ -159,8 +156,8 @@ startModel <- function(phenList, depVariable, equation="withWeight",
             keep_equalvar <- TRUE
             if (!is.null(keepList)){
                 if (outputMessages && !user_keep_equalvar)
-                message("Warning:\n'keepEqualVariance' is set to TRUE
-                        otherwise the model can't be fitted - false convergence.\n")
+                message(paste("Warning:\n'keepEqualVariance' is set to TRUE ",
+                        "otherwise the model can't be fitted - false convergence.\n",sep=""))
                 
                 user_keep_equalvar <- TRUE
             }
@@ -184,10 +181,10 @@ startModel <- function(phenList, depVariable, equation="withWeight",
                                 weights=varIdent(form=~1|Genotype), na.action="na.omit")),
                 error=function(error_mes) {
                     if (outputMessages)
-                    message("Warning:\nMixed model with heterogeneous
-                            residual variances for genotype groups is not
-                            fitting - false convergence.\nMixed model with
-                            homogeneous residual variances is used instead.\n")
+                    message(paste("Warning:\nMixed model with heterogeneous ",
+                            "residual variances for genotype groups is not ",
+                            "fitting - false convergence.\nMixed model with ",
+                            "homogeneous residual variances is used instead.\n",sep=""))
                     
                     model_hetvariance <- NULL
                 }
@@ -208,8 +205,8 @@ startModel <- function(phenList, depVariable, equation="withWeight",
             keep_equalvar <- TRUE
             if (!is.null(keepList)){
                 if (outputMessages && !user_keep_equalvar)
-                message("Warning:\n'keepEqualVariance' is set to TRUE
-                        otherwise the model can't be fitted - false convergence.\n")
+                message(paste("Warning:\n'keepEqualVariance' is set to TRUE ", 
+                        "otherwise the model can't be fitted - false convergence.\n",sep=""))
                 
                 user_keep_equalvar <- TRUE
             }
@@ -282,13 +279,16 @@ startModel <- function(phenList, depVariable, equation="withWeight",
     if (!keep_weight && equation=="withWeight") {
         equation="withoutWeight"
         if (outputMessages)
-        message("Since weight effect is not significant the equation
-                Eq.1 'withoutWeight' should be used instead.")
+        message(paste("Since weight effect is not significant the equation ",
+                "'withoutWeight' should be used instead.",sep=""))
     }
     
     if (outputMessages)
-    message(paste("Information:\nCalculated values for model effects are:
-                    keepBatch=",keep_batch,
+    message(paste("Information:\nEquation: '",equation,"'.\n",sep=""))
+    
+    if (outputMessages)
+    message(paste("Information:\nCalculated values for model effects are: ",
+                    "keepBatch=",keep_batch,
                     ", keepEqualVariance=",keep_equalvar,
                     ", keepWeight=",keep_weight,
                     ", keepGender=",keep_gender,
@@ -297,8 +297,8 @@ startModel <- function(phenList, depVariable, equation="withWeight",
     ## Results for user defined model effects values
     if (!is.null(keepList)){
         if (outputMessages)
-        message(paste("Information:\nUser's values for model effects are:
-                        keepBatch=",user_keep_batch,
+        message(paste("Information:\nUser's values for model effects are: ",
+                        "keepBatch=",user_keep_batch,
                         ", keepEqualVariance=",user_keep_equalvar,
                         ", keepWeight=",user_keep_weight,
                         ", keepGender=",user_keep_gender,
@@ -337,8 +337,7 @@ startModel <- function(phenList, depVariable, equation="withWeight",
                         keep_gender,keep_interaction))
         
         if (length(compList[compList==FALSE])>0 && outputMessages)
-        message("Warning:\nCalculated values differ from user defined values
-                for model effects.\n")
+        message("Warning:\nCalculated values differ from user defined values for model effects.\n")
         
         keep_weight <- user_keep_weight
         keep_gender <- user_keep_gender
@@ -347,9 +346,6 @@ startModel <- function(phenList, depVariable, equation="withWeight",
         keep_equalvar <- user_keep_equalvar
         
     }
-    
-    if (outputMessages)
-    message(paste("Information:\nEquation: '",equation,"'.\n",sep=""))
     
     
     result <- new("PhenTestResult",list(
@@ -428,8 +424,7 @@ finalModel <- function(phenTestResult, outputMessages=TRUE)
         
         ## Stop function if there are no datasets to work with
         if(is.null(x))
-        stop_message <- "Error:\nPlease create a PhenList object first and
-        run function 'testDataset'.\n"
+        stop_message <- "Error:\nPlease create a PhenList object first and run function 'testDataset'.\n"
         
         ## Stop function if there are no enough input parameters
         if (is.null(equation) || is.null(depVariable) || is.null(keep_batch)
@@ -605,7 +600,7 @@ finalModel <- function(phenTestResult, outputMessages=TRUE)
                         x, na.action="na.exclude"))
     }
     
-    
+
     ## Store the results
     result$model.output <- model_genotype
     result$model.null <- model_null

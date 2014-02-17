@@ -45,8 +45,8 @@ testFinalModel<-function(phenTestResult)
         outputnumeric <- is.numeric(result$model.output$apVar)
         Gp1 <- subset(data_all, data_all$Genotype==a[1])
         Gp2 <- subset(data_all, data_all$Genotype==a[2])
-        No_Gp1 <- sum(is.finite(Gp1[ , depVariable]))
-        No_Gp2 <- sum(is.finite(Gp2[ , depVariable]))
+        No_Gp1 <- sum(is.finite(Gp1[ , c("res")]))
+        No_Gp2 <- sum(is.finite(Gp2[ , c("res")]))
         
         if(keep_batch && No_batches >7 && outputnumeric){
             
