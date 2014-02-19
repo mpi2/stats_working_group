@@ -23,7 +23,7 @@ boxplotGenderGenotype<-function(phenList, depVariable=NULL, graphingName=NULL){
     if(is(phenList,"PhenList")) {
         x <- phenList$dataset               
     } else {
-        x <- phenList
+        stop("Please define PhenList object first.")
     }
     if (is.null(depVariable)) 
         stop("Please define dependent variable 'depVariable'.")
@@ -73,7 +73,7 @@ boxplotGenderGenotypeBatch<-function(phenList, depVariable=NULL, graphingName=NU
         x <- phenList$dataset
         refGenotype <- phenList$refGenotype        
     } else {
-        x <- phenList
+        stop("Please define PhenList object first.")
     }
 
             
@@ -163,7 +163,7 @@ scatterplotGenotypeWeight<-function(phenList, depVariable=NULL, graphingName=NUL
         x <- phenList$dataset     
         
     } else {
-        x <- phenList
+        stop("Please define PhenList object first.")
     }
     if (is.null(depVariable)) 
         stop("Please define dependent variable 'depVariable'.")

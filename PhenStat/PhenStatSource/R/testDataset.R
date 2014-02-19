@@ -26,24 +26,31 @@
 ## FET framework consists of only one function FisherExactTest that creates 
 ## count matrix (matrices) and perform test(s).  
 ##------------------------------------------------------------------------------
-testDataset <- function(phenList, depVariable, equation="withWeight", 
+testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight", 
         outputMessages=TRUE, pThreshold=0.05, method="MM", callAll=TRUE, keepList=NULL, dataPointsThreshold=4)
 {
     
     stop_message <- ""
     
     ## CHECK ARGUMENTS   
+    
     # 1
-    if(!is(phenList,"PhenList")) {
-        stop_message <- "Error:\nPlease create a PhenList object first.\n"
+    if (is.null(phenList) || !is(phenList,"PhenList")){
+        stop_message <- paste(stop_message,"Error:\nPlease create and specify PhenList object.\n",sep="")
     }
     
     # 2
+    if (is.null(depVariable)){
+        stop_message <- paste(stop_message,"Error:\nPlease specify dependent variable, ",
+                "for example: depVariable='Lean.Mass'.\n",sep="")
+    }
+    
+    # 3
     if (!(equation %in% c("withWeight","withoutWeight")) && method=="MM")
         stop_message <- paste(stop_message,"Error:\nPlease define equation you ", 
             "would like to use from the following options: 'withWeight', 'withoutWeight'.\n",sep="")
     
-    # 3  Checks for rovided significance values
+    # 4  Checks for rovided significance values
     if (!is.null(keepList)){
         ## Stop function if there are no enough needed input parameters
         if ((length(keepList[keepList==TRUE]) + length(keepList[keepList==FALSE])) !=5) 
@@ -56,7 +63,7 @@ testDataset <- function(phenList, depVariable, equation="withWeight",
         
     }
     
-    # 4
+    # 5
     if (!(method %in% c("MM","FE"))){
         stop_message <- paste(stop_message,"Error:\nMethod define in the 'method' argument '",
                         method,"' is not supported.\nAt the moment we are supporting 'MM' ", 
@@ -64,52 +71,56 @@ testDataset <- function(phenList, depVariable, equation="withWeight",
         
     }   
     
-    # 5
+    # 6
     if (dataPointsThreshold<2) {
         dataPointsThreshold <- 2
         if (outputMessages)
         message("Warning:\nData points threshold is set to 2 (minimal value).\n")
     }
     
+    # 7 
+    if (nchar(stop_message)==0) {
+        x <- phenList$dataset 
+        checkDepV <- columnChecks(x,depVariable,dataPointsThreshold)
+        
+        # Presence
+        if (!checkDepV[1])
+        stop_message <- paste("Error:\nDependent variable column '",
+                depVariable,"' is missed in the dataset.\n",sep="")
+    }
+    
+    
     ## STOP CHECK ARGUMENTS   
     
     ## DATASET'S CHECKS   
     # Dataset checks depending on selected method
     if (nchar(stop_message)==0){
-        x <- phenList$dataset    
+           
         
-        checkDepVLevels <- columnLevels(x,depVariable)
-        checkDepV <- columnChecks(x,depVariable,dataPointsThreshold,checkDepVLevels)
+        checkDepVLevels <- columnLevels(x,depVariable)   
         checkWeight <- columnChecks(x,"Weight",dataPointsThreshold)
         # MM checks
         # Should go first since there are switches between MM to FE
         if (method=="MM"){
-            # Presence
-            if (!checkDepV[1])
-            stop_message <- paste("Error:\nDependent variable column '",
-                    depVariable,"' is missed in the dataset.\n",sep="")
+            
             # Numeric
             if (!checkDepV[2]) {
                 method <- "FE"
                 if (outputMessages)
                 message(paste("Warning:\nDependent variable '",depVariable,
                                 "' is not numeric. Fisher Exact Test will be used for the ", 
-                                "analysis of this dependent variable.",sep=""))
+                                "analysis of this dependent variable.\n",sep=""))
             }
-                        
-            # Data points
-            if (!checkDepV[3])
-            stop_message <- paste(stop_message,"Error:\nNot enough data points in dependent variable '",
-                    depVariable,
-                    "' for genotype/gender combinations to allow the application of Mixed Model. ",
-                    "Threshold used: ",dataPointsThreshold,".\n",
-                    sep="")  
+
             
             # Variability
-            variability <- checkDepVLevels[2]/checkDepVLevels[1] 
+            if (checkDepVLevels[1]>0)
+                variability <- checkDepVLevels[2]/checkDepVLevels[1] 
+            else 
+                variability <- 0
             # where checkDepVLevels[2] contains number of levels and checkDepVLevels[1] contains number of data points
             # One level only
-            if (checkDepVLevels[2]==1){ 
+            if (checkDepVLevels[2]==1 || checkDepVLevels[2]==0){ 
                 stop_message <- paste(stop_message,"Error:\nNo variability in dependent variable '",
                         depVariable,"'.\n",sep="") 
             } 
@@ -117,41 +128,56 @@ testDataset <- function(phenList, depVariable, equation="withWeight",
                 stop_message <- paste(stop_message,"Error:\nInsufficient variability in dependent variable '",
                         depVariable,
                         "' for MM framework. Fisher Exact Test can be better way to do the analysis.\n",sep="") 
-            }    
+            } 
+            # Data points
+            else if (!checkDepV[3])
+                stop_message <- paste(stop_message,"Error:\nNot enough data points in dependent variable '",
+                    depVariable,
+                    "' for genotype/gender combinations to allow the application of Mixed Model. ",
+                    "Threshold used: ",dataPointsThreshold,".\n",sep="")     
             
             #Weight checks
             if (equation=="withWeight") {
+                if (! checkWeight[1]){
+                    if (outputMessages)
+                    message(paste("Warning:\nWeight column is not present in dataset.\n",
+                                "Equation 'withWeight' can't be used in such a case and has been ",
+                                "replaced to 'withoutWeight'.\n", sep=""))  
+                    equation <- "withoutWeight"   
+                    
+                }
+                else{
+                
                 # Equality to depVariable
                 columnOfInterest <- na.omit(x[,c(depVariable)])
                 columnOfWeight <- na.omit(x$Weight)
+                
                 if (length(columnOfInterest) == length(columnOfWeight))
-                    if (sum(columnOfInterest-x$Weight) == 0){    
+                    if (sum(columnOfInterest-columnOfWeight) == 0){    
                         if (outputMessages)
                         message(paste("Warning:\nWeight and dependent variable values seemed to be equivalent. ",
                                     "Equation 'withWeight' can't be used in such a case and ",
                                     "has been replaced to 'withoutWeight'.\n", sep=""))
                         equation <- "withoutWeight"
-                }
-                # Presence, Numeric, Data points
-                if (! checkWeight[1] || !checkWeight[2] || ! checkWeight[3]){
-                        equation <- "withoutWeight"                                     
-                }    
-                if (! checkWeight[1])
-                    if (outputMessages)
-                    message(paste("Warning:\nWeight column is not present in dataset.\n",
-                                "Equation 'withWeight' can't be used in such a case and has been ",
-                                "replaced to 'withoutWeight'.\n", sep=""))    
-                if (! checkWeight[2])
+                    }
+      
+                if (! checkWeight[2]){
                     if (outputMessages)
                     message(paste("Warning:\nWeight column is not numeric.\n",
                                 "Equation 'withWeight' can't be used in such a case and has been ",
-                                "replaced to 'withoutWeight'.\n", sep=""))    
-                if (! checkWeight[3])
+                                "replaced to 'withoutWeight'.\n", sep=""))
+                    equation <- "withoutWeight"       
+                }    
+                    
+                if (! checkWeight[3]){
                     if (outputMessages)
                     message(paste("Warning:\nWeight column does not have enough data points ",
                                 "for for genotype/gender combinations.\n",
                                 "Equation 'withWeight' can't be used in such a case and has been ",
-                                "replaced to 'withoutWeight'.\n", sep=""))                
+                                "replaced to 'withoutWeight'.\n", sep="")) 
+                    equation <- "withoutWeight"   
+                }          
+              }     
             }      
         }
         
@@ -228,12 +254,12 @@ columnLevels <- function(dataset, columnName){
     values<- c(length(columnOfInterest))
     
     #Test for the data points quantity for Genotype/gender combinations
-    Genotype_levels <- levels(dataset$Genotype)
-    Gender_levels <- levels(dataset$Gender)
+    Genotype_levels <- levels(factor(dataset$Genotype))
+    Gender_levels <- levels(factor(dataset$Gender))
     
     values<-append(values,length(levels(factor(columnOfInterest))))
     
-    values<-append(values,length(Genotype_levels)+length(Gender_levels))
+    values<-append(values,length(Genotype_levels)*length(Gender_levels))
     
     for (i in 1:length(Genotype_levels)){
         GenotypeSubset <- subset(dataset, dataset$Genotype==Genotype_levels[i])
@@ -244,6 +270,7 @@ columnLevels <- function(dataset, columnName){
             columnOfInterestSubset <- na.omit(GenotypeGenderSubset[,c(columnName)])
             
             values<-append(values,length(columnOfInterestSubset))
+
         }                
     }
     return (values)
@@ -257,7 +284,6 @@ columnChecks <- function(dataset, columnName, dataPointsThreshold=4,dataPointsSu
     numeric <- FALSE
     levelsCheck <- 0
     variabilityThreshold <- 10
-    
     # Test: dependent variable presence 
     if (!(columnName %in% colnames(dataset))){
         presence <- FALSE
@@ -270,17 +296,19 @@ columnChecks <- function(dataset, columnName, dataPointsThreshold=4,dataPointsSu
         }
         if (is.null(dataPointsSummary))
         dataPointsSummary <- columnLevels(dataset,columnName)
-        NoCombinations <- dataPointsSummary[3]
         
+        NoCombinations <- dataPointsSummary[3]
+
         variabilityThreshold <- NoCombinations
         if (NoCombinations==4)
-        variabilityThreshold =3 
+            variabilityThreshold <- 3 
         
         for (i in 1:NoCombinations){
             if (dataPointsSummary[3+i] >= dataPointsThreshold)
             levelsCheck <- levelsCheck+1
             
         }
+
     }
     
     values <- c(presence, numeric, (levelsCheck>=variabilityThreshold)) 

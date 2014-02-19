@@ -171,6 +171,8 @@ startModel <- function(phenList, depVariable, equation="withWeight",
         model_MM <- do.call("gls",
                 args=list(model.formula, x, na.action="na.omit"))
         
+        model_withoutbatch <- model_MM
+        
         ## MM fit of model formula with heterogeneous residual variances for
         ## genotype groups
         ## Model 1 assumes homogeneous residual variances
