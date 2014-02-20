@@ -310,6 +310,9 @@ vectorOutputMatrices <- function(phenTestResult){
                     "Female Value g2_l10")
             return (vectorOutput)
         }
-    }     
+    } 
+    else {
+        stop("\nThere are no matrices to output for MM framework. Function returns result only for FE framework.")
+    }    
 }
 ##------------------------------------------------------------------------------
