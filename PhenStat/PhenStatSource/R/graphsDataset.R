@@ -181,7 +181,7 @@ scatterplotGenotypeWeight<-function(phenList, depVariable=NULL, graphingName=NUL
         stop(paste(depVariable,"variable is not numeric. Can't create a plot based on it."))
 
         # Checks of Weight
-        checkWeight <- columnChecks(x,"Weight",dataPointsThreshold) 
+        checkWeight <- columnChecks(x,"Weight",4) 
         if (! checkWeight[1])
             stop("Weight column is not present in dataset. Can't create a plot.")  
         else{

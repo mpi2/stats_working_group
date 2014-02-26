@@ -85,8 +85,9 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
         dataset$Batch<-factor(dataset$Batch)
         
         # # Replace values for genders with 'Male','Female' if needed
-        if(!is.null(dataset.values.female)) 
+        if(!is.null(dataset.values.female))
         levels(dataset$Gender)[levels(dataset$Gender)==dataset.values.female] <- "Female"
+  
         if(!is.null(dataset.values.male)) 
         levels(dataset$Gender)[levels(dataset$Gender)==dataset.values.male] <- "Male"
         

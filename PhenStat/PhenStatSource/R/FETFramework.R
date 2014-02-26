@@ -42,7 +42,7 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
             columnOfInterest <- na.omit(columnOfInterest)
             nr <- length(columnOfInterest) 
             if (is.null(nr)) nr<-0 
-            count_matrix_all[j,i]=nr
+            count_matrix_all[j,i] <- nr
         }    
         
     }
