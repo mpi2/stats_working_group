@@ -1,4 +1,4 @@
-## Copyright © 2011-2013 EMBL - European Bioinformatics Institute
+## Copyright ï¿½ 2011-2013 EMBL - European Bioinformatics Institute
 ## 
 ## Licensed under the Apache License, Version 2.0 (the "License"); 
 ## you may not use this file except in compliance with the License.  
@@ -279,7 +279,7 @@ columnLevels <- function(dataset, columnName){
 ## Checks the column for eligibility, returns values: 
 ## presence of column, all data are numeric, No of levels passed checks (number of data points for each genotype/gender
 ## combination is at least equals to threshold)
-columnChecks <- function(dataset, columnName, dataPointsThreshold=4,dataPointsSummary=NULL){
+columnChecks <- function(dataset, columnName, dataPointsThreshold=4){
     presence <- TRUE
     numeric <- FALSE
     levelsCheck <- 0
@@ -294,7 +294,7 @@ columnChecks <- function(dataset, columnName, dataPointsThreshold=4,dataPointsSu
         if(all(sapply(columnOfInterest,is.numeric))){
             numeric <- TRUE
         }
-        if (is.null(dataPointsSummary))
+
         dataPointsSummary <- columnLevels(dataset,columnName)
         
         NoCombinations <- dataPointsSummary[3]

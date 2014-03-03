@@ -151,7 +151,7 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
                 
             }
         }
-        else if (phenTestResult$method=="FE"){
+        else if (phenTestResult$method %in% c("FE","RR")){
             if (!is.null(phenTestResult$model.output$male)){
                 male_p.value <- result$model.output$male$p.value
             }

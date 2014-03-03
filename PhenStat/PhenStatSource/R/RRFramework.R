@@ -298,7 +298,7 @@ RRTest <- function(phenList, depVariable,
     
     
     result <- new("PhenTestResult",list(model.dataset=x, model.output=model,
-                    depVariable=depVariable,method="RR+",model.effect.batch=keep_batch,
+                    depVariable=depVariable,method="RR",model.effect.batch=keep_batch,
                     model.effect.variance=keep_equalvar,model.effect.interaction=keep_interaction,
                     model.output.interaction=interactionTest,model.effect.gender=keep_gender,
                     model.effect.weight=keep_weight,numberGenders=numberofgenders))

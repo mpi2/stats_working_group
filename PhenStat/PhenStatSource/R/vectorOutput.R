@@ -118,7 +118,7 @@ vectorOutput <- function(phenTestResult)
                 "Classification tag",
                 "Additional information")
     }
-    else if (phenTestResult$method =="FE"){
+    else if (phenTestResult$method %in% c("FE","RR")){
         male_pval <- NA
         female_pval <- NA
         male_ES <- NA

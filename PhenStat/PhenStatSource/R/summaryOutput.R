@@ -23,7 +23,8 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
                     phenTestResult$depVariable,sep=""))
     
     message(paste("Method: ",switch(phenTestResult$method,
-                            MM = "Mixed Model framework",FE = "Fisher Exact Test framework"),"\n",sep=""))
+                            MM = "Mixed Model framework",FE = "Fisher Exact Test framework",
+                            RR = "Reference Ranges Plus framework"),"\n",sep=""))
     
     if (phenTestResult$method=="MM") {
         message(paste("Was batch significant?",phenTestResult$model.effect.batch))
@@ -52,7 +53,7 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
         summary(phenTestResult$model.output)$tTable
     }
     
-    else if (phenTestResult$method %in% c("FE","RR+")){
+    else if (phenTestResult$method %in% c("FE","RR")){
         message("Model output:")
         
         message(paste("All data p-val: ",
