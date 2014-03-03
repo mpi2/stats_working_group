@@ -118,7 +118,7 @@ vectorOutput <- function(phenTestResult)
                 "Classification tag",
                 "Additional information")
     }
-    else if (phenTestResult$method %in% c("FE","RR+")){
+    else if (phenTestResult$method =="FE"){
         male_pval <- NA
         female_pval <- NA
         male_ES <- NA
@@ -201,12 +201,12 @@ vectorOutput <- function(phenTestResult)
     
     vectorOutput[is.na(vectorOutput)] <-"NA"
     
-    return(as.character(vectorOutput))
+    return(vectorOutput)
 }
 
 #-------------------------------------------------------------------------------
 vectorOutputMatrices <- function(phenTestResult){
-    if (phenTestResult$method %in% c("FE","RR+")){
+    if (phenTestResult$method =="FE"){
         levels <-length(rownames(phenTestResult$model.output$count_matrix_all))
         if (levels>10){
             stop("Too many levels for dependent variable")
