@@ -113,11 +113,11 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
             }
             
             
-            # Variability
+            # Variability - the ratio of different values to all values in the column
             if (checkDepVLevels[1]>0)
-            variability <- checkDepVLevels[2]/checkDepVLevels[1] 
+                variability <- checkDepVLevels[2]/checkDepVLevels[1] 
             else 
-            variability <- 0
+                variability <- 0
             # where checkDepVLevels[2] contains number of levels and checkDepVLevels[1] contains number of data points
             # One level only
             if (checkDepVLevels[2]==1 || checkDepVLevels[2]==0){ 
@@ -129,7 +129,7 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
                         depVariable,
                         "' for MM framework. Fisher Exact Test can be better way to do the analysis.\n",sep="") 
             } 
-            # Data points
+            # Data points - number of data points in the depVariable column for genotype/gender combinations
             else if (!checkDepV[3])
             stop_message <- paste(stop_message,"Error:\nNot enough data points in dependent variable '",
                     depVariable,

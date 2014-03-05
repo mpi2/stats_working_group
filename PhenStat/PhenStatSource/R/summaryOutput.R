@@ -53,7 +53,7 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
         summary(phenTestResult$model.output)$tTable
     }
     
-    else if (phenTestResult$method %in% c("FE","RR")){
+    else if (phenTestResult$method %in% c("FE")){
         message("Model output:")
         
         message(paste("All data p-val: ",

@@ -118,7 +118,7 @@ vectorOutput <- function(phenTestResult)
                 "Classification tag",
                 "Additional information")
     }
-    else if (phenTestResult$method %in% c("FE","RR")){
+    else if (phenTestResult$method %in% c("FE")){
         male_pval <- NA
         female_pval <- NA
         male_ES <- NA
@@ -132,7 +132,8 @@ vectorOutput <- function(phenTestResult)
             female_ES<-as.numeric(phenTestResult$model.output$ES_female)
         }
         
-        vectorOutput <- c("Fisher Exact Test framework",
+        vectorOutput <- c(switch(phenTestResult$method,FE = "Fisher Exact Test framework",
+                        RR = "Reference Ranges Plus framework"),
                 as.character(phenTestResult$depVariable), 
                 "NA", 
                 "NA",
