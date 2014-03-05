@@ -1,0 +1,1529 @@
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2013.9.23)  5 MAR 2014 11:06
+entering extended mode
+ %&-line parsing enabled.
+**PhenStatUsersGuide.tex
+(./PhenStatUsersGuide.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size12.clo
+File: size12.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(/usr/share/texmf-texlive/tex/latex/base/inputenc.sty
+Package: inputenc 2008/03/30 v1.1d Input encoding file
+\inpenc@prehook=\toks14
+\inpenc@posthook=\toks15
+
+(/usr/share/texmf-texlive/tex/latex/base/utf8.def
+File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
+Now handling font encoding OML ...
+... no UTF-8 mapping file for font encoding OML
+Now handling font encoding T1 ...
+... processing UTF-8 mapping file for font encoding T1
+
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.dfu
+File: t1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
+   defining Unicode char U+00A1 (decimal 161)
+   defining Unicode char U+00A3 (decimal 163)
+   defining Unicode char U+00AB (decimal 171)
+   defining Unicode char U+00BB (decimal 187)
+   defining Unicode char U+00BF (decimal 191)
+   defining Unicode char U+00C0 (decimal 192)
+   defining Unicode char U+00C1 (decimal 193)
+   defining Unicode char U+00C2 (decimal 194)
+   defining Unicode char U+00C3 (decimal 195)
+   defining Unicode char U+00C4 (decimal 196)
+   defining Unicode char U+00C5 (decimal 197)
+   defining Unicode char U+00C6 (decimal 198)
+   defining Unicode char U+00C7 (decimal 199)
+   defining Unicode char U+00C8 (decimal 200)
+   defining Unicode char U+00C9 (decimal 201)
+   defining Unicode char U+00CA (decimal 202)
+   defining Unicode char U+00CB (decimal 203)
+   defining Unicode char U+00CC (decimal 204)
+   defining Unicode char U+00CD (decimal 205)
+   defining Unicode char U+00CE (decimal 206)
+   defining Unicode char U+00CF (decimal 207)
+   defining Unicode char U+00D0 (decimal 208)
+   defining Unicode char U+00D1 (decimal 209)
+   defining Unicode char U+00D2 (decimal 210)
+   defining Unicode char U+00D3 (decimal 211)
+   defining Unicode char U+00D4 (decimal 212)
+   defining Unicode char U+00D5 (decimal 213)
+   defining Unicode char U+00D6 (decimal 214)
+   defining Unicode char U+00D8 (decimal 216)
+   defining Unicode char U+00D9 (decimal 217)
+   defining Unicode char U+00DA (decimal 218)
+   defining Unicode char U+00DB (decimal 219)
+   defining Unicode char U+00DC (decimal 220)
+   defining Unicode char U+00DD (decimal 221)
+   defining Unicode char U+00DE (decimal 222)
+   defining Unicode char U+00DF (decimal 223)
+   defining Unicode char U+00E0 (decimal 224)
+   defining Unicode char U+00E1 (decimal 225)
+   defining Unicode char U+00E2 (decimal 226)
+   defining Unicode char U+00E3 (decimal 227)
+   defining Unicode char U+00E4 (decimal 228)
+   defining Unicode char U+00E5 (decimal 229)
+   defining Unicode char U+00E6 (decimal 230)
+   defining Unicode char U+00E7 (decimal 231)
+   defining Unicode char U+00E8 (decimal 232)
+   defining Unicode char U+00E9 (decimal 233)
+   defining Unicode char U+00EA (decimal 234)
+   defining Unicode char U+00EB (decimal 235)
+   defining Unicode char U+00EC (decimal 236)
+   defining Unicode char U+00ED (decimal 237)
+   defining Unicode char U+00EE (decimal 238)
+   defining Unicode char U+00EF (decimal 239)
+   defining Unicode char U+00F0 (decimal 240)
+   defining Unicode char U+00F1 (decimal 241)
+   defining Unicode char U+00F2 (decimal 242)
+   defining Unicode char U+00F3 (decimal 243)
+   defining Unicode char U+00F4 (decimal 244)
+   defining Unicode char U+00F5 (decimal 245)
+   defining Unicode char U+00F6 (decimal 246)
+   defining Unicode char U+00F8 (decimal 248)
+   defining Unicode char U+00F9 (decimal 249)
+   defining Unicode char U+00FA (decimal 250)
+   defining Unicode char U+00FB (decimal 251)
+   defining Unicode char U+00FC (decimal 252)
+   defining Unicode char U+00FD (decimal 253)
+   defining Unicode char U+00FE (decimal 254)
+   defining Unicode char U+00FF (decimal 255)
+   defining Unicode char U+0102 (decimal 258)
+   defining Unicode char U+0103 (decimal 259)
+   defining Unicode char U+0104 (decimal 260)
+   defining Unicode char U+0105 (decimal 261)
+   defining Unicode char U+0106 (decimal 262)
+   defining Unicode char U+0107 (decimal 263)
+   defining Unicode char U+010C (decimal 268)
+   defining Unicode char U+010D (decimal 269)
+   defining Unicode char U+010E (decimal 270)
+   defining Unicode char U+010F (decimal 271)
+   defining Unicode char U+0110 (decimal 272)
+   defining Unicode char U+0111 (decimal 273)
+   defining Unicode char U+0118 (decimal 280)
+   defining Unicode char U+0119 (decimal 281)
+   defining Unicode char U+011A (decimal 282)
+   defining Unicode char U+011B (decimal 283)
+   defining Unicode char U+011E (decimal 286)
+   defining Unicode char U+011F (decimal 287)
+   defining Unicode char U+0130 (decimal 304)
+   defining Unicode char U+0131 (decimal 305)
+   defining Unicode char U+0132 (decimal 306)
+   defining Unicode char U+0133 (decimal 307)
+   defining Unicode char U+0139 (decimal 313)
+   defining Unicode char U+013A (decimal 314)
+   defining Unicode char U+013D (decimal 317)
+   defining Unicode char U+013E (decimal 318)
+   defining Unicode char U+0141 (decimal 321)
+   defining Unicode char U+0142 (decimal 322)
+   defining Unicode char U+0143 (decimal 323)
+   defining Unicode char U+0144 (decimal 324)
+   defining Unicode char U+0147 (decimal 327)
+   defining Unicode char U+0148 (decimal 328)
+   defining Unicode char U+014A (decimal 330)
+   defining Unicode char U+014B (decimal 331)
+   defining Unicode char U+0150 (decimal 336)
+   defining Unicode char U+0151 (decimal 337)
+   defining Unicode char U+0152 (decimal 338)
+   defining Unicode char U+0153 (decimal 339)
+   defining Unicode char U+0154 (decimal 340)
+   defining Unicode char U+0155 (decimal 341)
+   defining Unicode char U+0158 (decimal 344)
+   defining Unicode char U+0159 (decimal 345)
+   defining Unicode char U+015A (decimal 346)
+   defining Unicode char U+015B (decimal 347)
+   defining Unicode char U+015E (decimal 350)
+   defining Unicode char U+015F (decimal 351)
+   defining Unicode char U+0160 (decimal 352)
+   defining Unicode char U+0161 (decimal 353)
+   defining Unicode char U+0162 (decimal 354)
+   defining Unicode char U+0163 (decimal 355)
+   defining Unicode char U+0164 (decimal 356)
+   defining Unicode char U+0165 (decimal 357)
+   defining Unicode char U+016E (decimal 366)
+   defining Unicode char U+016F (decimal 367)
+   defining Unicode char U+0170 (decimal 368)
+   defining Unicode char U+0171 (decimal 369)
+   defining Unicode char U+0178 (decimal 376)
+   defining Unicode char U+0179 (decimal 377)
+   defining Unicode char U+017A (decimal 378)
+   defining Unicode char U+017B (decimal 379)
+   defining Unicode char U+017C (decimal 380)
+   defining Unicode char U+017D (decimal 381)
+   defining Unicode char U+017E (decimal 382)
+   defining Unicode char U+200C (decimal 8204)
+   defining Unicode char U+2013 (decimal 8211)
+   defining Unicode char U+2014 (decimal 8212)
+   defining Unicode char U+2018 (decimal 8216)
+   defining Unicode char U+2019 (decimal 8217)
+   defining Unicode char U+201A (decimal 8218)
+   defining Unicode char U+201C (decimal 8220)
+   defining Unicode char U+201D (decimal 8221)
+   defining Unicode char U+201E (decimal 8222)
+   defining Unicode char U+2030 (decimal 8240)
+   defining Unicode char U+2031 (decimal 8241)
+   defining Unicode char U+2039 (decimal 8249)
+   defining Unicode char U+203A (decimal 8250)
+   defining Unicode char U+2423 (decimal 9251)
+)
+Now handling font encoding OT1 ...
+... processing UTF-8 mapping file for font encoding OT1
+
+(/usr/share/texmf-texlive/tex/latex/base/ot1enc.dfu
+File: ot1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
+   defining Unicode char U+00A1 (decimal 161)
+   defining Unicode char U+00A3 (decimal 163)
+   defining Unicode char U+00B8 (decimal 184)
+   defining Unicode char U+00BF (decimal 191)
+   defining Unicode char U+00C5 (decimal 197)
+   defining Unicode char U+00C6 (decimal 198)
+   defining Unicode char U+00D8 (decimal 216)
+   defining Unicode char U+00DF (decimal 223)
+   defining Unicode char U+00E6 (decimal 230)
+   defining Unicode char U+00EC (decimal 236)
+   defining Unicode char U+00ED (decimal 237)
+   defining Unicode char U+00EE (decimal 238)
+   defining Unicode char U+00EF (decimal 239)
+   defining Unicode char U+00F8 (decimal 248)
+   defining Unicode char U+0131 (decimal 305)
+   defining Unicode char U+0141 (decimal 321)
+   defining Unicode char U+0142 (decimal 322)
+   defining Unicode char U+0152 (decimal 338)
+   defining Unicode char U+0153 (decimal 339)
+   defining Unicode char U+2013 (decimal 8211)
+   defining Unicode char U+2014 (decimal 8212)
+   defining Unicode char U+2018 (decimal 8216)
+   defining Unicode char U+2019 (decimal 8217)
+   defining Unicode char U+201C (decimal 8220)
+   defining Unicode char U+201D (decimal 8221)
+)
+Now handling font encoding OMS ...
+... processing UTF-8 mapping file for font encoding OMS
+
+(/usr/share/texmf-texlive/tex/latex/base/omsenc.dfu
+File: omsenc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
+   defining Unicode char U+00A7 (decimal 167)
+   defining Unicode char U+00B6 (decimal 182)
+   defining Unicode char U+00B7 (decimal 183)
+   defining Unicode char U+2020 (decimal 8224)
+   defining Unicode char U+2021 (decimal 8225)
+   defining Unicode char U+2022 (decimal 8226)
+)
+Now handling font encoding OMX ...
+... no UTF-8 mapping file for font encoding OMX
+Now handling font encoding U ...
+... no UTF-8 mapping file for font encoding U
+   defining Unicode char U+00A9 (decimal 169)
+   defining Unicode char U+00AA (decimal 170)
+   defining Unicode char U+00AE (decimal 174)
+   defining Unicode char U+00BA (decimal 186)
+   defining Unicode char U+02C6 (decimal 710)
+   defining Unicode char U+02DC (decimal 732)
+   defining Unicode char U+200C (decimal 8204)
+   defining Unicode char U+2026 (decimal 8230)
+   defining Unicode char U+2122 (decimal 8482)
+   defining Unicode char U+2423 (decimal 9251)
+))
+(/usr/share/texmf-texlive/tex/generic/babel/babel.sty
+Package: babel 2008/07/06 v3.8l The Babel package
+
+(/usr/share/texmf-texlive/tex/generic/babel/english.ldf
+Language: english 2005/03/30 v3.3o English support from the babel system
+
+(/usr/share/texmf-texlive/tex/generic/babel/babel.def
+File: babel.def 2008/07/06 v3.8l Babel common definitions
+\babel@savecnt=\count87
+\U@D=\dimen103
+)
+\l@british = a dialect from \language\l@english 
+\l@UKenglish = a dialect from \language\l@english 
+\l@canadian = a dialect from \language\l@american 
+\l@australian = a dialect from \language\l@british 
+\l@newzealand = a dialect from \language\l@british 
+))
+(/usr/share/texmf-texlive/tex/latex/isodate/isodate.sty
+Package: isodate 2005/04/15 v2.28 Print dates with different formats (HH)
+
+(/usr/share/texmf-texlive/tex/latex/base/ifthen.sty
+Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
+)
+(/usr/share/texmf-texlive/tex/latex/substr/substr.sty
+Package: substr 2005/11/29 v1.1 Handle substrings
+\c@su@anzahl=\count88
+)
+(/usr/share/texmf-texlive/tex/latex/isodate/english.idf
+File: english.idf 2005/04/15 v2.28 Language definitions for isodate package (HH
+)
+
+Define commands for English date format
+)
+\c@iso@tmpmonth=\count89
+\c@iso@yeartwo=\count90
+\c@iso@slash=\count91
+\c@iso@minus=\count92
+\c@iso@dot=\count93
+\c@iso@@slash=\count94
+\c@iso@@minus=\count95
+\c@iso@@dot=\count96
+) (/usr/share/texmf-texlive/tex/latex/ltxmisc/parskip.sty
+Package: parskip 2001/04/09 non-zero parskip adjustments
+) (./graphicx.sty
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks16
+)
+(/usr/share/texmf-texlive/tex/latex/graphics/graphics.sty
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texmf-texlive/tex/latex/graphics/trig.sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+(/etc/texmf/tex/latex/config/graphics.cfg
+File: graphics.cfg 2009/08/28 v1.8 graphics configuration of TeX Live
+)
+Package graphics Info: Driver file: pdftex.def on input line 91.
+
+(/usr/share/texmf-texlive/tex/latex/pdftex-def/pdftex.def
+File: pdftex.def 2010/03/12 v0.04p Graphics/color for pdfTeX
+\Gread@gobject=\count97
+))
+\Gin@req@height=\dimen104
+\Gin@req@width=\dimen105
+) (./natbib.sty
+Package: natbib 2000/07/24 7.0a (PWD)
+\bibhang=\skip43
+\bibsep=\skip44
+LaTeX Info: Redefining \cite on input line 508.
+\c@NAT@ctr=\count98
+)
+(/usr/share/texmf-texlive/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2009/10/09 v6.79a Hypertext links for LaTeX
+
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2009/04/10 v2.0 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in pdf mode detected.
+)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty
+Package: ifvtex 2008/11/04 v1.4 Switches for detecting VTeX and its modes (HO)
+Package ifvtex Info: VTeX not detected.
+)
+(/usr/share/texmf-texlive/tex/generic/ifxetex/ifxetex.sty
+Package: ifxetex 2009/01/23 v0.5 Provides ifxetex conditional
+)
+(/usr/share/texmf-texlive/tex/latex/oberdiek/hycolor.sty
+Package: hycolor 2009/10/02 v1.5 Code for color options of hyperref/bookmark (H
+O)
+
+(/usr/share/texmf-texlive/tex/latex/oberdiek/xcolor-patch.sty
+Package: xcolor-patch 2009/10/02 xcolor patch
+))
+\@linkdim=\dimen106
+\Hy@linkcounter=\count99
+\Hy@pagecounter=\count100
+
+(/usr/share/texmf-texlive/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2009/10/09 v6.79a Hyperref: PDFDocEncoding definition (HO)
+Now handling font encoding PD1 ...
+... no UTF-8 mapping file for font encoding PD1
+)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/etexcmds.sty
+Package: etexcmds 2007/12/12 v1.2 Prefix for e-TeX command names (HO)
+
+(/usr/share/texmf-texlive/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2007/09/09 v1.2 Providing info/warning/message (HO)
+)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+)
+(/usr/share/texmf-texlive/tex/latex/latexconfig/hyperref.cfg
+File: hyperref.cfg 2002/06/06 v1.2 hyperref configuration of TeXLive
+)
+(/usr/share/texmf-texlive/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2009/08/13 v3.4 Keyval support for LaTeX options (HO)
+
+(/usr/share/texmf-texlive/tex/generic/oberdiek/kvsetkeys.sty
+Package: kvsetkeys 2009/07/30 v1.5 Key value parser with default handler suppor
+t (HO)
+))
+Package hyperref Info: Hyper figures OFF on input line 2975.
+Package hyperref Info: Link nesting OFF on input line 2980.
+Package hyperref Info: Hyper index ON on input line 2983.
+Package hyperref Info: Plain pages OFF on input line 2990.
+Package hyperref Info: Backreferencing OFF on input line 2995.
+
+Implicit mode ON; LaTeX internals redefined
+Package hyperref Info: Bookmarks ON on input line 3191.
+(./url.sty
+Package: url 1999/03/02  ver 1.4  Verb mode for urls, email addresses, and file
+ names
+)
+LaTeX Info: Redefining \url on input line 3428.
+ (/usr/share/texmf-texlive/tex/generic/oberdiek/bitset.sty
+Package: bitset 2007/09/28 v1.0 Data type bit set (HO)
+
+(/usr/share/texmf-texlive/tex/generic/oberdiek/intcalc.sty
+Package: intcalc 2007/09/27 v1.1 Expandable integer calculations (HO)
+)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/bigintcalc.sty
+Package: bigintcalc 2007/11/11 v1.1 Expandable big integer calculations (HO)
+
+(/usr/share/texmf-texlive/tex/generic/oberdiek/pdftexcmds.sty
+Package: pdftexcmds 2009/09/23 v0.6 LuaTeX support for pdfTeX utility functions
+ (HO)
+
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifluatex.sty
+Package: ifluatex 2009/04/17 v1.2 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2009/08/05 v1.0 Some LaTeX kernel commands for general use (HO
+)
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+)))
+\Fld@menulength=\count101
+\Field@Width=\dimen107
+\Fld@charsize=\dimen108
+\Field@toks=\toks17
+Package hyperref Info: Hyper figures OFF on input line 4377.
+Package hyperref Info: Link nesting OFF on input line 4382.
+Package hyperref Info: Hyper index ON on input line 4385.
+Package hyperref Info: backreferencing OFF on input line 4392.
+Package hyperref Info: Link coloring OFF on input line 4397.
+Package hyperref Info: Link coloring with OCG OFF on input line 4402.
+Package hyperref Info: PDF/A mode OFF on input line 4407.
+
+(/usr/share/texmf-texlive/tex/generic/oberdiek/atbegshi.sty
+Package: atbegshi 2008/07/31 v1.9 At begin shipout hook (HO)
+)
+\Hy@abspage=\count102
+\c@Item=\count103
+\c@Hfootnote=\count104
+)
+*hyperref using default driver hpdftex*
+(/usr/share/texmf-texlive/tex/latex/hyperref/hpdftex.def
+File: hpdftex.def 2009/10/09 v6.79a Hyperref driver for pdfTeX
+\Fld@listcount=\count105
+)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2000/07/18 v2.13 AMS math features
+\@mathmargin=\skip45
+
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+Package: amstext 2000/06/29 v2.01
+
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0
+\@emptytoks=\toks18
+\ex@=\dimen109
+))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d
+\pmbraise@=\dimen110
+)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty
+Package: amsopn 1999/12/14 v2.01 operator names
+)
+\inf@bad=\count106
+LaTeX Info: Redefining \frac on input line 211.
+\uproot@=\count107
+\leftroot@=\count108
+LaTeX Info: Redefining \overline on input line 307.
+\classnum@=\count109
+\DOTSCASE@=\count110
+LaTeX Info: Redefining \ldots on input line 379.
+LaTeX Info: Redefining \dots on input line 382.
+LaTeX Info: Redefining \cdots on input line 467.
+\Mathstrutbox@=\box26
+\strutbox@=\box27
+\big@size=\dimen111
+LaTeX Font Info:    Redeclaring font encoding OML on input line 567.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
+\macc@depth=\count111
+\c@MaxMatrixCols=\count112
+\dotsspace@=\muskip10
+\c@parentequation=\count113
+\dspbrk@lvl=\count114
+\tag@help=\toks19
+\row@=\count115
+\column@=\count116
+\maxfields@=\count117
+\andhelp@=\toks20
+\eqnshift@=\dimen112
+\alignsep@=\dimen113
+\tagshift@=\dimen114
+\tagwidth@=\dimen115
+\totwidth@=\dimen116
+\lineht@=\dimen117
+\@envbody=\toks21
+\multlinegap=\skip46
+\multlinetaggap=\skip47
+\mathdisplay@stack=\toks22
+LaTeX Info: Redefining \[ on input line 2666.
+LaTeX Info: Redefining \] on input line 2667.
+)
+(/usr/share/texmf-texlive/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2009/06/22 v3.00
+
+(/usr/share/texmf-texlive/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2009/06/22 v3.00 Basic AMSFonts support
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 96.
+))
+(/usr/share/texmf-texlive/tex/latex/multirow/multirow.sty
+\bigstrutjot=\dimen118
+) (./float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count118
+\float@exts=\toks23
+\float@box=\box28
+\@float@everytoks=\toks24
+\@floatcapt=\box29
+)
+(/usr/share/texmf-texlive/tex/latex/rotating/rotating.sty
+Package: rotating 2009/03/28 v2.16a rotated objects in LaTeX
+\c@r@tfl@t=\count119
+\rotFPtop=\skip48
+\rotFPbot=\skip49
+\rot@float@box=\box30
+\rot@mess@toks=\toks25
+) (./array.sty
+Package: array 1998/05/13 v2.3m Tabular extension package (FMi)
+\col@sep=\dimen119
+\extrarowheight=\dimen120
+\NC@list=\toks26
+\extratabsurround=\skip50
+\backup@length=\skip51
+)
+(./PhenStatUsersGuide.aux)
+\openout1 = `PhenStatUsersGuide.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+
+isodate: babel.sty has been loaded
+(/usr/share/texmf-texlive/tex/context/base/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count120
+\scratchdimen=\dimen121
+\scratchbox=\box31
+\nofMPsegments=\count121
+\nofMParguments=\count122
+\everyMPshowfont=\toks27
+\MPscratchCnt=\count123
+\MPscratchDim=\dimen122
+\MPnumerator=\count124
+\everyMPtoPDFconversion=\toks28
+)
+Package hyperref Info: Link coloring OFF on input line 22.
+ (/usr/share/texmf-texlive/tex/latex/hyperref/nameref.sty
+Package: nameref 2007/05/29 v2.31 Cross-referencing by name of section
+
+(/usr/share/texmf-texlive/tex/latex/oberdiek/refcount.sty
+Package: refcount 2008/08/11 v3.1 Data extraction from references (HO)
+)
+\c@section@level=\count125
+)
+LaTeX Info: Redefining \ref on input line 22.
+LaTeX Info: Redefining \pageref on input line 22.
+
+(./PhenStatUsersGuide.out) (./PhenStatUsersGuide.out)
+\@outlinefile=\write3
+\openout3 = `PhenStatUsersGuide.out'.
+
+\AtBeginShipoutBox=\box32
+LaTeX Font Info:    Try loading font information for U+msa on input line 24.
+
+(/usr/share/texmf-texlive/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2009/06/22 v3.00 AMS symbols A
+)
+LaTeX Font Info:    Try loading font information for U+msb on input line 24.
+
+(/usr/share/texmf-texlive/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2009/06/22 v3.00 AMS symbols B
+) [1
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./PhenStatUsersGuide.toc 
+[2])
+\tf@toc=\write4
+\openout4 = `PhenStatUsersGuide.toc'.
+
+ [3]
+Underfull \hbox (badness 10000) in paragraph at lines 38--40
+
+ []
+
+<PhenStat.png, id=214, 851.18pt x 694.595pt>
+File: PhenStat.png Graphic file (type png)
+ <use PhenStat.png> [4] [5pdfTeX warning (ext4): destination with the same iden
+tifier (name{figure.1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.51 \item R
+            esults Output: depending on user needs there are two functions f...
+ <./PhenStat.png>]
+Overfull \hbox (6.22388pt too wide) in paragraph at lines 57--57
+[]\OT1/cmr/bx/n/17.28 Data Pro-cess-ing with Phen-List Func-tion 
+ []
+
+
+Overfull \hbox (1.19853pt too wide) in paragraph at lines 76--76
+[]|\OT1/cmr/m/n/12 Colony. 
+ []
+
+
+Overfull \hbox (3.05632pt too wide) in paragraph at lines 76--76
+[]|\OT1/cmr/m/n/12 Age.In. 
+ []
+
+
+Overfull \hbox (5.76376pt too wide) in paragraph at lines 76--76
+\OT1/cmr/m/n/12 Mineral. 
+ []
+
+
+Overfull \hbox (2.0777pt too wide) in paragraph at lines 76--76
+\OT1/cmr/m/n/12 Density| 
+ []
+
+
+Overfull \hbox (40.83083pt too wide) in paragraph at lines 74--109
+[][]
+ []
+
+
+Overfull \hbox (1.19853pt too wide) in paragraph at lines 115--115
+[]|\OT1/cmr/m/n/12 Colony. 
+ []
+
+
+Overfull \hbox (3.05632pt too wide) in paragraph at lines 115--115
+[]|\OT1/cmr/m/n/12 Age.In. 
+ []
+
+
+Overfull \hbox (2.81122pt too wide) in paragraph at lines 115--115
+\OT1/cmr/m/n/12 Processes| 
+ []
+
+
+Overfull \hbox (2.81122pt too wide) in paragraph at lines 115--115
+\OT1/cmr/m/n/12 Processes| 
+ []
+
+
+Overfull \hbox (4.32039pt too wide) in paragraph at lines 116--116
+[]|\OT1/cmr/m/n/12 Smarcal1| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 116--116
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 118--118
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 120--120
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 121--121
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 122--122
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 123--123
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 123--123
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (3.82874pt too wide) in paragraph at lines 124--124
+[]|\OT1/cmr/m/n/12 Fam175b| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 124--124
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (3.82874pt too wide) in paragraph at lines 125--125
+[]|\OT1/cmr/m/n/12 Fam175b| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 125--125
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 126--126
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 128--128
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (3.30547pt too wide) in paragraph at lines 129--129
+[]|\OT1/cmr/m/n/12 MDWN| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 129--129
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 130--130
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 130--130
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (3.30547pt too wide) in paragraph at lines 131--131
+[]|\OT1/cmr/m/n/12 MDWN| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 131--131
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 134--134
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 134--134
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 135--135
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 136--136
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 136--136
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 137--137
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 137--137
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 138--138
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 138--138
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 139--139
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 139--139
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 140--140
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 140--140
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 141--141
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 141--141
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 142--142
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 142--142
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 143--143
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 143--143
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 144--144
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 144--144
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 145--145
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 145--145
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 146--146
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (2.86868pt too wide) in paragraph at lines 146--146
+[]|\OT1/cmr/m/n/12 Abnormal| 
+ []
+
+
+Overfull \hbox (80.91693pt too wide) in paragraph at lines 113--150
+[][]
+ []
+
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 156.
+
+(/usr/share/texmf-texlive/tex/latex/base/omscmr.fd
+File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 156.
+ [6] [7pdfTeX warning (ext4): destination with the same identifier (name{table.
+1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.164 
+      ] [8pdfTeX warning (ext4): destination with the same identifier (name{tab
+le.2}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.164 
+      ]
+Overfull \hbox (60.50647pt too wide) in paragraph at lines 191--191
+[]\OT1/cmtt/m/n/8 Dataset's column 'Assay.Date' has been renamed to 'Batch' and
+ will be used for the batch effect modelling.[] 
+ []
+
+[9]
+Overfull \hbox (60.50647pt too wide) in paragraph at lines 231--231
+[]\OT1/cmtt/m/n/8 Dataset's column 'Assay.Date' has been renamed to 'Batch' and
+ will be used for the batch effect modelling.[] 
+ []
+
+[10]
+Overfull \hbox (60.50647pt too wide) in paragraph at lines 277--277
+[]\OT1/cmtt/m/n/8 Dataset's column 'Assay.Date' has been renamed to 'Batch' and
+ will be used for the batch effect modelling.[] 
+ []
+
+[11pdfTeX warning (ext4): destination with the same identifier (name{table.3}) 
+has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.282 
+      ]
+Overfull \hbox (60.50647pt too wide) in paragraph at lines 328--328
+[]\OT1/cmtt/m/n/8 Dataset's column 'Assay.Date' has been renamed to 'Batch' and
+ will be used for the batch effect modelling.[] 
+ []
+
+
+Overfull \hbox (81.75677pt too wide) in paragraph at lines 328--328
+[]\OT1/cmtt/m/n/8 Alternatively you can define 'hemiGenotype' and 'testGenotype
+' arguments to relabel hemizygotes to homozygotes.[] 
+ []
+
+[12] [13pdfTeX warning (ext4): destination with the same identifier (name{table
+.4}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.376 \end{verbatim}
+                    ]
+Overfull \hbox (5.25568pt too wide) in paragraph at lines 418--418
+[] \OT1/cmtt/m/n/8 'Mysm1/+'/'unsexed' (1), appropriate gender records have bee
+n filtered out from the dataset.[] 
+ []
+
+
+Overfull \hbox (22.25592pt too wide) in paragraph at lines 418--418
+[]\OT1/cmtt/m/n/8 Dataset's 'Gender' column has to have one or two values and c
+urrently the data has more than two.[] 
+ []
+
+[14]
+Overfull \hbox (78.27979pt too wide) in paragraph at lines 446--475
+ [] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+Overfull \hbox (20.50021pt too wide) in paragraph at lines 478--479
+\OT1/cmr/m/n/12 geno-type, test geno-type, hem-izy-gotes geno-type, orig-i-nal 
+col-umn names, etc. 
+ []
+
+[15] [16pdfTeX warning (ext4): destination with the same identifier (name{table
+.5}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.511 \subsection
+                 {Manager for Analysis Methods -- \textit{testDataset} funct...
+] [17]
+Overfull \hbox (12.7879pt too wide) in paragraph at lines 535--536
+\OT1/cmr/m/n/12 of the frame-work one af-ter an-other when set to TRUE (de-faul
+t be-haviour). 
+ []
+
+[18] <Motivation1.jpg, id=321, 453.19313pt x 146.04562pt>
+File: Motivation1.jpg Graphic file (type jpg)
+
+<use Motivation1.jpg> <Motivation2.png, id=322, 453.19313pt x 117.43875pt>
+File: Motivation2.png Graphic file (type png)
+
+<use Motivation2.png> [19pdfTeX warning (ext4): destination with the same ident
+ifier (name{figure.2}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.583 
+       <./Motivation1.jpg>] [20pdfTeX warning (ext4): destination with the same
+ identifier (name{figure.3}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.585 
+       <./Motivation2.png>]
+<MM_framework.png, id=351, 855.195pt x 727.71875pt>
+File: MM_framework.png Graphic file (type png)
+ <use MM_framework.png>
+<Model_Formula.png, id=352, 974.64125pt x 743.77875pt>
+File: Model_Formula.png Graphic file (type png)
+ <use Model_Formula.png>
+<Mixed_Models.png, id=353, 773.89125pt x 644.4075pt>
+File: Mixed_Models.png Graphic file (type png)
+ <use Mixed_Models.png>
+[21] [22pdfTeX warning (ext4): destination with the same identifier (name{figur
+e.4}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.630 
+       <./MM_framework.png>] [23pdfTeX warning (ext4): destination with the sam
+e identifier (name{figure.5}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.630 
+       <./Model_Formula.png>] [24pdfTeX warning (ext4): destination with the sa
+me identifier (name{figure.6}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.630 
+       <./Mixed_Models.png>] [25] [26]
+Overfull \hbox (5.25568pt too wide) in paragraph at lines 759--759
+[]\OT1/cmtt/m/n/8 > result <- testDataset(test,depVariable="Bone.Area", equatio
+n="withoutWeight",callAll=FALSE)[] 
+ []
+
+[27] [28] [29] <classificationTagMM2.png, id=411, 747.79375pt x 560.0925pt>
+File: classificationTagMM2.png Graphic file (type png)
+
+<use classificationTagMM2.png> [30pdfTeX warning (ext4): destination with the s
+ame identifier (name{figure.7}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.811 
+       <./classificationTagMM2.png (PNG copy)>]
+<classificationTagMM_MP.png, id=418, 748.7975pt x 553.06625pt>
+File: classificationTagMM_MP.png Graphic file (type png)
+
+<use classificationTagMM_MP.png> [31pdfTeX warning (ext4): destination with the
+ same identifier (name{figure.8}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.822 
+       <./classificationTagMM_MP.png (PNG copy)>]
+Overfull \hbox (56.25641pt too wide) in paragraph at lines 955--955
+[]\OT1/cmtt/m/n/8 Dataset's column 'Assay.Date' has been renamed to 'Batch' and
+ will be used for the batch effect modeling.[] 
+ []
+
+
+Overfull \hbox (18.00586pt too wide) in paragraph at lines 955--955
+[]\OT1/cmtt/m/n/8 for the weight effect modeling. Otherwise you can only use mi
+xed model equation 'withoutWeight'.[] 
+ []
+
+[32] [33] [34]
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1006.
+
+LaTeX Font Info:    Try loading font information for OML+cmr on input line 1006
+.
+(/usr/share/texmf-texlive/tex/latex/base/omlcmr.fd
+File: omlcmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <12> not available
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 1006.
+
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1006.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1006.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1006.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1006.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1006.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1007.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1007.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1007.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1007.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1008.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1008.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1008.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1008.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1009.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1009.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1010.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1010.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1010.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1010.
+
+
+Underfull \hbox (badness 2717) in paragraph at lines 1010--1011
+[]|\OT1/cmr/m/n/12 Significant in fe-males and in com-bined
+ []
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1011.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1011.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1012.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1012.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1014.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1014.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1014.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1014.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1015.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1015.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1015.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1015.
+
+
+Overfull \hbox (43.79001pt too wide) in paragraph at lines 1003--1019
+ [] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[35] [36pdfTeX warning (ext4): destination with the same identifier (name{table
+.6}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1060 \end{verbatim}
+                     ] [37] [38]
+Underfull \hbox (badness 1701) in paragraph at lines 1172--1173
+[]|\OT1/cmr/m/n/12 Possible val-ues: "FE", "MM, lin-ear mixed-effects
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1172--1173
+\OT1/cmr/m/n/12 model/generalized least squares, equa-tion with
+ []
+
+
+Underfull \hbox (badness 1112) in paragraph at lines 1185--1186
+[]|\OT1/cmr/m/n/12 Weight p-value that rep-re-sents the prob-a-bil-ity the
+ []
+
+
+Overfull \hbox (70.31326pt too wide) in paragraph at lines 1169--1193
+[][] 
+ []
+
+
+Overfull \hbox (73.31601pt too wide) in paragraph at lines 1197--1215
+[][]
+ []
+
+[39] [40] [41pdfTeX warning (ext4): destination with the same identifier (name{
+table.7}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1289 \end{verbatim}
+                     ] [42] [43] [44]
+Overfull \hbox (9.50574pt too wide) in paragraph at lines 1390--1390
+[]\OT1/cmtt/m/n/8 > generateGraphs(phenTestResult=result,dir="./graphs",graphin
+gName="Lean Mass",type="windows")[] 
+ []
+
+<categoricalBarPlot.png, id=488, 481.8pt x 481.8pt>
+File: categoricalBarPlot.png Graphic file (type png)
+
+<use categoricalBarPlot.png> [45]
+<boxplotGenderGenotype.png, id=495, 481.8pt x 481.8pt>
+File: boxplotGenderGenotype.png Graphic file (type png)
+
+<use boxplotGenderGenotype.png>
+<boxplotGenderGenotypeBatch.png, id=497, 481.8pt x 481.8pt>
+File: boxplotGenderGenotypeBatch.png Graphic file (type png)
+
+<use boxplotGenderGenotypeBatch.png>
+<scatterplotGenotypeWeight.png, id=499, 481.8pt x 481.8pt>
+File: scatterplotGenotypeWeight.png Graphic file (type png)
+
+<use scatterplotGenotypeWeight.png> [46pdfTeX warning (ext4): destination with 
+the same identifier (name{figure.9}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1444 
+        <./categoricalBarPlot.png (PNG copy)>] [47pdfTeX warning (ext4): destin
+ation with the same identifier (name{figure.10}) has been already used, duplica
+te ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1444 
+       pdfTeX warning (ext4): destination with the same identifier (name{figure
+.11}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1444 
+        <./boxplotGenderGenotype.png (PNG copy)> <./boxplotGenderGenotypeBatch.
+png (PNG copy)>]
+Overfull \hbox (0.187pt too wide) in paragraph at lines 1450--1451
+[]\OT1/cmr/m/it/12 plotResidualPredicted \OT1/cmr/m/n/12 cre-ates pre-dicted ve
+r-sus resid-ual val-ues plots split
+ []
+
+<qqplotGenotype.png, id=514, 481.8pt x 481.8pt>
+File: qqplotGenotype.png Graphic file (type png)
+ <use qqplotGenotype.png>
+[48pdfTeX warning (ext4): destination with the same identifier (name{figure.12}
+) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1470 
+        <./scatterplotGenotypeWeight.png (PNG copy)>]
+<qqplotRandomEffects.png, id=522, 481.8pt x 481.8pt>
+File: qqplotRandomEffects.png Graphic file (type png)
+
+<use qqplotRandomEffects.png>
+<qqplotRotatedResiduals.png, id=525, 481.8pt x 481.8pt>
+File: qqplotRotatedResiduals.png Graphic file (type png)
+
+<use qqplotRotatedResiduals.png> [49pdfTeX warning (ext4): destination with the
+ same identifier (name{figure.13}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1489 
+        <./qqplotGenotype.png (PNG copy)>] [50pdfTeX warning (ext4): destinatio
+n with the same identifier (name{figure.14}) has been already used, duplicate i
+gnored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1489 
+       pdfTeX warning (ext4): destination with the same identifier (name{figure
+.15}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1489 
+        <./qqplotRandomEffects.png (PNG copy)> <./qqplotRotatedResiduals.png (P
+NG copy)>] <plotResidualPredicted.png, id=543, 481.8pt x 481.8pt>
+File: plotResidualPredicted.png Graphic file (type png)
+
+<use plotResidualPredicted.png>
+<boxplotResidualBatch.png, id=545, 481.8pt x 481.8pt>
+File: boxplotResidualBatch.png Graphic file (type png)
+
+<use boxplotResidualBatch.png>
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1510.
+
+LaTeX Font Info:    Font shape `OML/cmr/m/it' in size <12> not available
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 1510.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1510.
+
+
+LaTeX Warning: Command \textgreater invalid in math mode on input line 1510.
+
+
+LaTeX Warning: Command \textgreater invalid in math mode on input line 1510.
+
+[51pdfTeX warning (ext4): destination with the same identifier (name{figure.16}
+) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1513 
+        <./plotResidualPredicted.png (PNG copy)>]
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[52pdfTeX warning (ext4): destination with the same identifier (name{figure.17}
+) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1544 \end{verbatim}
+                      <./boxplotResidualBatch.png (PNG copy)>] [53pdfTeX warnin
+g (ext4): destination with the same identifier (name{table.8}) has been already
+ used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1569 
+       ] [54] <cs1_boxplotGenderGenotype.png, id=569, 481.8pt x 481.8pt>
+File: cs1_boxplotGenderGenotype.png Graphic file (type png)
+
+<use cs1_boxplotGenderGenotype.png>
+<cs1_boxplotBatchGenotype.jpg, id=570, 654.19406pt x 276.28218pt>
+File: cs1_boxplotBatchGenotype.jpg Graphic file (type jpg)
+
+<use cs1_boxplotBatchGenotype.jpg> [55pdfTeX warning (ext4): destination with t
+he same identifier (name{figure.18}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1638 
+        <./cs1_boxplotGenderGenotype.png (PNG copy)>] [56pdfTeX warning (ext4):
+ destination with the same identifier (name{figure.19}) has been already used, 
+duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1660 
+        <./cs1_boxplotBatchGenotype.jpg>]
+<cs1_qqplotGenotype.png, id=585, 481.8pt x 481.8pt>
+File: cs1_qqplotGenotype.png Graphic file (type png)
+
+<use cs1_qqplotGenotype.png> [57pdfTeX warning (ext4): destination with the sam
+e identifier (name{figure.20}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1682 \begin{verbatim}
+                        <./cs1_qqplotGenotype.png (PNG copy)>]
+<cs1_boxplotResidualBatch.png, id=592, 481.8pt x 481.8pt>
+File: cs1_boxplotResidualBatch.png Graphic file (type png)
+
+<use cs1_boxplotResidualBatch.png>
+<cs1_plotResidualPredicted.png, id=593, 481.8pt x 481.8pt>
+File: cs1_plotResidualPredicted.png Graphic file (type png)
+
+<use cs1_plotResidualPredicted.png> [58pdfTeX warning (ext4): destination with 
+the same identifier (name{figure.21}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1711 
+        <./cs1_boxplotResidualBatch.png (PNG copy)>]
+<cs1_qqplotRandomEffects.png, id=600, 481.8pt x 481.8pt>
+File: cs1_qqplotRandomEffects.png Graphic file (type png)
+
+<use cs1_qqplotRandomEffects.png> [59pdfTeX warning (ext4): destination with th
+e same identifier (name{figure.22}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1732 
+        <./cs1_plotResidualPredicted.png (PNG copy)>]
+<cs1_qqplotRotatedResiduals.png, id=610, 481.8pt x 481.8pt>
+File: cs1_qqplotRotatedResiduals.png Graphic file (type png)
+
+<use cs1_qqplotRotatedResiduals.png> [60pdfTeX warning (ext4): destination with
+ the same identifier (name{figure.23}) has been already used, duplicate ignored
+
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1752 
+        <./cs1_qqplotRandomEffects.png (PNG copy)>] [61pdfTeX warning (ext4): d
+estination with the same identifier (name{figure.24}) has been already used, du
+plicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1770 
+        <./cs1_qqplotRotatedResiduals.png (PNG copy)>]
+<cs1_bodyweight.png, id=627, 602.25pt x 401.5pt>
+File: cs1_bodyweight.png Graphic file (type png)
+ <use cs1_bodyweight.png>
+[62pdfTeX warning (ext4): destination with the same identifier (name{figure.25}
+) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1798 
+        <./cs1_bodyweight.png>] [63]
+<cs1_scatterplotGenotypeWeight.png, id=639, 481.8pt x 481.8pt>
+File: cs1_scatterplotGenotypeWeight.png Graphic file (type png)
+
+<use cs1_scatterplotGenotypeWeight.png> [64pdfTeX warning (ext4): destination w
+ith the same identifier (name{figure.26}) has been already used, duplicate igno
+red
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1855 
+        <./cs1_scatterplotGenotypeWeight.png (PNG copy)>]
+<cs2_categoricalBarplot.jpg, id=647, 596.98032pt x 374.14781pt>
+File: cs2_categoricalBarplot.jpg Graphic file (type jpg)
+
+<use cs2_categoricalBarplot.jpg> [65pdfTeX warning (ext4): destination with the
+ same identifier (name{table.9}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1903 
+       ] [66pdfTeX warning (ext4): destination with the same identifier (name{f
+igure.27}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1950 \end{verbatim}
+                      <./cs2_categoricalBarplot.jpg>]
+Overfull \hbox (53.40887pt too wide) in paragraph at lines 1964--1974
+ [] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[67] <cs2_noRibsRight_percentageplot.jpg, id=663, 591.71063pt x 303.38344pt>
+File: cs2_noRibsRight_percentageplot.jpg Graphic file (type jpg)
+
+<use cs2_noRibsRight_percentageplot.jpg>
+Overfull \hbox (1.00562pt too wide) in paragraph at lines 2006--2006
+[]\OT1/cmtt/m/n/8 Insufficient variability in the dependent variable 'Number.Of
+.Ribs.Left' for genotype/gender[] 
+ []
+
+[68pdfTeX warning (ext4): destination with the same identifier (name{table.10})
+ has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.2012 
+       pdfTeX warning (ext4): destination with the same identifier (name{figure
+.28}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.2012 
+        <./cs2_noRibsRight_percentageplot.jpg>] [69]
+Overfull \hbox (60.50647pt too wide) in paragraph at lines 2077--2077
+[]      \OT1/cmtt/m/n/8 result <- testDataset(phenList, variable, method="MM",e
+quation="withoutWeight",outputMessages=FALSE)[] 
+ []
+
+
+Overfull \hbox (52.00635pt too wide) in paragraph at lines 2129--2129
+[]\OT1/cmtt/m/n/8 clusterEvalQ(cluster, try({ fn = paste(getwd(), "./", Sys.inf
+o()[4], "-", Sys.getpid(), ".log", sep="");[] 
+ []
+
+[70] [71] (./PhenStatUsersGuide.aux) ) 
+Here is how much of TeX's memory you used:
+ 6574 strings out of 495061
+ 90509 string characters out of 1182621
+ 251521 words of memory out of 3000000
+ 9417 multiletter control sequences out of 15000+50000
+ 15599 words of font info for 59 fonts, out of 3000000 for 9000
+ 28 hyphenation exceptions out of 8191
+ 38i,13n,39p,1056b,452s stack positions out of 5000i,500n,10000p,200000b,50000s
+</usr/share/texmf-texlive/fonts/type1/pub
+lic/amsfonts/cm/cmbx12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfont
+s/cm/cmbx7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbxti1
+0.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr
+/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf
+-texlive/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texmf-texlive/fon
+ts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texmf-texlive/fonts/type1/publ
+ic/amsfonts/cm/cmr8.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/c
+m/cmsy10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy7.pfb
+></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/shar
+e/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti7.pfb></usr/share/texmf-texl
+ive/fonts/type1/public/amsfonts/cm/cmti8.pfb></usr/share/texmf-texlive/fonts/ty
+pe1/public/amsfonts/cm/cmtt8.pfb></usr/share/texmf-texlive/fonts/type1/public/a
+msfonts/symbols/msam10.pfb>
+Output written on PhenStatUsersGuide.pdf (71 pages, 1547941 bytes).
+PDF statistics:
+ 776 PDF objects out of 1000 (max. 8388607)
+ 169 named destinations out of 1000 (max. 500000)
+ 445 words of extra memory for PDF output out of 10000 (max. 10000000)
+
