@@ -74,8 +74,10 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
                             phenTestResult$model.output$female$p.va,sep=""))
             
             message(paste("Females only effect size: ",
-                            phenTestResult$model.output$ES_female,"%",sep=""))            
+                            phenTestResult$model.output$ES_female,"%",sep=""))                     
         }
+        message(paste("Classification tag:", 
+                        classificationTag(phenTestResult)))
         
         ## Matrices and statistics
         message("\nMatrix 'all':")
