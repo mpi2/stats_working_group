@@ -53,7 +53,7 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
         summary(phenTestResult$model.output)$tTable
     }
     
-    else if (phenTestResult$method %in% c("FE")){
+    else if (phenTestResult$method %in% c("FE","RR")){
         message("Model output:")
         
         message(paste("All data p-val: ",
@@ -74,10 +74,21 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
                             phenTestResult$model.output$female$p.va,sep=""))
             
             message(paste("Females only effect size: ",
-                            phenTestResult$model.output$ES_female,"%",sep=""))                     
+                            phenTestResult$model.output$ES_female,"%",sep=""))            
         }
+        
         message(paste("Classification tag:", 
                         classificationTag(phenTestResult)))
+        
+        if (phenTestResult$method=="RR"){
+            thresholds <- unlist(strsplit(res_oneGender$model.output.quality,"="))
+            thresholds_string <- ""
+            for (i in c(1,3,5,7)){
+                thresholds_string <- paste(thresholds_string,thresholds[i]," = ",thresholds[i+1],"; ",sep="")
+            }
+            message(paste("RR thresholds:", 
+                            substr(thresholds_string, 1, nchar(thresholds_string)-2)))
+        }
         
         ## Matrices and statistics
         message("\nMatrix 'all':")
@@ -104,6 +115,8 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
             message("\nMatrix 'females only' statistics:")
             print(phenTestResult$model.output$stat_female) 
         }
+        
+        
     }    
 }
 

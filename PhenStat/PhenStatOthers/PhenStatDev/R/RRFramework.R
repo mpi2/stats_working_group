@@ -15,10 +15,11 @@
 ## RRFramework.R contains ... functions for refernce range plus analysis 
 ##------------------------------------------------------------------------------
 # Non-Gaussian distribution - percentiles are used to limit of the reference range. 
-# Sufficient numbers of samples are required (minimum 60)
+# Sufficient numbers of control samples are required (minimum 60) - tests in testDataset function
+# Natural variation to default to 95% min 75% and max 99%
 
 RRTest <- function(phenList, depVariable, 
-        outputMessages=TRUE, naturalVariation=95)
+        outputMessages=TRUE, naturalVariation=95, controlPointsThreshold=60)
 {
     # run checks first
     
@@ -289,6 +290,11 @@ RRTest <- function(phenList, depVariable,
     model$stat_male <- stat_male
     model$stat_female <- stat_female
     
+    thresholds <- c(paste("naturalVariation=",naturalVariation,sep=""),
+            paste("controlPointsThreshold=",controlPointsThreshold,sep=""), 
+            paste("rangeLeft=",rangeLeft,sep=""),
+            paste("rangeRight=",rangeRight,sep=""))
+    
     keep_weight <- NA
     keep_gender <- NA
     keep_interaction <- NA
@@ -301,7 +307,7 @@ RRTest <- function(phenList, depVariable,
                     depVariable=depVariable,method="RR",model.effect.batch=keep_batch,
                     model.effect.variance=keep_equalvar,model.effect.interaction=keep_interaction,
                     model.output.interaction=interactionTest,model.effect.gender=keep_gender,
-                    model.effect.weight=keep_weight,numberGenders=numberofgenders))
+                    model.effect.weight=keep_weight,numberGenders=numberofgenders, model.output.quality = thresholds ))
     return(result)
 }
 
