@@ -346,6 +346,7 @@ columnChecks <- function(phenList, columnName, dataPointsThreshold=4, controlPoi
     levelsCheck <- 0
     controlsCheck <- 0
     variabilityThreshold <- 10
+    NoCombinations <- 2
     # Test: dependent variable presence 
     if (!(columnName %in% colnames(dataset))){
         presence <- FALSE
