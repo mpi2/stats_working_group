@@ -81,7 +81,7 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
                         classificationTag(phenTestResult)))
         
         if (phenTestResult$method=="RR"){
-            thresholds <- unlist(strsplit(res_oneGender$model.output.quality,"="))
+            thresholds <- unlist(strsplit(phenTestResult$model.output.quality,"="))
             thresholds_string <- ""
             for (i in c(1,3,5,7)){
                 thresholds_string <- paste(thresholds_string,thresholds[i]," = ",thresholds[i+1],"; ",sep="")
