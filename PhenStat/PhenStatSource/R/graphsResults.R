@@ -14,7 +14,7 @@
 ##------------------------------------------------------------------------------
 ## graphsResults.R contains functions for model fit diagnostic plots: 
 ## qqplotGenotype, plotResidualPredicted, qqplotRandomEffects,
-## boxplotResidualBatch, qqplotRotatedResiduals 
+## boxplotResidualBatch, qqplotRotatedResiduals, categoricalBarplot
 ##------------------------------------------------------------------------------
 ## Q-Q plot of residuals for each genotype
 qqplotGenotype<-function(phenTestResult){

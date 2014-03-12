@@ -547,14 +547,33 @@ finalModel <- function(phenTestResult, outputMessages=TRUE)
     ## Alternative Hypothesis: genotypes are associated with dependent
     ## variable
     if(keep_batch && keep_equalvar){
-        model_genotype <- do.call("lme", args = list(model_genotype.formula,
-                        random=~1|Batch, x, na.action="na.omit", method="ML"))
+        model_genotype <- tryCatch(
+            model_genotype <-  do.call("lme", args = list(model_genotype.formula,
+                        random=~1|Batch, x, na.action="na.omit", method="ML")),
+            error=function(error_mes) {
+            if (outputMessages)
+            message(paste("Warning:\nMixed model with homogeneous ",
+            "residual variances for genotype groups is not ",
+            "fitting - false convergence.\nMixed model with ",
+            "heterogeneous residual variances is used instead.\n",sep=""))
+            
+             model_genotype <- NULL
+
+             
+            }
+        )        
         
         model_null <- do.call("lme", args=list(model_null.formula, x,
                         random=~1|Batch, na.action="na.omit",  method="ML"))
-        
-        p.value <- (anova(model_genotype, model_null)$p[2])
-    }else if(keep_batch && !keep_equalvar){
+
+        if (!is.null(model_genotype)){
+            p.value <- (anova(model_genotype, model_null)$p[2])
+        }
+        else{
+            keep_equalvar <- FALSE
+        }
+    }
+    if(keep_batch && !keep_equalvar){
         model_genotype <- do.call("lme", args = list(model_genotype.formula,
                         random=~1|Batch, x,weights=varIdent(form=~1|Genotype),
                         na.action="na.omit", method="ML"))
@@ -609,6 +628,7 @@ finalModel <- function(phenTestResult, outputMessages=TRUE)
     result$model.output.genotype.nulltest.pVal <- p.value
     result$model.formula.null <- model_null.formula
     result$model.formula.genotype <- model_genotype.formula
+    result$model.effect.variance <- keep_equalvar
     
     ## Assign MM quality of fit
     result$model.output.quality <- testFinalModel(result)
