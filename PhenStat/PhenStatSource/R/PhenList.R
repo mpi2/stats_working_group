@@ -62,19 +62,61 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
         ## Replace empty strings with NA
         dataset[dataset == ""] <- NA
         
+        
+        # make Weight column numeric if possible (if there are no strings)
         if ('Weight' %in% colnames(dataset)){
-            if (is.numeric(dataset$Weight) && (!all(sapply(dataset$Weight,is.na)))) {
-                dataset$Weight<-as.numeric(dataset$Weight)              
+        #for (i in 1:length(colnames(dataset))){
+            columnName <- "Weight"
+            checkNA_transformed <- sum(is.na(suppressWarnings(as.numeric(as.character(dataset[,c(columnName)])))))
+            checkNA_initial <- sum(is.na(dataset[,c(columnName)])) 
+            if (checkNA_transformed == checkNA_initial) {
+                dataset[,c(columnName)]<-as.numeric(as.character(dataset[,c(columnName)]))
             }
-            else {
-                colnames(dataset)[colnames(dataset) == 'Weight'] <-'Weight_labels'
-                if (outputMessages)
-                message(paste("Warning:\nWeight column values are not numeric or NA. ", 
-                              "In order to avoid erroneous execution of statistical ",
-                              "functions column is renamed to 'Weight_labels'.\n",sep=""))
-                
-            }
+            
+        #}
         }
+        
+
+        checkWeight <- columnChecks(dataset,"Weight",4) 
+
+        if (! checkWeight[1]){
+            if (outputMessages)
+            message("Warning:\nWeight column is not present in the database.\n")
+        }    
+        else {        
+                if (! checkWeight[2]){
+                    if (outputMessages)
+                        message(paste("Warning:\nWeight column values are not numeric.\n", 
+                                    "In order to avoid erroneous execution of statistical ",
+                                    "functions column is renamed to 'Weight_labels'.\n",sep=""))
+                    colnames(dataset)[colnames(dataset) == 'Weight'] <-'Weight_labels'      
+                }    
+                if (! checkWeight[3]){
+                    if (outputMessages)
+                        message(paste("Warning:\nWeight column does not have enough data points ",
+                                    "for genotype/sex combinations.\n", 
+                                    "In order to avoid erroneous execution of statistical ",
+                                    "functions column is renamed to 'Weight_labels'.\n",sep=""))    
+                    colnames(dataset)[colnames(dataset) == 'Weight'] <-'Weight_labels'      
+                }  
+       }         
+
+            
+       
+        
+#        if ('Weight' %in% colnames(dataset)){
+#            if (is.numeric(dataset$Weight) && (!all(sapply(dataset$Weight,is.na)))) {
+#                dataset$Weight<-as.numeric(dataset$Weight)              
+#            }
+#            else {
+#                colnames(dataset)[colnames(dataset) == 'Weight'] <-'Weight_labels'
+#                if (outputMessages)
+#                message(paste("Warning:\nWeight column values are not numeric or NA. ", 
+#                              "In order to avoid erroneous execution of statistical ",
+#                              "functions column is renamed to 'Weight_labels'.\n",sep=""))
+#                
+#            }
+#        }
         
         ## Renew levels
         if ('Gender' %in% colnames(dataset))
@@ -83,6 +125,7 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
         dataset$Genotype<-factor(dataset$Genotype)
         if ('Batch' %in% colnames(dataset))
         dataset$Batch<-factor(dataset$Batch)
+
         
         # # Replace values for genders with 'Male','Female' if needed
         if(!is.null(dataset.values.female))
@@ -124,6 +167,7 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
     dataset<-dataset[dataset$Genotype!="",]
     if ('Batch' %in% colnames(dataset))
     dataset<-dataset[dataset$Batch!="",]
+
     
     ## Renew levels
     if ('Gender' %in% colnames(dataset))
@@ -132,7 +176,7 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
     dataset$Genotype<-factor(dataset$Genotype)
     if ('Batch' %in% colnames(dataset))
     dataset$Batch<-factor(dataset$Batch)
-    
+
     ## CHECKS
     dataset <- checkDataset(dataset, testGenotype, refGenotype, 
             outputMessages, dataset.clean)
@@ -212,14 +256,13 @@ checkDataset <- function(dataset, testGenotype, refGenotype="+/+",
     if (!('Weight' %in% colnames(dataset)) && outputMessages) {
         message(paste("Warning:\nDataset's 'Weight' column is missed.\n",
                       "You can define 'dataset.colname.weight' argument to specify column ", 
-                      "for the weight effect modeling.\nOtherwise you can only use Mixed ", 
-                      "Model framework with equation 'withoutWeight'.\n",sep=""))
+                      "for the weight effect modeling.\n",sep=""))
     }
     
     if (!('Batch' %in% colnames(dataset))){
         message(paste("Warning:\nDataset's 'Batch' column is missed.\n",
                 "You can define 'dataset.colname.batch' argument to specify column ",
-                "for the batch effect modeling. Otherwise you can only fit a GLM.\n",sep=""))
+                "for the batch effect modeling.\n",sep=""))
     }
     
     if (('Gender' %in% colnames(dataset)) && ('Genotype' %in% colnames(dataset))){

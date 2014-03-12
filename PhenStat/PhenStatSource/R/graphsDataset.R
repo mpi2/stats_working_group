@@ -14,7 +14,7 @@
 ##------------------------------------------------------------------------------
 ## graphsDataset.R contains functions for dataset diagnostic plots:
 ## boxplotGenderGenotype, boxplotGenderGenotypeBatch, 
-## scatterplotGenotypeWeigh & categoricalBarplot
+## scatterplotGenotypeWeigh
 ##------------------------------------------------------------------------------
 ## Raw data boxplot: split by gender and genotype
 boxplotGenderGenotype<-function(phenList, depVariable=NULL, graphingName=NULL){
