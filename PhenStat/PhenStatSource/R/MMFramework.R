@@ -541,7 +541,7 @@ finalModel <- function(phenTestResult, outputMessages=TRUE)
             }
             )
     
-    
+    finalResult <- tryCatch( {   
     ## Test: genotype groups association with dependent variable
     ## Null Hypothesis: genotypes are not associated with dependent variable
     ## Alternative Hypothesis: genotypes are associated with dependent
@@ -636,7 +636,26 @@ finalModel <- function(phenTestResult, outputMessages=TRUE)
     ## Parse modeloutput and choose output depending on model
     result$model.output.summary <- parserOutputSummary(result)
     
-    return(result)
+    finalResult <- result
+    },
+
+    # End of tryCatch statement - if fails try to suggest smth useful for the user
+    error=function(error_mes) {
+  
+    if (outputMessages){
+        if (equation=="withWeight") 
+            message(paste("Error:\nCan't fit the model ",
+            format(model_genotype.formula),". Try MM with equation 'withoutWeight'. Another option is jitter\n",sep=""))
+        else
+            message(paste("Error:\nCan't fit the model ",
+                format(model_genotype.formula),". Try to add jitter or RR plus method.\n",sep=""))
+    }
+    finalResult <- NULL
+    
+    
+    }
+    )        
+    return(finalResult)
 }
 ##------------------------------------------------------------------------------
 ## Parser model output summary and return in readable vector format
