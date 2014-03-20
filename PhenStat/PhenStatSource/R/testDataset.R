@@ -232,7 +232,7 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
                 outputMessages, pThreshold, keepList)
         
         ## Perform all framework methods 
-        if (callAll){
+        if (callAll && is(result,"PhenTestResult")){
             result <- finalModel(result, outputMessages)
         }
         
