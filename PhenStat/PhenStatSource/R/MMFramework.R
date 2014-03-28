@@ -77,6 +77,7 @@ startModel <- function(phenList, depVariable, equation="withWeight",
     ## genotype and sex interaction included
     model.formula  <- modelFormula(equation,numberofgenders, depVariable)
     
+#START OF tryCatch    
     finalResult <- tryCatch({
     
                 if ('Batch' %in% colnames(x)){
@@ -368,20 +369,26 @@ startModel <- function(phenList, depVariable, equation="withWeight",
                                 pThreshold=pThreshold,
                                 model.formula.genotype=model.formula))
     },
-
-    # End of tryCatch statement - if fails try to suggest smth useful for the user
+#END OF tryCatch    
     error=function(error_mes) {
+                finalResult <- NULL
+                if (equation=="withWeight") 
+                    stop_message <- paste("Error:\nCan't fit the model ",
+                        format(model.formula),". Try MM with equation 'withoutWeight'. ",
+                        "Another option is jitter\n",sep="")
+                else
+                    stop_message <- paste("Error:\nCan't fit the model ",
+                        format(model.formula),". Try to add jitter or RR plus method.\n",sep="")
                 
                 if (outputMessages){
-                    if (equation=="withWeight") 
-                    message(paste("Error:\nCan't fit the model ",
-                                    format(model.formula),". Try MM with equation 'withoutWeight'. Another option is jitter\n",sep=""))
-                    else
-                    message(paste("Error:\nCan't fit the model ",
-                                    format(model.formula),". Try to add jitter or RR plus method.\n",sep=""))
+                    message(stop_message)
+                    opt <- options(show.error.messages=FALSE)
+                    on.exit(options(opt))
+                    stop()
                 }
-                finalResult <- NULL
-                
+                else {
+                    stop(stop_message)
+                }
                 
             }
     )        
@@ -460,12 +467,16 @@ finalModel <- function(phenTestResult, outputMessages=TRUE)
     }
     
     
-    if (nchar(stop_message)>1){
-        if (outputMessages)
-        message(stop_message)
-        opt <- options(show.error.messages=FALSE)
-        on.exit(options(opt))
-        stop()
+    if (nchar(stop_message)>0){
+        if (outputMessages){
+            message(stop_message)
+            opt <- options(show.error.messages=FALSE)
+            on.exit(options(opt))
+            stop()
+        }
+        else {
+            stop(stop_message)
+        }
     }
     
     ## END Checks and stop messages
@@ -663,17 +674,25 @@ finalModel <- function(phenTestResult, outputMessages=TRUE)
     # End of tryCatch statement - if fails try to suggest smth useful for the user
     error=function(error_mes) {
   
-    if (outputMessages){
-        if (equation=="withWeight") 
-            message(paste("Error:\nCan't fit the model ",
-            format(model_genotype.formula),". Try MM with equation 'withoutWeight'. Another option is jitter\n",sep=""))
-        else
-            message(paste("Error:\nCan't fit the model ",
-                format(model_genotype.formula),". Try to add jitter or RR plus method.\n",sep=""))
-    }
-    finalResult <- NULL
-    
-    
+            finalResult <- NULL
+            if (equation=="withWeight") 
+                stop_message <- paste("Error:\nCan't fit the model ",
+                    format(model_genotype.formula),". Try MM with equation 'withoutWeight'. ",
+                    "Another option is jitter\n",sep="")
+            else
+                stop_message <- paste("Error:\nCan't fit the model ",
+                    format(model_genotype.formula),". Try to add jitter or RR plus method.\n",sep="")
+            
+            if (outputMessages){
+                message(stop_message)
+                opt <- options(show.error.messages=FALSE)
+                on.exit(options(opt))
+                stop()
+            }
+            else {
+                stop(stop_message)
+            }
+        
     }
     )        
     return(finalResult)

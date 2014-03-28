@@ -150,7 +150,7 @@ generateGraphs <- function(phenTestResult, dir, graphingName=NULL, type="Xlib")
         #4
         graph_name=file.path(dir, "qqplotGenotype.png")
         png(graph_name,type=type)
-        qqplotGenotype(phenTestResult)
+        qqplotGenotype(phenTestResult,outputMessages=FALSE)
         dev.off()
         
         #5
@@ -163,7 +163,7 @@ generateGraphs <- function(phenTestResult, dir, graphingName=NULL, type="Xlib")
                 && phenTestResult$model.effect.batch){
             graph_name=file.path(dir, "qqplotRandomEffects.png")
             png(graph_name,type=type)
-            qqplotRandomEffects(phenTestResult)
+            qqplotRandomEffects(phenTestResult,outputMessages=FALSE)
             
             dev.off()
         }    
@@ -172,7 +172,7 @@ generateGraphs <- function(phenTestResult, dir, graphingName=NULL, type="Xlib")
         if (('Batch' %in% colnames(phenTestResult$model.dataset))){
             graph_name=file.path(dir, "boxplotResidualBatch.png")
             png(graph_name,type=type)
-            boxplotResidualBatch(phenTestResult)
+            boxplotResidualBatch(phenTestResult,outputMessages=FALSE)
             
             dev.off()
         }    
@@ -182,7 +182,7 @@ generateGraphs <- function(phenTestResult, dir, graphingName=NULL, type="Xlib")
                 && phenTestResult$model.effect.batch){
             graph_name=file.path(dir, "qqplotRotatedResiduals.png")
             png(graph_name,type=type)
-            qqplotRotatedResiduals(phenTestResult)
+            qqplotRotatedResiduals(phenTestResult,outputMessages=FALSE)
             
             dev.off()
         }   
@@ -191,7 +191,7 @@ generateGraphs <- function(phenTestResult, dir, graphingName=NULL, type="Xlib")
     else {
         graph_name=file.path(dir, "categoricalBarPlot.png")
         png(graph_name,type=type)
-        categoricalBarplot(phenTestResult)
+        categoricalBarplot(phenTestResult,outputMessages=FALSE)
         
         dev.off()
     } 

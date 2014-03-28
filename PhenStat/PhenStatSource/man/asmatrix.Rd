@@ -1,6 +1,6 @@
 \name{as.matrix}
 \alias{as.matrix.PhenList}
-\title{Method from limma package "as.matrix"}
+\title{as.matrix function}
 \description{
     Turn a phenotypic data object into a numeric matrix by extracting the dataset or model output values.
 }
@@ -19,7 +19,7 @@
 \value{
     A numeric matrix.
 }
-\author{Gordon Smyth}
+\author{Natalja Kurbatova}
 \seealso{
     \code{\link{as.matrix}} in the base package.
 }

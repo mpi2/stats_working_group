@@ -55,10 +55,13 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
     if (nchar(stop_message)>0){
         if (outputMessages){
             message(stop_message)
+            opt <- options(show.error.messages=FALSE)
+            on.exit(options(opt))
+            stop()
         }
-        opt <- options(show.error.messages=FALSE)
-        on.exit(options(opt))
-        stop()
+        else {
+            stop(stop_message)
+        }
     }
     else {
         if (phenTestResult$method=="MM") {
