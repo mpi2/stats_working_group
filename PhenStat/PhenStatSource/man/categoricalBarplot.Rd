@@ -6,10 +6,11 @@
     Graphs are created for all data and also for each gender individually.
 }
 \usage{
-    categoricalBarplot(phenTestResult)
+    categoricalBarplot(phenTestResult,outputMessages=TRUE)
 }
 \arguments{
     \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{testDataset}; mandatory argument}
+    \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages; default value TRUE}   
 }
 \references{
     Karp N, Melvin D, Sanger Mouse Genetics Project, Mott R (2012): Robust and Sensitive Analysis of Mouse Knockout Phenotypes. \emph{PLoS ONE} \bold{7}(12): e52410. doi:10.1371/journal.pone.0052410

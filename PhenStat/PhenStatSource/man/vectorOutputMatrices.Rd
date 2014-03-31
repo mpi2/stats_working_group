@@ -7,10 +7,11 @@
     Note: Maximal supported number of dependent variable levels is 10.
 }
 \usage{
-    vectorOutputMatrices(phenTestResult)
+    vectorOutputMatrices(phenTestResult,outputMessages=TRUE)
 }
 \arguments{
     \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{\link{testDataset}}; mandatory argument}
+    \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages; default value TRUE}   
 }
 \value{
     Returns a vector with count values.

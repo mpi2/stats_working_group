@@ -5,10 +5,11 @@
     Graph function for the Mixed Model framework's results. Creates a box plot with residue versus batch split by genotype.
 }
 \usage{
-    boxplotResidualBatch(phenTestResult)
+    boxplotResidualBatch(phenTestResult,outputMessages=TRUE)
 }
 \arguments{
     \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{\link{testDataset}}; mandatory argument}
+    \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages; default value TRUE}   
 }
 
 \references{

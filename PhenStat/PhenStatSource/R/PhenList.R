@@ -430,10 +430,14 @@ checkDataset <- function(dataset, testGenotype, refGenotype="+/+",
                 if (outputMessages){
                     message(paste("********* Errors start *********\n",message,sep=""))
                     message("********* Errors end ***********")
+                    opt <- options(show.error.messages=FALSE)
+                    on.exit(options(opt))
+                    stop()
                 }
-                opt <- options(show.error.messages=FALSE)
-                on.exit(options(opt))
-                stop()
+                else {
+                    stop(message)
+                }
+            
             }
             
             return(dataset)

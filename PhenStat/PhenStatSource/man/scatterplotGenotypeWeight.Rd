@@ -7,12 +7,13 @@
     Both a regression line and a loess line (locally weighted line) is fitted for each genotype.
 }
 \usage{
-    scatterplotGenotypeWeight(phenList,depVariable,graphingName)
+    scatterplotGenotypeWeight(phenList,depVariable=NULL,graphingName=NULL,outputMessages=TRUE)
 }
 \arguments{
     \item{phenList}{instance of the \code{\linkS4class{PhenList}} class; mandatory argument}
     \item{depVariable}{a character string defining the dependent variable of interest; mandatory argument}
     \item{graphingName}{a character string defining the name to be used on the graph for the dependent variable; mandatory argument}
+    \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages; default value TRUE}   
 }
 
 \references{

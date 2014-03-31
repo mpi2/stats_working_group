@@ -19,7 +19,7 @@
 ## (output from functions testDataset and buildFinalModel)
 vectorOutput <- function(phenTestResult)
 {
-    
+ 
     if (phenTestResult$method=="MM") {
         equation <- switch(phenTestResult$equation,
                 withoutWeight = {"equation withoutWeight"},withWeight = {"equation withWeight"})
@@ -201,16 +201,18 @@ vectorOutput <- function(phenTestResult)
     }
     
     vectorOutput[is.na(vectorOutput)] <-"NA"
+   
     
     return(vectorOutput)
 }
 
 #-------------------------------------------------------------------------------
-vectorOutputMatrices <- function(phenTestResult){
+vectorOutputMatrices <- function(phenTestResult,outputMessages=TRUE){
+    stop_message <- ""
     if (phenTestResult$method =="FE"){
         levels <-length(rownames(phenTestResult$model.output$count_matrix_all))
         if (levels>10){
-            stop("Too many levels for dependent variable")
+            stop_message <- "Error:\nToo many levels for dependent variable.\n"
         }
         else{
             vectorOutput <- c(phenTestResult$depVariable, 
@@ -313,7 +315,19 @@ vectorOutputMatrices <- function(phenTestResult){
         }
     } 
     else {
-        stop("\nThere are no matrices to output for MM framework. Function returns result only for FE framework.")
-    }    
+        stop_message <- "Error:\nThere are no matrices to output for MM framework. Function returns result only for FE framework.\n"
+    }   
+    
+    if (nchar(stop_message)>0){
+        if (outputMessages){
+            message(stop_message)
+            opt <- options(show.error.messages=FALSE)
+            on.exit(options(opt))
+            stop()
+        }
+        else {
+            stop(stop_message)
+        }
+    } 
 }
 ##------------------------------------------------------------------------------
