@@ -8,15 +8,15 @@
     
     2. Genotype column should present
     
-    3. Gender column should present
+    3. Sex column should present
     
-    4. Two data points for each Genotype/Gender combination
+    4. Two data points for each Genotype/Sex combination
     
     5. Number of Genotype levels should be 2
     
-    6. Number of Gender levels should be 1 or 2
+    6. Number of Sex levels should be 1 or 2
     
-    7. Gender levels have to be "Female" and/or "Male"
+    7. Sex levels have to be "Female" and/or "Male"
     
     8. Records with reference genotype should be in the dataset
     

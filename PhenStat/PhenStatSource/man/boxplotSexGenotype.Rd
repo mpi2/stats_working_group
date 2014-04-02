@@ -1,14 +1,11 @@
-\name{boxplotGenderGenotypeBatch}
-\alias{boxplotGenderGenotypeBatch}
-\title{Method "boxplotGenderGenotypeBatch"}
+\name{boxplotSexGenotype}
+\alias{boxplotSexGenotype}
+\title{Method "boxplotSexGenotype"}
 \description{
-    Graph function for the phenotypic dataset. Creates a box plot split by gender, genotype and batch. 
-    
-    Note: the batches are not ordered with time but allow assessment of how the treatment groups lie relative to the normal control variation.
-    
+    Graph function for the phenotypic dataset. Creates a box plot split by sex and genotype.
 }
 \usage{
-    boxplotGenderGenotypeBatch(phenList,depVariable=NULL,graphingName=NULL,outputMessages=TRUE)
+    boxplotSexGenotype(phenList,depVariable=NULL,graphingName=NULL,outputMessages=TRUE)
 }
 \arguments{
     \item{phenList}{instance of the \code{\linkS4class{PhenList}} class; mandatory argument}
@@ -29,14 +26,15 @@
     test <- PhenList(dataset=read.csv(file),
             testGenotype="Sparc/Sparc")
     # box plot for dataset with two sexes: males and females
-    boxplotGenderGenotypeBatch(test,
-            depVariable="Bone.Mineral.Content",
-            graphingName="BMC" )
+    boxplotSexGenotype(test,
+            depVariable="Bone.Mineral.Content", 
+            graphingName="BMC")
     
     file <- system.file("extdata", "test4.csv", package="PhenStat")
-    test_1gender <- PhenList(dataset=read.csv(file),
+    test_1sex <- PhenList(dataset=read.csv(file),
             testGenotype="Mysm1/+")
     # box plot for females only dataset
-    boxplotGenderGenotypeBatch(test_1gender,depVariable="Lean.Mass", 
-            graphingName="Lean Mass")
+    boxplotSexGenotype(test_1sex,
+            depVariable="Lean.Mass", 
+            graphingName="Lean Mass (g)")
 }

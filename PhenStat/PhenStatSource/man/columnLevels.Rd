@@ -3,7 +3,7 @@
 \title{Method "columnLevels"}
 \description{
     Method removes null values from the column and calculates column basic stat.
-    Returns: No of data points, No of levels, No of Genotype/Gender combinations, 
+    Returns: No of data points, No of levels, No of Genotype/Sex combinations, 
     No of data points for each one combination.
 }
 \usage{
@@ -15,7 +15,7 @@
 }
 
 \value{
-    Numeric vector of length 6 or 7: No of data points, No of levels, No of Genotype/Gender combinations, 
+    Numeric vector of length 6 or 7: No of data points, No of levels, No of Genotype/Sex combinations, 
     No of data points for each one combination.
 }
 \references{

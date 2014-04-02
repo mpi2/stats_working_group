@@ -8,9 +8,9 @@
 \usage{
     PhenTestResult(model.output=NULL, model.dataset=NULL, depVariable=NULL, equation="withWeight", 
             method="MM", model.effect.batch=NULL, 
-            model.effect.variance=NULL,model.effect.gender=NULL, 
+            model.effect.variance=NULL,model.effect.sex=NULL, 
             model.effect.interaction=NULL, model.output.interaction=NULL, 
-            model.effect.weight=NULL, numberGenders=NULL,pThreshold=0.05, 
+            model.effect.weight=NULL, numberSexes=NULL,pThreshold=0.05, 
             model.formula.null=NULL,model.formula.genotype=NULL, 
             model.output.genotype.nulltest.pVal=NULL, 
             model.output.quality=NULL,model.output.summary=NULL) 
@@ -23,11 +23,11 @@
     \item{method}{possible values: "MM" to work with Mixed Model framework, "FE" to work with Fisher Exact Test framework}
     \item{model.effect.batch}{Result of the test for batch effect significance}
     \item{model.effect.variance}{Result of the test for residual variance effect}
-    \item{model.effect.gender}{Result of the test for gender effect significance}
+    \item{model.effect.sex}{Result of the test for sex effect significance}
     \item{model.effect.weight}{Result of the test for weight effect significance}
-    \item{model.effect.interaction}{Result of the test for genotype by gender interaction significance}
+    \item{model.effect.interaction}{Result of the test for genotype by sex interaction significance}
     \item{model.output.interaction}{Interaction test result: p-value}
-    \item{numberGenders}{number of possible gender values in the dataset}
+    \item{numberSexes}{number of possible sex values in the dataset}
     \item{pThreshold}{p-value threshold used to evaluate the effect significance, default value 0.05}
     \item{model.formula.null}{formula for the model without genotype effect}
     \item{model.formula.genotype}{formula for the model with genotype effect}

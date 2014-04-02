@@ -118,18 +118,18 @@ generateGraphs <- function(phenTestResult, dir, graphingName=NULL, type="Xlib")
         
         
         #1
-        graph_name=file.path(dir, "boxplotGenderGenotype.png")
+        graph_name=file.path(dir, "boxplotSexGenotype.png")
         png(graph_name,type=type)
-        boxplotGenderGenotype(phenTestResult$model.dataset,
+        boxplotSexGenotype(phenTestResult$model.dataset,
                 phenTestResult$depVariable, graphingName=graphingName)
         
         dev.off()
         
         #2
         if (('Batch' %in% colnames(phenTestResult$model.dataset))){
-            graph_name=file.path(dir, "boxplotGenderGenotypeBatch.png")
+            graph_name=file.path(dir, "boxplotSexGenotypeBatch.png")
             png(graph_name,type=type)
-            boxplotGenderGenotypeBatch(phenTestResult$model.dataset,
+            boxplotSexGenotypeBatch(phenTestResult$model.dataset,
                     phenTestResult$depVariable, graphingName=graphingName)
             
             dev.off()

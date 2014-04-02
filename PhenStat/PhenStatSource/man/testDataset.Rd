@@ -32,7 +32,7 @@
     \item{method}{a character string ("MM" or "FE") defining the method to use for model building, default value "MM" mixed model}
     \item{callAll}{flag: "FALSE" value to run only the first stage of the selected framework; "TRUE" value (default) to run all stages of framework one after another}        
     \item{keepList}{a logical vector defining the significance of different model effects: keep_batch, keep_equalvar,
-        keep_weight, keep_gender, keep_interaction; default value NULL}
+        keep_weight, keep_sex, keep_interaction; default value NULL}
     \item{dataPointsThreshold}{threshold for the number of data points in the MM framework}
 }
 \value{
@@ -61,7 +61,7 @@
     user_defined_effects <- c(keep_batch=TRUE,
             keep_equalvar=TRUE,
             keep_weight=TRUE,
-            keep_gender=TRUE,
+            keep_sex=TRUE,
             keep_interaction=TRUE)
     result3 <- testDataset(test,
             depVariable="Lean.Mass",

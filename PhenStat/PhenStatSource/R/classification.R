@@ -26,7 +26,7 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
         depVariable <- result$depVariable
         equation <- result$equation
         keep_weight <- result$model.effect.weight
-        keep_gender <- result$model.effect.gender
+        keep_sex <- result$model.effect.sex
         keep_interaction <- result$model.effect.interaction
         keep_batch <- result$model.effect.batch
         keep_equalvar <- result$model.effect.variance
@@ -36,7 +36,7 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
         if (phenTestResult$method=="MM"){
             if (is.null(equation) || is.null(depVariable) 
                     || is.null(keep_batch) || is.null(keep_equalvar)
-                    || is.null(keep_gender) || is.null(keep_interaction)) {
+                    || is.null(keep_sex) || is.null(keep_interaction)) {
                 stop_message <- "Error:\nPlease run function 'testDataset' first.\n"}}
         else
         if (is.null(model.output))
@@ -74,7 +74,7 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
                             phenotypeThreshold,"- no significant change")
                 }else{
                     if(result$model.effect.interaction==FALSE) {
-                        if (result$numberGenders==1){
+                        if (result$numberSexes==1){
                             ChangeClassification <- paste("With phenotype threshold value",phenotypeThreshold,
                                     "- a significant change for the one genotype tested")
                         }
@@ -83,27 +83,27 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
                                     phenotypeThreshold,"- both sexes equally")
                         }
                     }else 
-                    if(result$model.output.summary["gender_FvKO_p_value"]>=0.05 
-                            && result$model.output.summary["gender_MvKO_p_value"]>=0.05){
+                    if(result$model.output.summary["sex_FvKO_p_value"]>=0.05 
+                            && result$model.output.summary["sex_MvKO_p_value"]>=0.05){
                         ChangeClassification <- paste("With phenotype threshold value",
                                 phenotypeThreshold,"- cannot classify effect")
                     }else 
-                    if(result$model.output.summary["gender_FvKO_p_value"]<0.05 
-                            && result$model.output.summary["gender_MvKO_p_value"]>=0.05){
+                    if(result$model.output.summary["sex_FvKO_p_value"]<0.05 
+                            && result$model.output.summary["sex_MvKO_p_value"]>=0.05){
                         ChangeClassification <- paste("With phenotype threshold value",
                                 phenotypeThreshold,"- females only")
                     }else 
-                    if(result$model.output.summary["gender_FvKO_p_value"]>=0.05 
-                            && result$model.output.summary["gender_MvKO_p_value"]<0.05){
+                    if(result$model.output.summary["sex_FvKO_p_value"]>=0.05 
+                            && result$model.output.summary["sex_MvKO_p_value"]<0.05){
                         ChangeClassification <- paste("With phenotype threshold value",
                                 phenotypeThreshold,"- males only")
                     }else 
-                    if(result$model.output.summary["gender_FvKO_estimate"]>0 && 
-                            result$model.output.summary["gender_MvKO_estimate"]>0 | 
-                            result$model.output.summary["gender_FvKO_estimate"]<0 && 
-                            result$model.output.summary["gender_MvKO_estimate"]<0){
-                        if(abs(result$model.output.summary["gender_FvKO_estimate"])
-                                >abs(result$model.output.summary["gender_MvKO_estimate"])){
+                    if(result$model.output.summary["sex_FvKO_estimate"]>0 && 
+                            result$model.output.summary["sex_MvKO_estimate"]>0 | 
+                            result$model.output.summary["sex_FvKO_estimate"]<0 && 
+                            result$model.output.summary["sex_MvKO_estimate"]<0){
+                        if(abs(result$model.output.summary["sex_FvKO_estimate"])
+                                >abs(result$model.output.summary["sex_MvKO_estimate"])){
                             ChangeClassification <- paste("With phenotype threshold value",phenotypeThreshold,
                                     "- different size as females greater")
                             ## change could be positive or negative but size change greater
@@ -117,33 +117,34 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
                     }
                 }
             }
+            #vectorOutput
             else {
                 
                 if(result$model.effect.interaction==FALSE) {
-                    if (result$numberGenders==1){
+                    if (result$numberSexes==1){
                         ChangeClassification <- paste("If phenotype is significant it is for the one genotype tested")
                     }else{
                         ChangeClassification <- paste("If phenotype is significant - both sexes equally")
                     }
                 }else 
-                if(result$model.output.summary["gender_FvKO_p_value"]>=0.05 
-                        && result$model.output.summary["gender_MvKO_p_value"]>=0.05){
+                if(result$model.output.summary["sex_FvKO_p_value"]>=0.05 
+                        && result$model.output.summary["sex_MvKO_p_value"]>=0.05){
                     ChangeClassification <- paste("If phenotype is significant - can not classify effect")
                 }else 
-                if(result$model.output.summary["gender_FvKO_p_value"]<0.05 
-                        && result$model.output.summary["gender_MvKO_p_value"]>=0.05){
+                if(result$model.output.summary["sex_FvKO_p_value"]<0.05 
+                        && result$model.output.summary["sex_MvKO_p_value"]>=0.05){
                     ChangeClassification <- paste("If phenotype is significant - females only")
                 }else 
-                if(result$model.output.summary["gender_FvKO_p_value"]>=0.05 
-                        && result$model.output.summary["gender_MvKO_p_value"]<0.05){
+                if(result$model.output.summary["sex_FvKO_p_value"]>=0.05 
+                        && result$model.output.summary["sex_MvKO_p_value"]<0.05){
                     ChangeClassification <- paste("If phenotype is significant - males only")
                 }else 
-                if(result$model.output.summary["gender_FvKO_estimate"]>0 && 
-                        result$model.output.summary["gender_MvKO_estimate"]>0 |
-                        result$model.output.summary["gender_FvKO_estimate"]<0 && 
-                        result$model.output.summary["gender_MvKO_estimate"]<0){
-                    if(abs(result$model.output.summary["gender_FvKO_estimate"])
-                            >abs(result$model.output.summary["gender_MvKO_estimate"])){
+                if(result$model.output.summary["sex_FvKO_estimate"]>0 && 
+                        result$model.output.summary["sex_MvKO_estimate"]>0 |
+                        result$model.output.summary["sex_FvKO_estimate"]<0 && 
+                        result$model.output.summary["sex_MvKO_estimate"]<0){
+                    if(abs(result$model.output.summary["sex_FvKO_estimate"])
+                            >abs(result$model.output.summary["sex_MvKO_estimate"])){
                         ChangeClassification <- paste("If phenotype is significant - different size as females greater")
                         ## change could be positive or negative but size change greater
                     }else{
@@ -156,47 +157,74 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
             }
         }
         else if (phenTestResult$method =="FE"){
-            if (!is.null(phenTestResult$model.output$male)){
-                male_p.value <- result$model.output$male$p.value
-            }
-            else {
-                male_p.value <- 10
-            }
-            if (!is.null(phenTestResult$model.output$female)){
-                female_p.value <- result$model.output$female$p.value
-            }
-            else {
-                female_p.value <- 10
-            }
-            all_p.value <- result$model.output$all$p.value
-            
-            ChangeClassification <- paste("Not significant")
-            # Tag
-            # combined & males & females
-            if(all_p.value < 0.05 && male_p.value < 0.05 && female_p.value < 0.05)
-                ChangeClassification <- paste("Significant in males, females and in combined dataset")
-            # combined & males & !females
-            if(all_p.value < 0.05 && male_p.value < 0.05 && female_p.value >= 0.05)
-                ChangeClassification <- paste("Significant in males and in combined dataset")
-            # combined & !males & females
-            if(all_p.value < 0.05 && male_p.value >= 0.05 && female_p.value < 0.05)
-                ChangeClassification <- paste("Significant in females and in combined dataset")
-            # combined & !males & !females
-            if(all_p.value < 0.05 && male_p.value >= 0.05 && female_p.value >= 0.05){
-                if (phenTestResult$numberGenders==2)
-                    ChangeClassification <- paste("Significant in combined dataset only")
-                else
-                    ChangeClassification <- paste("Significant for the sex tested")
-            }
-            # !combined & males & females
-            if(all_p.value >= 0.05 && male_p.value < 0.05 && female_p.value < 0.05)
-                ChangeClassification <- paste("Significant in males and in females datasets")
-            # !combined & males & !females
-            if(all_p.value >= 0.05 && male_p.value < 0.05 && female_p.value >= 0.05)
-                ChangeClassification <- paste("Significant in males dataset only")
-            # !combined & !males & females
-            if(all_p.value >= 0.05 && male_p.value >= 0.05 && female_p.value < 0.05)
-                ChangeClassification <- paste("Significant in females dataset only")
+            if (userMode=="summaryOutput") { 
+                if (!is.null(phenTestResult$model.output$male)){
+                    male_p.value <- result$model.output$male$p.value
+                }
+                else {
+                    male_p.value <- 10
+                }
+                if (!is.null(phenTestResult$model.output$female)){
+                    female_p.value <- result$model.output$female$p.value
+                }
+                else {
+                    female_p.value <- 10
+                }
+                all_p.value <- result$model.output$all$p.value
+                
+                ChangeClassification <- paste("Not significant")
+                # Tag
+                # combined & males & females
+                if(all_p.value < phenotypeThreshold && 
+                        male_p.value < phenotypeThreshold && 
+                        female_p.value < phenotypeThreshold)
+                    ChangeClassification <- paste("With phenotype threshold value",phenotypeThreshold, 
+                        "- significant in males, females and in combined dataset")
+                # combined & males & !females
+                if(all_p.value < phenotypeThreshold && 
+                        male_p.value < phenotypeThreshold && 
+                        female_p.value >= phenotypeThreshold)
+                    ChangeClassification <- paste("With phenotype threshold value",phenotypeThreshold, 
+                        "- significant in males and in combined dataset")
+                # combined & !males & females
+                if(all_p.value < phenotypeThreshold && 
+                        male_p.value >= phenotypeThreshold && 
+                        female_p.value < phenotypeThreshold)
+                    ChangeClassification <- paste("With phenotype threshold value",phenotypeThreshold, 
+                        "- significant in females and in combined dataset")
+                # combined & !males & !females
+                if(all_p.value < phenotypeThreshold && 
+                        male_p.value >= phenotypeThreshold && 
+                        female_p.value >= phenotypeThreshold){
+                    if (phenTestResult$numberSexes==2)
+                        ChangeClassification <- paste("With phenotype threshold value",phenotypeThreshold, 
+                            "- significant in combined dataset only")
+                    else
+                        ChangeClassification <- paste("With phenotype threshold value",phenotypeThreshold, 
+                            "- significant for the sex tested")
+                }
+                # !combined & males & females
+                if(all_p.value >= phenotypeThreshold && 
+                        male_p.value < phenotypeThreshold && 
+                        female_p.value < phenotypeThreshold)
+                    ChangeClassification <- paste("With phenotype threshold value",phenotypeThreshold, 
+                        "- significant in males and in females datasets")
+                # !combined & males & !females
+                if(all_p.value >= phenotypeThreshold && 
+                        male_p.value < phenotypeThreshold && 
+                        female_p.value >= phenotypeThreshold)
+                    ChangeClassification <- paste("With phenotype threshold value",phenotypeThreshold, 
+                        "- significant in males dataset only")
+                # !combined & !males & females
+                if(all_p.value >= phenotypeThreshold && 
+                        male_p.value >= phenotypeThreshold && 
+                        female_p.value < phenotypeThreshold)
+                    ChangeClassification <- paste("With phenotype threshold value",phenotypeThreshold, 
+                        "- significant in females dataset only")
+          }
+          else {
+                ChangeClassification <- "NA"
+          }
         }
         return(ChangeClassification)
         

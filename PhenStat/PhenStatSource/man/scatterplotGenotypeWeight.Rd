@@ -31,9 +31,9 @@
             depVariable="Bone.Mineral.Content",
             graphingName="BMC" )
     file <- system.file("extdata", "test4.csv", package="PhenStat")
-    test_1gender <- PhenList(dataset=read.csv(file),
+    test_1sex <- PhenList(dataset=read.csv(file),
             testGenotype="Mysm1/+")
-    scatterplotGenotypeWeight(test_1gender,
+    scatterplotGenotypeWeight(test_1sex,
             depVariable="Lean.Mass", 
             graphingName="Lean Mass")
 }

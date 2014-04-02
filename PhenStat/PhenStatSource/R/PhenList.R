@@ -19,7 +19,7 @@
 PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL,
         outputMessages=TRUE, dataset.clean=TRUE,
         dataset.colname.batch=NULL, dataset.colname.genotype=NULL,
-        dataset.colname.gender=NULL, dataset.colname.weight=NULL,
+        dataset.colname.sex=NULL, dataset.colname.weight=NULL,
         dataset.values.missingValue=NULL, dataset.values.male=NULL,
         dataset.values.female=NULL)
 {
@@ -51,8 +51,18 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
         }
         if(!is.null(dataset.colname.genotype))
         colnames(dataset)[colnames(dataset) == dataset.colname.genotype] <-'Genotype'
-        if(!is.null(dataset.colname.gender))
-        colnames(dataset)[colnames(dataset) == dataset.colname.gender] <-'Gender'
+        if(!is.null(dataset.colname.sex)) {
+            colnames(dataset)[colnames(dataset) == dataset.colname.sex] <-'Sex'
+        }
+        else {
+            if ('Gender' %in% colnames(dataset)){
+                colnames(dataset)[colnames(dataset) == 'Gender'] <-'Sex'
+                if (outputMessages)
+                message(paste("Warning:\nDataset's column 'Gender' has been ",
+                                "renamed to 'Sex'.\n",sep=""))
+            }
+        }
+        
         if(!is.null(dataset.colname.weight))
         colnames(dataset)[colnames(dataset) == dataset.colname.weight] <-'Weight'
         
@@ -119,20 +129,20 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
 #        }
         
         ## Renew levels
-        if ('Gender' %in% colnames(dataset))
-        dataset$Gender<-factor(dataset$Gender)
+        if ('Sex' %in% colnames(dataset))
+        dataset$Sex<-factor(dataset$Sex)
         if ('Genotype' %in% colnames(dataset))
         dataset$Genotype<-factor(dataset$Genotype)
         if ('Batch' %in% colnames(dataset))
         dataset$Batch<-factor(dataset$Batch)
 
         
-        # # Replace values for genders with 'Male','Female' if needed
+        # # Replace values for sexes with 'Male','Female' if needed
         if(!is.null(dataset.values.female))
-        levels(dataset$Gender)[levels(dataset$Gender)==dataset.values.female] <- "Female"
+        levels(dataset$Sex)[levels(dataset$Sex)==dataset.values.female] <- "Female"
   
         if(!is.null(dataset.values.male)) 
-        levels(dataset$Gender)[levels(dataset$Gender)==dataset.values.male] <- "Male"
+        levels(dataset$Sex)[levels(dataset$Sex)==dataset.values.male] <- "Male"
         
         ## Hemi to test genotype replacement
         if (!is.null(hemiGenotype)) {
@@ -161,8 +171,8 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
     
     
     ## Clean the empty records  NB - after renaming/cleaning !
-    if ('Gender' %in% colnames(dataset))
-    dataset<-dataset[dataset$Gender!="",]
+    if ('Sex' %in% colnames(dataset))
+    dataset<-dataset[dataset$Sex!="",]
     if ('Genotype' %in% colnames(dataset))
     dataset<-dataset[dataset$Genotype!="",]
     if ('Batch' %in% colnames(dataset))
@@ -170,8 +180,8 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
 
     
     ## Renew levels
-    if ('Gender' %in% colnames(dataset))
-    dataset$Gender<-factor(dataset$Gender)
+    if ('Sex' %in% colnames(dataset))
+    dataset$Sex<-factor(dataset$Sex)
     if ('Genotype' %in% colnames(dataset))
     dataset$Genotype<-factor(dataset$Genotype)
     if ('Batch' %in% colnames(dataset))
@@ -183,7 +193,7 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
     
     
     Genotype_levels <- levels(dataset$Genotype)
-    Gender_levels <- levels(dataset$Gender)
+    Sex_levels <- levels(dataset$Sex)
     
     ## Calculate statistics
     dataset.stat <- data.frame(
@@ -211,7 +221,7 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
     x$dataset.stat <- dataset.stat
     x$dataset.colname.batch <- dataset.colname.batch
     x$dataset.colname.genotype <- dataset.colname.genotype
-    x$dataset.colname.gender <- dataset.colname.gender
+    x$dataset.colname.sex <- dataset.colname.sex
     x$dataset.colname.weight <- dataset.colname.weight
     x$dataset.values.missingValue <- dataset.values.missingValue
     x$dataset.values.male <- dataset.values.male
@@ -238,7 +248,7 @@ checkDataset <- function(dataset, testGenotype, refGenotype="+/+",
                 "\nCheck failed:\nDataset with no column names.\n",sep="")
     }
     
-    ## Check for mandatory columns: Genotype and Gender
+    ## Check for mandatory columns: Genotype and Sex
     if (!('Genotype' %in% colnames(dataset))) {
         pass <- FALSE
         message <- paste(message,
@@ -246,10 +256,10 @@ checkDataset <- function(dataset, testGenotype, refGenotype="+/+",
     }
     
     
-    if (!('Gender' %in% colnames(dataset))) {
+    if (!('Sex' %in% colnames(dataset))) {
         pass <- FALSE
         message <- paste(message, 
-                "\nCheck failed:\nDataset's 'Gender' column is missed.\n",sep="")
+                "\nCheck failed:\nDataset's 'Sex' column is missed.\n",sep="")
     }
     
     ## Check for other columns: Weight and Batch
@@ -265,46 +275,46 @@ checkDataset <- function(dataset, testGenotype, refGenotype="+/+",
                 "for the batch effect modeling.\n",sep=""))
     }
     
-    if (('Gender' %in% colnames(dataset)) && ('Genotype' %in% colnames(dataset))){
+    if (('Sex' %in% colnames(dataset)) && ('Genotype' %in% colnames(dataset))){
         
         Genotype_levels <- levels(dataset$Genotype)
-        Gender_levels <- levels(dataset$Gender)
+        Sex_levels <- levels(dataset$Sex)
         
-        ## Genotype/Gender combinations with less than two data points
-        combinations_list <- "" # String with Genotype/Gender (count) in initial dataset
+        ## Genotype/Sex combinations with less than two data points
+        combinations_list <- "" # String with Genotype/Sex (count) in initial dataset
         
         for (i in 1:length(Genotype_levels)){
             GenotypeSubset <- subset(dataset, dataset$Genotype==Genotype_levels[i])
-            for (j in 1:length(Gender_levels)){
-                nr <- sum(is.finite(GenotypeSubset[GenotypeSubset$Gender==Gender_levels[j],][ , "Gender"]))
+            for (j in 1:length(Sex_levels)){
+                nr <- sum(is.finite(GenotypeSubset[GenotypeSubset$Sex==Sex_levels[j],][ , "Sex"]))
                 combinations_list<-paste(combinations_list,paste("'", 
-                                Genotype_levels[i],"'/'",Gender_levels[j],
+                                Genotype_levels[i],"'/'",Sex_levels[j],
                                 "' (",nr,"), ",sep=""),sep="")
             }
             
         }
         
-        ## String with Genotype/Gender (count), where Gender would be filtered out
+        ## String with Genotype/Sex (count), where Sex would be filtered out
         filtered_list_combinations <- ""
         dataset_filtered <- dataset
         for (i in 1:length(Genotype_levels)){
             GenotypeSubset <- subset(dataset, dataset$Genotype==Genotype_levels[i])
-            for (j in 1:length(Gender_levels)){
-                nr <- sum(is.finite(GenotypeSubset[GenotypeSubset$Gender==Gender_levels[j],][ , "Gender"]))
+            for (j in 1:length(Sex_levels)){
+                nr <- sum(is.finite(GenotypeSubset[GenotypeSubset$Sex==Sex_levels[j],][ , "Sex"]))
                 
                 ## There are combinations with less than two data points
                 if (nr<2) {
                     filtered_list_combinations <- paste(
                             filtered_list_combinations,
-                            paste("'", Genotype_levels[i],"'/'",Gender_levels[j],
+                            paste("'", Genotype_levels[i],"'/'",Sex_levels[j],
                                     "' (",nr,"), ",sep=""),sep="")
                     
                     if (dataset.clean){
-                        ## If you have data in one genotype for both genders 
+                        ## If you have data in one genotype for both sexes 
                         ## but not in the other then you have to revert to a 
-                        ## one gender analysis.
+                        ## one sex analysis.
                         subset_to_filter <- subset(dataset_filtered,
-                                (dataset_filtered$Gender==Gender_levels[j]))
+                                (dataset_filtered$Sex==Sex_levels[j]))
                         
                         dataset_filtered <- dataset_filtered[setdiff(
                                         rownames(dataset_filtered),rownames(subset_to_filter)),]
@@ -329,14 +339,14 @@ checkDataset <- function(dataset, testGenotype, refGenotype="+/+",
             if (dataset.clean){
                 if (outputMessages)
                 message(paste("Warning:\nSince dataset has to have at least ", 
-                              "two data points for each genotype/gender combination and ",
+                              "two data points for each genotype/sex combination and ",
                               "there are not enough records for the combination(s): ",
-                               filtered_list_combinations,", appropriate gender records ",
+                               filtered_list_combinations,", appropriate sex records ",
                               "have been filtered out from the dataset.\n",sep=""))
             }
             else
             message_dp <- paste("\nCheck failed:\nDataset should have at ", 
-                    "least two data points for each genotype/gender combination.\n",
+                    "least two data points for each genotype/sex combination.\n",
                     "At the moment there are no enough data points for the following ",
                     "combination(s): ",filtered_list_combinations,".\n",sep="")
         }
@@ -344,7 +354,7 @@ checkDataset <- function(dataset, testGenotype, refGenotype="+/+",
         dataset <- dataset_filtered
         
         ## Renew levels
-        dataset$Gender <- factor(dataset$Gender)
+        dataset$Sex <- factor(dataset$Sex)
         dataset$Genotype <- factor(dataset$Genotype)
         
         if ('Batch' %in% colnames(dataset))
@@ -352,19 +362,19 @@ checkDataset <- function(dataset, testGenotype, refGenotype="+/+",
         
         
         Genotype_levels <- levels(dataset$Genotype)
-        Gender_levels <- levels(dataset$Gender)
+        Sex_levels <- levels(dataset$Sex)
         
-        ## INFO about genotype and gender levels
+        ## INFO about genotype and sex levels
         genotype_values <- paste(Genotype_levels, collapse="', '" )
-        gender_values <- paste(Gender_levels, collapse="', '" )
+        sex_values <- paste(Sex_levels, collapse="', '" )
         if (outputMessages){
             message(paste("Information:\nDataset's 'Genotype' ", 
                     "column has following values: '",genotype_values,"'\n",sep=""))
-            message(paste("Information:\nDataset's 'Gender' ", 
-                    "column has following value(s): '",gender_values,"'\n",sep=""))
+            message(paste("Information:\nDataset's 'Sex' ", 
+                    "column has following value(s): '",sex_values,"'\n",sep=""))
         }
         
-        ## Check of genotype and gender levels after cleaning
+        ## Check of genotype and sex levels after cleaning
         if (length(Genotype_levels)!=2)  {
             pass <- FALSE
             message <- paste(message,"\nCheck failed:\nDataset's 'Genotype' ",
@@ -376,31 +386,31 @@ checkDataset <- function(dataset, testGenotype, refGenotype="+/+",
         }
         
         
-        if (!(length(Gender_levels) %in% c(1,2))) {
+        if (!(length(Sex_levels) %in% c(1,2))) {
             pass <- FALSE
-            message <- paste(message,"\nCheck failed:\nDataset's 'Gender' ",
+            message <- paste(message,"\nCheck failed:\nDataset's 'Sex' ",
                     "column has to have one or two values and currently the data has ", 
                     "more than two.\n",sep="")
             
         }
         
-        ## Check for gender levels - we want to have 'Female' and/or 'Male' only
-        wrong_gender_levels <- setdiff(Gender_levels,c("Female","Male"))
-        wrong_gender_values<-paste(wrong_gender_levels, collapse="', '" )
+        ## Check for sex levels - we want to have 'Female' and/or 'Male' only
+        wrong_sex_levels <- setdiff(Sex_levels,c("Female","Male"))
+        wrong_sex_values<-paste(wrong_sex_levels, collapse="', '" )
         
-        if (!length(wrong_gender_levels)==0){
+        if (!length(wrong_sex_levels)==0){
             pass <- FALSE
-            if (length(Gender_levels)<=2)
+            if (length(Sex_levels)<=2)
             message <- paste(message, "\nCheck failed:\nDataset's ",
-                            "'Gender' column has '",gender_values,"' values instead of ",
+                            "'Sex' column has '",sex_values,"' values instead of ",
                             "'Female' and/or 'Male' values. You can define ",
                             "'dataset.values.male' and 'dataset.values.female' ", 
                             "arguments to replace those values automatically.\n",sep="")
             else
             message <- paste(message,"\nCheck failed:\nDataset's ",
-                            "'Gender' column has '",gender_values,"' values instead of ", 
+                            "'Sex' column has '",sex_values,"' values instead of ", 
                             "'Female' and/or 'Male' values only. ",
-                            "Please delete records with gender(s) '",wrong_gender_values,
+                            "Please delete records with sex(s) '",wrong_sex_values,
                             "' from the dataset.\n",sep="")
                 }
                 

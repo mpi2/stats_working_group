@@ -20,7 +20,7 @@
 FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
 {    
     x <- phenList$dataset
-    numberofgenders <- length(levels(x$Gender))
+    numberofsexes <- length(levels(x$Sex))
     Genotype_levels <- levels(x$Genotype)         
     depVariable_levels <- levels(factor(x[,c(depVariable)])) 
     
@@ -83,7 +83,7 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
     stat_female <- NULL
     
     
-    if(numberofgenders==2){
+    if(numberofsexes==2){
         count_matrix_male <- matrix(0,length(depVariable_levels),2)
         count_matrix_female <- matrix(0,length(depVariable_levels),2)
         ES_matrix_male <- matrix(0,length(depVariable_levels),3)
@@ -92,10 +92,10 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
         for (i in 1:length(Genotype_levels)){
             GenotypeSubset <- subset(x, x$Genotype==Genotype_levels[i])
             GenotypeSubset_male <- subset(GenotypeSubset, 
-                    GenotypeSubset$Gender=="Male")
+                    GenotypeSubset$Sex=="Male")
             
             GenotypeSubset_female <- subset(GenotypeSubset, 
-                    GenotypeSubset$Gender=="Female")
+                    GenotypeSubset$Sex=="Female")
             
             for (j in 1:length(depVariable_levels)){  
                 columnOfInterest_male <- GenotypeSubset_male[,c(depVariable)]
@@ -187,7 +187,7 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
     model$stat_female <- stat_female
     
     keep_weight <- NA
-    keep_gender <- NA
+    keep_sex <- NA
     keep_interaction <- NA
     keep_batch <- NA
     keep_equalvar <- NA
@@ -197,8 +197,8 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
     result <- new("PhenTestResult",list(model.dataset=x, model.output=model,
                     depVariable=depVariable,method="FE",model.effect.batch=keep_batch,
                     model.effect.variance=keep_equalvar,model.effect.interaction=keep_interaction,
-                    model.output.interaction=interactionTest,model.effect.gender=keep_gender,
-                    model.effect.weight=keep_weight,numberGenders=numberofgenders))
+                    model.output.interaction=interactionTest,model.effect.sex=keep_sex,
+                    model.effect.weight=keep_weight,numberSexes=numberofsexes))
     return(result)
 } 
 ##------------------------------------------------------------------------------
