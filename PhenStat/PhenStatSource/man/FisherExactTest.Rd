@@ -7,11 +7,11 @@
     
     Three matrices can be created and three tests can be potentially perform depending on the dataset:
     
-    - all records together regardless the gender values - combined dataset, 
+    - all records together regardless the sex values - combined dataset, 
     
-    - records where gender value is "Male" (if such exists) - males only dataset,
+    - records where sex value is "Male" (if such exists) - males only dataset,
     
-    - records where gender value is "Female" (if such exists) - females only dataset.
+    - records where sex value is "Female" (if such exists) - females only dataset.
     
     Together with count matrices creates percentage matrices, calculates effect sizes and statistics for count matrices. Performs Fisher Exact Tests. 
     

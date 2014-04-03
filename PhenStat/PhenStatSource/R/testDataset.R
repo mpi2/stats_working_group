@@ -59,7 +59,7 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
                 "where for each effect/part of the model TRUE/FALSE value defines to ",
                 "keep it in the model or not, for instance: ", 
                 "'keepList=c(keepBatch=TRUE,keepEqualVariance=TRUE,keepWeight=FALSE, ",
-                "keepGender=TRUE,keepInteraction=TRUE)'.\n",sep="")
+                "keepSex=TRUE,keepInteraction=TRUE)'.\n",sep="")
         
     }
     
@@ -130,11 +130,11 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
                             depVariable,
                             "' for MM framework. Fisher Exact Test can be better way to do the analysis.\n",sep="") 
                 } 
-                # Data points - number of data points in the depVariable column for genotype/gender combinations
+                # Data points - number of data points in the depVariable column for genotype/sex combinations
                 else if (!checkDepV[3])
                 stop_message <- paste(stop_message,"Error:\nNot enough data points in dependent variable '",
                         depVariable,
-                        "' for genotype/gender combinations to allow the application of Mixed Model. ",
+                        "' for genotype/sex combinations to allow the application of Mixed Model. ",
                         "Threshold used: ",dataPointsThreshold,".\n",sep="")     
                 
                 #Weight checks
@@ -173,7 +173,7 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
                         if (! checkWeight[3]){
                             if (outputMessages)
                             message(paste("Warning:\nWeight column does not have enough data points ",
-                                            "for for genotype/gender combinations.\n",
+                                            "for for genotype/sex combinations.\n",
                                             "Equation 'withWeight' can't be used in such a case and has been ",
                                             "replaced to 'withoutWeight'.\n", sep="")) 
                             equation <- "withoutWeight"   
@@ -252,28 +252,28 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
 }
 ##------------------------------------------------------------------------------
 ## Returns values after null removing procedure: No of data points, No of levels, 
-## No of Genotype/Gender combinations, No of data points for each one combination
+## No of Genotype/Sex combinations, No of data points for each one combination
 columnLevels <- function(dataset, columnName){
     
     columnOfInterest <- na.omit(dataset[,c(columnName)])
     # Test if there are data points in a column other than NA
     values<- c(length(columnOfInterest))
     
-    #Test for the data points quantity for Genotype/gender combinations
+    #Test for the data points quantity for Genotype/sex combinations
     Genotype_levels <- levels(factor(dataset$Genotype))
-    Gender_levels <- levels(factor(dataset$Gender))
+    Sex_levels <- levels(factor(dataset$Sex))
     
     values<-append(values,length(levels(factor(columnOfInterest))))
     
-    values<-append(values,length(Genotype_levels)*length(Gender_levels))
+    values<-append(values,length(Genotype_levels)*length(Sex_levels))
     
     for (i in 1:length(Genotype_levels)){
         GenotypeSubset <- subset(dataset, dataset$Genotype==Genotype_levels[i])
-        for (j in 1:length(Gender_levels)){           
-            GenotypeGenderSubset <- subset(GenotypeSubset, 
-                    GenotypeSubset$Gender==Gender_levels[j]) 
+        for (j in 1:length(Sex_levels)){           
+            GenotypeSexSubset <- subset(GenotypeSubset, 
+                    GenotypeSubset$Sex==Sex_levels[j]) 
             
-            columnOfInterestSubset <- na.omit(GenotypeGenderSubset[,c(columnName)])
+            columnOfInterestSubset <- na.omit(GenotypeSexSubset[,c(columnName)])
 
             values<-append(values,length(columnOfInterestSubset))
             
@@ -283,7 +283,7 @@ columnLevels <- function(dataset, columnName){
 }
 ##------------------------------------------------------------------------------
 ## Checks the column for eligibility, returns values: 
-## presence of column, all data are numeric, No of levels passed checks (number of data points for each genotype/gender
+## presence of column, all data are numeric, No of levels passed checks (number of data points for each genotype/sex
 ## combination is at least equals to threshold)
 columnChecks <- function(dataset, columnName, dataPointsThreshold=4){
     presence <- TRUE

@@ -32,7 +32,7 @@ The PhenList object can be created by using function \code{\link{PhenList}}.}
        
         - \code{phenList$dataset.colname.genotype} column name for genotype values
     
-        - \code{phenList$dataset.colname.gender} column name for gender values
+        - \code{phenList$dataset.colname.sex} column name for sex values
     
         - \code{phenList$dataset.colname.weight} column name for weight values
         

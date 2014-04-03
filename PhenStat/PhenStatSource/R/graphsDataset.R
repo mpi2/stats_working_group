@@ -13,11 +13,11 @@
 ## limitations under the License.
 ##------------------------------------------------------------------------------
 ## graphsDataset.R contains functions for dataset diagnostic plots:
-## boxplotGenderGenotype, boxplotGenderGenotypeBatch, 
+## boxplotSexGenotype, boxplotSexGenotypeBatch, 
 ## scatterplotGenotypeWeigh
 ##------------------------------------------------------------------------------
-## Raw data boxplot: split by gender and genotype
-boxplotGenderGenotype<-function(phenList, depVariable=NULL, 
+## Raw data boxplot: split by sex and genotype
+boxplotSexGenotype<-function(phenList, depVariable=NULL, 
         graphingName=NULL, outputMessages=TRUE){
     stop_message <- ""
     ## Checks
@@ -59,10 +59,10 @@ boxplotGenderGenotype<-function(phenList, depVariable=NULL,
     } 
     else {
         ## Plot creation
-        numberofgenders <- length(levels(x$Gender))
-        if(numberofgenders==2){
-            Male <- subset(x, x$Gender=="Male")
-            Female <- subset(x, x$Gender=="Female")
+        numberofsexes <- length(levels(x$Sex))
+        if(numberofsexes==2){
+            Male <- subset(x, x$Sex=="Male")
+            Female <- subset(x, x$Sex=="Female")
             op <- par(mfrow=c(1,2))
             boxplot(Male[ , depVariable]~Male$Genotype, 
                     ylab=graphingName, xlab="Genotype")
@@ -81,8 +81,8 @@ boxplotGenderGenotype<-function(phenList, depVariable=NULL,
     }
 }    
 ##------------------------------------------------------------------------------
-## Raw data boxplot: split by gender,genotype and batch 
-boxplotGenderGenotypeBatch<-function(phenList, depVariable=NULL, 
+## Raw data boxplot: split by sex,genotype and batch 
+boxplotSexGenotypeBatch<-function(phenList, depVariable=NULL, 
         graphingName=NULL, outputMessages=TRUE){
     stop_message <- ""
     ## Checks
@@ -133,16 +133,16 @@ boxplotGenderGenotypeBatch<-function(phenList, depVariable=NULL,
     } 
     else {
         ## Plot creation
-        numberofgenders <- length(levels(x$Gender))
+        numberofsexes <- length(levels(x$Sex))
         if (is.numeric(x[ ,depVariable]))   
         y_range <- c(min(x[ ,depVariable], na.rm=TRUE), 
                 max((x[ ,depVariable]), na.rm=TRUE))
         else
         y_range <- c(1, length(levels(x[ ,depVariable])))
         
-        if(numberofgenders==2){
-            Male <- subset(x, x$Gender=="Male")
-            Female <- subset(x, x$Gender=="Female")
+        if(numberofsexes==2){
+            Male <- subset(x, x$Sex=="Male")
+            Female <- subset(x, x$Sex=="Female")
             Male$Batch <- factor(Male$Batch)
             Female$Batch <- factor(Female$Batch)
             
@@ -234,7 +234,7 @@ scatterplotGenotypeWeight<-function(phenList, depVariable=NULL,
             if (! checkWeight[3])
                 stop_message <- paste(stop_message,
                 "Error:\nWeight column does not have enough ",
-                "data points for for genotype/gender combinations.\n",sep="")
+                "data points for for genotype/sex combinations.\n",sep="")
             
         }
     }       

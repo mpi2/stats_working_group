@@ -5,7 +5,7 @@
     Function to create data object from the data frame. 
     
     In addition to dependent variable column (the variable of interest) mandatory columns that should present 
-    in the data frame are "Genotype" and "Gender". 
+    in the data frame are "Genotype" and "Sex". 
     The "Assay.Date" column is used to model "Batch" effect if not specified differently. 
     "Weight" column is used to model body weight effect.
     
@@ -14,7 +14,7 @@
     
     Returns an instance of the \code{\linkS4class{PhenList}} object created from the data file. 
     
-    Dataset is cleaned to ensure there is a maximum two gender levels and there are exactly two levels for genotype.
+    Dataset is cleaned to ensure there is a maximum two sex levels and there are exactly two levels for genotype.
     Data cleaning can be switched off by defining the argument "dataset.clean" as FALSE.
 
 }
@@ -22,7 +22,7 @@
     PhenList(dataset, testGenotype, refGenotype="+/+", hemiGenotype=NULL, 
             outputMessages=TRUE, dataset.clean=TRUE, 
             dataset.colname.batch=NULL, dataset.colname.genotype=NULL, 
-            dataset.colname.gender=NULL, dataset.colname.weight=NULL, 
+            dataset.colname.sex=NULL, dataset.colname.weight=NULL, 
             dataset.values.missingValue=NULL, dataset.values.male=NULL, 
             dataset.values.female=NULL)
     
@@ -36,7 +36,7 @@
     \item{dataset.clean}{flag: "FALSE" value for no modification of the dataset; "TRUE" value to clean dataset if needed; assigned default value is TRUE}
     \item{dataset.colname.batch}{column name within dataset for the batch effect}
     \item{dataset.colname.genotype}{column name within dataset for the genotype info}
-    \item{dataset.colname.gender}{column name within dataset for the gender info}
+    \item{dataset.colname.sex}{column name within dataset for the sex info}
     \item{dataset.colname.weight}{column name within dataset for the weight info}
     \item{dataset.values.missingValue}{value used as missing value in the dataset}
     \item{dataset.values.male}{value used to label "males" in the dataset}

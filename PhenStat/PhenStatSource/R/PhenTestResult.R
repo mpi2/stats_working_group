@@ -21,11 +21,11 @@ PhenTestResult <- function(model.output=NULL,
         method="MM", 
         model.effect.batch=NULL, 
         model.effect.variance=NULL, 
-        model.effect.gender=NULL, 
+        model.effect.sex=NULL, 
         model.effect.interaction=NULL, 
         model.output.interaction=NULL, 
         model.effect.weight=NULL, 
-        numberGenders=NULL,
+        numberSexes=NULL,
         pThreshold=0.05, 
         model.formula.null=NULL, 
         model.formula.genotype=NULL, 
@@ -43,7 +43,7 @@ PhenTestResult <- function(model.output=NULL,
     x$method <- method
     x$model.effect.batch <- model.effect.batch
     x$model.effect.variance <- model.effect.variance
-    x$model.effect.gender <- model.effect.gender
+    x$model.effect.sex <- model.effect.sex
     x$model.effect.interaction <- model.effect.interaction
     x$model.effect.weight <- model.effect.weight
     x$model.output.genotype.nulltest.pVal <- model.output.genotype.nulltest.pVal

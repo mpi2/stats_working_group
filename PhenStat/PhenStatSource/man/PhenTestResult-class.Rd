@@ -28,7 +28,7 @@
     
     \code{phenTestResult$pThreshold}
     
-    6. "numberGenders" contains the number of sexes in the dataset: \code{phenTestResult$numberGenders}
+    6. "numberSexes" contains the number of sexes in the dataset: \code{phenTestResult$numberSexes}
     
     
     Modelling/testing results are stored in the sections "model.output", "model.formula" and "model.effect". The last two are specific for Mixed Model framework.
@@ -44,9 +44,9 @@
     
     3. Weight effect significance: \code{phenTestResult$model.effect.weight} 
     
-    4. Gender effect significance: \code{phenTestResult$model.effect.interaction}     
+    4. Sex effect significance: \code{phenTestResult$model.effect.interaction}     
     
-    5. Evidence of gender effect (p-value): \code{phenTestResult$model.output.interaction}
+    5. Evidence of sex effect (p-value): \code{phenTestResult$model.output.interaction}
     
     6. Evidence of genotype effect (p-value): 
     \code{phenTestResult$model.output.genotype.nulltest.pVal}
@@ -137,16 +137,16 @@
     result$depVariable
     result$method
     result$equation
-    result$numberGenders   
+    result$numberSexes   
     # Batch effect is significant
     result$model.effect.batch    
     # Variance homogeneosity 
     result$model.effect.variance
     # Weight effect is significant
     result$model.effect.weight     
-    # Gender effect is significant 
+    # Sex effect is significant 
     result$model.effect.interaction    
-    # Gender effect p-value - the result of the test 
+    # Sex effect p-value - the result of the test 
     result$model.output.interaction
     # Genotype effect p-value    
     result$model.output.genotype.nulltest.pVal
@@ -168,7 +168,7 @@
             method="FE") 
     result$depVariable
     result$method
-    result$numberGenders   
+    result$numberSexes   
     # Count matrix for all data
     result$model.output$count_matrix_all 
     # Count matrix for males only records

@@ -226,8 +226,8 @@ qqplotRotatedResiduals<-function(phenTestResult,outputMessages=TRUE){
     } 
     else {
         # Plot creation
-        x[, c("Genotype", "Gender", "Batch")] = lapply(x[, 
-                        c("Genotype", "Gender", "Batch")], factor)
+        x[, c("Genotype", "Sex", "Batch")] = lapply(x[, 
+                        c("Genotype", "Sex", "Batch")], factor)
         
         if (keep_batch){
             # Extract variance estimates
@@ -291,10 +291,10 @@ categoricalBarplot<-function(phenTestResult,outputMessages=TRUE){
     } 
     else {
         # Produces graphs 
-        numberofgenders <- phenTestResult$numberGenders
+        numberofsexes <- phenTestResult$numberSexes
         # Colors for the plot and legends
         plot_col <- c(1:dim(phenTestResult$model.output$count_matrix_all)[1])
-        if(numberofgenders==2){
+        if(numberofsexes==2){
             
             op <- par(mfrow=c(1,4)) 
             barplot(phenTestResult$model.output$percentage_matrix_all[ ,1:2], 

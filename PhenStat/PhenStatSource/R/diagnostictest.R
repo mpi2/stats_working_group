@@ -24,13 +24,13 @@ testFinalModel<-function(phenTestResult)
     depVariable <- result$depVariable
     equation <- result$equation
     keep_weight <- result$model.effect.weight
-    keep_gender <- result$model.effect.gender
+    keep_sex <- result$model.effect.sex
     keep_interaction <- result$model.effect.interaction
     keep_batch <- result$model.effect.batch
     keep_equalvar <- result$model.effect.variance
     
     a <- levels(x$Genotype)
-    numberofgenders <- result$numberGenders
+    numberofsexes <- result$numberSexes
     
     if(!keep_weight && equation=="withWeight"){
         testresults <- c(a[1], NA, a[2], NA, NA, NA)
@@ -39,7 +39,7 @@ testFinalModel<-function(phenTestResult)
         res <- resid(result$model.output)
         data_all <- data.frame(x, res)
         genotype_no <- length(a)
-        data_all[, c("Gender", "Batch")] <- lapply(data_all[, c("Gender", 
+        data_all[, c("Sex", "Batch")] <- lapply(data_all[, c("Sex", 
                                 "Batch")], factor)
         No_batches <- nlevels(data_all$Batch)
         outputnumeric <- is.numeric(result$model.output$apVar)

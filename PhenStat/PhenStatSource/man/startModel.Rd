@@ -13,9 +13,9 @@
     
     -variance effect (TRUE if residual variances for genotype groups are homogeneous and FALSE if they are heterogeneous), 
     
-    -interaction effect (TRUE if genotype by gender interaction is significant), 
+    -interaction effect (TRUE if genotype by sex interaction is significant), 
     
-    -gender effect (TRUE if gender is significant), 
+    -sex effect (TRUE if sex is significant), 
     
     -weight effect (TRUE if weight is significant).
     
@@ -41,7 +41,7 @@
     \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages; default value TRUE}        
     \item{pThreshold}{a numerical value for the p-value threshold to use in tests, default value 0.05}    
     \item{keepList}{a logical vector defining the significance of different model effects: keep_batch, keep_equalvar,
-        keep_weight, keep_gender, keep_interaction; default value NULL}
+        keep_weight, keep_sex, keep_interaction; default value NULL}
 }
 \value{
     Returns results stored in instance of the \code{\linkS4class{PhenTestResult}} class
