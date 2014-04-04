@@ -21,8 +21,11 @@
     
     If you are working interactively with the data,  the argument "userMode" set to the value "summaryOutput" will use the "phenotypeThreshold" argument's value 
     to assess statistical significance of the genotype effect and if significant then assign 
-    a sexual dimorphic classification.  Alternatively, in the "userMode" set to the value "vectorMode", 
-    a sexual dimorphic classification will be returned where later you can globally assess whether the variable had a significant genotype effect. 
+    a sexual dimorphic classification.  Alternatively, if the "userMode" set to the value "vectorMode", 
+    a sexual dimorphic classification will be returned with the MM framework where later you can globally 
+    assess whether the variable had a significant genotype effect.  
+    With the FE framework and the vectorMode, a NA is returned as the type of the effect cannot be 
+    assessed without assessing the statistical significance of the genotype effect.
 }
 
 \references{
