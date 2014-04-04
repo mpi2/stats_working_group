@@ -23,6 +23,7 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
         dataset.values.missingValue=NULL, dataset.values.male=NULL,
         dataset.values.female=NULL)
 {
+   if (class(dataset) == "data.frame") {
     dataset <- dataset[,order(names(dataset))]
     
     ## Rename columns if needed
@@ -228,6 +229,20 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
     x$dataset.values.female <- dataset.values.female
     x$dataset.clean <- dataset.clean
     x
+        
+  }
+  else {
+        message <- "Error: PhenList function's first argument should be data frame.\n"
+        if (outputMessages){            
+            message(message)
+            opt <- options(show.error.messages=FALSE)
+            on.exit(options(opt))
+            stop()
+        }
+        else {
+            stop(message)
+        }
+  }
 }
 #-------------------------------------------------------------------------------
 ## Check dataset for the minimum required info and additional cleaning steps

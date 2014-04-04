@@ -26,25 +26,27 @@ boxplotSexGenotype<-function(phenList, depVariable=NULL,
     } else {
         stop_message <- "Error:\nPlease define PhenList object first.\n"
     }
-    if (is.null(depVariable)) 
+    if (is.null(depVariable)) {
         stop_message <- paste(stop_message,
         "Error:\nPlease define dependent variable 'depVariable'.\n",sep="")
-    
+    }
+    else {
+        if (!(depVariable %in% colnames(x))) {
+            stop_message <- paste(stop_message,"Error:\n",
+                paste(depVariable,"column is missed in the dataset.\n"),sep="")
+        }
+        else {
+            columnOfInterest <- x[,c(depVariable)]
+            ## Test: depVariable is numeric 
+            if(!is.numeric(columnOfInterest))
+            stop_message <- paste(stop_message,"Error:\n",
+                    depVariable,"variable is not numeric. ", 
+                    "Can't create a plot based on it.\n",sep="")
+        }     
+    }
     if (is.null(graphingName))
         graphingName <- depVariable
-    
-    if (!(depVariable %in% colnames(x)))
-        stop_message <- paste(stop_message,"Error:\n",
-            paste(depVariable,"column is missed in the dataset.\n"),sep="")
-    else {
-        columnOfInterest <- x[,c(depVariable)]
-        
-        ## Test: depVariable is numeric 
-        if(!is.numeric(columnOfInterest))
-            stop_message <- paste(stop_message,"Error:\n",
-                depVariable,"variable is not numeric. ", 
-                        "Can't create a plot based on it.\n",sep="")
-    }       
+          
     
     if (nchar(stop_message)>0){
         if (outputMessages){
