@@ -15,20 +15,20 @@
 \contentsline {subsubsection}{\numberline {3.2.4}Diagnostics}{28}{subsubsection.3.2.4}
 \contentsline {subsubsection}{\numberline {3.2.5}Classification Tag}{29}{subsubsection.3.2.5}
 \contentsline {subsubsection}{\numberline {3.2.6}Model Failures and Jitter}{31}{subsubsection.3.2.6}
-\contentsline {subsection}{\numberline {3.3}Fisher Exact Test Framework}{34}{subsection.3.3}
-\contentsline {subsubsection}{\numberline {3.3.1}Classification Tag}{38}{subsubsection.3.3.1}
-\contentsline {section}{\numberline {4}Output of Results}{38}{section.4}
-\contentsline {subsection}{\numberline {4.1}Summary Output}{39}{subsection.4.1}
-\contentsline {subsection}{\numberline {4.2}Vector Format}{41}{subsection.4.2}
+\contentsline {subsection}{\numberline {3.3}Fisher Exact Test Framework}{33}{subsection.3.3}
+\contentsline {subsubsection}{\numberline {3.3.1}Classification Tag}{37}{subsubsection.3.3.1}
+\contentsline {section}{\numberline {4}Output of Results}{37}{section.4}
+\contentsline {subsection}{\numberline {4.1}Summary Output}{38}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}Vector Format}{40}{subsection.4.2}
 \contentsline {subsection}{\numberline {4.3}Count Matrices in Vector Format}{45}{subsection.4.3}
 \contentsline {section}{\numberline {5}Graphics}{47}{section.5}
 \contentsline {subsection}{\numberline {5.1}Graphics for Categorical Data}{47}{subsection.5.1}
 \contentsline {subsection}{\numberline {5.2}Graphics for Continuous Data}{48}{subsection.5.2}
 \contentsline {section}{\numberline {6}Case Studies}{53}{section.6}
 \contentsline {subsection}{\numberline {6.1}PhenStat Usage Example Continuous Data}{53}{subsection.6.1}
-\contentsline {subsubsection}{\numberline {6.1.1}Loading the data and initial steps of analysis}{55}{subsubsection.6.1.1}
+\contentsline {subsubsection}{\numberline {6.1.1}Loading the data and initial steps of analysis}{54}{subsubsection.6.1.1}
 \contentsline {subsubsection}{\numberline {6.1.2}Exploring and understanding the output}{55}{subsubsection.6.1.2}
-\contentsline {subsubsection}{\numberline {6.1.3}Assessment of raw data and distribution characteristics}{57}{subsubsection.6.1.3}
+\contentsline {subsubsection}{\numberline {6.1.3}Assessment of raw data and distribution characteristics}{56}{subsubsection.6.1.3}
 \contentsline {subsubsection}{\numberline {6.1.4}Assessment of model fit}{58}{subsubsection.6.1.4}
 \contentsline {subsubsection}{\numberline {6.1.5}Including weight as a covariate in the model fitting process}{63}{subsubsection.6.1.5}
 \contentsline {subsubsection}{\numberline {6.1.6}Additional model diagnostics when weight is included}{65}{subsubsection.6.1.6}

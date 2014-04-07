@@ -425,7 +425,7 @@ checkDataset <- function(dataset, testGenotype, refGenotype="+/+",
             message <- paste(message,"\nCheck failed:\nDataset's ",
                             "'Sex' column has '",sex_values,"' values instead of ", 
                             "'Female' and/or 'Male' values only. ",
-                            "Please delete records with sex(s) '",wrong_sex_values,
+                            "Please delete records with sex(es) '",wrong_sex_values,
                             "' from the dataset.\n",sep="")
                 }
                 
