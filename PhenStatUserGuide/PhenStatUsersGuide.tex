@@ -822,14 +822,29 @@ The Mammalian Phenotype Ontology is under development as a community effort to p
 \begin{figure}[!tpb]%figure05_x
 \centerline{\includegraphics[scale=0.6]{Jitter_figureX.png}}
 \caption{Mean Corpus volume distribution for a dataset comparing a wildtype group (coded as 1) and a knockout group (coded as 3) of male mice.
-When PhenStat processes this data,  models are not estimated as the software fails to converge on a solution and estimate the parameters,  thus the software returns the error “Error: Can’t fit the model Param $\sim$ Genotype.  Try to add jitter or RR plus method”.}\label{fig:05_x}
+When PhenStat processes this data,  models are not estimated as the software fails to converge on a solution and estimate the parameters,  thus the software returns the error “Error: Can’t fit the model ... Try to add jitter or RR plus method."}\label{fig:05_x}
 \end{figure}
 
-\begin{figure}[!tpb]%figure05_y
-\centerline{\includegraphics[scale=0.5]{Jitter_figureY.png}}
-\caption{Output of MM methodology for dataset shown in Figure \ref{fig:05_x}}\label{fig:05_y}
-\end{figure}
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> data <- read.csv("PhenStat/inst/extdata/test_jitter.csv")
+> test <- PhenList(data, testGenotype="3", refGenotype="1", 
+dataset.values.missingValue="null")
+> result <- testDataset(test, depVariable="MCV", equation="withoutWeight")
+Information:
+Dependent variable: 'MCV'.
 
+Information:
+Perform all MM framework stages: startModel and finalModel.
+
+Information:
+Method: Mixed Model framework.
+
+Error:
+Can't fit the model MCV ~ Genotype. Try to add jitter or RR plus method.
+\end{verbatim}
+\endgroup
 
 In this section we would like to discuss failure of model fitting and the potential use of jitter.
 At times,  the model fitting process with the MM methodology would struggle to fit a model.  In these instances,  the PhenStat method would return  an error message stating that the software can’t fit the the model  and sugest that you could try jitter or an alternate method such as reference range approach. For example,  this was seen with a Mean Corpuscular Volume dataset which had data only for male mice and the knockout mice had little variation as the majority of readings were 43 fl (shown in Figure \ref{fig:05_x}).
@@ -839,19 +854,33 @@ Code to add jitter and process the new variable:
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
-example$ParamWITHjitter <- jitter(example$Param, 
-factor =((max(example$Param) - min(example$Param)) / 1000))  
-test <- PhenList(example, testGenotype="3", refGenotype="1")
-result <- testDataset(test,depVariable="ParamWITHjitter",equation="withoutWeight")   
-result <- testDataset(test,depVariable="ParamWITHjitter", equation="withWeight")  
+> data$MCVWITHjitter <- jitter(data$MCV, 
+factor =((max(data$MCV) - min(data$MCV)) / 1000))
+> test <- PhenList(data, testGenotype="3", refGenotype="1", 
+dataset.values.missingValue="null")
+
+> result <- testDataset(test,depVariable="MCVWITHjitter",equation="withWeight")
+
+Information:
+Dependent variable: 'MCVWITHjitter'.
+...
+> summaryOutput(result)
+Test for dependent variable: MCVWITHjitter
+Method: Mixed Model framework
+
+Was batch significant? TRUE
+Was variance equal? FALSE
+Was there evidence of sexual dimorphism? no (p-value NA)
+Final fitted model: MCVWITHjitter ~ Genotype
+Model output:
+Genotype effect: 0.00789132
+Classification tag: With phenotype threshold value 0.01 - a significant change for the one genotype tested
+                Value Std.Error  DF   t-value       p-value
+(Intercept) 46.293557 0.4869005 238 95.078065 2.542604e-191
+Genotype3    1.307933 0.4792576 238  2.729081  6.825327e-03
 \end{verbatim}
 \endgroup
 
-
-\begin{figure}[!tpb]%figure05_z
-\centerline{\includegraphics[scale=0.6]{Jitter_figureZ.png}}
-\caption{SummaryOutput for a MM analysis of the data shown in Figure \ref{fig:05_x} after jitter was added.}\label{fig:05_z}
-\end{figure}
  
 \subsection{Fisher Exact Test Framework}
 \label{section:FET}
