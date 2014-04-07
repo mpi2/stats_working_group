@@ -70,6 +70,8 @@ In Table \ref{table:01} the example dataset is presented with numerical variable
 
 In addition to dependent variable column (the variable of interest) mandatory columns are "Genotype" and "Sex". The "Assay.Date" column is used to model "Batch" effect if not specified differently. "Weight" column is used to model body weight effect.
 
+The information provided in the "Assay.Date" column is treated as a categorical variable with different strings as different levels.  As such there is no requirement to provide the date in any particular format.
+
 \begin{sidewaystable}
  \begin{tabular}{| p{13mm} | p{13mm} | l | l | l | p{19mm}| p{12mm} | l | p{13mm} | p{12mm} | p{12mm} | l |}
   \hline
@@ -812,6 +814,43 @@ The Mammalian Phenotype Ontology is under development as a community effort to p
 \begin{figure}[!tpb]%figure04
 \centerline{\includegraphics[scale=0.6]{classificationTagMM_MP.png}}
 \caption{Assigning a Mammalian Phenotype (MP) ontology term in the presence of sexual dimorphism. }\label{fig:05_2}
+\end{figure}
+
+
+\subsubsection{Model Failures and Jitter}
+
+\begin{figure}[!tpb]%figure05_x
+\centerline{\includegraphics[scale=0.6]{Jitter_figureX.png}}
+\caption{Mean Corpus volume distribution for a dataset comparing a wildtype group (coded as 1) and a knockout group (coded as 3) of male mice.
+When PhenStat processes this data,  models are not estimated as the software fails to converge on a solution and estimate the parameters,  thus the software returns the error “Error: Can’t fit the model Param $\sim$ Genotype.  Try to add jitter or RR plus method”.}\label{fig:05_x}
+\end{figure}
+
+\begin{figure}[!tpb]%figure05_y
+\centerline{\includegraphics[scale=0.5]{Jitter_figureY.png}}
+\caption{Output of MM methodology for dataset shown in Figure \ref{fig:05_x}}\label{fig:05_y}
+\end{figure}
+
+
+In this section we would like to discuss failure of model fitting and the potential use of jitter.
+At times,  the model fitting process with the MM methodology would struggle to fit a model.  In these instances,  the PhenStat method would return  an error message stating that the software can’t fit the the model  and sugest that you could try jitter or an alternate method such as reference range approach. For example,  this was seen with a Mean Corpuscular Volume dataset which had data only for male mice and the knockout mice had little variation as the majority of readings were 43 fl (shown in Figure \ref{fig:05_x}).
+
+Jitter is a function that adds a small amount of noise to a variable.  The noise is added randomly at 1000th of the signal difference for that variable.  In the example shown, the additional of noise allows the model to converge and estimate the values (Figure \ref{fig:05_z}).  
+Code to add jitter and process the new variable:
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+example$ParamWITHjitter <- jitter(example$Param, 
+factor =((max(example$Param) - min(example$Param)) / 1000))  
+test <- PhenList(example, testGenotype="3", refGenotype="1")
+result <- testDataset(test,depVariable="ParamWITHjitter",equation="withoutWeight")   
+result <- testDataset(test,depVariable="ParamWITHjitter", equation="withWeight")  
+\end{verbatim}
+\endgroup
+
+
+\begin{figure}[!tpb]%figure05_z
+\centerline{\includegraphics[scale=0.6]{Jitter_figureZ.png}}
+\caption{SummaryOutput for a MM analysis of the data shown in Figure \ref{fig:05_x} after jitter was added.}\label{fig:05_z}
 \end{figure}
  
 \subsection{Fisher Exact Test Framework}
