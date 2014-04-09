@@ -80,7 +80,7 @@ test <- PhenList(dataset=read.csv(dataset1),
 @
 
 
-We define "terminology unification" as the terminology used to describe data (variables) that are essential for the analysis. The PhenStat package uses the following nomenclature for the names of columns: "Sex", "Genotype", "Batch" or "Assay.Date" and "Weight". In addition, expected gender values are "Male" and "Female" and missing value is \textit{NA}. 
+We define "terminology unification" as the terminology used to describe data (variables) that are essential for the analysis. The PhenStat package uses the following nomenclature for the names of columns: "Sex", "Genotype", "Batch" or "Assay.Date" and "Weight". In addition, expected sex values are "Male" and "Female" and missing value is \textit{NA}. 
 
 In the example below dataset's values for females and males are 1 and 2 accordingly. Those values are changed to "Female" and "Male".  
 
@@ -191,7 +191,7 @@ result$model.effect.variance
 
 result$model.effect.weight
 
-result$model.effect.gender
+result$model.effect.sex
 
 result$model.effect.interaction
 
@@ -363,8 +363,8 @@ categoricalBarplot(result_cat)
 There are many graphic functions for the MM framework results. They can be divided into two types: dataset based graphs and results based graphs.
 There are three functions in the dataset based graphs category:
 \begin{itemize}
-\item \textit{boxplotSexGenotype} creates a box plot split by gender and genotype.
-\item \textit{boxplotSexGenotypeBatch} creates a box plot split by gender, genotype and batch if batch data present in the dataset. Please note the batches are not ordered with time but allow assessment of how the treatment groups lie relative to the normal control variation.
+\item \textit{boxplotSexGenotype} creates a box plot split by sex and genotype.
+\item \textit{boxplotSexGenotypeBatch} creates a box plot split by sex, genotype and batch if batch data present in the dataset. Please note the batches are not ordered with time but allow assessment of how the treatment groups lie relative to the normal control variation.
 \item \textit{scatterplotGenotypeWeight} creates a scatter plot body weight versus dependent variable. Both a regression line and a loess line (locally weighted line) is fitted for each genotype.
 \end{itemize}
 
