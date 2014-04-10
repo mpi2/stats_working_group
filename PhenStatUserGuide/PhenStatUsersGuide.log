@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.11 (TeX Live 2010) (format=pdflatex 2010.10.15)  7 APR 2014 14:29
+This is pdfTeX, Version 3.1415926-1.40.11 (TeX Live 2010) (format=pdflatex 2010.10.15)  10 APR 2014 15:53
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -551,7 +551,8 @@ Package: array 1998/05/13 v2.3m Tabular extension package (FMi)
 \NC@list=\toks26
 \extratabsurround=\skip51
 \backup@length=\skip52
-) (./PhenStatUsersGuide.aux)
+)
+No file PhenStatUsersGuide.aux.
 \openout1 = `PhenStatUsersGuide.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 22.
@@ -568,7 +569,6 @@ LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 22.
 LaTeX Font Info:    ... okay on input line 22.
 LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 22.
 LaTeX Font Info:    ... okay on input line 22.
-
 isodate: babel.sty has been loaded
 (/usr/local/texlive/2010/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -614,8 +614,6 @@ Package: gettitlestring 2009/12/18 v1.3 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 22.
 LaTeX Info: Redefining \pageref on input line 22.
 LaTeX Info: Redefining \nameref on input line 22.
-
-(./PhenStatUsersGuide.out) (./PhenStatUsersGuide.out)
 \@outlinefile=\write3
 \openout3 = `PhenStatUsersGuide.out'.
 
@@ -631,28 +629,44 @@ File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 ) [1
 
 {/usr/local/texlive/2010/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-(./PhenStatUsersGuide.toc [2])
 \tf@toc=\write4
 \openout4 = `PhenStatUsersGuide.toc'.
 
- [3]
+ [2]
 Underfull \hbox (badness 10000) in paragraph at lines 38--40
 
  []
 
-<PhenStat.png, id=221, 851.18pt x 694.595pt>
+<PhenStat.png, id=19, 851.18pt x 694.595pt>
 File: PhenStat.png Graphic file (type png)
- <use PhenStat.png> [4] [5pdfTeX warning (ext4): destination with the same iden
-tifier (name{figure.1}) has been already used, duplicate ignored
+ <use PhenStat.png>
+
+LaTeX Warning: Reference `fig:01' on page 3 undefined on input line 46.
+
+
+LaTeX Warning: Reference `fig:01' on page 3 undefined on input line 50.
+
+[3] [4pdfTeX warning (ext4): destination with the same identifier (name{figure.
+1}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
 l.51 \item R
             esults Output: depending on user needs there are two functions f...
  <./PhenStat.png>]
+
+LaTeX Warning: Reference `fig:01' on page 5 undefined on input line 52.
+
+
 Overfull \hbox (6.22388pt too wide) in paragraph at lines 57--57
 []\OT1/cmr/bx/n/17.28 Data Pro-cess-ing with Phen-List Func-tion 
  []
+
+
+LaTeX Warning: Reference `table:01' on page 5 undefined on input line 69.
+
+
+LaTeX Warning: Reference `table:02' on page 5 undefined on input line 69.
 
 
 Overfull \hbox (1.19853pt too wide) in paragraph at lines 78--78
@@ -936,13 +950,18 @@ File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 158.
- [6] [7pdfTeX warning (ext4): destination with the same identifier (name{table.
-1}) has been already used, duplicate ignored
+
+
+LaTeX Warning: Reference `TerminilogyUnification' on page 5 undefined on input 
+line 158.
+
+[5] [6pdfTeX warning (ext4): destination with the same identifier (name{table.1
+}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
 l.161 \end{itemize}
-                   ] [8pdfTeX warning (ext4): destination with the same identif
+                   ] [7pdfTeX warning (ext4): destination with the same identif
 ier (name{table.2}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
@@ -954,7 +973,7 @@ Overfull \hbox (60.50647pt too wide) in paragraph at lines 193--193
  will be used for the batch effect modelling.[] 
  []
 
-[9]
+[8]
 Overfull \hbox (7.87012pt too wide) in paragraph at lines 206--207
 []\OT1/cmr/m/it/12 dataset.colname.sex \OT1/cmr/m/n/12 al-lows the user to de-f
 ine col-umn name within dataset
@@ -966,13 +985,24 @@ Overfull \hbox (60.50647pt too wide) in paragraph at lines 233--233
  will be used for the batch effect modelling.[] 
  []
 
-[10]
+[9]
+
+LaTeX Warning: Reference `table:03' on page 10 undefined on input line 242.
+
+
+LaTeX Warning: Reference `table:03' on page 10 undefined on input line 256.
+
+
 Overfull \hbox (60.50647pt too wide) in paragraph at lines 279--279
 []\OT1/cmtt/m/n/8 Dataset's column 'Assay.Date' has been renamed to 'Batch' and
  will be used for the batch effect modelling.[] 
  []
 
-[11pdfTeX warning (ext4): destination with the same identifier (name{table.3}) 
+
+LaTeX Warning: Reference `section:DatasetChecks' on page 10 undefined on input 
+line 283.
+
+[10pdfTeX warning (ext4): destination with the same identifier (name{table.3}) 
 has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
@@ -990,8 +1020,13 @@ Overfull \hbox (81.75677pt too wide) in paragraph at lines 330--330
 ' arguments to relabel hemizygotes to homozygotes.[] 
  []
 
-[12] [13pdfTeX warning (ext4): destination with the same identifier (name{table
-.4}) has been already used, duplicate ignored
+[11]
+
+LaTeX Warning: Reference `section:Filtering' on page 12 undefined on input line
+ 381.
+
+[12pdfTeX warning (ext4): destination with the same identifier (name{table.4}) 
+has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
@@ -1002,7 +1037,18 @@ Overfull \hbox (9.50574pt too wide) in paragraph at lines 420--420
 ently the data has more than two.[] 
  []
 
-[14]
+
+LaTeX Warning: Reference `section:Filtering' on page 13 undefined on input line
+ 423.
+
+[13]
+
+LaTeX Warning: Reference `table:05' on page 14 undefined on input line 428.
+
+
+LaTeX Warning: Reference `table:05' on page 14 undefined on input line 443.
+
+
 Overfull \hbox (78.27979pt too wide) in paragraph at lines 448--477
  [] 
  []
@@ -1016,139 +1062,232 @@ Overfull \hbox (20.50021pt too wide) in paragraph at lines 480--481
 col-umn names, etc. 
  []
 
-[15] [16pdfTeX warning (ext4): destination with the same identifier (name{table
-.5}) has been already used, duplicate ignored
+[14]
+
+LaTeX Warning: Reference `fig:01' on page 15 undefined on input line 511.
+
+[15pdfTeX warning (ext4): destination with the same identifier (name{table.5}) 
+has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
 l.513 \subsection
                  {Manager for Analysis Methods -- \textit{testDataset} funct...
-] [17]
-Overfull \hbox (12.7879pt too wide) in paragraph at lines 537--538
+] [16]
+Overfull \hbox (12.7879pt too wide) in paragraph at lines 538--539
 \OT1/cmr/m/n/12 of the frame-work one af-ter an-other when set to TRUE (de-faul
 t be-haviour). 
  []
 
-[18] <Motivation1.jpg, id=329, 453.19313pt x 146.04562pt>
+
+LaTeX Warning: Reference `sec:MMImplementation' on page 17 undefined on input l
+ine 541.
+
+
+Package natbib Warning: Citation `MM07' on page 17 undefined on input line 565.
+
+
+
+Package natbib Warning: Citation `MM12' on page 17 undefined on input line 568.
+
+
+[17]
+
+LaTeX Warning: Reference `fig:001' on page 18 undefined on input line 570.
+
+
+LaTeX Warning: Reference `fig:002' on page 18 undefined on input line 572.
+
+<Motivation1.jpg, id=114, 453.19313pt x 146.04562pt>
 File: Motivation1.jpg Graphic file (type jpg)
-
-<use Motivation1.jpg> <Motivation2.png, id=330, 453.19313pt x 117.43875pt>
+ <use Motivation1.jpg>
+<Motivation2.png, id=115, 453.19313pt x 117.43875pt>
 File: Motivation2.png Graphic file (type png)
+ <use Motivation2.png>
 
-<use Motivation2.png> [19pdfTeX warning (ext4): destination with the same ident
-ifier (name{figure.2}) has been already used, duplicate ignored
+Package natbib Warning: Citation `Pinkert' on page 18 undefined on input line 5
+84.
 
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.585 
-       <./Motivation1.jpg>] [20pdfTeX warning (ext4): destination with the same
- identifier (name{figure.3}) has been already used, duplicate ignored
+[18pdfTeX warning (ext4): destination with the same identifier (name{figure.2})
+ has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.587 
+l.586 
+       <./Motivation1.jpg>]
+
+Package natbib Warning: Citation `MM12' on page 19 undefined on input line 587.
+
+
+[19pdfTeX warning (ext4): destination with the same identifier (name{figure.3})
+ has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.588 
        <./Motivation2.png>]
-<MM_framework.png, id=359, 855.195pt x 727.71875pt>
+
+LaTeX Warning: Reference `Eq1' on page 20 undefined on input line 590.
+
+
+LaTeX Warning: Reference `Eq2' on page 20 undefined on input line 590.
+
+
+LaTeX Warning: Reference `Eq1' on page 20 undefined on input line 601.
+
+
+LaTeX Warning: Reference `Eq2' on page 20 undefined on input line 601.
+
+
+LaTeX Warning: Reference `fig:02' on page 20 undefined on input line 601.
+
+
+LaTeX Warning: Reference `fig:03' on page 20 undefined on input line 604.
+
+
+LaTeX Warning: Reference `fig:02' on page 20 undefined on input line 614.
+
+
+LaTeX Warning: Reference `fig:02' on page 20 undefined on input line 615.
+
+
+LaTeX Warning: Reference `fig:03' on page 20 undefined on input line 615.
+
+[20] <MM_framework.png, id=138, 855.195pt x 727.71875pt>
 File: MM_framework.png Graphic file (type png)
- <use MM_framework.png>
-<Model_Formula.png, id=360, 974.64125pt x 743.77875pt>
+
+<use MM_framework.png> <Model_Formula.png, id=139, 974.64125pt x 743.77875pt>
 File: Model_Formula.png Graphic file (type png)
- <use Model_Formula.png>
-<Mixed_Models.png, id=361, 773.89125pt x 644.4075pt>
+
+<use Model_Formula.png> <Mixed_Models.png, id=140, 773.89125pt x 644.4075pt>
 File: Mixed_Models.png Graphic file (type png)
- <use Mixed_Models.png>
-[21] [22pdfTeX warning (ext4): destination with the same identifier (name{figur
-e.4}) has been already used, duplicate ignored
+
+<use Mixed_Models.png>
+
+LaTeX Warning: Reference `fig:02' on page 21 undefined on input line 632.
+
+
+LaTeX Warning: Reference `fig:03' on page 21 undefined on input line 632.
+
+[21pdfTeX warning (ext4): destination with the same identifier (name{figure.4})
+ has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.632 
-       <./MM_framework.png>] [23pdfTeX warning (ext4): destination with the sam
-e identifier (name{figure.5}) has been already used, duplicate ignored
+l.634 \subsubsection
+                    {Implementation} <./MM_framework.png>] [22pdfTeX warning (e
+xt4): destination with the same identifier (name{figure.5}) has been already us
+ed, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.632 
-       <./Model_Formula.png>] [24pdfTeX warning (ext4): destination with the sa
-me identifier (name{figure.6}) has been already used, duplicate ignored
+l.634 \subsubsection
+                    {Implementation} <./Model_Formula.png>] [23pdfTeX warning (
+ext4): destination with the same identifier (name{figure.6}) has been already u
+sed, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.632 
-       <./Mixed_Models.png>] [25] [26]
-Overfull \hbox (5.25568pt too wide) in paragraph at lines 761--761
+l.634 \subsubsection
+                    {Implementation} <./Mixed_Models.png>]
+
+LaTeX Warning: Reference `Eq1' on page 24 undefined on input line 645.
+
+
+LaTeX Warning: Reference `Eq2' on page 24 undefined on input line 645.
+
+[24] [25]
+Overfull \hbox (5.25568pt too wide) in paragraph at lines 762--762
 []\OT1/cmtt/m/n/8 > result <- testDataset(test,depVariable="Bone.Area", equatio
 n="withoutWeight",callAll=FALSE)[] 
  []
 
-[27] [28] [29] <classificationTagMM2.png, id=419, 747.79375pt x 560.0925pt>
+[26]
+
+Package natbib Warning: Citation `RotatedResiduals04' on page 27 undefined on i
+nput line 770.
+
+[27]
+
+LaTeX Warning: Reference `fig:05' on page 28 undefined on input line 806.
+
+<classificationTagMM2.png, id=181, 747.79375pt x 560.0925pt>
 File: classificationTagMM2.png Graphic file (type png)
 
-<use classificationTagMM2.png> [30pdfTeX warning (ext4): destination with the s
-ame identifier (name{figure.7}) has been already used, duplicate ignored
+<use classificationTagMM2.png>
+
+LaTeX Warning: Reference `fig:05_2' on page 28 undefined on input line 813.
+
+[28] [29pdfTeX warning (ext4): destination with the same identifier (name{figur
+e.7}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.813 
+l.814 
        <./classificationTagMM2.png (PNG copy)>]
-<classificationTagMM_MP.png, id=426, 748.7975pt x 553.06625pt>
+<classificationTagMM_MP.png, id=194, 748.7975pt x 553.06625pt>
 File: classificationTagMM_MP.png Graphic file (type png)
 
-<use classificationTagMM_MP.png> [31pdfTeX warning (ext4): destination with the
- same identifier (name{figure.8}) has been already used, duplicate ignored
+<use classificationTagMM_MP.png>
+
+LaTeX Warning: Reference `fig:05_x' on page 30 undefined on input line 823.
+
+[30pdfTeX warning (ext4): destination with the same identifier (name{figure.8})
+ has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.823 
+l.824 
        <./classificationTagMM_MP.png (PNG copy)>]
-<Jitter_figureX.png, id=435, 365.86688pt x 334.24875pt>
+<Jitter_figureX.png, id=201, 365.86688pt x 334.24875pt>
 File: Jitter_figureX.png Graphic file (type png)
 
-<use Jitter_figureX.png> [32pdfTeX warning (ext4): destination with the same id
+<use Jitter_figureX.png> [31pdfTeX warning (ext4): destination with the same id
 entifier (name{figure.9}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.852 
-       <./Jitter_figureX.png (PNG copy)>] [33]
-Overfull \hbox (56.25641pt too wide) in paragraph at lines 1024--1024
+l.853 
+       <./Jitter_figureX.png (PNG copy)>]
+
+LaTeX Warning: Reference `FE_EffectSize' on page 32 undefined on input line 893
+.
+
+[32]
+Overfull \hbox (56.25641pt too wide) in paragraph at lines 1025--1025
 []\OT1/cmtt/m/n/8 Dataset's column 'Assay.Date' has been renamed to 'Batch' and
  will be used for the batch effect modeling.[] 
  []
 
 
-Overfull \hbox (18.00586pt too wide) in paragraph at lines 1024--1024
+Overfull \hbox (18.00586pt too wide) in paragraph at lines 1025--1025
 []\OT1/cmtt/m/n/8 for the weight effect modeling. Otherwise you can only use mi
 xed model equation 'withoutWeight'.[] 
  []
 
-[34] [35] [36]
+[33] [34]
 
-LaTeX Warning: Command \textless invalid in math mode on input line 1075.
+LaTeX Warning: Reference `section:Results' on page 35 undefined on input line 1
+028.
 
-LaTeX Font Info:    Try loading font information for OML+cmr on input line 1075
+[35]
+
+LaTeX Warning: Reference `table:06' on page 36 undefined on input line 1069.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1076.
+
+LaTeX Font Info:    Try loading font information for OML+cmr on input line 1076
 .
 (/usr/local/texlive/2010/texmf-dist/tex/latex/base/omlcmr.fd
 File: omlcmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <12> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 1075.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 1076.
 
 
 
-LaTeX Warning: Command \textless invalid in math mode on input line 1075.
-
-
-LaTeX Warning: Command \textless invalid in math mode on input line 1075.
-
-
-LaTeX Warning: Command \textless invalid in math mode on input line 1075.
-
-
-LaTeX Warning: Command \textless invalid in math mode on input line 1075.
-
-
-LaTeX Warning: Command \textless invalid in math mode on input line 1075.
+LaTeX Warning: Command \textless invalid in math mode on input line 1076.
 
 
 LaTeX Warning: Command \textless invalid in math mode on input line 1076.
@@ -1181,7 +1320,10 @@ LaTeX Warning: Command \textless invalid in math mode on input line 1078.
 LaTeX Warning: Command \textless invalid in math mode on input line 1078.
 
 
-LaTeX Warning: Command \textless invalid in math mode on input line 1079.
+LaTeX Warning: Command \textless invalid in math mode on input line 1078.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1078.
 
 
 LaTeX Warning: Command \textless invalid in math mode on input line 1079.
@@ -1190,36 +1332,33 @@ LaTeX Warning: Command \textless invalid in math mode on input line 1079.
 LaTeX Warning: Command \textless invalid in math mode on input line 1079.
 
 
-LaTeX Warning: Command \textless invalid in math mode on input line 1079.
+LaTeX Warning: Command \textless invalid in math mode on input line 1080.
 
 
-Underfull \hbox (badness 2717) in paragraph at lines 1079--1080
+LaTeX Warning: Command \textless invalid in math mode on input line 1080.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1080.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1080.
+
+
+Underfull \hbox (badness 2717) in paragraph at lines 1080--1081
 []|\OT1/cmr/m/n/12 Significant in fe-males and in com-bined
  []
 
 
-LaTeX Warning: Command \textless invalid in math mode on input line 1080.
-
-
-LaTeX Warning: Command \textless invalid in math mode on input line 1080.
-
-
 LaTeX Warning: Command \textless invalid in math mode on input line 1081.
 
 
 LaTeX Warning: Command \textless invalid in math mode on input line 1081.
 
 
-LaTeX Warning: Command \textless invalid in math mode on input line 1083.
+LaTeX Warning: Command \textless invalid in math mode on input line 1082.
 
 
-LaTeX Warning: Command \textless invalid in math mode on input line 1083.
-
-
-LaTeX Warning: Command \textless invalid in math mode on input line 1083.
-
-
-LaTeX Warning: Command \textless invalid in math mode on input line 1083.
+LaTeX Warning: Command \textless invalid in math mode on input line 1082.
 
 
 LaTeX Warning: Command \textless invalid in math mode on input line 1084.
@@ -1234,345 +1373,440 @@ LaTeX Warning: Command \textless invalid in math mode on input line 1084.
 LaTeX Warning: Command \textless invalid in math mode on input line 1084.
 
 
-Overfull \hbox (31.70958pt too wide) in paragraph at lines 1072--1088
+LaTeX Warning: Command \textless invalid in math mode on input line 1085.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1085.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1085.
+
+
+LaTeX Warning: Command \textless invalid in math mode on input line 1085.
+
+
+Overfull \hbox (31.70958pt too wide) in paragraph at lines 1073--1089
  [] 
  []
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[37] [38pdfTeX warning (ext4): destination with the same identifier (name{table
+[36] [37pdfTeX warning (ext4): destination with the same identifier (name{table
 .6}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1129 \end{verbatim}
-                     ] [39] [40]
-Underfull \hbox (badness 1701) in paragraph at lines 1241--1242
+l.1130 \end{verbatim}
+                     ]
+
+LaTeX Warning: Reference `Eq2' on page 38 undefined on input line 1135.
+
+[38] [39]
+
+LaTeX Warning: Reference `table:07' on page 40 undefined on input line 1236.
+
+
+Underfull \hbox (badness 1701) in paragraph at lines 1242--1243
 []|\OT1/cmr/m/n/12 Possible val-ues: "FE", "MM, lin-ear mixed-effects
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1241--1242
+Underfull \hbox (badness 10000) in paragraph at lines 1242--1243
 \OT1/cmr/m/n/12 model/generalized least squares, equa-tion with
  []
 
 
-Underfull \hbox (badness 1112) in paragraph at lines 1254--1255
+Underfull \hbox (badness 1112) in paragraph at lines 1255--1256
 []|\OT1/cmr/m/n/12 Weight p-value that rep-re-sents the prob-a-bil-ity the
  []
 
 
-Overfull \hbox (70.31326pt too wide) in paragraph at lines 1238--1262
+Overfull \hbox (70.31326pt too wide) in paragraph at lines 1239--1263
 [][] 
  []
 
 
-Overfull \hbox (73.31601pt too wide) in paragraph at lines 1266--1284
+Overfull \hbox (73.31601pt too wide) in paragraph at lines 1267--1285
 [][]
  []
 
-[41] [42] [43pdfTeX warning (ext4): destination with the same identifier (name{
+[40] [41] [42pdfTeX warning (ext4): destination with the same identifier (name{
 table.7}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1358 \end{verbatim}
-                     ] [44] [45] [46]
-Overfull \hbox (9.50574pt too wide) in paragraph at lines 1459--1459
+l.1359 \end{verbatim}
+                     ] [43]
+
+LaTeX Warning: Reference `section:FET' on page 44 undefined on input line 1369.
+
+
+[44] [45]
+Overfull \hbox (9.50574pt too wide) in paragraph at lines 1460--1460
 []\OT1/cmtt/m/n/8 > generateGraphs(phenTestResult=result,dir="./graphs",graphin
 gName="Lean Mass",type="windows")[] 
  []
 
-<categoricalBarPlot.png, id=508, 481.8pt x 481.8pt>
+
+LaTeX Warning: Reference `fig:06' on page 46 undefined on input line 1473.
+
+<categoricalBarPlot.png, id=274, 481.8pt x 481.8pt>
 File: categoricalBarPlot.png Graphic file (type png)
 
-<use categoricalBarPlot.png> [47pdfTeX warning (ext4): destination with the sam
+<use categoricalBarPlot.png> [46pdfTeX warning (ext4): destination with the sam
 e identifier (name{figure.10}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1481 \begin{itemize}
+l.1482 \begin{itemize}
                        <./categoricalBarPlot.png (PNG copy)>]
-<boxplotSexGenotype.png, id=516, 481.8pt x 481.8pt>
+
+LaTeX Warning: Reference `fig:07' on page 47 undefined on input line 1497.
+
+<boxplotSexGenotype.png, id=283, 481.8pt x 481.8pt>
 File: boxplotSexGenotype.png Graphic file (type png)
 
 <use boxplotSexGenotype.png>
-<boxplotSexGenotypeBatch.png, id=518, 481.8pt x 481.8pt>
+
+LaTeX Warning: Reference `fig:08' on page 47 undefined on input line 1503.
+
+<boxplotSexGenotypeBatch.png, id=284, 481.8pt x 481.8pt>
 File: boxplotSexGenotypeBatch.png Graphic file (type png)
 
 <use boxplotSexGenotypeBatch.png>
-<scatterplotGenotypeWeight.png, id=520, 481.8pt x 481.8pt>
+
+LaTeX Warning: Reference `fig:09' on page 47 undefined on input line 1509.
+
+<scatterplotGenotypeWeight.png, id=285, 481.8pt x 481.8pt>
 File: scatterplotGenotypeWeight.png Graphic file (type png)
 
 <use scatterplotGenotypeWeight.png>
-Overfull \hbox (0.187pt too wide) in paragraph at lines 1519--1520
+Overfull \hbox (0.187pt too wide) in paragraph at lines 1520--1521
 []\OT1/cmr/m/it/12 plotResidualPredicted \OT1/cmr/m/n/12 cre-ates pre-dicted ve
 r-sus resid-ual val-ues plots split
  []
 
-[48] [49pdfTeX warning (ext4): destination with the same identifier (name{figur
+[47] [48pdfTeX warning (ext4): destination with the same identifier (name{figur
 e.11}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1520 \item \textit
+l.1521 \item \textit
                     {boxplotResidualBatch} creates a box plot with residue v...
 pdfTeX warning (ext4): destination with the same identifier (name{figure.12}) h
 as been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1520 \item \textit
+l.1521 \item \textit
                     {boxplotResidualBatch} creates a box plot with residue v...
  <./boxplotSexGenotype.png (PNG copy)> <./boxplotSexGenotypeBatch.png (PNG copy
-)>] <qqplotGenotype.png, id=535, 481.8pt x 481.8pt>
+)>]
+
+LaTeX Warning: Reference `fig:10' on page 49 undefined on input line 1535.
+
+<qqplotGenotype.png, id=299, 481.8pt x 481.8pt>
 File: qqplotGenotype.png Graphic file (type png)
  <use qqplotGenotype.png>
-[50pdfTeX warning (ext4): destination with the same identifier (name{figure.13}
+
+LaTeX Warning: Reference `fig:11' on page 49 undefined on input line 1542.
+
+[49pdfTeX warning (ext4): destination with the same identifier (name{figure.13}
 ) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1542 
+l.1543 
         <./scatterplotGenotypeWeight.png (PNG copy)>]
-<qqplotRandomEffects.png, id=544, 481.8pt x 481.8pt>
+<qqplotRandomEffects.png, id=307, 481.8pt x 481.8pt>
 File: qqplotRandomEffects.png Graphic file (type png)
 
 <use qqplotRandomEffects.png>
-<qqplotRotatedResiduals.png, id=547, 481.8pt x 481.8pt>
+
+LaTeX Warning: Reference `fig:12' on page 50 undefined on input line 1549.
+
+
+LaTeX Warning: Reference `Diagnostics' on page 50 undefined on input line 1550.
+
+
+<qqplotRotatedResiduals.png, id=308, 481.8pt x 481.8pt>
 File: qqplotRotatedResiduals.png Graphic file (type png)
 
-<use qqplotRotatedResiduals.png> [51pdfTeX warning (ext4): destination with the
- same identifier (name{figure.14}) has been already used, duplicate ignored
+<use qqplotRotatedResiduals.png>
+
+LaTeX Warning: Reference `fig:13' on page 50 undefined on input line 1557.
+
+[50pdfTeX warning (ext4): destination with the same identifier (name{figure.14}
+) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1563 \item N
+l.1564 \item N
               o one residual outstands from the basic random pattern of resi...
- <./qqplotGenotype.png (PNG copy)>] [52pdfTeX warning (ext4): destination with 
+ <./qqplotGenotype.png (PNG copy)>] [51pdfTeX warning (ext4): destination with 
 the same identifier (name{figure.15}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1563 \item N
+l.1564 \item N
               o one residual outstands from the basic random pattern of resi...
 pdfTeX warning (ext4): destination with the same identifier (name{figure.16}) h
 as been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1563 \item N
+l.1564 \item N
               o one residual outstands from the basic random pattern of resi...
  <./qqplotRandomEffects.png (PNG copy)> <./qqplotRotatedResiduals.png (PNG copy
-)>] <plotResidualPredicted.png, id=563, 481.8pt x 481.8pt>
+)>] <plotResidualPredicted.png, id=324, 481.8pt x 481.8pt>
 File: plotResidualPredicted.png Graphic file (type png)
 
 <use plotResidualPredicted.png>
-<boxplotResidualBatch.png, id=565, 481.8pt x 481.8pt>
+
+LaTeX Warning: Reference `fig:14' on page 52 undefined on input line 1571.
+
+<boxplotResidualBatch.png, id=325, 481.8pt x 481.8pt>
 File: boxplotResidualBatch.png Graphic file (type png)
 
 <use boxplotResidualBatch.png>
 
-LaTeX Warning: Command \textless invalid in math mode on input line 1579.
+LaTeX Warning: Command \textless invalid in math mode on input line 1580.
 
 LaTeX Font Info:    Font shape `OML/cmr/m/it' in size <12> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 1579.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 1580.
 
 
-LaTeX Warning: Command \textless invalid in math mode on input line 1579.
+LaTeX Warning: Command \textless invalid in math mode on input line 1580.
 
 
-LaTeX Warning: Command \textgreater invalid in math mode on input line 1579.
+LaTeX Warning: Command \textgreater invalid in math mode on input line 1580.
 
 
-LaTeX Warning: Command \textgreater invalid in math mode on input line 1579.
+LaTeX Warning: Command \textgreater invalid in math mode on input line 1580.
 
-[53pdfTeX warning (ext4): destination with the same identifier (name{figure.17}
+[52pdfTeX warning (ext4): destination with the same identifier (name{figure.17}
 ) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1582 
-        <./plotResidualPredicted.png (PNG copy)>] [54pdfTeX warning (ext4): des
+l.1583 
+        <./plotResidualPredicted.png (PNG copy)>] [53pdfTeX warning (ext4): des
 tination with the same identifier (name{figure.18}) has been already used, dupl
 icate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1613 \end{verbatim}
+l.1614 \end{verbatim}
                      pdfTeX warning (ext4): destination with the same identifie
 r (name{table.8}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1613 \end{verbatim}
-                      <./boxplotResidualBatch.png (PNG copy)>] [55]
-<cs1_boxplotSexGenotype.png, id=586, 481.8pt x 481.8pt>
+l.1614 \end{verbatim}
+                      <./boxplotResidualBatch.png (PNG copy)>] [54]
+
+LaTeX Warning: Reference `AssesingModelFit' on page 55 undefined on input line 
+1668.
+
+<cs1_boxplotSexGenotype.png, id=348, 481.8pt x 481.8pt>
 File: cs1_boxplotSexGenotype.png Graphic file (type png)
 
-<use cs1_boxplotSexGenotype.png> [56]
-<cs1_boxplotBatchGenotype.jpg, id=593, 654.19406pt x 276.28218pt>
+<use cs1_boxplotSexGenotype.png> [55]
+<cs1_boxplotBatchGenotype.jpg, id=357, 654.19406pt x 276.28218pt>
 File: cs1_boxplotBatchGenotype.jpg Graphic file (type jpg)
 
-<use cs1_boxplotBatchGenotype.jpg> [57pdfTeX warning (ext4): destination with t
+<use cs1_boxplotBatchGenotype.jpg> [56pdfTeX warning (ext4): destination with t
 he same identifier (name{figure.19}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1713 
+l.1714 
        pdfTeX warning (ext4): destination with the same identifier (name{figure
 .20}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1713 
+l.1714 
         <./cs1_boxplotSexGenotype.png (PNG copy)> <./cs1_boxplotBatchGenotype.j
-pg>] <cs1_qqplotGenotype.png, id=602, 481.8pt x 481.8pt>
+pg>]
+
+LaTeX Warning: Reference `Diagnostics' on page 57 undefined on input line 1715.
+
+
+<cs1_qqplotGenotype.png, id=365, 481.8pt x 481.8pt>
 File: cs1_qqplotGenotype.png Graphic file (type png)
 
-<use cs1_qqplotGenotype.png> [58]
-<cs1_boxplotResidualBatch.png, id=607, 481.8pt x 481.8pt>
+<use cs1_qqplotGenotype.png> [57]
+<cs1_boxplotResidualBatch.png, id=371, 481.8pt x 481.8pt>
 File: cs1_boxplotResidualBatch.png Graphic file (type png)
 
-<use cs1_boxplotResidualBatch.png> [59pdfTeX warning (ext4): destination with t
+<use cs1_boxplotResidualBatch.png> [58pdfTeX warning (ext4): destination with t
 he same identifier (name{figure.21}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1760 
+l.1761 
         <./cs1_qqplotGenotype.png (PNG copy)>]
-<cs1_plotResidualPredicted.png, id=614, 481.8pt x 481.8pt>
+<cs1_plotResidualPredicted.png, id=378, 481.8pt x 481.8pt>
 File: cs1_plotResidualPredicted.png Graphic file (type png)
 
-<use cs1_plotResidualPredicted.png> [60pdfTeX warning (ext4): destination with 
+<use cs1_plotResidualPredicted.png> [59pdfTeX warning (ext4): destination with 
 the same identifier (name{figure.22}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1780 
+l.1781 
         <./cs1_boxplotResidualBatch.png (PNG copy)>]
-<cs1_qqplotRandomEffects.png, id=621, 481.8pt x 481.8pt>
+<cs1_qqplotRandomEffects.png, id=385, 481.8pt x 481.8pt>
 File: cs1_qqplotRandomEffects.png Graphic file (type png)
 
-<use cs1_qqplotRandomEffects.png> [61pdfTeX warning (ext4): destination with th
+<use cs1_qqplotRandomEffects.png> [60pdfTeX warning (ext4): destination with th
 e same identifier (name{figure.23}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1801 
+l.1802 
         <./cs1_plotResidualPredicted.png (PNG copy)>]
-<cs1_qqplotRotatedResiduals.png, id=632, 481.8pt x 481.8pt>
+
+Package natbib Warning: Citation `RotatedResiduals04' on page 61 undefined on i
+nput line 1805.
+
+
+LaTeX Warning: Reference `Diagnostics' on page 61 undefined on input line 1806.
+
+
+<cs1_qqplotRotatedResiduals.png, id=392, 481.8pt x 481.8pt>
 File: cs1_qqplotRotatedResiduals.png Graphic file (type png)
 
-<use cs1_qqplotRotatedResiduals.png> [62pdfTeX warning (ext4): destination with
+<use cs1_qqplotRotatedResiduals.png> [61pdfTeX warning (ext4): destination with
  the same identifier (name{figure.24}) has been already used, duplicate ignored
 
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1821 
-        <./cs1_qqplotRandomEffects.png (PNG copy)>] [63pdfTeX warning (ext4): d
+l.1822 
+        <./cs1_qqplotRandomEffects.png (PNG copy)>] [62pdfTeX warning (ext4): d
 estination with the same identifier (name{figure.25}) has been already used, du
 plicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1839 
+l.1840 
         <./cs1_qqplotRotatedResiduals.png (PNG copy)>]
-<cs1_bodyweight.png, id=648, 602.25pt x 401.5pt>
+<cs1_bodyweight.png, id=410, 602.25pt x 401.5pt>
 File: cs1_bodyweight.png Graphic file (type png)
  <use cs1_bodyweight.png>
-[64pdfTeX warning (ext4): destination with the same identifier (name{figure.26}
+
+LaTeX Warning: Reference `cs1_output' on page 63 undefined on input line 1864.
+
+[63pdfTeX warning (ext4): destination with the same identifier (name{figure.26}
 ) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1867 
-        <./cs1_bodyweight.png>] [65]
-<cs1_scatterplotGenotypeWeight.png, id=660, 481.8pt x 481.8pt>
+l.1868 
+        <./cs1_bodyweight.png>] [64]
+<cs1_scatterplotGenotypeWeight.png, id=422, 481.8pt x 481.8pt>
 File: cs1_scatterplotGenotypeWeight.png Graphic file (type png)
 
-<use cs1_scatterplotGenotypeWeight.png> [66pdfTeX warning (ext4): destination w
+<use cs1_scatterplotGenotypeWeight.png> [65pdfTeX warning (ext4): destination w
 ith the same identifier (name{figure.27}) has been already used, duplicate igno
 red
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1924 
+l.1925 
         <./cs1_scatterplotGenotypeWeight.png (PNG copy)>]
-<cs2_categoricalBarplot.jpg, id=668, 596.98032pt x 374.14781pt>
+<cs2_categoricalBarplot.jpg, id=431, 596.98032pt x 374.14781pt>
 File: cs2_categoricalBarplot.jpg Graphic file (type jpg)
 
-<use cs2_categoricalBarplot.jpg> [67pdfTeX warning (ext4): destination with the
+<use cs2_categoricalBarplot.jpg> [66pdfTeX warning (ext4): destination with the
  same identifier (name{table.9}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1972 
-       ] [68pdfTeX warning (ext4): destination with the same identifier (name{f
+l.1973 
+       ] [67pdfTeX warning (ext4): destination with the same identifier (name{f
 igure.28}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.2019 \end{verbatim}
+l.2020 \end{verbatim}
                       <./cs2_categoricalBarplot.jpg>]
-Overfull \hbox (53.40887pt too wide) in paragraph at lines 2033--2043
+Overfull \hbox (53.40887pt too wide) in paragraph at lines 2034--2044
  [] 
  []
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[69] <cs2_noRibsRight_percentageplot.jpg, id=684, 591.71063pt x 303.38344pt>
+[68] <cs2_noRibsRight_percentageplot.jpg, id=453, 591.71063pt x 303.38344pt>
 File: cs2_noRibsRight_percentageplot.jpg Graphic file (type jpg)
 
-<use cs2_noRibsRight_percentageplot.jpg> [70pdfTeX warning (ext4): destination 
+<use cs2_noRibsRight_percentageplot.jpg> [69pdfTeX warning (ext4): destination 
 with the same identifier (name{table.10}) has been already used, duplicate igno
 red
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.2081 
+l.2082 
        pdfTeX warning (ext4): destination with the same identifier (name{figure
 .29}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.2081 
-        <./cs2_noRibsRight_percentageplot.jpg>] [71]
-Overfull \hbox (60.50647pt too wide) in paragraph at lines 2146--2146
+l.2082 
+        <./cs2_noRibsRight_percentageplot.jpg>] [70]
+Overfull \hbox (60.50647pt too wide) in paragraph at lines 2147--2147
 []      \OT1/cmtt/m/n/8 result <- testDataset(phenList, variable, method="MM",e
 quation="withoutWeight",outputMessages=FALSE)[] 
  []
 
 
-Overfull \hbox (52.00635pt too wide) in paragraph at lines 2198--2198
+Overfull \hbox (52.00635pt too wide) in paragraph at lines 2199--2199
 []\OT1/cmtt/m/n/8 clusterEvalQ(cluster, try({ fn = paste(getwd(), "./", Sys.inf
 o()[4], "-", Sys.getpid(), ".log", sep="");[] 
  []
 
+[71]
+
+Package natbib Warning: There were undefined citations.
+
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 2233.
 [72]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 2232.
- [73]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 2232.
- (./PhenStatUsersGuide.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 2232.
-Package rerunfilecheck Info: File `PhenStatUsersGuide.out' has not changed.
-(rerunfilecheck)             Checksum: FF203FA795CFD2479EB7A0A27116D36B;3091.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 2233.
+ (./PhenStatUsersGuide.aux
+
+Package natbib Warning: Citation(s) may have changed.
+(natbib)                Rerun to get citations correct.
+
+)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 2233.
+
+
+Package rerunfilecheck Warning: File `PhenStatUsersGuide.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `PhenStatUsersGuide.out':
+(rerunfilecheck)             Before: <no file>
+(rerunfilecheck)             After:  FF203FA795CFD2479EB7A0A27116D36B;3091.
+
+LaTeX Warning: There were undefined references.
 
 
 LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
  ) 
 Here is how much of TeX's memory you used:
- 7139 strings out of 493747
- 102023 string characters out of 3143545
- 269179 words of memory out of 3000000
- 10064 multiletter control sequences out of 15000+200000
+ 7091 strings out of 493747
+ 101153 string characters out of 3143545
+ 262638 words of memory out of 3000000
+ 10024 multiletter control sequences out of 15000+200000
  15599 words of font info for 59 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
- 31i,13n,31p,1056b,468s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 31i,13n,31p,1055b,470s stack positions out of 5000i,500n,10000p,200000b,50000s
 </usr/local/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb
 ></usr/local/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb><
 /usr/local/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb>
@@ -1588,10 +1822,10 @@ live/2010/texmf-dist/fonts/type1/public/amsfonts/cm/cmti7.pfb></usr/local/texli
 ve/2010/texmf-dist/fonts/type1/public/amsfonts/cm/cmti8.pfb></usr/local/texlive
 /2010/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb></usr/local/texlive/2
 010/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb>
-Output written on PhenStatUsersGuide.pdf (73 pages, 1483699 bytes).
+Output written on PhenStatUsersGuide.pdf (72 pages, 1476619 bytes).
 PDF statistics:
- 802 PDF objects out of 1000 (max. 8388607)
- 656 compressed objects within 7 object streams
+ 572 PDF objects out of 1000 (max. 8388607)
+ 429 compressed objects within 5 object streams
  173 named destinations out of 1000 (max. 500000)
- 458 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 146 words of extra memory for PDF output out of 10000 (max. 10000000)
 
