@@ -525,7 +525,8 @@ The \textit{testDataset} function performs basic checks which ensure the statist
 \item \textit{depVariable} column is present in the dataset;
 \item \textit{depVariable} is numeric for Mixed Model (MM) framework, otherwise Fisher Exact Test (FE) is performed;
 \item Variability check 1 (whole column): \textit{depVariable} column values are variable enough (the ratio of different values to all values in the column $\geq$ 0.5\%) for MM framework, otherwise  FE framework is recommended;
-\item Variability check 2 (variability within a group): there are enough data points in subsets per genotype/sex combinations. The number of values from \textit{depVariable} column should exceed \textit{dataPointsThreshold} in 3 subsets when there are two sexes and in all subsets for one sex only dataset, otherwise FE framework is recommended;
+\item Variability check 2 (variability within a group): there are enough data points in subsets per genotype/sex combinations. The number of values from \textit{depVariable} column should exceed \textit{dataPointsThreshold} in all subsets, otherwise FE framework is recommended;
+\item Variability check 3 (variability for Weigth column) applied only when \textit{equation} argument value is set to "withWeight": there are enough data points in subsets per genotype/sex combinations. The number of values from Weight column should exceed \textit{dataPointsThreshold} in all subsets, otherwise \textit{equation} "withoutWeight" is used;
 \item Number of \textit{depVariable} levels is 10 or less for the FE framework.
 \end{enumerate}
 

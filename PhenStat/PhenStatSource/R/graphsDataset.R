@@ -21,31 +21,36 @@ boxplotSexGenotype<-function(phenList, depVariable=NULL,
         graphingName=NULL, outputMessages=TRUE){
     stop_message <- ""
     ## Checks
-    if(is(phenList,"PhenList")) {
-        x <- phenList$dataset               
-    } else {
-        stop_message <- "Error:\nPlease define PhenList object first.\n"
-    }
-    if (is.null(depVariable)) {
-        stop_message <- paste(stop_message,
-        "Error:\nPlease define dependent variable 'depVariable'.\n",sep="")
-    }
+    if (is.null(depVariable)) 
+    stop_message <- paste(stop_message,
+            "Error:\nPlease define dependent variable 'depVariable'.\n",sep="")
     else {
-        if (!(depVariable %in% colnames(x))) {
-            stop_message <- paste(stop_message,"Error:\n",
-                paste(depVariable,"column is missed in the dataset.\n"),sep="")
-        }
-        else {
-            columnOfInterest <- x[,c(depVariable)]
-            ## Test: depVariable is numeric 
-            if(!is.numeric(columnOfInterest))
-            stop_message <- paste(stop_message,"Error:\n",
-                    depVariable,"variable is not numeric. ", 
-                    "Can't create a plot based on it.\n",sep="")
-        }     
-    }
-    if (is.null(graphingName))
+        if (is.null(graphingName))
         graphingName <- depVariable
+    }
+    
+    if(is(phenList,"PhenList")) {
+        x <- phenList$dataset
+        
+        if (nchar(stop_message)==0){
+            if (!(depVariable %in% colnames(x)))
+            stop_message <- paste(stop_message,
+                    "Error:\n",depVariable," column is missed in the dataset.",sep="")
+            else {
+                columnOfInterest <- x[,c(depVariable)]
+                
+                ## Test: depVariable is numeric 
+                if(!is.numeric(columnOfInterest))
+                stop_message <- paste(stop_message,
+                        "Error:\n",depVariable," variable is not numeric. ",
+                        "Can't create a plot based on it.",sep="")
+            }       
+          
+        }
+        
+    } else {
+        stop_message <- paste(stop_message,"Error:\nPlease define PhenList object.\n",sep="")
+    }
           
     
     if (nchar(stop_message)>0){
@@ -88,39 +93,48 @@ boxplotSexGenotypeBatch<-function(phenList, depVariable=NULL,
         graphingName=NULL, outputMessages=TRUE){
     stop_message <- ""
     ## Checks
+    
+    if (is.null(depVariable)) 
+        stop_message <- paste(stop_message,
+            "Error:\nPlease define dependent variable 'depVariable'.\n",sep="")
+    else {
+        if (is.null(graphingName))
+            graphingName <- depVariable
+    }
+    
     if(is(phenList,"PhenList")) {
         x <- phenList$dataset
-        refGenotype <- phenList$refGenotype        
+        refGenotype <- phenList$refGenotype   
+        
+        if (nchar(stop_message)==0){
+            if (!(depVariable %in% colnames(x)))
+            stop_message <- paste(stop_message,
+                    "Error:\n",depVariable," column is missed in the dataset.",sep="")
+            else {
+                columnOfInterest <- x[,c(depVariable)]
+                
+                ## Test: depVariable is numeric 
+                if(!is.numeric(columnOfInterest))
+                stop_message <- paste(stop_message,
+                        "Error:\n",depVariable," variable is not numeric. ",
+                        "Can't create a plot based on it.",sep="")
+            }       
+            
+            
+            if (!('Batch' %in% colnames(x)))
+            stop_message <- paste(stop_message,
+                    "Error:\nBatch column is missed in the dataset.\n",sep="")
+        }
+             
     } else {
-        stop_message <- "Error:\nPlease define PhenList object first.\n"
+        stop_message <- paste(stop_message,"Error:\nPlease define PhenList object.\n",sep="")
     }
 
             
-    if (is.null(depVariable)) 
-        stop_message <- paste(stop_message,
-        "Error:\nPlease define dependent variable 'depVariable'.\n",sep="")
-    
-    if (is.null(graphingName))
-            graphingName <- depVariable
+   
     
     
-    if (!(depVariable %in% colnames(x)))
-        stop_message <- paste(stop_message,
-        "Error:\n",depVariable," column is missed in the dataset.",sep="")
-    else {
-        columnOfInterest <- x[,c(depVariable)]
-        
-        ## Test: depVariable is numeric 
-        if(!is.numeric(columnOfInterest))
-            stop_message <- paste(stop_message,
-                "Error:\n",depVariable," variable is not numeric. ",
-                "Can't create a plot based on it.",sep="")
-    }       
     
-    
-    if (!('Batch' %in% colnames(x)))
-        stop_message <- paste(stop_message,
-        "Error:\nBatch column is missed in the dataset.\n",sep="")
     
     if (nchar(stop_message)>0){
         if (outputMessages){
@@ -194,52 +208,59 @@ boxplotSexGenotypeBatch<-function(phenList, depVariable=NULL,
 scatterplotGenotypeWeight<-function(phenList, depVariable=NULL, 
         graphingName=NULL, outputMessages=TRUE){
     stop_message <- ""
+    
+    
+    if (is.null(depVariable)) 
+    stop_message <- paste(stop_message,
+            "Error:\nPlease define dependent variable 'depVariable'.\n",sep="")
+    else {
+        if (is.null(graphingName))
+        graphingName <- depVariable
+    }
+    
     ## Checks
     if(is(phenList,"PhenList")) {
         x <- phenList$dataset     
         
+        if (nchar(stop_message)==0){ 
+            if (!(depVariable %in% colnames(x)))
+            stop_message <- paste(stop_message,
+                    "Error:\n",depVariable," column is missed in the dataset.",sep="")
+            else {
+                columnOfInterest <- x[,c(depVariable)]        
+                ## Test: depVariable is numeric 
+                if(!is.numeric(columnOfInterest))
+                stop_message <- paste(stop_message,
+                        "Error:\n",depVariable," variable is not numeric. ",
+                        "Can't create a plot based on it.",sep="")
+                
+                # Checks of Weight
+                checkWeight <- columnChecks(x,"Weight",4) 
+                if (! checkWeight[1])
+                stop_message <- paste(stop_message,
+                        "Error:\nWeight column is not present in dataset. ",
+                        "Can't create a plot.\n", sep="") 
+                
+                else{
+                    if (! checkWeight[2])
+                    stop_message <- paste(stop_message,
+                            "Error:\nWeight column is not numeric. ",
+                            "Can't create a plot based on it.\n",sep="")
+                    
+                    if (! checkWeight[3])
+                    stop_message <- paste(stop_message,
+                            "Error:\nWeight column does not have enough ",
+                            "data points for for genotype/sex combinations.\n",sep="")
+                    
+                }
+            }
+        }   
+        
     } else {
-        stop_message <- "Error:\nPlease define PhenList object first."
+        stop_message <- paste(stop_message,"Error:\nPlease define PhenList object.\n",sep="")
     }
-    if (is.null(depVariable)) 
-        stop_message <- paste(stop_message,
-        "Error:\nPlease define dependent variable 'depVariable'.\n",sep="")
-    
-    if (is.null(graphingName))
-        graphingName <- depVariable
-    
-    
-    if (!(depVariable %in% colnames(x)))
-        stop_message <- paste(stop_message,
-        "Error:\n",depVariable," column is missed in the dataset.",sep="")
-    else {
-        columnOfInterest <- x[,c(depVariable)]        
-        ## Test: depVariable is numeric 
-        if(!is.numeric(columnOfInterest))
-            stop_message <- paste(stop_message,
-            "Error:\n",depVariable," variable is not numeric. ",
-            "Can't create a plot based on it.",sep="")
 
-        # Checks of Weight
-        checkWeight <- columnChecks(x,"Weight",4) 
-        if (! checkWeight[1])
-            stop_message <- paste(stop_message,
-            "Error:\nWeight column is not present in dataset. ",
-            "Can't create a plot.\n", sep="") 
-         
-        else{
-            if (! checkWeight[2])
-                stop_message <- paste(stop_message,
-                "Error:\nWeight column is not numeric. ",
-                "Can't create a plot based on it.\n",sep="")
-      
-            if (! checkWeight[3])
-                stop_message <- paste(stop_message,
-                "Error:\nWeight column does not have enough ",
-                "data points for for genotype/sex combinations.\n",sep="")
-            
-        }
-    }       
+       
     
 
     if (nchar(stop_message)>0){

@@ -154,6 +154,7 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
                         columnOfWeight <- na.omit(x$Weight)
                         
                         if (length(columnOfInterest) == length(columnOfWeight))
+                        
                         if (sum(columnOfInterest-columnOfWeight) == 0){    
                             if (outputMessages)
                             message(paste("Warning:\nWeight and dependent variable values seemed to be equivalent. ",
@@ -177,7 +178,8 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
                                             "Equation 'withWeight' can't be used in such a case and has been ",
                                             "replaced to 'withoutWeight'.\n", sep="")) 
                             equation <- "withoutWeight"   
-                        }          
+                        } 
+                                 
                     }     
                 }
             }            
@@ -306,8 +308,8 @@ columnChecks <- function(dataset, columnName, dataPointsThreshold=4){
         NoCombinations <- dataPointsSummary[3]
         
         variabilityThreshold <- NoCombinations
-        if (NoCombinations==4)
-        variabilityThreshold <- 3 
+        #if (NoCombinations==4)
+        #variabilityThreshold <- 3 
         
         for (i in 1:NoCombinations){
             if (dataPointsSummary[3+i] >= dataPointsThreshold)
