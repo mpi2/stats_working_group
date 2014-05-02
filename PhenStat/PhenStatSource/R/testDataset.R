@@ -28,7 +28,7 @@
 ##------------------------------------------------------------------------------
 testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight", 
         outputMessages=TRUE, pThreshold=0.05, method="MM", callAll=TRUE, 
-        keepList=NULL, dataPointsThreshold=4, MM_naturalVariation=95, MM_controlPointsThreshold=60)
+        keepList=NULL, dataPointsThreshold=4, RR_naturalVariation=95, RR_controlPointsThreshold=60)
 {
 
     
@@ -211,11 +211,11 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
             
             columnOfInterest <- na.omit(x[,c(depVariable)])
             controlSubset <- subset(x, x$Genotype==phenList$refGenotype)
-            if (length(controlSubset)<MM_controlPointsThreshold) 
+            if (length(controlSubset)<RR_controlPointsThreshold) 
                 stop_message <- paste("Error:\nInsufficient data in the dependent variable '",
                     depVariable,
                     "' control subset (",length(controlSubset),") to allow the application of RR plus framework.",
-                    "\nThe threshold is ",MM_controlPointsThreshold," datapoints. \n",sep="") 
+                    "\nThe threshold is ",RR_controlPointsThreshold," datapoints. \n",sep="") 
         } 
         
     }    
@@ -275,7 +275,7 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
         ## RR Plus
         if (outputMessages)
         message(paste("Information:\nMethod: Reference Ranges Plus framework.\n",sep="")) 
-        result <- RRTest(phenList,depVariable,outputMessages,MM_naturalVariation, MM_controlPointsThreshold)
+        result <- RRTest(phenList,depVariable,outputMessages,RR_naturalVariation,RR_controlPointsThreshold)
     }
     
     return(result)   
