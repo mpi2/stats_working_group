@@ -27,8 +27,10 @@
 ## count matrix (matrices) and perform test(s).  
 ##------------------------------------------------------------------------------
 testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight", 
-        outputMessages=TRUE, pThreshold=0.05, method="MM", callAll=TRUE, keepList=NULL, dataPointsThreshold=4)
+        outputMessages=TRUE, pThreshold=0.05, method="MM", callAll=TRUE, 
+        keepList=NULL, dataPointsThreshold=4, MM_naturalVariation=95, MM_controlPointsThreshold=60)
 {
+
     
     stop_message <- ""
     
@@ -64,10 +66,12 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
     }
     
     # 5
-    if (!(method %in% c("MM","FE"))){
+    if (!(method %in% c("MM","FE","RR"))){
         stop_message <- paste(stop_message,"Error:\nMethod define in the 'method' argument '",
                 method,"' is not supported.\nAt the moment we are supporting 'MM' ", 
-                "value for Mixed Model framework and 'FE' value for Fisher Exact Test framework.\n",sep="")
+                "value for Mixed Model framework, 'FE' value for Fisher Exact Test framework and",
+                "'RR' for Reference Ranges Plus framework.\n",
+                sep="")
         
     }   
     
@@ -197,6 +201,23 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
                     "The variable '",depVariable,"' has more than 10 levels.\n",sep="") 
         } 
         
+        # RR checks
+        if (method=="RR"){
+            if (checkDepVLevels[2]==0)
+            stop_message <- paste("Error:\nInsufficient data in the dependent variable '",
+                    depVariable,
+                    "' to allow the application of RR plus framework.\n",sep="") 
+            # Number of control data
+            
+            columnOfInterest <- na.omit(x[,c(depVariable)])
+            controlSubset <- subset(x, x$Genotype==phenList$refGenotype)
+            if (length(controlSubset)<MM_controlPointsThreshold) 
+                stop_message <- paste("Error:\nInsufficient data in the dependent variable '",
+                    depVariable,
+                    "' control subset (",length(controlSubset),") to allow the application of RR plus framework.",
+                    "\nThe threshold is ",MM_controlPointsThreshold," datapoints. \n",sep="") 
+        } 
+        
     }    
     
     ## STOP DATASET'S CHECKS 
@@ -248,6 +269,13 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
         if (outputMessages)
         message(paste("Information:\nMethod: Fisher Exact Test framework.\n",sep="")) 
         result <- FisherExactTest(phenList,depVariable,outputMessages)
+    }
+    
+    else if (method=="RR"){
+        ## RR Plus
+        if (outputMessages)
+        message(paste("Information:\nMethod: Reference Ranges Plus framework.\n",sep="")) 
+        result <- RRTest(phenList,depVariable,outputMessages,MM_naturalVariation, MM_controlPointsThreshold)
     }
     
     return(result)   
