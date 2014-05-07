@@ -21,10 +21,6 @@
 RRTest <- function(phenList, depVariable, 
         outputMessages=TRUE, naturalVariation=95, controlPointsThreshold=60)
 {
-    # run checks first
-    
-    #if (length(controlSubset_male)>=50){
-    #}
         
     x <- phenList$dataset
     
@@ -299,13 +295,21 @@ RRTest <- function(phenList, depVariable,
 
     thresholds[1] <- format(naturalVariation, nsmall = 0)
     thresholds[2] <- format(controlPointsThreshold, nsmall = 0)
-    thresholds[3] <- rangeLeft
-    thresholds[4] <- rangeRight
-    
     colnames(thresholds) <- c("Value")
-    rownames(thresholds) <- c("Natrual variation","Min control points",
-            "Range from the left","Range from the right")
     
+    if(numberofsexes==2){     
+        thresholds[3] <- paste(format(RR_left_male,nsmall=3)," to ",format(RR_right_male,nsmall=3),sep="")
+        thresholds[4] <- paste(format(RR_left_female,nsmall=3)," to ",format(RR_right_female,nsmall=3),sep="")
+        rownames(thresholds) <- c("Natural variation","Min control points",
+                "Normal males","Normal females")
+    }
+    else {
+        thresholds[3] <- paste(format(RR_left_all,nsmall=3)," to ",format(RR_right_all,nsmall=3),sep="")
+        rownames(thresholds) <- c("Natural variation","Min control points",
+                "Normal values")
+    }
+    
+
     keep_weight <- NA
     keep_sex <- NA
     keep_interaction <- NA
