@@ -209,12 +209,15 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
                     "' to allow the application of RR plus framework.\n",sep="") 
             # Number of control data
             
-            columnOfInterest <- na.omit(x[,c(depVariable)])
+
             controlSubset <- subset(x, x$Genotype==phenList$refGenotype)
-            if (length(controlSubset)<RR_controlPointsThreshold) 
+            columnOfInterestSubset <- na.omit(controlSubset[,c(depVariable)])
+            
+            if (length(columnOfInterestSubset)<RR_controlPointsThreshold) 
                 stop_message <- paste("Error:\nInsufficient data in the dependent variable '",
                     depVariable,
-                    "' control subset (",length(controlSubset),") to allow the application of RR plus framework.",
+                    "' control subset (",length(columnOfInterestSubset),
+                            ") to allow the application of RR plus framework.",
                     "\nThe threshold is ",RR_controlPointsThreshold," datapoints. \n",sep="") 
         } 
         
