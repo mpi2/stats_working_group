@@ -135,15 +135,27 @@ vectorOutput <- function(phenTestResult)
         classificationValue <- classificationTag(phenTestResult,                
                 userMode="vectorOutput",outputMessages=FALSE)
         
-        addInfo = paste('"',rownames(result$model.output.quality)[1],":",
-                result$model.output.quality[1],'"',",",sep="")
-        addInfo = paste(addInfo,'"',rownames(result$model.output.quality)[2],":",
-                result$model.output.quality[2],'"',",",sep="")
-        addInfo = paste(addInfo,'"',rownames(result$model.output.quality)[3],":",
-                result$model.output.quality[3],'"',",",sep="")
-        addInfo = paste(addInfo,'"',rownames(result$model.output.quality)[4],":",
-                result$model.output.quality[4],'"',sep="")
-        addInfo = paste("{",addInfo,"}",sep="")
+        if (phenTestResult$method=="RR"){
+            addInfo = paste('"',rownames(phenTestResult$model.output.quality)[1],
+                    phenTestResult$model.output.quality[1],'"',",",sep="")
+            addInfo = paste(addInfo,'"',rownames(phenTestResult$model.output.quality)[2],
+                    phenTestResult$model.output.quality[2],'"',",",sep="")
+            
+            if (phenTestResult$numberSexes==2){
+                addInfo = paste(addInfo,'"',rownames(phenTestResult$model.output.quality)[3],
+                        phenTestResult$model.output.quality[3],'"',",",sep="")
+                addInfo = paste(addInfo,'"',rownames(phenTestResult$model.output.quality)[4],
+                    phenTestResult$model.output.quality[4],'"',sep="")
+            }
+            else {
+                addInfo = paste(addInfo,'"',rownames(phenTestResult$model.output.quality)[3],
+                        phenTestResult$model.output.quality[3],'"',sep="")
+            }
+            addInfo = paste("{",addInfo,"}",sep="")
+        }
+        else {
+            addInfo = "NA"
+        }
         
         vectorOutput <- c(switch(phenTestResult$method,FE = "Fisher Exact Test framework",
                         RR = "Reference Ranges Plus framework"),
