@@ -71,7 +71,7 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
         }
         if (!is.null(phenTestResult$model.output$female)){
             message(paste("Females only p-val: ",
-                            phenTestResult$model.output$female$p.va,sep=""))
+                            phenTestResult$model.output$female$p.val,sep=""))
             
             message(paste("Females only effect size: ",
                             phenTestResult$model.output$ES_female,"%",sep=""))                     
