@@ -35,7 +35,6 @@ RRTest <- function(phenList, depVariable,
     allValues_female <- NA
     percentageOut_female <- NA
     rangesVector <- NA
-    thresholds <- matrix(0,4,1)
      
     numberofsexes <- length(levels(x$Sex))
     
@@ -292,21 +291,23 @@ RRTest <- function(phenList, depVariable,
     model$stat_male <- stat_male
     model$stat_female <- stat_female
     
-
-    thresholds[1] <- format(naturalVariation, nsmall = 0)
-    thresholds[2] <- format(controlPointsThreshold, nsmall = 0)
-    colnames(thresholds) <- c("Value")
-    
-    if(numberofsexes==2){     
+    if(numberofsexes==2){    
+        thresholds <- matrix(0,4,1)
+        thresholds[1] <- format(naturalVariation, nsmall = 0)
+        thresholds[2] <- format(controlPointsThreshold, nsmall = 0)
         thresholds[3] <- paste(format(RR_left_male,nsmall=3)," to ",format(RR_right_male,nsmall=3),sep="")
         thresholds[4] <- paste(format(RR_left_female,nsmall=3)," to ",format(RR_right_female,nsmall=3),sep="")
-        rownames(thresholds) <- c("Natural variation","Min control points",
-                "Normal males","Normal females")
+        rownames(thresholds) <- c("Natural variation:","Min control points:",
+                "Normal values 'males only':","Normal values 'females only':")
+        colnames(thresholds) <- c("Value")
     }
     else {
+        thresholds <- matrix(0,3,1)
+        thresholds[1] <- format(naturalVariation, nsmall = 0)
+        thresholds[2] <- format(controlPointsThreshold, nsmall = 0)
         thresholds[3] <- paste(format(RR_left_all,nsmall=3)," to ",format(RR_right_all,nsmall=3),sep="")
-        rownames(thresholds) <- c("Natural variation","Min control points",
-                "Normal values")
+        rownames(thresholds) <- c("Natural variation:","Min control points:","Normal values 'all':")
+        colnames(thresholds) <- c("Value")
     }
     
 
