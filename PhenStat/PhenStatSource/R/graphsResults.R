@@ -274,9 +274,9 @@ categoricalBarplot<-function(phenTestResult,outputMessages=TRUE){
         stop_message <- "Error:\nPlease create a PhenTestResult object first.\n"
     }
     
-    if (!phenTestResult$method=="FE")
+    if (!phenTestResult$method %in% c("FE","RR"))
         stop_message <- paste(stop_message,"Error:\nCategorical bar plot can be created only within ", 
-            "Fisher Exact Test framework.\n",sep="")
+            "Fisher Exact Test or RR plus framework.\n",sep="")
     
     if (nchar(stop_message)>0){
         if (outputMessages){
