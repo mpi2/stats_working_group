@@ -227,9 +227,9 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
           }
         }
         else if (phenTestResult$method=="RR"){
-            direction_females <- names(which.max(result$model.output$percentage_matrix_female[,3]))
-            direction_males <- names(which.max(result$model.output$percentage_matrix_male[,3]))
-            direction_all <- names(which.max(result$model.output$percentage_matrix_all[,3]))
+            direction_females <- names(which.max(result$model.output$percentage_matrix_female[c(1,3),3]))
+            direction_males <- names(which.max(result$model.output$percentage_matrix_male[c(1,3),3]))
+            direction_all <- names(which.max(result$model.output$percentage_matrix_all[c(1,3),3]))
             
             # Low and High have the same Effect sizes
             if (phenTestResult$numberSexes==2){
