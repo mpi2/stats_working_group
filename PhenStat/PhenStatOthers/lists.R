@@ -95,7 +95,7 @@ getParameters <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL
                     PipelineID," AND procedure_stable_id:",
                     ProcedureID,"&rows=0&wt=json&facet=true&"
                     ,"facet.field=parameter_stable_id",sep=""))
-    print(json_file)
+   # print(json_file)
     json_data <- fromJSON(paste(readLines(json_file), collapse=""))
     parameters <- unlist(json_data$facet_counts$facet_fields$parameter_stable_id)
     numDocs <- parameters[seq(2,length(parameters),2)]
@@ -107,6 +107,70 @@ getParameters <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL
     return (as.list(parameters[selected]))
 }
 ##------------------------------------------------------------------------------
+## Strains used during measurments of patameter in phenotyping center
+getStrains <- function(PhenCenterName=NULL, ParameterID=NULL)
+{
+    if(is.null(PhenCenterName)||is.null(ParameterID)){
+        stop("Please define phenotyping center and parameter of interest")
+    }
+    else {
+        PhenCenterName <- paste("\"",PhenCenterName,"\"",sep="")
+        
+    }
+    
+    json_file <- URLencode(paste("http://www.ebi.ac.uk/mi/impc/solr/experiment/select?q=phenotyping_center:",
+                    PhenCenterName," AND parameter_stable_id:",
+                    ParameterID,"&rows=0&wt=json&facet=true&"
+                    ,"facet.field=strain",sep=""))
+    #print(json_file)
+    json_data <- fromJSON(paste(readLines(json_file), collapse=""))
+    strains <- unlist(json_data$facet_counts$facet_fields$strain)
+    numDocs <- strains[seq(2,length(strains),2)]
+    numDocs < -as.numeric(numDocs)
+    #print(numDocs)
+    selected <- numDocs>0
+    strains <- strains[seq(1,length(strains),2)]
+    
+    return (as.list(strains[selected]))
+}
+##------------------------------------------------------------------------------
+## Genes used during measurments of patameter in phenotyping center
+getGenes <- function(PhenCenterName=NULL, ParameterID=NULL, strain=NULL)
+{
+    if(is.null(PhenCenterName)||is.null(ParameterID)){
+        stop("Please define phenotyping center and parameter of interest")
+    }
+    else {
+        PhenCenterName <- paste("\"",PhenCenterName,"\"",sep="")
+        
+    }
+    
+    if (is.null(strain)){
+    
+    json_file <- URLencode(paste("http://www.ebi.ac.uk/mi/impc/solr/experiment/select?q=phenotyping_center:",
+                    PhenCenterName," AND parameter_stable_id:",
+                    ParameterID,"&rows=0&wt=json&facet=true&"
+                    ,"facet.field=gene_accession",sep=""))
+    }
+    else {
+        strain <- paste("\"",strain,"\"",sep="")
+        json_file <- URLencode(paste("http://www.ebi.ac.uk/mi/impc/solr/experiment/select?q=phenotyping_center:",
+                        PhenCenterName," AND parameter_stable_id:",
+                        ParameterID," AND strain:",
+                        strain,"&rows=0&wt=json&facet=true&"
+                        ,"facet.field=gene_accession",sep=""))
+    }
+    #print(json_file)
+    json_data <- fromJSON(paste(readLines(json_file), collapse=""))
+    genes <- unlist(json_data$facet_counts$facet_fields$gene_accession)
+    numDocs <- genes[seq(2,length(genes),2)]
+    numDocs < -as.numeric(numDocs)
+    #print(numDocs)
+    selected <- numDocs>0
+    genes <- genes[seq(1,length(genes),2)]
+    
+    return (as.list(genes[selected]))
+}
 
 # alleleAccession
 # return TSV of all mutants and control discrimited
