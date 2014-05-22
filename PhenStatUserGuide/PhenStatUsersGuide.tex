@@ -27,9 +27,9 @@
 \section{Introduction}
 High-throughput phenotyping generates large volumes of varied data including both categorical and continuous data. Operational and cost constraints can lead to a work-flow that precludes traditional analysis methods. Furthermore, for a high throughput environment, a robust automated statistical pipeline that alleviates manual intervention is required. 
 
-PhenStat is a package that provides statistical methods for the identification of abnormal phenotypes with an emphasize on high-throughput dataflows. The package contains dataset checks and cleaning in preparation for the analysis. For continuous data, an iterative fitting process is used to fit a regression model that is the most appropriate for the data (Mixed Model framework), whilst for categorical data, a Fisher Exact Test is implemented (Fisher Exact Test framework). 
+PhenStat is a package that provides statistical methods for the identification of abnormal phenotypes with an emphasize on high-throughput dataflows. The package contains dataset checks and cleaning in preparation for the analysis. For continuous data, an iterative fitting process is used to fit a regression model that is the most appropriate for the data (Mixed Model framework), whilst for categorical data, a Fisher Exact Test is implemented (Fisher Exact Test framework). In addition, the reference range method (Reference Range framework) is added into the package as a conservative method of identifying phenodeviants.  
 
-Both analysis frameworks output a statistical significance measure, an effect size measure, model diagnostics (when appropriate), and graphical visualisation of the genotype effect. 
+All analysis frameworks output a statistical significance measure, an effect size measure, model diagnostics (when appropriate), and graphical visualisation of the genotype effect. 
 
 The Mixed Model (MM) framework is an iterative process to select the best model for the data which considers both the best modelling approach (mixed model or general linear regression) and which factors to include in the model. There is also user control functionality on whether to include body weight in the modelling process. 
 
@@ -503,7 +503,7 @@ dataset.colname.weight="Weight.Value")
 \endgroup
 
 \section{Statistical Analysis}
-The PhenStat package provides two methods (frameworks) for statistical analysis: Linear Mixed Models for continuous data and Fisher Exact Test for categorical data. For both the MM and FE framework, 
+The PhenStat package provides three methods (frameworks) for statistical analysis: Linear Mixed Models for continuous data, Fisher Exact Test for categorical data and Reference Range method. For all the MM, FE and RR framework, 
 the statistical significance is assessed, the biological significance measured through an effect size estimate and finally the genotype effect is classified e.g. "If phenotype is significant - both sexes equally".  
 
 
@@ -820,7 +820,7 @@ The Mammalian Phenotype Ontology is under development as a community effort to p
 
 \subsubsection{Model Failures and Jitter}
 In this section we would like to discuss failure of model fitting and the potential use of jitter.
-At times,  the model fitting process with the MM methodology would struggle to fit a model.  In these instances,  the PhenStat method would return  an error message stating that the software can’t fit the the model  and sugest that you could try jitter or an alternate method such as reference range approach. For example,  this was seen with a Mean Corpuscular Volume dataset which had data only for male mice and the knockout mice had little variation as the majority of readings were 43 fl (shown in Figure \ref{fig:05_x}).
+At times,  the model fitting process with the MM methodology would struggle to fit a model.  In these instances,  the PhenStat method would return  an error message stating that the software can’t fit the the model  and suggest that you could try jitter or an alternate method such as reference range approach. For example,  this was seen with a Mean Corpuscular Volume dataset which had data only for male mice and the knockout mice had little variation as the majority of readings were 43 fl (shown in Figure \ref{fig:05_x}).
 
 \begin{figure}[!tpb]%figure05_x
 \centerline{\includegraphics[scale=0.6]{Jitter_figureX.png}}
@@ -1090,6 +1090,18 @@ NA&$\textless$ X&$\textless$ X&Significant for the sex tested\\
 \end{center}
 \end{table}
 
+\subsection{Reference Range Framework}
+At times phenotyping data has been collected in such a way, the typically analysis routes are not considered reliable. The reference range method (RR framework), as a conservative method which is easy to understand can have a role in identifying phenodeviants.   
+\subsubsection{Theory}
+The reference range methodology is considered a conservative method where mice are classed normal, low or high depending on whether they lie within the natural variation seen within the wild-type. Once the animals are classified, then a Fisher Exact Test is used to compare the proportion of normal, low and high between the test and reference genotype. 
+
+\subsubsection{Implementation}
+The RR methodology is driven from the \textit{testDataset} function manager. To drive the analysis through the RR methodology the argument \textit{method} needs to be set to "RR".  For the RR methodology there are a number of additional arguments that determine how the RR is implemented. The argument \textit{RR\_naturalVariation}, which defaults to 95, determines how much of the data is classified as normal and thus is used in the calculations of the classification threshold. The thresholds are determined using a percentile method, which avoids any distribution assumptions. 
+For example, when \textit{RR\_naturalVariation} defaults to 95, then 95\%  of the data should be classed as normal and therefore the 2.5 and 97.5 percentile values of the dependent variable are used to define the boundaries of normal. The RR methodology also has the \textit{RR\_controlPointsThreshold} argument which determines the minimum number of data points per sex that are used to determine a reference range.  This defaults to 60. The mathematical minimum is recommended as 40 data points, see \cite{Solberg} for details.
+
+Data is analysed as a male only, a female only and all. In the all classification, the classifications of normal, low and high are combined in the count table but please note the classification of normal, low or high are run on a sex specific basis.  In the situation where only one sex is present the output is returned in the all category.
+The effect size calculated is the maximum percentage change seen in the low or high classification. For each trait level (i.e. the observed phenotype), the change in percentage effect size is seen by subtracting the percentage observed in the knockout from the wild-type. Then across the low and high levels, the maximum percentage change is selected after ignoring the direction of the change.
+
 \section{Output of Results}
 \label{section:Results}
 The PhenStat package stores the results of statistical analyses in the \textit{PhenTestResult} object.  
@@ -1149,12 +1161,12 @@ For the "FE" framework results \textit{summaryOutput} function's output includes
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
-test2 <- PhenList(dataset=read.csv("./PhenStat/extdata/test_categorical.csv"),
+> test2 <- PhenList(dataset=read.csv("./PhenStat/extdata/test_categorical.csv"),
             testGenotype="Aff3/Aff3",outputMessages=FALSE)
-result2 <- testDataset(test2,
+> result2 <- testDataset(test2,
             depVariable="Thoracic.Processes",
             method="FE",outputMessages=FALSE)  
-summaryOutput(result2)
+> summaryOutput(result2)
 
 Test for dependent variable: Thoracic.Processes
 Method: Fisher Exact Test framework
@@ -1191,6 +1203,64 @@ Matrix 'males only':
 \end{verbatim}
 \endgroup
 
+For the “RR” framework results summaryOutput function’s output includes count matrices, statistics and effect size measures.
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> result <- testDataset(test,depVariable="Lean.Mass", method="RR")
+Information:
+Dependent variable: 'Lean.Mass'.
+
+Information:
+Method: Reference Ranges Plus framework.
+
+> summaryOutput(result)
+Test for dependent variable: Lean.Mass
+Method: Reference Ranges Plus framework
+
+Model output:
+All data p-val: 0.0201954004980281
+All data effect size: 17%
+Males only p-val: 0.401194102286188
+Males only effect size: 9%
+Females only p-val: 0.0305625957838226
+Females only effect size: 26%
+Classification tag: Significant in females (Low) and in combined dataset (Low)
+
+Thresholds:
+                              Value              
+Natural variation:            "95"               
+Min control points:           "60"               
+Normal values 'males only':   "18.830 to 26.630" 
+Normal values 'females only': "15.586 to 20.6035"
+
+Matrix 'all':
+       +/+ Sparc/Sparc
+Low     13           3
+Normal 423          12
+High    12           0
+
+Percentage matrix 'all' statistics:
+       +/+ Sparc/Sparc ES change
+Low      3          20        17
+Normal  94          80        14
+High     3           0         3
+...
+
+Matrix 'males only':
+       +/+ Sparc/Sparc
+Low      7           1
+Normal 208           7
+High     6           0
+
+Percentage matrix 'males only' statistics:
+       +/+ Sparc/Sparc ES change
+Low      3          12         9
+Normal  94          88         6
+High     3           0         3
+...
+\end{verbatim}
+\endgroup
 \subsection{Vector Format}
 \textit{vectorOutput} function was developed for large scale application where automatic implementation would be required. 
 As such, each value within the output vector is strictly defined and depends only on the statistical analysis method that has been used. 
@@ -1239,12 +1309,12 @@ In the Table \ref{table:07} vector output values are described.
 \begin{tabular}{| l | l | l | l | p{10cm} |}
   \hline
 \#&Name&Value&Framework&Description\\\hline
-1&Method&String&MM and FE&Possible values: "FE", "MM, linear mixed-effects model/generalized least squares, equation with weight/equation without weight".\\
-2&Dependent variable&String&MM and FE&Name of the dependent variable.\\
+1&Method&String&MM, FE, RR&Possible values: "FE", "RR",  "MM, linear mixed-effects model/generalized least squares, equation with weight/equation without weight".\\
+2&Dependent variable&String&MM, FE, RR&Name of the dependent variable.\\
 3&Batch included&TRUE/FALSE&MM&Was batch significant in MM?\\
 4&Residual variances homogeneity&TRUE/FALSE&MM&Was variance equal in MM?\\
-5&Genotype contribution&Numeric&MM and FE&p-value indicating genotype contribution.\\
-6&Genotype estimate&Numeric&MM and FE&Estimated coefficient that describes genotype value calculated by MM or effect size estimates in FE.\\
+5&Genotype contribution&Numeric&MM, FE, RR&p-value indicating genotype contribution.\\
+6&Genotype estimate&Numeric&MM, FE, RR&Estimated coefficient that describes genotype value calculated by MM or effect size estimates in FE.\\
 7&Genotype standard error&Numeric&MM&Standard error of the coefficient estimate for genotype in MM.\\
 8&Genotype p-val&Numeric&MM&Genotype p-value that represents the probability the genotype is NOT relevant in MM.\\
 9&Sex estimate&Numeric&MM&Estimated coefficient that describes sex value calculated by the MM.\\
@@ -1253,9 +1323,9 @@ In the Table \ref{table:07} vector output values are described.
 12&Weight estimate&Numeric&MM&Estimated coefficient that describes weight value calculated by the MM.\\
 13&Weight standard error&Numeric&MM&Standard error of the coefficient estimate for weight in MM.\\
 14&Weight p-val&Numeric&MM&Weight p-value that represents the probability the weight is NOT relevant in MM.\\
-15&Gp1 genotype&String&MM and FE&Value of reference genotype.\\
+15&Gp1 genotype&String&MM, FE, RR&Value of reference genotype.\\
 16&Gp1 Residuals normality test&Numeric&MM&p-value that represents the probability the residuals in reference genotype subset are normally distributed.\\
-17&Gp2 genotype&String&MM and FE&Value of test genotype.\\
+17&Gp2 genotype&String&MM, FE, RR&Value of test genotype.\\
 18&Gp2 Residuals normality test&Numeric&MM&p-value that represents the probability the residuals in test genotype subset are normally distrbuted.\\
 19&Blups test&Numeric&MM&p-value that represents the probability the blups are normally distrbuted.\\
 \hline  
@@ -1272,20 +1342,20 @@ In the Table \ref{table:07} vector output values are described.
 22&Intercept standard error&Numeric&MM&Standard error of the coefficient estimate for intercept in MM.\\
 23&Interaction included&TRUE/FALSE&MM&Indicates the inclusion of genotype by sex interaction effect into MM.\\
 24&Interaction p-val&Numeric&MM&Interaction p-value that represents the probability the interaction is NOT relevant in MM.\\
-25&Sex FvKO estimate&Numeric&MM and FE&Estimated coefficient that describes value calculated by the MM for females in test genotype subset or effect size estimate calculated from chi table for females only subset in FE.\\
+25&Sex FvKO estimate&Numeric&MM, FE, RR&Estimated coefficient that describes value calculated by the MM for females in test genotype subset or effect size estimate calculated from chi table for females only subset in FE.\\
 26&Sex FvKO standard error&Numeric&MM&Standard error of the "Sex FvKO estimate" in MM.\\
 27&Sex FvKO p-val&Numeric&MM&p-value that represents the probability that females group from test genotype subset contribution into MM is NOT relevant.\\
-28&Sex MvKO estimate&Numeric&MM and FE&Estimated coefficient that describes value calculated by the MM for males in test genotype subset or effect size estimate calculated from chi table for males only subset in FE.\\
+28&Sex MvKO estimate&Numeric&MM, FE, RR&Estimated coefficient that describes value calculated by the MM for males in test genotype subset or effect size estimate calculated from chi table for males only subset in FE.\\
 29&Sex MvKO standard error&Numeric&MM&Standard error of the "Sex MvKO estimate" in MM.\\
 30&Sex MvKO p-val&Numeric&MM&p-value that represents the probability that males group from test genotype subset contribution into MM is NOT relevant.\\
-31&Classification tag&String&MM and FE&A sexual dimorphism assessment of the phenotypic change from the results of MM or the overall estimation of the signals significance in FE.\\
-32&Additional information&String&MM and FE&Additional info concerning dataset, for instance, subsets sizes for MM. String in JSON format.\\
+31&Classification tag&String&MM, FE, RR&A sexual dimorphism assessment of the phenotypic change from the results of MM or the overall estimation of the signals significance in FE.\\
+32&Additional information&String&MM, FE, RR&Additional info concerning dataset, for instance, subsets sizes for MM. String in JSON format. See table \ref{table:071} for "RR".\\
 \hline  
 \end{tabular}
 \caption{Vector output description.}\label{table:07}
 \end{sidewaystable}
 
-As was mentioned above \textit{vectorOutput} format is the same for both frameworks. However, in case of "FE" many values are not defined. For example:
+As was mentioned above \textit{vectorOutput} format is the same for all frameworks. However, in case of "FE" and "RR" many values are not defined. For example, using "FE":
 
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
@@ -1359,8 +1429,26 @@ As was mentioned above \textit{vectorOutput} format is the same for both framewo
 \end{verbatim}
 \endgroup
 
+Additional information for "RR" framework contains data that help to understand how the RR methodology was implemented. For example the thresholds that define normal are stored within the additional information. See table \ref{table:071} for details. 
+
+\begin{table}
+ 
+\begin{tabular}{| l | p{2.5cm} |  p{2cm}  | p{5cm} |}
+  \hline
+Tag name&Sub-tag&Output example&Meaning\\\hline
+Natural variation&-&95&Percentage of data classed as ‘normal’\\
+Min control points&-&60&
+Minimum number of data points required to construct reference range\\
+Normal values&males only&19.19875 to 27.12625&The thresholds used to define normal\\
+&females only&15.786 to 21.520&\\
+&all&15.786 to 21.520&only provided if only one sex tested\\
+\hline  
+\end{tabular}
+\caption{The "RR" framework's information stored within the additional information index in the vector output. }\label{table:071}
+\end{table}
+
 \subsection{Count Matrices in Vector Format}
-There is an additional function to support the FE framework: \textit{vectorOutputMatrices}. This function returns values from count matrices in the vector format.
+There is an additional function to support the FE and RR frameworks: \textit{vectorOutputMatrices}. This function returns values from count matrices in the vector format.
 We've limited the number of levels for dependent variable to 10. 
 In the vector, the first three positions represent: dependent variable, genotype level 1 (reference genotype) and genotype level 2 (test genotype).
 The next 10 positions are used to define the dependent variable levels. When there are less than 10 levels, ``NA'' value is used.
@@ -1461,7 +1549,7 @@ For graphical output of the analysis, multiple graphical functions have been gen
 \endgroup 
 
 \subsection{Graphics for Categorical Data}
-There is only one graphical output for FE framework: categorical bar plots. This graph allows a visual representation of the count data, comparing observed proportions between reference and test genotypes.  
+There is only one graphical output for FE and RR frameworks: categorical bar plots. This graph allows a visual representation of the count data, comparing observed proportions between reference and test genotypes.  
 
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
@@ -2112,6 +2200,92 @@ Percentage matrix 'all' statistics:
 \endgroup 
 
 %\subsection{PhenStat Integration with Database}
+\subsection{PhenStat Usage Example RR framework}
+The following dataset, provided by Wellcome Trust Sanger Institute (WTSI) Mouse Genetics Project (MGP) is Dual-energy X-ray absorptiometry data obtained for a study on gene knockout mice carrying \textit{Akt2$\textless$tm1Wcs$\textgreater$} targeted allele which were created by blastocyst injection of targeted ES cells, and bred on the 129S5SvEvBrd genetic background. Data was collected doing a standardized high throughput phenotyping pipeline following a multi-batch workflow, where regular control animals are collected and knockout animals of the correct age are issued to the pipeline as they arise. 
+
+See table \ref{table:08}.
+
+\subsubsection{Loading the data and initial steps of analysis}
+Initial steps focus on loading the data, using the PhenStat tools to generate the PhenList object, and then the result object. We can then explore the data and fitted results using the visualisation and output functions.
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> DEXAdata=read.csv("WTSI_AKt2_data.csv")
+> test <- PhenList(dataset=DEXAdata,
+		  testGenotype="Akt2/Akt2",
+		  refGenotype="WT",
+		  dataset.colname.batch="dateOfExperiment",
+		  dataset.values.female="female",
+		  dataset.values.male="male", 
+		  dataset.colname.genotype="Genotype", 
+		  dataset.colname.sex="Gender")
+> result <- testDataset(test, 
+			depVariable="Lean.Mass", 
+			method="RR")
+\end{verbatim}
+\endgroup 
+
+\subsubsection{Visualisation of data}
+The function \textit{categoricalBarplot} has been provided to visualise the categorical data formed from the RR framework as summary percentage data. It reports the percentage of each classification observed for up to three datasets: all data, male only and female only. It is important to note that percentage accuracy is very dependent on the number of readings so it is important to consider the dataset size when interpreting these graphs. Therefore tables showing both the percentage and count values are included in the \textit{summaryOutput}.
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> categoricalBarplot(result)
+\end{verbatim}
+\endgroup 
+
+\begin{figure}[H]%figure01
+\centerline{\includegraphics[scale=0.5]{RR_graph.png}}
+\caption{\textit{categoricalBarplot} function for \textit{Akt2} Lean Mass example.}\label{fig:16a}
+\end{figure}
+
+
+\subsubsection{Understanding the summaryOutput}
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> summaryOutput(result)
+Test for dependent variable: Lean.Mass
+Method: Reference Ranges Plus framework
+
+Model output:
+All data p-val: 2.34792204203902e-17
+All data effect size: 59%
+Males only p-val: 4.17246685163137e-07
+Males only effect size: 47%
+Females only p-val: 5.21527489923298e-11
+Females only effect size: 72%
+Classification tag: Significant in males (Low), females (Low) and in combined dataset (Low)
+
+Thresholds:
+                              Value                 
+Natural variation:            "95"                  
+Min control points:           "60"                  
+Normal values 'males only':   "18.10925 to 30.0315" 
+Normal values 'females only': "14.38975 to 23.52675"
+\end{verbatim}
+\endgroup 
+The first two lines of the \textit{summaryOutput} confirm the statistical framework used and the dependent variable studied. The next section of the output reports the summary of statistical assessment under the title ‘Model output’. Two measures are provided for each dataset considered. First a test of statistical significance assessed using a Fisher Exact Test and then a measure of biological significance, the maximum effect size change in high or low classification. Under a section titled ‘Thresholds’ information on how the reference range methodology has been implemented has been reported.  Natural variation indicates how much of the data was used to define normal.  This defaults to 95\%.  The ‘Min control points’ indicates how many data points were required as a minimum to build a reference range.  Then the thresholds for defining normal are reported for the male and female for this variable.  Data is analysed as a male only, a female only and all.  In the all classification, the classification are combined but please note the classification of normal, low or high are run on a sex specific basis.  In the situation where only one sex is present the output is returned in the all category. 
+The final section of the output provides tables showing the counts and percentage calculated for each group and possible level. The following is reported for dependent variable lean mass for the \textit{Akt2} dataset and we can see that for all datasets, there is a statistically significant change with a large effect size.
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+Matrix 'males only':
+        WT Akt2/Akt2
+Low     15         7
+Normal 542         7
+High    15         0
+
+Percentage matrix 'males only' statistics:
+       WT Akt2/Akt2 ES change
+Low     3        50        47
+Normal 95        50        45
+High    3         0         3
+\end{verbatim}
+\endgroup 
+Example count and percentage output.  Shown are the male only results for the \textit{Akt2} lean mass example.
+\subsubsection{Understanding the maximum effect size reported}
+The effect size reported is the maximum percentage change seen in the low or high classification. For each trait level (i.e. the observed phenotype), the change in percentage effect size is seen by subtracting the percentage observed in the knockout from the wild-type. Then across the low and high levels, the maximum percentage change is selected after ignoring the direction of the change. Thus in the \textit{Akt2} example, the maximum effect size would be 47\% for the male data as the increase in classification of low ($|3-50|=47$\%) was larger than the change in the high classification ($|3-0|=3$\%). 
 
 \subsection{PhenStat Example Using Cluster}
 If someone would like to analyse all variables in the dataset and has a cluster available for such kind of job then here is an example of PhenStat package usage.
@@ -2221,6 +2395,8 @@ Hahne,F., Huber,W., Gentleman,R., Falcon,S. (2008). Bioconductor Case Studies. S
 \bibitem[Houseman {\it et~al}., 2004]{RotatedResiduals04} E. Andrés Houseman, Louise M. Ryan and Brent A. Coull (2004) Cholesky Residuals for Assessing Normal Errors in a Linear Model with Correlated Outcomes, {\it Journal of the American Statistical Association}, {\bf 99} (466), 383-394
 
 \bibitem[Pinkert, 2002]{Pinkert} C.A. Pinkert, Transgenic Animal Technology. A laboratory Handbook (2002), {\it Academic Press Inc.}, USA
+
+\bibitem[Solberg, 1983]{Solberg} H.E. Solberg, The theory of reference values Part 5. Statistical treatment of collected reference values. Determination of reference limits, {\it Journal of clinical chemistry and clinical biochemistry}, {\bf 21} (11), 749-760
 
 %%An R2 statistic for fixed effects in the linear mixed model
 
