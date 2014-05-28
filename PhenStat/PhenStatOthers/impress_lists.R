@@ -12,7 +12,7 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ##------------------------------------------------------------------------------
-## lists.R contains functions that are using Impress SOLR REST API to retrieve data 
+## impress_lists.R contains functions that are using Impress SOLR REST API to retrieve data 
 ##------------------------------------------------------------------------------
 library("rjson")
 ## Phenotyping center
@@ -117,6 +117,7 @@ getStrains <- function(PhenCenterName=NULL, ParameterID=NULL)
         PhenCenterName <- paste("\"",PhenCenterName,"\"",sep="")
         
     }
+
     
     json_file <- URLencode(paste("http://www.ebi.ac.uk/mi/impc/solr/experiment/select?q=phenotyping_center:",
                     PhenCenterName," AND parameter_stable_id:",
@@ -160,7 +161,7 @@ getGenes <- function(PhenCenterName=NULL, ParameterID=NULL, strain=NULL)
                         strain,"&rows=0&wt=json&facet=true&"
                         ,"facet.field=gene_accession",sep=""))
     }
-    #print(json_file)
+    print(json_file)
     json_data <- fromJSON(paste(readLines(json_file), collapse=""))
     genes <- unlist(json_data$facet_counts$facet_fields$gene_accession)
     numDocs <- genes[seq(2,length(genes),2)]
@@ -170,6 +171,40 @@ getGenes <- function(PhenCenterName=NULL, ParameterID=NULL, strain=NULL)
     genes <- genes[seq(1,length(genes),2)]
     
     return (as.list(genes[selected]))
+}
+##------------------------------------------------------------------------------
+## Zygosity used during measurments of patameter in phenotyping center
+getZygosities <- function(PhenCenterName=NULL, ParameterID=NULL, strain=NULL)
+{
+    if(is.null(PhenCenterName)||is.null(ParameterID)){
+        stop("Please define phenotyping center and parameter of interest")
+    }
+    else {
+        PhenCenterName <- paste("\"",PhenCenterName,"\"",sep="")
+        
+    }
+    add_this <- ""
+    if (!is.null(strain)){
+        strain <- paste("\"",strain,"\"",sep="")
+        add_this <- paste(add_this," AND strain:", strain, sep="")
+    }  
+
+        
+    json_file <- URLencode(paste("http://www.ebi.ac.uk/mi/impc/solr/experiment/select?q=phenotyping_center:",
+                        PhenCenterName," AND parameter_stable_id:",
+                        ParameterID,add_this,"&rows=0&wt=json&facet=true&"
+                        ,"facet.field=zygosity",sep=""))
+    
+    print(json_file)
+    json_data <- fromJSON(paste(readLines(json_file), collapse=""))
+    zygosities <- unlist(json_data$facet_counts$facet_fields$zygosity)
+    numDocs <- zygosities[seq(2,length(zygosities),2)]
+    numDocs < -as.numeric(numDocs)
+    #print(numDocs)
+    selected <- numDocs>0
+    zygosities <- zygosities[seq(1,length(zygosities),2)]
+    
+    return (as.list(zygosities[selected]))
 }
 
 # alleleAccession
