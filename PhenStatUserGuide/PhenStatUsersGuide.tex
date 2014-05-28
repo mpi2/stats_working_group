@@ -169,11 +169,12 @@ Here is an example when the user sets out-messages to FALSE:
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
-> dataset1 <- read.csv("./PhenStat/extdata/test.csv")
+> file <- system.file("extdata", "test1.csv", package="PhenStat") 
+> dataset1 <- read.csv(file)
 
 # Default behaviour with messages
 > test <- PhenList(dataset=dataset1,
-  testGenotype="Sparc/Sparc")
+   testGenotype="Sparc/Sparc")
 
 Warning:
 Dataset's column 'Assay.Date' has been renamed to 'Batch' and will be used for the batch effect modelling.
@@ -186,8 +187,8 @@ Dataset's 'Sex' column has following value(s): 'Female', 'Male'
 
 # Out-messages are switched off 
 > test <- PhenList(dataset=dataset1,
-  testGenotype="Sparc/Sparc",
-  outputMessages=FALSE)
+   testGenotype="Sparc/Sparc",
+   outputMessages=FALSE)
   
 # There are no messages!
 \end{verbatim}
@@ -214,7 +215,8 @@ In the example below dataset's values for females and males are 1 and 2 accordin
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
-> dataset_test <- read.csv("./PhenStat/extdata/test3.csv")
+> file <- system.file("extdata", "test3.csv", package="PhenStat") 
+> dataset_test <- read.csv(file)
 
 > test <- PhenList(dataset=dataset_test, 
   dataset.clean=TRUE, 
@@ -255,39 +257,18 @@ Male&+\slash +&KO\slash Y& \\
 
 With the dataset described in Table \ref{table:03} where \textit{hemiGenotype} argument of the PhenList function is defined as "KO\slash Y", the actions of the function are:  "KO/Y" genotypes are relabelled to "KO/KO" for males;  females "+\slash KO" heterozygous are filtered out. 
 
-\begingroup
-    \fontsize{8pt}{12pt}\selectfont
-\begin{verbatim}
-> dataset1 <- read.csv("sex_linked_genes.csv")
-> test <- PhenList(dataset=dataset1,
-  testGenotype="KO/KO",
-  refGenotype="+/+",
-  hemiGenotype="KO/Y")
-  
-Warning:
-Dataset's column 'Assay.Date' has been renamed to 'Batch' and will be used for the batch effect modelling.
-
-Warning:
-Hemizygotes 'KO/Y' have been relabeled to test genotype 'KO/KO'.
-If you don't want this behaviour then don't define 'hemiGenotype' argument.
-
-Information:
-Dataset's 'Genotype' column has following values: '+/+', 'KO/KO'
-
-Information:
-Dataset's 'Sex' column has following value(s): 'Female', 'Male'
-\end{verbatim}
-\endgroup
-
 If a user would like to switch off filtering, (s)he can set \textit{PhenList} function's argument \textit{dataset.clean} to FALSE (default value is TRUE). 
 In the following example the same dataset is processed successfully passing the checks procedures (see section \ref{section:DatasetChecks}) when \textit{dataset.clean} is set to TRUE and fails at checks otherwise.
 
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
-> dataset <- read.csv("test_3genotypes.csv")
+> file <- system.file("extdata", "test3.csv", package="PhenStat") 
+> dataset <- read.csv(file)
 > test<-PhenList(dataset,
-testGenotype="Mysm1/+")
+   testGenotype="Mysm1/+",
+   dataset.values.male="1",
+   dataset.values.female="2")
 
 Warning:
 Dataset's column 'Assay.Date' has been renamed to 'Batch' and will be used for the batch effect modelling.
@@ -429,7 +410,8 @@ The example below shows how to print out the whole cleaned dataset and how to vi
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
-> dataset1 <- read.csv("./PhenStat/extdata/test.csv")
+> file <- system.file("extdata", "test1.csv", package="PhenStat") 
+> dataset1 <- read.csv(file)
 
 > test <- PhenList(dataset=dataset1,
   testGenotype="Sparc/Sparc", outputMessages=FALSE)
@@ -483,10 +465,12 @@ An example is given below.
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
-> dataset2 <- read.csv("./PhenStat/extdata/test2.csv")
+> file <- system.file("extdata", "test2.csv", package="PhenStat") 
+> dataset2 <- read.csv(file)
+
 > test2 <- PhenList(dataset=dataset2,
-testGenotype="Arid4a/Arid4a",
-dataset.colname.weight="Weight.Value")
+   testGenotype="Arid4a/Arid4a",
+   dataset.colname.weight="Weight.Value")
 
 > test2$testGenotype
 
@@ -546,10 +530,11 @@ The example how to call MM and FE framework is given below.
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
-> dataset1 <- read.csv("./PhenStat/extdata/test.csv")
+> file <- system.file("extdata", "test1.csv", package="PhenStat") 
+> dataset1 <- read.csv(file)
 
 > test <- PhenList(dataset=dataset1,
-  testGenotype="Sparc/Sparc", outputMessages=FALSE)
+   testGenotype="Sparc/Sparc", outputMessages=FALSE)
 
 > result_MM_Lean.Mass <- testDataset(test,depVariable="Lean.Mass", method="MM",
   dataPointsThreshold=2)
@@ -831,10 +816,14 @@ When PhenStat processes this data,  models are not estimated as the software fai
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
-> data <- read.csv("PhenStat/inst/extdata/test_jitter.csv")
-> test <- PhenList(data, testGenotype="3", refGenotype="1", 
-dataset.values.missingValue="null")
-> result <- testDataset(test, depVariable="MCV", equation="withoutWeight")
+> file <- system.file("extdata", "test_jitter.csv", package="PhenStat") 
+> dataset_jitter <- read.csv(file)
+
+> test <- PhenList(dataset=dataset_jitter, 
+   testGenotype="3", refGenotype="1",
+   dataset.values.missingValue="null")
+> result <- testDataset(test, depVariable="MCV", 
+   equation="withoutWeight")
 Information:
 Dependent variable: 'MCV'.
 
@@ -906,8 +895,10 @@ All results are stored in \textit{PhenTestResult} object:
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
-> dataset_cat <- read.csv("./PhenStat/extdata/test_categorical.csv")
-> test_cat <- PhenList(dataset_cat,testGenotype="Aff3/Aff3")
+> file <- system.file("extdata", "test_categorical.csv", package="PhenStat") 
+> dataset_cat <- read.csv(file)
+
+> test_cat <- PhenList(dataset=dataset_cat, testGenotype="Aff3/Aff3")
  
 Warning:
 Dataset's column 'Assay.Date' has been renamed to 'Batch' and will be used for the batch effect modeling.
@@ -1032,7 +1023,9 @@ The following is an example of such case:
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
-> test2 <- PhenList(dataset=read.csv("test_categorical_normal.csv"),
+> file <- system.file("extdata", "test_categorical_normal.csv", package="PhenStat") 
+> dataset_cat_normal <- read.csv(file)
+> test2 <- PhenList(dataset=dataset_cat_normal, testGenotype="Aff3/Aff3")
 > result2 <- testDataset(test2,depVariable="Thoracic.Processes", method="FE")
 > levels(result2$model.dataset$Thoracic.Processes)
 [1] "Normal"
@@ -1091,16 +1084,19 @@ NA&$\textless$ X&$\textless$ X&Significant for the sex tested\\
 \end{table}
 
 \subsection{Reference Range Framework}
-At times phenotyping data has been collected in such a way, the typically analysis routes are not considered reliable. The reference range method (RR framework), as a conservative method which is easy to understand can have a role in identifying phenodeviants.   
+At times phenotyping data has been collected in such a way, that typical analysis routes are not considered reliable. The conservative, easy to understand reference range method (RR framework) can have a role in identifying phenodeviants.   
 \subsubsection{Theory}
-The reference range methodology is considered a conservative method where mice are classed normal, low or high depending on whether they lie within the natural variation seen within the wild-type. Once the animals are classified, then a Fisher Exact Test is used to compare the proportion of normal, low and high between the test and reference genotype. 
+The reference range methodology is considered a conservative method where data are classed normal, low or high depending on whether they lie within the natural variation seen within the control. Once the data are classified, then a Fisher Exact Test is used to compare the proportion of normal, low and high between the test and reference genotype. 
 
 \subsubsection{Implementation}
-The RR methodology is driven from the \textit{testDataset} function manager. To drive the analysis through the RR methodology the argument \textit{method} needs to be set to "RR".  For the RR methodology there are a number of additional arguments that determine how the RR is implemented. The argument \textit{RR\_naturalVariation}, which defaults to 95, determines how much of the data is classified as normal and thus is used in the calculations of the classification threshold. The thresholds are determined using a percentile method, which avoids any distribution assumptions. 
-For example, when \textit{RR\_naturalVariation} defaults to 95, then 95\%  of the data should be classed as normal and therefore the 2.5 and 97.5 percentile values of the dependent variable are used to define the boundaries of normal. The RR methodology also has the \textit{RR\_controlPointsThreshold} argument which determines the minimum number of data points per sex that are used to determine a reference range.  This defaults to 60. The mathematical minimum is recommended as 40 data points, see \cite{Solberg} for details.
+The RR methodology is driven from the \textit{testDataset} function manager. To analyse the data using the RR methodology the argument \textit{method} needs to be set to "RR".  For the RR methodology there are a number of additional arguments that determine how the RR is executed. The \textit{RR\_naturalVariation} argument (defaults to 95) determines how much of the data is classified as normal and thus is used in the calculations of the classification threshold. The thresholds are determined using a percentile method, which avoids any distribution assumptions. 
+For example, when \textit{RR\_naturalVariation} defaults to 95, then 95\%  of the data will be classed as normal, i.e. the 2.5 and 97.5 percentile thresholds of the dependent variable are used to define the boundaries of normal. 
 
-Data is analysed as a male only, a female only and all. In the all classification, the classifications of normal, low and high are combined in the count table but please note the classification of normal, low or high are run on a sex specific basis.  In the situation where only one sex is present the output is returned in the all category.
-The effect size calculated is the maximum percentage change seen in the low or high classification. For each trait level (i.e. the observed phenotype), the change in percentage effect size is seen by subtracting the percentage observed in the knockout from the wild-type. Then across the low and high levels, the maximum percentage change is selected after ignoring the direction of the change.
+The \textit{RR\_controlPointsThreshold} argument (defaults to 60)  determines the minimum number of data points per sex that are used to determine a reference range.  The mathematical minimum is recommended as 40 data points, see \cite{Solberg} for details.
+
+Data is analysed in three ways: 1) male only, 2) female only, and 3)  all. In the all classification, the classifications of normal, low, and high are combined in the count table but please note the classification of normal, low, or high are run on a sex specific basis.  In the situation where only one sex is present the output is returned in the all category.
+
+The effect size calculated is the maximum percentage change seen in the low or high classification. For each trait level (i.e. the observed phenotype), the change in percentage effect size is seen by subtracting the percentage observed in the knockout from the control. Then across the low and high levels, the maximum percentage change is selected after ignoring the direction of the change.
 
 \section{Output of Results}
 \label{section:Results}
@@ -1118,10 +1114,13 @@ The following is an example of summary output of MM framework:
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
  # Mixed Model framework
-> test <- PhenList(dataset=read.csv("./PhenStat/extdata/test.csv"),
-            testGenotype="Sparc/Sparc",outputMessages=FALSE)
+> file <- system.file("extdata", "test1.csv", package="PhenStat") 
+> dataset1 <- read.csv(file)
+
+> test <- PhenList(dataset=dataset1,
+    testGenotype="Sparc/Sparc",outputMessages=FALSE)
 > result <- testDataset(test,
-            depVariable="Lean.Mass",outputMessages=FALSE)
+    depVariable="Lean.Mass",outputMessages=FALSE)
 > summaryOutput(result)
 
 Test for dependent variable: Lean.Mass
@@ -1161,11 +1160,14 @@ For the "FE" framework results \textit{summaryOutput} function's output includes
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
-> test2 <- PhenList(dataset=read.csv("./PhenStat/extdata/test_categorical.csv"),
-            testGenotype="Aff3/Aff3",outputMessages=FALSE)
+> file <- system.file("extdata", "test_categorical.csv", package="PhenStat") 
+> dataset_cat <- read.csv(file)
+
+> test2 <- PhenList(dataset=dataset_cat,
+   testGenotype="Aff3/Aff3",outputMessages=FALSE)
 > result2 <- testDataset(test2,
-            depVariable="Thoracic.Processes",
-            method="FE",outputMessages=FALSE)  
+   depVariable="Thoracic.Processes",
+   method="FE",outputMessages=FALSE)  
 > summaryOutput(result2)
 
 Test for dependent variable: Thoracic.Processes
@@ -1203,7 +1205,7 @@ Matrix 'males only':
 \end{verbatim}
 \endgroup
 
-For the “RR” framework results summaryOutput function’s output includes count matrices, statistics and effect size measures.
+The output of the “RR” framework \textit{summaryOutput} function includes count matrices, statistics and effect size measures.
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -1429,7 +1431,7 @@ As was mentioned above \textit{vectorOutput} format is the same for all framewor
 \end{verbatim}
 \endgroup
 
-Additional information for "RR" framework contains data that help to understand how the RR methodology was implemented. For example the thresholds that define normal are stored within the additional information. See table \ref{table:071} for details. 
+Additional information for "RR" framework contains data that help to understand how the RR methodology was implemented. For example the thresholds that define normal are stored within the additional information field. See table \ref{table:071} for details. 
 
 \begin{table}
  
@@ -1549,7 +1551,7 @@ For graphical output of the analysis, multiple graphical functions have been gen
 \endgroup 
 
 \subsection{Graphics for Categorical Data}
-There is only one graphical output for FE and RR frameworks: categorical bar plots. This graph allows a visual representation of the count data, comparing observed proportions between reference and test genotypes.  
+There is only one graphical output for "FE" and "RR" frameworks: categorical bar plots. This graph allows a visual representation of the count data, comparing observed proportions between reference and test genotypes.  
 
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
@@ -1692,13 +1694,15 @@ We can then explore the data and fitted results using the visualisation and outp
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
-> DEXAdata=read.csv("WTSI_AKt2_data.csv")
+> file <- system.file("extdata", "test_Akt2.csv", package="PhenStat") 
+> DEXAdata <- read.csv(file)
 > test <- PhenList(dataset=DEXAdata,testGenotype="Akt2/Akt2",  
-  refGenotype="WT",
-  dataset.colname.batch="dateOfExperiment", 
-  dataset.values.female="female", 
-  dataset.values.male="male" )
-> result <- testDataset(test,depVariable="Lean.Mass",method="MM",equation="withoutWeight")
+   refGenotype="WT",
+   dataset.colname.batch="dateOfExperiment", 
+   dataset.values.female="female", 
+   dataset.values.male="male" )
+> result <- testDataset(test,depVariable="Lean.Mass",
+   method="MM",equation="withoutWeight")
 \end{verbatim}
 \endgroup 
 
@@ -1749,7 +1753,7 @@ SexMale         4.620361 0.1581236 1048 29.219943 8.940893e-138
 \endgroup 
 
 A regression model estimates each component of the model, by isolating how that effect influences the dependent variable (i.e. lean mass) as though all other parts of the model had been fixed and isolated.   
-From the table of output, we can see that the intercept (the expected reading for lean mass for female reference genotype (aka female wild type animals) is 18.5.  
+From the table of output, we can see that the intercept (the expected reading for lean mass for female reference genotype (aka female wild-type animals) is 18.5.  
 Then we can see the effect of the genotype is -3.5 in that knockout animals are predicted to have 3.5 grams less lean mass relative to the control animals.  
 Finally we can see that being a male animals leads to an increase of 4.6 grams.  
 As there was no evidence for sexual dimorphism, and thus the genotype effect was estimated independently of sex, then a classification tag “both sexes equally” has been assigned.  
@@ -1800,9 +1804,9 @@ Five functions are available and they focus on looking at residual behaviour.
 A residual, is the difference between the estimated dependent variable from the final model estimates and the actual measured dependent variable response. 
 A model is a good fit, when the residuals are normally distributed and there is no systematic pattern in the distribution of the residuals relative to the dependent variable. 
 
-The \textit{vectorOutput} function includes statistical tests for normality on the residuals for the wild type, residuals for the knockout, the blups and ``rotated'' residuals (see section \ref{Diagnostics}). 
+The \textit{vectorOutput} function includes statistical tests for normality on the residuals for the wild-type, residuals for the knockout, the blups and ``rotated'' residuals (see section \ref{Diagnostics}). 
 These normality tests are provide to assist in the building automated tools for assessing model fit, 
-however when there is a lot of data (e.g. in a dataset where the wild type arises from a high throughput program with a running baseline), 
+however when there is a lot of data (e.g. in a dataset where the wild-type arises from a high throughput program with a running baseline), 
 the statistical test can be overall sensitive to departures from normality and when the number of data points is low (e.g. in many knockout groups), the test can lack ability to detect deviations from normality. 
 
 \begin{itemize}
@@ -1830,7 +1834,7 @@ This is not concerning as we have a very large control dataset and we do have ou
 
 \item \textbf{boxplotResidualBatch} 
 
-This function allows visualisation to assist the user to assess whether the deviation in the residual is consistent across all the batches and similar in size between the wild type and knockout line. 
+This function allows visualisation to assist the user to assess whether the deviation in the residual is consistent across all the batches and similar in size between the wild-type and knockout line. 
 For the \textit{Akt2} example, we can see that the variation in residual is consistent across all the batches and similar in size between the knockout and wildtype group.
 
 A few of the wildtype (control) dataset points have large residuals and it would be worth looking at these data points further to see why these are outliers. They do not suggest the model should be discarded because as a proportion of the dataset they are few and scattered through the dataset.
@@ -1924,12 +1928,12 @@ There are two advantages to including weight:
 If differences in animal weight lead to greater variability in the dependent variable, then by adding weight and accounting for this variability then the statistical model will be more sensitive to a genotype effect. 
 
  \item \textbf{Adjusting for weight differences between the knockout and control group.}  
-When there is a weight difference between the knockout and wild type animals, the genotype effect is confounded by the weight effect in that there is a difference in the dependent variable but you cannot assess whether it is due to the differences in body weight of the knockout and control animals or genotype differences between the knockout and control animals. When weight is included in the equation, the genotype effect is then testing for a genotype difference after adjusting for the weight difference.
+When there is a weight difference between the knockout and wild-type animals, the genotype effect is confounded by the weight effect in that there is a difference in the dependent variable but you cannot assess whether it is due to the differences in body weight of the knockout and control animals or genotype differences between the knockout and control animals. When weight is included in the equation, the genotype effect is then testing for a genotype difference after adjusting for the weight difference.
 
 \end{enumerate}
 
 We have found that the majority of continuous phenotypic variables monitored in the WTSI Mouse Genetics Project (\href{http://www.sanger.ac.uk/resources/mouse/}{MGP}) have a relationship with body weight. 
-Looking at the \textit{Akt2} dataset we can see that there is a difference in body weight between the wild type and knockout group and thus body weight can be a confounding factor to isolating the genotype effect.   
+Looking at the \textit{Akt2} dataset we can see that there is a difference in body weight between the wild-type and knockout group and thus body weight can be a confounding factor to isolating the genotype effect.   
 
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
@@ -1947,7 +1951,7 @@ When body weight is included, the inclusion can be seen in the final fitted mode
 With weight included the genotype effect is estimating the impact of genotype after adjusting for weight differences in the animals. 
 
 Looking at the \textit{summaryOutput} for the \textit{Akt2} example, the table shows that for each gram of body weight the lean mass increased by 0.32g.  
-When weight is included in the equation it changes the definition of the intercept from the lean mass value of a wild type female animal to the lean mass value of a wild type female animal of zero body weight. 
+When weight is included in the equation it changes the definition of the intercept from the lean mass value of a wild-type female animal to the lean mass value of a wild-type female animal of zero body weight. 
 This happens as the model is estimating each of these terms influences in isolation of the other terms. 
 In contrast to the earlier fitted results (section \ref{cs1_output}), when weight is included in the model, the classification tag identifies the change as “no significant change” 
 as the global genotype test is now not significant with a p-value of 0.64.  
@@ -2009,7 +2013,7 @@ a study on gene knockout mice carrying the \textit{Aff3tm1a(EUCOMM)Wtsi} targete
 Data was collected on a standardized high throughput phenotyping pipeline following a multi-batch workflow, where regular control animals are collected and knockout animals of the correct age are then issued to the pipeline as they arise. 
 At WTSI, batch to batch variation has not been found to be significant for these rare event categorical variables. 
 Consequently, we ignore batch and combine data for the same genetic background when collected with the same protocol and housing and husbandry conditions. 
-This increases the sensitivity of the analysis as we have more accuracy on the estimate of the prevalence of the condition in the wild type population.
+This increases the sensitivity of the analysis as we have more accuracy on the estimate of the prevalence of the condition in the wild-type population.
 
 \begin{table}[!h]
 \begin{center}
@@ -2019,7 +2023,7 @@ Genotype&Sex&Number Animals&Number Batches\\\hline
 \multirow{2}{*}{\textit{Aff3}\slash \textit{Aff3}}&Female&7&4\\
 			    &Male&6&4\\
 			    \hline
-\multirow{2}{*}{Wild type}&Female&446&70\\
+\multirow{2}{*}{wild-type}&Female&446&70\\
 			    &Male&451&70\\
 
 \hline  
@@ -2034,15 +2038,18 @@ Initial steps focus on loading the data, using the PhenStat tools to generate th
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
-> aff3data=read.csv("categorical_example 1_aff3_Xray.csv")
-> test <- PhenList(dataset=aff3data,testGenotype="Aff3/Aff3", 
-  refGenotype="+/+", dataset.colname.batch="Assay.Date")
+> file <- system.file("extdata", "test_categorical.csv", package="PhenStat") 
+> dataset_cat <- read.csv(file)
+> test <- PhenList(dataset=dataset_cat, 
+   testGenotype="Aff3/Aff3", 
+   refGenotype="+/+", 
+   dataset.colname.batch="Assay.Date")
 > result <- testDataset(test, depVariable="Thoracic.Processes", method="FE")
 \end{verbatim}
 \endgroup 
 
 \subsubsection{Visualisation of data}
-The function \textit{categoricalBarplot} has been provided to visualise the categorical data as summary percentage data. 
+The \textit{categoricalBarplot} function is used to visualise the categorical data as summary percentage data. 
 It reports the percentage of each classification observed for up to three datasets: all data, male only and female only.  
 It is important to note that percentage accuracy is very dependent on the number of readings so it is important to consider the dataset size when interpreting these graphs.  
 Therefore tables showing both the percentage and count values are included in the \textit{summaryOutput}. 
@@ -2061,10 +2068,13 @@ Therefore tables showing both the percentage and count values are included in th
 
 \subsubsection{Understanding the \textit{summaryOutput}}
 
-The first two lines of the \textit{summaryOutput} confirm the statistical framework used and the dependent variable studied.  
-The next section of the output reports the summary of statistical assessment. Two measures are provided for each dataset considered. 
-First a test of statistical significance assessed using a Fisher Exact Test and then a measure of biological significance, the maximum effect size. 
-The final section of the output provides tables showing the counts and percentage calculated for each group and possible level. 
+The first two lines of \textit{summaryOutput} indicate the statistical framework used and the dependent variable studied.  
+The next section, titled "Model output", reports the summary of statistical assessment. Two measures are provided for each dataset considered:
+\begin{enumerate}
+\item A test of statistical significance assessed using a Fisher Exact Test. 
+\item A measure of biological significance, the maximum effect size
+\end{enumerate}
+The final section provides tables showing the counts and percentage calculated for each group and possible level. 
 
 The following is reported for dependent variable thoracic processes for the \textit{Aff3} dataset and we can see that for all datasets, there is a statistically significant change with a large effect size. 
 
@@ -2112,8 +2122,8 @@ Cramer's V        : 0.242
 \subsubsection{Understanding the maximum effect size reported}
 \label{FE_EffectSize}
 The maximum effect size is the maximum percentage change seen for an observation type. 
-Below is a table showing an artificial example where the majority of the wild type are normal but the abnormality is spread across multiple levels in the knockout. 
-For each trait level (i.e. the observed phenotype), the change in percentage effect size is seen by subtracting the percentage observed in the knockout from the wild type. 
+Below is a table showing an artificial example where the majority of the wild-type are normal but the abnormality is spread across multiple levels in the knockout. 
+For each trait level (i.e. the observed phenotype), the change in percentage effect size is seen by subtracting the percentage observed in the knockout from the wild-type. 
 Then across all the observed levels, the maximum percentage change is selected after ignoring the direction of the change. 
 Thus in the example below, the maximum effect size would be 86.5\% which indicates that there has been 86.5\% change in how often a level is observed.
 
@@ -2210,7 +2220,8 @@ Initial steps focus on loading the data, using the PhenStat tools to generate th
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
-> DEXAdata=read.csv("WTSI_AKt2_data.csv")
+> file <- system.file("extdata", "test_Akt2.csv", package="PhenStat") 
+> DEXAdata <- read.csv(file)
 > test <- PhenList(dataset=DEXAdata,
 		  testGenotype="Akt2/Akt2",
 		  refGenotype="WT",
@@ -2265,7 +2276,23 @@ Normal values 'males only':   "18.10925 to 30.0315"
 Normal values 'females only': "14.38975 to 23.52675"
 \end{verbatim}
 \endgroup 
-The first two lines of the \textit{summaryOutput} confirm the statistical framework used and the dependent variable studied. The next section of the output reports the summary of statistical assessment under the title ‘Model output’. Two measures are provided for each dataset considered. First a test of statistical significance assessed using a Fisher Exact Test and then a measure of biological significance, the maximum effect size change in high or low classification. Under a section titled ‘Thresholds’ information on how the reference range methodology has been implemented has been reported.  Natural variation indicates how much of the data was used to define normal.  This defaults to 95\%.  The ‘Min control points’ indicates how many data points were required as a minimum to build a reference range.  Then the thresholds for defining normal are reported for the male and female for this variable.  Data is analysed as a male only, a female only and all.  In the all classification, the classification are combined but please note the classification of normal, low or high are run on a sex specific basis.  In the situation where only one sex is present the output is returned in the all category. 
+
+The first two lines of \textit{summaryOutput} indicate the statistical framework used and the dependent variable studied.  
+
+The next section, titled "Model output", reports the summary of statistical assessment. Two measures are provided for each dataset considered:
+\begin{enumerate}
+\item A test of statistical significance assessed using a Fisher Exact Test. 
+\item A measure of biological significance, the maximum effect size change in high or low classification
+\end{enumerate}
+The final section provides tables showing the counts and percentage calculated for each group and possible level. 
+
+The section titled ‘Thresholds’ indicates how the reference range methodology has been configured.  
+\begin{itemize}
+\item "Natural variation" indicates how much of the data was used to define normal.  This defaults to 95\%. 
+\item "Min control points" indicates how many data points were required as a minimum to build a reference range.  
+\item The thresholds for defining normal are reported for the male and female for this variable.  Data is analysed as a male only, a female only and all.  In the all classification, the male and female classifications are combined but please note the classification of normal, low or high are run on a sex specific basis.  In the situation where only one sex is present the output is returned in the all category. 
+\end{itemize}
+
 The final section of the output provides tables showing the counts and percentage calculated for each group and possible level. The following is reported for dependent variable lean mass for the \textit{Akt2} dataset and we can see that for all datasets, there is a statistically significant change with a large effect size.
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
