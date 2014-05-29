@@ -57,6 +57,8 @@ Package run time depends on a variety of factors including dataset size, computa
 \section{Data Processing with PhenList Function}
 \textit{PhenList} function performs data processing and creates a \textit{PhenList} object. 
 As input, \textit{PhenList} function requires dataset of phenotypic data that can be presented as data frame. For instance, it can be dataset stored in csv or txt file. 
+
+
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -212,6 +214,8 @@ The following \textit{PhenList} function's arguments have to be specified to ena
 \end{itemize} 
 
 In the example below dataset's values for females and males are 1 and 2 accordingly. Those values are changed to "Female" and "Male".  
+
+
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -337,10 +341,10 @@ After terminology unification and filtering tasks, \textit{PhenList} function ch
 \item column names and sex values are there and described in the package's nomenclature, 
 \item test and reference genotype records are in the dataset, 
 \item there are at least two records for each genotype\slash sex values combination.
-\end{itemize}
-
-If one of the checks fails, the function stops and the PhenList object is not created. In the following example "Sex" column is missed in the dataset and the checks fail. 
+\end{itemize}If one of the checks fails, the function stops and the PhenList object is not created. In the following example "Sex" column is missed in the dataset and the checks fail. 
 Note, a dataset can consist of one sex but a sex column is still required to ensure the appropriate model is fitted.
+
+
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -407,6 +411,8 @@ Many checking failures will be avoided when \textit{dataset.clean} argument of t
 The output of the \textit{PhenList} function is the \textit{PhenList} object that contains a cleaned dataset (\textit{PhenList} object's section \textit{dataset}), simple statistics about dataset columns and additional information. 
 
 The example below shows how to print out the whole cleaned dataset and how to view the statistics about it (output is shown in Table \ref{table:05}). 
+
+
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -462,6 +468,8 @@ Weight&TRUE&TRUE&183&468&34.95&5.09&20.4&48.4\\
 \textit{PhenList} object has stored many characteristics about the data: reference genotype, test genotype, hemizygotes genotype, original column names, etc.
 
 An example is given below.
+
+
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -527,6 +535,8 @@ For instance, \textit{testDataset} function runs \textit{startModel} and after t
 If framework contains only one stage (such as the Fisher Exact Test case) then \textit{testDataset} function runs that single stage regardless of the \textit{callAll} argument's value. 
 
 The example how to call MM and FE framework is given below.
+
+
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -583,10 +593,10 @@ depVariable \backsim Genotype + Sex +
 Genotype*Sex + Weight \tag{Eq2}\label{Eq2}
 \]
 
-We reference to the \ref{Eq1} and \ref{Eq2} as to the models with "loaded" mean structure and random batch-specific intercepts or fully loaded model (see Figure \ref{fig:02}).
+We reference to the \ref{Eq1} and \ref{Eq2} as to the models with "loaded" mean structure and random batch-specific intercepts or fully loaded model (see Fig. \ref{fig:02}).
 
 The final model construct is influenced by a number of criteria. 
-These criteria, such as fixed effects, batch effect and the structure of residual variances, can be either evaluated from the dataset or defined by user (see Figure \ref{fig:03}).
+These criteria, such as fixed effects, batch effect and the structure of residual variances, can be either evaluated from the dataset or defined by user (see Fig. \ref{fig:03}).
 The following criteria (effects) are considered:
 \begin{itemize}
 \item Batch effect (batch variation). Considered only when batch column is present in the dataset. 
@@ -596,8 +606,8 @@ The following criteria (effects) are considered:
 \item Genotype by sex interaction effect. Considered only when there are more than one sex in the dataset. 
 \end{itemize}
 
-The selection of model is influenced by the batch effect (random effects) --- is batch in the dataset, and if so, is it significant in explaining variation in the dependent variable --- and a covariance structure for the residuals that can be homogeneous or heterogeneous (see Figure \ref{fig:02} Step 1-3).
-The selected model is then modified by reducing non-significant effects (see Figure \ref{fig:02} Step 4 and Figure \ref{fig:03}).
+The selection of model is influenced by the batch effect (random effects) --- is batch in the dataset, and if so, is it significant in explaining variation in the dependent variable --- and a covariance structure for the residuals that can be homogeneous or heterogeneous (see Fig. \ref{fig:02} Step 1-3).
+The selected model is then modified by reducing non-significant effects (see Fig. \ref{fig:02} Step 4 and Fig. \ref{fig:03}).
 
 \begin{figure}[!tpb]%figure02
 \centerline{\includegraphics[scale=0.5]{MM_framework.png}}
@@ -614,7 +624,7 @@ The selected model is then modified by reducing non-significant effects (see Fig
 \caption{MM framework: different models that are considered. }\label{fig:04}
 \end{figure}
 
-When the final model is selected and reduced, the genotype effect is assessed by comparing a genotype and null model fitted with maximum likelihood evaluation method (ML). Finally, the final genotype model is refitted using restricted maximum likelihood evaluation method (REML) to get unbiased estimates of the variance parameters (see Figure \ref{fig:02} Step 5,6 and Figure \ref{fig:03}).   
+When the final model is selected and reduced, the genotype effect is assessed by comparing a genotype and null model fitted with maximum likelihood evaluation method (ML). Finally, the final genotype model is refitted using restricted maximum likelihood evaluation method (REML) to get unbiased estimates of the variance parameters (see Fig. \ref{fig:02} Step 5,6 and Fig. \ref{fig:03}).   
 
 \subsubsection{Implementation}
 \label{sec:MMImplementation}
@@ -777,6 +787,8 @@ Outcomes: Technical Report} for more details about ``rotated'' residuals.
 
 \subsubsection{Classification Tag}
 \textit{classificationTag} function returns a classification tag to assign a sexual dimorphism assessment of the phenotypic change from the results of MM framework.
+
+
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -788,14 +800,14 @@ Outcomes: Technical Report} for more details about ``rotated'' residuals.
 \end{verbatim}
 \endgroup
 
-When the function is called through \textit{vectorOutput} function,  the tag shown in Figure \ref{fig:05} will be proceeded by the phrase “If phenotype is significant”,  meaning that globally the test has not assessed whether there was a statistical significant difference just that if there was this would be the classification if it was statistically significant.  When the function is called through \textit{summaryOutput} function or directly there is an argument \textit{phenotypeThreshold} (default value is 0.01),  which sets the significance threshold of whether there is a phenotype of interest.  If globally, the analysis indicates there is a statistically significant phenotype then the classification tag is appended to the phrase “With phenotype threshold value XXX”.
+When the function is called through \textit{vectorOutput} function,  the tag shown in Fig. \ref{fig:05} will be proceeded by the phrase “If phenotype is significant”,  meaning that globally the test has not assessed whether there was a statistical significant difference just that if there was this would be the classification if it was statistically significant.  When the function is called through \textit{summaryOutput} function or directly there is an argument \textit{phenotypeThreshold} (default value is 0.01),  which sets the significance threshold of whether there is a phenotype of interest.  If globally, the analysis indicates there is a statistically significant phenotype then the classification tag is appended to the phrase “With phenotype threshold value XXX”.
 
 \begin{figure}[!tpb]%figure05
 \centerline{\includegraphics[scale=0.6]{classificationTagMM2.png}}
 \caption{Assigning a classification tag. The output of the mixed model framework is queried to assign a classification tag of how the observed phenotype was observed across the two sexes. Within the decision tree, the question “Is the effect the same for both sexes? “ is asking whether mathematically was there an interaction between the  genotype and sex. Occasionally the procedure will find that there was a significant interaction but when it comes to identifying how this occurred and quantifying the effect for each sex,  there is insufficient power.  In this scenario the classification returned states  that it “cannot classify the effect”.}\label{fig:05}
 \end{figure}
 
-The Mammalian Phenotype Ontology is under development as a community effort to provide standard terms for annotating mammalian phenotypic data and is housed and managed by the JAXS laboratory (see \href{http://www.informatics.jax.org/searches/MP_form.shtml}{MP ontology}). With the mixed model implementation, the output is very rich and a classification tag can be appended to the MP term to give richer information on the observed phenotype (e.g. abnormal circulating sodium levels – both sexes equally).  Figure \ref{fig:05_2}, details the decision tree that can be used with the MM output to interpret the results such a ontology term can be discerned and an annotation tag added when appropriate.
+The Mammalian Phenotype Ontology is under development as a community effort to provide standard terms for annotating mammalian phenotypic data and is housed and managed by the JAXS laboratory (see \href{http://www.informatics.jax.org/searches/MP_form.shtml}{MP ontology}). With the mixed model implementation, the output is very rich and a classification tag can be appended to the MP term to give richer information on the observed phenotype (e.g. abnormal circulating sodium levels – both sexes equally).  Fig. \ref{fig:05_2}, details the decision tree that can be used with the MM output to interpret the results such a ontology term can be discerned and an annotation tag added when appropriate.
 
 \begin{figure}[!tpb]%figure04
 \centerline{\includegraphics[scale=0.6]{classificationTagMM_MP.png}}
@@ -805,7 +817,7 @@ The Mammalian Phenotype Ontology is under development as a community effort to p
 
 \subsubsection{Model Failures and Jitter}
 In this section we would like to discuss failure of model fitting and the potential use of jitter.
-At times,  the model fitting process with the MM methodology would struggle to fit a model.  In these instances,  the PhenStat method would return  an error message stating that the software can’t fit the the model  and suggest that you could try jitter or an alternate method such as reference range approach. For example,  this was seen with a Mean Corpuscular Volume dataset which had data only for male mice and the knockout mice had little variation as the majority of readings were 43 fl (shown in Figure \ref{fig:05_x}).
+At times,  the model fitting process with the MM methodology would struggle to fit a model.  In these instances,  the PhenStat method would return  an error message stating that the software can’t fit the the model  and suggest that you could try jitter or an alternate method such as reference range approach. For example,  this was seen with a Mean Corpuscular Volume dataset which had data only for male mice and the knockout mice had little variation as the majority of readings were 43 fl (shown in Fig. \ref{fig:05_x}).
 
 \begin{figure}[!tpb]%figure05_x
 \centerline{\includegraphics[scale=0.6]{Jitter_figureX.png}}
@@ -841,6 +853,8 @@ Can't fit the model MCV ~ Genotype. Try to add jitter or RR plus method.
 Jitter is a function that adds a small amount of noise to a variable.  The noise is added randomly at 1000th of the signal difference for that variable.  In the example shown, the additional of noise allows the model to converge and estimate the values.
   
 Code to add jitter and process the new variable:
+
+
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -1020,6 +1034,8 @@ The same data as shown in examples can be obtained by using output functions of 
 
 If there is only one level for the dependent variable in the dataset e.g. "Normal`` then the package will add level "Other'' into the count matrices for consistency. All values for this level will be set to 0.
 The following is an example of such case:
+
+
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -1110,6 +1126,8 @@ These output forms were generated for differing users needs.
 The \textit{summaryOutput} function supports interactive analysis of the data and prints results on the screen.
 
 The following is an example of summary output of MM framework:
+
+
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -1205,7 +1223,11 @@ Matrix 'males only':
 \end{verbatim}
 \endgroup
 
+
 The output of the “RR” framework \textit{summaryOutput} function includes count matrices, statistics and effect size measures.
+
+
+
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -1457,6 +1479,8 @@ The next 10 positions are used to define the dependent variable levels. When the
 The next 20 positions represent combined count matrix values. Thereafter the vector contains the males only count matrix values and females only count matrix values. Again ``NA'' is used when the values are not present. The positions are labelled with the group and level.
 
 For the chi squared tables from example described in ``Fisher Exact Test framework'' subsection (see \ref{section:FET}) results of \textit{vectorOutputMatrices} function look like this:
+
+
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -1541,6 +1565,7 @@ Dependent variable level10 (l10)                      Value g1_l1
 For graphical output of the analysis, multiple graphical functions have been generated and these can be called by a user individually or alternatively, 
 \textit{generateGraphs} generates all relevant graphs for an analysis and stores the graphs in the defined directory. 
 
+
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -1553,6 +1578,7 @@ For graphical output of the analysis, multiple graphical functions have been gen
 \subsection{Graphics for Categorical Data}
 There is only one graphical output for "FE" and "RR" frameworks: categorical bar plots. This graph allows a visual representation of the count data, comparing observed proportions between reference and test genotypes.  
 
+
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -1560,7 +1586,7 @@ There is only one graphical output for "FE" and "RR" frameworks: categorical bar
 \end{verbatim}
 \endgroup 
 
-The example of bar plot is shown in Figure \ref{fig:06}. This graph allows a visual representation of the genotype effect for the variable of interest.
+The example of bar plot is shown in Fig. \ref{fig:06}. This graph allows a visual representation of the genotype effect for the variable of interest.
 \begin{figure}[!htpb]%figure01
 \centerline{\includegraphics[scale=0.5]{categoricalBarPlot.png}}
 \caption{The PhenStat package's graphical output: categorical bar plot.}\label{fig:06}
@@ -1575,6 +1601,7 @@ There are three functions in the dataset based graphs category:
 \item \textit{scatterplotGenotypeWeight} creates a scatter plot body weight versus dependent variable. Both a regression line and a loess line (locally weighted line) is fitted for each genotype.
 \end{itemize}
 
+
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -1584,19 +1611,20 @@ There are three functions in the dataset based graphs category:
 \end{verbatim}
 \endgroup 
 
-An example of box plot split by sex and genotype is shown in Figure \ref{fig:07}. Outliers are shown as independent data points beyond the fences (``whiskers'') of the boxplot. An outlier is defined as a data point that is 1.5 times the interquartile range above the upper quartile and bellow the lower quartile.
+
+An example of box plot split by sex and genotype is shown in Fig. \ref{fig:07}. Outliers are shown as independent data points beyond the fences (``whiskers'') of the boxplot. An outlier is defined as a data point that is 1.5 times the interquartile range above the upper quartile and bellow the lower quartile.
 \begin{figure}[!htpb]%figure01
 \centerline{\includegraphics[scale=0.5]{boxplotSexGenotype.png}}
 \caption{The PhenStat package's graphical output: box plot split by sex and genotype.}\label{fig:07}
 \end{figure}
 
-The example of box plot split by sex, genotype and batch is shown in Figure \ref{fig:08}. This allows a visualisation of variation of dependent variable with time. The MM framework assumes this variation is random and conforms the normal distribution. Then the genotype distribution can be compared relative to natural variation. 
+The example of box plot split by sex, genotype and batch is shown in Fig. \ref{fig:08}. This allows a visualisation of variation of dependent variable with time. The MM framework assumes this variation is random and conforms the normal distribution. Then the genotype distribution can be compared relative to natural variation. 
 \begin{figure}[!htpb]%figure01
 \centerline{\includegraphics[scale=0.5]{boxplotSexGenotypeBatch.png}}
 \caption{The PhenStat package's graphical output: box plot split by sex, genotype and batch.}\label{fig:08}
 \end{figure}
 
-The example of scatter plot of body weight versus dependent variable is shown in Figure \ref{fig:09}. When weight is included in the model MM framework, it assumes a linear relationship between dependent variable and body weight. This graph allows an assessment of this assumption. 
+The example of scatter plot of body weight versus dependent variable is shown in Fig. \ref{fig:09}. When weight is included in the model MM framework, it assumes a linear relationship between dependent variable and body weight. This graph allows an assessment of this assumption. 
 \begin{figure}[!htpb]%figure01
 \centerline{\includegraphics[scale=0.5]{scatterplotGenotypeWeight.png}}
 \caption{The PhenStat package's graphical output: scatter plot of body weight versus dependent variable.}\label{fig:09}
@@ -1611,6 +1639,7 @@ There are five functions in the results based graphs category:
 \item \textit{boxplotResidualBatch} creates a box plot with residue versus batch split by genotype.
 \end{itemize}
 
+
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -1622,21 +1651,21 @@ There are five functions in the results based graphs category:
 \end{verbatim}
 \endgroup 
 
-The example of Q-Q plot of residuals for each genotype is shown in Figure \ref{fig:10}. The MM framework assumes residuals are normally distributed. Residuals are the differences between the real values observed for a dependent variable and the fitted values from the model. A Q-Q plot assesses this assumption (residuals will be randomly arranged around the line if normally distributed). 
+The example of Q-Q plot of residuals for each genotype is shown in Fig. \ref{fig:10}. The MM framework assumes residuals are normally distributed. Residuals are the differences between the real values observed for a dependent variable and the fitted values from the model. A Q-Q plot assesses this assumption (residuals will be randomly arranged around the line if normally distributed). 
 \begin{figure}[!tpb]%figure01
 \centerline{\includegraphics[scale=0.5]{qqplotGenotype.png}}
 \caption{The PhenStat package's graphical output: Q-Q plot of residuals for each genotype.}\label{fig:10}
 \end{figure}
 
 
-The example of Q-Q plot of BLUPs (best linear unbiased predictions) is shown in Figure \ref{fig:11}. The MM framework assumes the BLUPs are normally distributed. This graph assesses this assumption by plotting BLUPs and the ideal normal line (large deviations from the line can be an indicator of problems with the model fit). BLUPs are best linear unbiased predictions and are used for the estimation of batch effects. See tutorial \href{http://www.extension.org/pages/61006/the-solcap-tomato-phenotypic-data:-estimating-heritability-and-blups-for-traits#.Ui4zjWRgYXc}{BLUPs} for more details.
+The example of Q-Q plot of BLUPs (best linear unbiased predictions) is shown in Fig. \ref{fig:11}. The MM framework assumes the BLUPs are normally distributed. This graph assesses this assumption by plotting BLUPs and the ideal normal line (large deviations from the line can be an indicator of problems with the model fit). BLUPs are best linear unbiased predictions and are used for the estimation of batch effects. See tutorial \href{http://www.extension.org/pages/61006/the-solcap-tomato-phenotypic-data:-estimating-heritability-and-blups-for-traits#.Ui4zjWRgYXc}{BLUPs} for more details.
 
 \begin{figure}[!htpb]%figure01
 \centerline{\includegraphics[scale=0.5]{qqplotRandomEffects.png}}
 \caption{The PhenStat package's graphical output: Q-Q plot of BLUPs (best linear unbiased predictions).}\label{fig:11}
 \end{figure}
 
-Another method to assess the model fit is to consider the normality of the ``rotated'' and ``unrotated'' residuals. The example of Q-Q plot of ``rotated'' residuals is shown in Figure \ref{fig:12}. 
+Another method to assess the model fit is to consider the normality of the ``rotated'' and ``unrotated'' residuals. The example of Q-Q plot of ``rotated'' residuals is shown in Fig. \ref{fig:12}. 
 See section \ref{Diagnostics} for the details about ``rotated'' residuals.
 
 \begin{figure}[!htpb]%figure01
@@ -1644,7 +1673,7 @@ See section \ref{Diagnostics} for the details about ``rotated'' residuals.
 \caption{The PhenStat package's graphical output: Q-Q plot of ``rotated'' residuals.}\label{fig:12}
 \end{figure}
 
-The example of residual-by-predicted plot is shown in Figure \ref{fig:13}. Residuals, differences between fitted and real values, are plotted against the predicted (fitted) values of dependent variable.  
+The example of residual-by-predicted plot is shown in Fig. \ref{fig:13}. Residuals, differences between fitted and real values, are plotted against the predicted (fitted) values of dependent variable.  
 A residual-by-predicted plot can be used to diagnose nonlinearity or nonconstant error variance. It is also can be used to find outliers. 
 
 Here are the characteristics of a residual-by-predicted plot when model fitness is close to the ideal and what they suggest about the appropriateness of the model:
@@ -1658,7 +1687,7 @@ Here are the characteristics of a residual-by-predicted plot when model fitness 
 \caption{The PhenStat package's graphical output: residual-by-predicted plot split by genotype.}\label{fig:13}
 \end{figure}
 
-The example of box plot with residue versus batch split by genotype is shown in Figure \ref{fig:14}. This allows assessment that the residual behaviour for all batches is within natural deviation and the model is fitting the data well.
+The example of box plot with residue versus batch split by genotype is shown in Fig. \ref{fig:14}. This allows assessment that the residual behaviour for all batches is within natural deviation and the model is fitting the data well.
 \begin{figure}[!htpb]%figure01
 \centerline{\includegraphics[scale=0.5]{boxplotResidualBatch.png}}
 \caption{The PhenStat package's graphical output: box plot with residual versus batch split by genotype.}\label{fig:14}
@@ -1690,7 +1719,9 @@ Genotype&Sex&Number Animals&Number Batches\\\hline
 
 \subsubsection{Loading the data and initial steps of analysis}
 Initial steps focus on loading the data, using the PhenStat tools to generate the PhenList object, and then the result object.  
-We can then explore the data and fitted results using the visualisation and output functions.   
+We can then explore the data and fitted results using the visualisation and output functions. 
+
+  
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -1769,6 +1800,8 @@ To assess model fit, graphical tools are ideal.  They focus on two areas:
 
 The function, \textit{boxplotSexGenotype}, allows the genotype effect to be visualised for each sex group. 
 For the \textit{Akt2} example, we can suggest that there looks to be a significant genotype effect that is seen in both sexes. 
+
+
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -2217,6 +2250,8 @@ See table \ref{table:08}.
 
 \subsubsection{Loading the data and initial steps of analysis}
 Initial steps focus on loading the data, using the PhenStat tools to generate the PhenList object, and then the result object. We can then explore the data and fitted results using the visualisation and output functions.
+
+
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -2238,6 +2273,8 @@ Initial steps focus on loading the data, using the PhenStat tools to generate th
 
 \subsubsection{Visualisation of data}
 The function \textit{categoricalBarplot} has been provided to visualise the categorical data formed from the RR framework as summary percentage data. It reports the percentage of each classification observed for up to three datasets: all data, male only and female only. It is important to note that percentage accuracy is very dependent on the number of readings so it is important to consider the dataset size when interpreting these graphs. Therefore tables showing both the percentage and count values are included in the \textit{summaryOutput}.
+
+
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -2252,6 +2289,7 @@ The function \textit{categoricalBarplot} has been provided to visualise the cate
 
 
 \subsubsection{Understanding the summaryOutput}
+
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -2294,6 +2332,8 @@ The section titled ‘Thresholds’ indicates how the reference range methodolog
 \end{itemize}
 
 The final section of the output provides tables showing the counts and percentage calculated for each group and possible level. The following is reported for dependent variable lean mass for the \textit{Akt2} dataset and we can see that for all datasets, there is a statistically significant change with a large effect size.
+
+
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -2318,6 +2358,8 @@ The effect size reported is the maximum percentage change seen in the low or hig
 If someone would like to analyse all variables in the dataset and has a cluster available for such kind of job then here is an example of PhenStat package usage.
 
 First, the function that runs on each cluster's node and stores the results in particular directory is created. This function is based on the section \textit{dataset.stat} of the \textit{PhenList} object. 
+
+
 \begingroup
 \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -2350,6 +2392,8 @@ PhenStatCluster<-function(phenList,i){
 
 We are planning to analyse every individual variable of the dataset using a cluster. Each one cluster node has to have sourced function \textit{PhenStatCluster} and loaded \textit{PhenStat} library. 
 \textit{PhenList} object with dataset to analyse should also be available for every cluster node.
+
+
 \begingroup
 \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
