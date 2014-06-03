@@ -393,15 +393,16 @@ finalTFModel <- function(phenTestResult, outputMessages=TRUE)
         keep_equalvar <- result$model.effect.variance
         
         ## Stop function if there are no datasets to work with
-        if(is.null(x))
-        stop_message <- "Error:\nPlease create a PhenList object first and run function 'testDataset'.\n"
+        if(is.null(x)){
+            stop_message <- "Error:\nPlease create a PhenList object first and run function 'testDataset'.\n"
+        }
         
         ## Stop function if there are no enough input parameters
         if (is.null(equation) || is.null(depVariable) || is.null(keep_batch) || is.null(keep_equalvar)
-            || is.null(keep_sex) || is.null(keep_interaction))
+            || is.null(keep_sex) || is.null(keep_interaction)){
             stop_message <- "Error:\nPlease run function 'testDataset' first.\n"
-    }
-    else{
+        }
+    }else{
         stop_message <- "Error:\nPlease create a PhenTestResult object first.\n"
     }
         
@@ -455,7 +456,7 @@ finalTFModel <- function(phenTestResult, outputMessages=TRUE)
                     paste("Sex", "Weight", sep= "+"),batch_formula))
                 }
             }else{
-                as.formula(paste(depVariable, "~", "Weight"),batch_formula)
+                as.formula(paste(depVariable, "~", "Weight",batch_formula))
             }
         },
         withoutWeight = {
