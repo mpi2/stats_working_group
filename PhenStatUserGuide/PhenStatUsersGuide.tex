@@ -27,7 +27,45 @@
 \section{Introduction}
 High-throughput phenotyping generates large volumes of varied data including both categorical and continuous data. Operational and cost constraints can lead to a work-flow that precludes traditional analysis methods. Furthermore, for a high throughput environment, a robust automated statistical pipeline that alleviates manual intervention is required. 
 
-PhenStat is a package that provides statistical methods for the identification of abnormal phenotypes with an emphasize on high-throughput dataflows. The package contains dataset checks and cleaning in preparation for the analysis. For continuous data, an iterative fitting process is used to fit a regression model that is the most appropriate for the data (Mixed Model framework), whilst for categorical data, a Fisher Exact Test is implemented (Fisher Exact Test framework). In addition, the reference range method (Reference Range framework) is added into the package as a conservative method of identifying phenodeviants.  
+PhenStat is a package that provides statistical methods for the identification of abnormal phenotypes with an emphasize on high-throughput dataflows. The package contains dataset checks and cleaning in preparation for the analysis, four statistical frameworks for the phenodeviants identification and additional functions that help to decide the correct method for analysis. 
+
+%For continuous data, an iterative fitting process is used to fit a regression model that is the most appropriate for the data (Mixed Model framework), whilst for categorical data, a Fisher Exact Test is implemented (Fisher Exact Test framework). In addition, the reference range method (Reference Range Plus framework) is added into the package as a conservative method of identifying phenodeviants.
+
+\begin{enumerate}
+\item Mixed Models framework assumes that base line values of dependent variable are normally distributed but batch (assay date) adds noise and models variables accordingly in order to separate the batch and the genotype. 
+Model optimisation starting with:
+
+$Y=Genotype+Sex+Genotype*Sex + Weight + (1|Batch)$
+
+Assume batch is normally distributed with defined variance. This framework can be used in case when ...
+\begin{figure}[!htpb]%figure01a
+\centerline{\includegraphics[scale=0.4]{MM_simple.png}}
+\end{figure}
+
+\item Time Fixed Effect framework estimates each batch effect to separate it from genotype.
+Model optimisation starting with:
+
+$Y=Genotype+Sex+Genotype*Sex + Weight + Batch$
+
+This framework can be used in case when there are up to 5 batches and concurrent controls approach had been used. 
+\begin{figure}[!htpb]%figure01a
+\centerline{\includegraphics[scale=0.4]{TFE_simple.png}}
+\end{figure}
+
+\item Reference Range Plus framework identifies the normal variation form the wild-type animals, classifies dependent variables from the genotype of interest as low, normal or high and compare proportions.  
+\begin{figure}[!htpb]%figure01a
+\centerline{\includegraphics[scale=0.4]{RR1_simple.png}}
+\end{figure} 
+\begin{figure}[!htpb]%figure01a
+\centerline{\includegraphics[scale=0.4]{RR2_simple.png}}
+\end{figure}
+
+This framework requires sufficient number of controls (more than 60 records) in order to correctly identify normal variation and can be used when other methods are not applicable or as a first simple data assessment method. 
+\item Fisher Exact Test is a standard framework for categorical data which compares data proportions and calculates the percentage change in classification.
+\begin{figure}[!htpb]%figure01a
+\centerline{\includegraphics[scale=0.4]{FE_simple.png}}
+\end{figure}
+\end{enumerate}
 
 All analysis frameworks output a statistical significance measure, an effect size measure, model diagnostics (when appropriate), and graphical visualisation of the genotype effect. 
 
@@ -53,6 +91,7 @@ and \textit{vectorOutput} that present data from \textit{PhenTestResult} object 
 \end{enumerate}
 
 Package run time depends on a variety of factors including dataset size, computational resources, etc. Average analysis \textbf{run time} of the pilot dataset in our local environement is \textbf{1.34 seconds}. 
+
 
 \section{Data Processing with PhenList Function}
 \textit{PhenList} function performs data processing and creates a \textit{PhenList} object. 
@@ -508,16 +547,16 @@ The \textit{testDataset} function's argument \textit{phenList} defines the datas
 Function's argument \textit{depVariable} defines the dependent variable.
 
 Function's argument \textit{method} defines which statistical analysis framework to use. 
-The default value is "MM" which stands for mixed model framework. To perform Fisher Exact Test, the argument \textit{method} is set to "FE". 
+The default value is "MM" which stands for mixed model framework. To perform Fisher Exact Test, the argument \textit{method} is set to "FE". For the Reference Range Plus framework \textit{method} is set to "RR".
 
 Function's argument \textit{dataPointsThreshold} defines the required number of data points in a group (subsets per genotype and sex combinations) for a successful analysis within "MM". The default value is 4. The minimal value is 2.
 
 The \textit{testDataset} function performs basic checks which ensure the statistical analysis would be appropriate and successful:
 \begin{enumerate}
 \item \textit{depVariable} column is present in the dataset;
-\item \textit{depVariable} is numeric for Mixed Model (MM) framework, otherwise Fisher Exact Test (FE) is performed;
-\item Variability check 1 (whole column): \textit{depVariable} column values are variable enough (the ratio of different values to all values in the column $\geq$ 0.5\%) for MM framework, otherwise  FE framework is recommended;
-\item Variability check 2 (variability within a group): there are enough data points in subsets per genotype/sex combinations. The number of values from \textit{depVariable} column should exceed \textit{dataPointsThreshold} in all subsets, otherwise FE framework is recommended;
+\item \textit{depVariable} is numeric for Mixed Model (MM) framework and for Reference Range Plus (RR) framework, otherwise Fisher Exact Test (FE) is performed;
+\item Variability check 1 (whole column): \textit{depVariable} column values are variable enough (the ratio of different values to all values in the column $\geq$ 0.5\%) for MM framework, otherwise RR or FE framework is recommended;
+\item Variability check 2 (variability within a group): there are enough data points in subsets per genotype/sex combinations. The number of values from \textit{depVariable} column should exceed \textit{dataPointsThreshold} in all subsets, otherwise RR or FE framework is recommended;
 \item Variability check 3 (variability for Weigth column) applied only when \textit{equation} argument value is set to "withWeight": there are enough data points in subsets per genotype/sex combinations. The number of values from Weight column should exceed \textit{dataPointsThreshold} in all subsets, otherwise \textit{equation} "withoutWeight" is used;
 \item Number of \textit{depVariable} levels is 10 or less for the FE framework.
 \end{enumerate}
