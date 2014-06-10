@@ -87,32 +87,6 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
         #}
         }
         
-
-        checkWeight <- columnChecks(dataset,"Weight",4) 
-
-        if (! checkWeight[1]){
-            if (outputMessages)
-            message("Warning:\nWeight column is not present in the database.\n")
-        }    
-        else {        
-                if (! checkWeight[2]){
-                    if (outputMessages)
-                        message(paste("Warning:\nWeight column values are not numeric.\n", 
-                                    "In order to avoid erroneous execution of statistical ",
-                                    "functions column is renamed to 'Weight_labels'.\n",sep=""))
-                    colnames(dataset)[colnames(dataset) == 'Weight'] <-'Weight_labels'      
-                }    
-                if (! checkWeight[3]){
-                    if (outputMessages)
-                        message(paste("Warning:\nWeight column does not have enough data points ",
-                                    "for genotype/sex combinations.\n", 
-                                    "In order to avoid erroneous execution of statistical ",
-                                    "functions column is renamed to 'Weight_labels'.\n",sep=""))    
-                    colnames(dataset)[colnames(dataset) == 'Weight'] <-'Weight_labels'      
-                }  
-       }         
-
-            
        
         
 #        if ('Weight' %in% colnames(dataset)){
@@ -187,6 +161,30 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
     dataset$Genotype<-factor(dataset$Genotype)
     if ('Batch' %in% colnames(dataset))
     dataset$Batch<-factor(dataset$Batch)
+        
+        checkWeight <- columnChecks(dataset,"Weight",4) 
+        
+        if (! checkWeight[1]){
+            if (outputMessages)
+            message("Warning:\nWeight column is not present in the database.\n")
+        }    
+        else {        
+            if (! checkWeight[2]){
+                if (outputMessages)
+                message(paste("Warning:\nWeight column values are not numeric.\n", 
+                                "In order to avoid erroneous execution of statistical ",
+                                "functions column is renamed to 'Weight_labels'.\n",sep=""))
+                colnames(dataset)[colnames(dataset) == 'Weight'] <-'Weight_labels'      
+            }    
+            if (! checkWeight[3]){
+                if (outputMessages)
+                message(paste("Warning:\nWeight column does not have enough data points ",
+                                "for genotype/sex combinations.\n", 
+                                "In order to avoid erroneous execution of statistical ",
+                                "functions column is renamed to 'Weight_labels'.\n",sep=""))    
+                colnames(dataset)[colnames(dataset) == 'Weight'] <-'Weight_labels'      
+            }  
+        }     
 
     ## CHECKS
     dataset <- checkDataset(dataset, testGenotype, refGenotype, 
