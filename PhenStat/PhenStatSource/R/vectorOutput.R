@@ -20,13 +20,17 @@
 vectorOutput <- function(phenTestResult)
 {
  
-    if (phenTestResult$method=="MM") {
+    if (phenTestResult$method %in% c("MM","TF")) {
         equation <- switch(phenTestResult$equation,
                 withoutWeight = {"equation withoutWeight"},withWeight = {"equation withWeight"})
         
+        framework <- switch(phenTestResult$method,
+                                MM = "Mixed Model framework",
+                                TF = "Time as Fixed Effect framework")
+        
         fittingMethod <- "generalized least squares, "
-        if (phenTestResult$model.effect.batch)
-        fittingMethod <- "linear mixed-effects model, "
+        if (phenTestResult$model.effect.batch && phenTestResult$method=="MM")
+            fittingMethod <- "linear mixed-effects model, "        
         
         classificationValue <- classificationTag(phenTestResult,
                 userMode="vectorOutput",outputMessages=FALSE)
@@ -57,7 +61,7 @@ vectorOutput <- function(phenTestResult)
         
         addInfo = paste("{",DSsize,variability,",",formula,"}",sep="")
         
-        vectorOutput <- c(paste("MM framework, ",fittingMethod, equation,sep=""),
+        vectorOutput <- c(paste(framework,", ",fittingMethod, equation,sep=""),
                 as.character(phenTestResult$depVariable), 
                 as.character(phenTestResult$model.effect.batch), 
                 as.character(phenTestResult$model.effect.variance), 

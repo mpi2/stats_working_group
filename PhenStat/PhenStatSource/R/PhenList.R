@@ -162,7 +162,7 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
     if ('Batch' %in% colnames(dataset))
     dataset$Batch<-factor(dataset$Batch)
         
-        checkWeight <- columnChecks(dataset,"Weight",4) 
+        checkWeight <- columnChecks(dataset,"Weight",2) 
         
         if (! checkWeight[1]){
             if (outputMessages)

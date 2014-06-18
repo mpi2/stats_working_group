@@ -64,7 +64,7 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
         }
     }
     else {
-        if (phenTestResult$method=="MM") {
+        if (phenTestResult$method %in% c("MM","TF")) {
             if (userMode=="summaryOutput") {
                 if(is.na(result$model.output.genotype.nulltest.pVal)==TRUE){
                     ChangeClassification <- NA

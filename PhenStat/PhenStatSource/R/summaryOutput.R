@@ -24,17 +24,18 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
     
     message(paste("Method: ",switch(phenTestResult$method,
                             MM = "Mixed Model framework",FE = "Fisher Exact Test framework",
-                            RR = "Reference Ranges Plus framework"),"\n",sep=""))
+                            RR = "Reference Ranges Plus framework",
+                            TF = "Time as Fixed Effect framework"),"\n",sep=""))
     
-    if (phenTestResult$method=="MM") {
+    if (phenTestResult$method %in% c("MM","TF")) {
         message(paste("Was batch significant?",phenTestResult$model.effect.batch))
         
         message(paste("Was variance equal?",phenTestResult$model.effect.variance))
         
         if (phenTestResult$model.effect.interaction)
-        sexualDimorphism = "yes"
+            sexualDimorphism = "yes"
         else 
-        sexualDimorphism = "no"
+            sexualDimorphism = "no"
         message(paste("Was there evidence of sexual dimorphism? ",
                         sexualDimorphism," (p-value ",
                         round(phenTestResult$model.output.interaction,digits=3),")",sep=""))

@@ -212,11 +212,31 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
 
             controlSubset <- subset(x, x$Genotype==phenList$refGenotype)
             columnOfInterestSubset <- na.omit(controlSubset[,c(depVariable)])
+
+            Sex_levels <- levels(factor(x$Sex))
+
+            controlNotEnough <- FALSE
+            errorText <- ""
             
-            if (length(columnOfInterestSubset)<RR_controlPointsThreshold) 
+            for (j in 1:length(Sex_levels)){           
+                GenotypeSexSubset <- subset(controlSubset, 
+                        controlSubset$Sex==Sex_levels[j]) 
+                    
+                columnOfInterestSubset <- na.omit(GenotypeSexSubset[,c(depVariable)])
+                
+                errorText <- paste(errorText, Sex_levels[j], " - ", length(columnOfInterestSubset),", ",sep="") 
+                
+                if (length(columnOfInterestSubset)<RR_controlPointsThreshold) {
+                    controlNotEnough <- TRUE
+                }
+            }                
+            errorText <- substr(errorText, 1, nchar(errorText)-2) 
+            
+            
+            if (controlNotEnough) 
                 stop_message <- paste("Error:\nInsufficient data in the dependent variable '",
                     depVariable,
-                    "' control subset (",length(columnOfInterestSubset),
+                    "' control subset (",errorText,
                             ") to allow the application of RR plus framework.",
                     "\nThe threshold is ",RR_controlPointsThreshold," datapoints. \n",sep="") 
         } 
@@ -329,7 +349,7 @@ columnChecks <- function(dataset, columnName, dataPointsThreshold=4){
     }    
     else {
         columnOfInterest <- na.omit(dataset[,c(columnName)])
-        
+
         if(all(sapply(columnOfInterest,is.numeric))){
             numeric <- TRUE
         }
@@ -337,7 +357,7 @@ columnChecks <- function(dataset, columnName, dataPointsThreshold=4){
         dataPointsSummary <- columnLevels(dataset,columnName)
         
         NoCombinations <- dataPointsSummary[3]
-        
+        #message(dataPointsSummary[3])
         variabilityThreshold <- NoCombinations
         #if (NoCombinations==4)
         #variabilityThreshold <- 3 
