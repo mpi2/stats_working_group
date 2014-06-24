@@ -37,7 +37,7 @@ Model optimisation starting with:
 
 $Y=Genotype+Sex+Genotype*Sex + Weight + (1|Batch)$
 
-Assume batch is normally distributed with defined variance. This framework can be used in case when ...
+Assume batch is normally distributed with defined variance. This framework can be used in case when you have controls measured over multiple batches and you ideally have knockout mice measured in multiple batches. The knockouts do not have to be concurrent with controls.
 \begin{figure}[!htpb]%figure01a
 \centerline{\includegraphics[scale=0.4]{MM_simple.png}}
 \end{figure}
@@ -111,8 +111,7 @@ In Table \ref{table:01} the example dataset is presented with numerical variable
 
 In addition to dependent variable column (the variable of interest) mandatory columns are "Genotype" and "Sex". The "Assay.Date" column is used to model "Batch" effect if not specified differently. "Weight" column is used to model body weight effect.
 
-The information provided in the "Assay.Date" column is treated as a categorical variable with different strings as different levels.  As such there is no requirement to provide the date in any particular format.
-
+The information provided in the "Assay.Date" column is treated as a categorical variable with different strings as different levels.  As such there is no requirement to provide the date in any particular format (ie D\textbackslash M\textbackslash Y or M\textbackslash D\textbackslash Y) however please remove any time stamp.  Removing the time stamp is necessary such that data will cluster by day appropriately.
 \begin{sidewaystable}
  \begin{tabular}{| p{13mm} | p{13mm} | l | l | l | p{19mm}| p{12mm} | l | p{13mm} | p{12mm} | p{12mm} | l |}
   \hline
@@ -1372,12 +1371,12 @@ In the Table \ref{table:07} vector output values are described.
 \begin{tabular}{| l | l | l | l | p{10cm} |}
   \hline
 \#&Name&Value&Framework&Description\\\hline
-1&Method&String&MM, FE, RR&Possible values: "FE", "RR",  "MM, linear mixed-effects model/generalized least squares, equation with weight/equation without weight".\\
+1&Method&String&MM, FE, RR&Possible values: "FE", "RR", "MM, linear mixed-effects model/generalized least squares, equation with weight/equation without weight". FF stands for Fisher extact test. RR means reference range plus framework.\\
 2&Dependent variable&String&MM, FE, RR&Name of the dependent variable.\\
 3&Batch included&TRUE/FALSE&MM&Was batch significant in MM?\\
 4&Residual variances homogeneity&TRUE/FALSE&MM&Was variance equal in MM?\\
-5&Genotype contribution&Numeric&MM, FE, RR&p-value indicating genotype contribution.\\
-6&Genotype estimate&Numeric&MM, FE, RR&Estimated coefficient that describes genotype value calculated by MM or effect size estimates in FE.\\
+5&Genotype contribution&Numeric&MM, FE, RR&For the MM it is the p-value from the test of genotype contribution.  Whilst for the FE and RR it is the p-value from either a test of one sex (if only one sex exists) or it is the output of the combined datasets.\\
+6&Genotype estimate&Numeric&MM, FE, RR&Estimated coefficient that describes genotype value calculated by MM or effect size estimates in FE and RR.\\
 7&Genotype standard error&Numeric&MM&Standard error of the coefficient estimate for genotype in MM.\\
 8&Genotype p-val&Numeric&MM&Genotype p-value that represents the probability the genotype is NOT relevant in MM.\\
 9&Sex estimate&Numeric&MM&Estimated coefficient that describes sex value calculated by the MM.\\
@@ -1405,13 +1404,13 @@ In the Table \ref{table:07} vector output values are described.
 22&Intercept standard error&Numeric&MM&Standard error of the coefficient estimate for intercept in MM.\\
 23&Interaction included&TRUE/FALSE&MM&Indicates the inclusion of genotype by sex interaction effect into MM.\\
 24&Interaction p-val&Numeric&MM&Interaction p-value that represents the probability the interaction is NOT relevant in MM.\\
-25&Sex FvKO estimate&Numeric&MM, FE, RR&Estimated coefficient that describes value calculated by the MM for females in test genotype subset or effect size estimate calculated from chi table for females only subset in FE.\\
+25&Sex FvKO estimate&Numeric&MM, FE, RR&Estimated coefficient that describes value calculated by the MM for females in test genotype subset or effect size estimate calculated from chi table for females only subset in FE and RR.\\
 26&Sex FvKO standard error&Numeric&MM&Standard error of the "Sex FvKO estimate" in MM.\\
 27&Sex FvKO p-val&Numeric&MM&p-value that represents the probability that females group from test genotype subset contribution into MM is NOT relevant.\\
-28&Sex MvKO estimate&Numeric&MM, FE, RR&Estimated coefficient that describes value calculated by the MM for males in test genotype subset or effect size estimate calculated from chi table for males only subset in FE.\\
+28&Sex MvKO estimate&Numeric&MM, FE, RR&Estimated coefficient that describes value calculated by the MM for males in test genotype subset or effect size estimate calculated from chi table for males only subset in FE and RR.\\
 29&Sex MvKO standard error&Numeric&MM&Standard error of the "Sex MvKO estimate" in MM.\\
 30&Sex MvKO p-val&Numeric&MM&p-value that represents the probability that males group from test genotype subset contribution into MM is NOT relevant.\\
-31&Classification tag&String&MM, FE, RR&A sexual dimorphism assessment of the phenotypic change from the results of MM or the overall estimation of the signals significance in FE.\\
+31&Classification tag&String&MM, FE, RR&A sexual dimorphism assessment of the phenotypic change from the results of MM or the overall estimation of the signals significance in FE and RR.\\
 32&Additional information&String&MM, FE, RR&Additional info concerning dataset, for instance, subsets sizes for MM. String in JSON format. See table \ref{table:071} for "RR".\\
 \hline  
 \end{tabular}
