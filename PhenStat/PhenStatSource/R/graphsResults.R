@@ -158,14 +158,14 @@ boxplotResidualBatch<-function(phenTestResult,outputMessages=TRUE){
     if(is(phenTestResult,"PhenTestResult")) {
         x <- phenTestResult$model.dataset
         modeloutput <- phenTestResult$model.output
+       
+        if (!('Batch' %in% colnames(x))){
+            stop_message <- paste(stop_message,
+                    "Error:\nBatch column is missed in the dataset.\n",sep="")
+        }
     }
     else{
         stop_message <- "Error:\nPlease create a PhenTestResult object first.\n"
-    }
-    
-    if (!('Batch' %in% colnames(x))){
-        stop_message <- paste(stop_message,
-                "Error:\nBatch column is missed in the dataset.\n",sep="")
     }
     
     if (nchar(stop_message)>0){
