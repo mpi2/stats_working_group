@@ -82,6 +82,19 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
         message("Warning:\nData points threshold is set to 2 (minimal value).\n")
     }
     
+    # RR_naturalVariation=95, RR_controlPointsThreshold=60
+    if (RR_naturalVariation<60) {
+        RR_naturalVariation <- 60
+        if (outputMessages)
+        message("Warning:\nNatural variation threshold is set to 60 (minimal value).\n")
+    }
+    
+    if (RR_controlPointsThreshold<40) {
+        RR_controlPointsThreshold <- 40
+        if (outputMessages)
+        message("Warning:\nControl points threshold is set to 40 (minimal value).\n")
+    }
+    
     # 7 
     if (nchar(stop_message)==0) {
         x <- phenList$dataset 

@@ -19,9 +19,10 @@
 
 }    
 \usage{
-    testDataset(phenList, depVariable, 
+    testDataset(phenList=NULL, depVariable=NULL, 
             equation="withWeight", outputMessages=TRUE, 
-            pThreshold=0.05, method="MM", callAll=TRUE, keepList=NULL, dataPointsThreshold=4)
+            pThreshold=0.05, method="MM", callAll=TRUE, keepList=NULL, dataPointsThreshold=4,
+            RR_naturalVariation=95,RR_controlPointsThreshold=60)
 }
 \arguments{
     \item{phenList}{instance of the \code{\linkS4class{PhenList}} class; mandatory argument}       
@@ -29,11 +30,13 @@
     \item{equation}{a character string defining the equation to use. Possible values "withWeight" (default),"withoutWeight"}
     \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages; default value TRUE}        
     \item{pThreshold}{a numerical value for the p-value threshold to use in tests, default value 0.05}    
-    \item{method}{a character string ("MM" or "FE") defining the method to use for model building, default value "MM" mixed model}
+    \item{method}{a character string ("MM", "FE" or "RR") defining the method to use for model building, default value "MM" mixed model}
     \item{callAll}{flag: "FALSE" value to run only the first stage of the selected framework; "TRUE" value (default) to run all stages of framework one after another}        
     \item{keepList}{a logical vector defining the significance of different model effects: keep_batch, keep_equalvar,
         keep_weight, keep_sex, keep_interaction; default value NULL}
-    \item{dataPointsThreshold}{threshold for the number of data points in the MM framework}
+    \item{dataPointsThreshold}{threshold for the number of data points in the MM framework, default value is 4, minimal value is 2}
+    \item{RR_naturalVariation}{threshold for the variation ranges in the RR framework, default value is 95, minimal value is 60}
+    \item{RR_controlPointsThreshold}{threshold for the number of control data points in the RR framework, default value is 60, minimal value is 40}
 }
 \value{
     Returns results stored in instance of the \code{\linkS4class{PhenTestResult}} class

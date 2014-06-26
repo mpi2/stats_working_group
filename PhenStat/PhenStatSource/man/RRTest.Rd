@@ -2,8 +2,12 @@
 \alias{RRTest}
 \title{Method "RRTest"}
 \description{
-    The main function of the RR plus framework. Performs Reference Ranges Plus test and after that Fsihet Exact test on calculated count matrices.
+    This is an internal function run within RR framework. It performs Reference Ranges Plus test and after that 
+    Fisher Exact test on calculated count matrices. 
+    As an internal function, it doesn't include extensive error testing of inputs. 
+    Please use cautiously if calling directly.  
     
+    Works with \code{\linkS4class{PhenList}} object created by \code{\link{PhenList}} function.     
 }
 \usage{
     RRTest(phenList, depVariable, outputMessages=TRUE, naturalVariation=95, controlPointsThreshold=60)
@@ -26,7 +30,7 @@
     West B, Welch K, Galecki A (2007): Linear Mixed Models: A practical guide using statistical software  \emph{New York: Chapman & Hall/CRC} 353 p.
 }
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
-\seealso{\code{\linkS4class{PhenTestResult}}}
+\seealso{\code{\linkS4class{PhenList}} and \code{\link{testDataset}}}
 \examples{
     file <- system.file("extdata", "test1.csv", package="PhenStat")
     test <- PhenList(dataset=read.csv(file),
