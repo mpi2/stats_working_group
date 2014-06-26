@@ -379,6 +379,7 @@ After terminology unification and filtering tasks, \textit{PhenList} function ch
 \item column names and sex values are there and described in the package's nomenclature, 
 \item test and reference genotype records are in the dataset, 
 \item there are at least two records for each genotype\slash sex values combination.
+\item if there is "Weight" column in the dataset then there are at least two weight records for each genotype\slash sex values combination.
 \end{itemize}If one of the checks fails, the function stops and the PhenList object is not created. In the following example "Sex" column is missed in the dataset and the checks fail. 
 Note, a dataset can consist of one sex but a sex column is still required to ensure the appropriate model is fitted.
 
@@ -550,15 +551,35 @@ The default value is "MM" which stands for mixed model framework. To perform Fis
 
 Function's argument \textit{dataPointsThreshold} defines the required number of data points in a group (subsets per genotype and sex combinations) for a successful analysis within "MM". The default value is 4. The minimal value is 2.
 
-The \textit{testDataset} function performs basic checks which ensure the statistical analysis would be appropriate and successful:
+There are two more arguments specific for the "RR" framework: 
+\begin{itemize}
+\item \textit{RR\_naturalVariation} for the variation ranges in the RR framework with default value set to 95 and minimal value set to 60; 
+\item \textit{RR\_controlPointsThreshold} for the number of control data points in the RR framework with default value 60 and minimal value set to 40.
+\end{itemize}
+
+The \textit{testDataset} function performs basic checks which ensure the statistical analysis would be appropriate and successful: \textit{depVariable} column is present in the dataset; thresholds value are set and do not exceed minimal values.
+
+After the basic checks the \textit{testDataset} function performs framework specific checks:
+\begin{itemize}
+\item Mixed Model (MM) framework's checks:
 \begin{enumerate}
-\item \textit{depVariable} column is present in the dataset;
-\item \textit{depVariable} is numeric for Mixed Model (MM) framework and for Reference Range Plus (RR) framework, otherwise Fisher Exact Test (FE) is performed;
-\item Variability check 1 (whole column): \textit{depVariable} column values are variable enough (the ratio of different values to all values in the column $\geq$ 0.5\%) for MM framework, otherwise RR or FE framework is recommended;
-\item Variability check 2 (variability within a group): there are enough data points in subsets per genotype/sex combinations. The number of values from \textit{depVariable} column should exceed \textit{dataPointsThreshold} in all subsets, otherwise RR or FE framework is recommended;
-\item Variability check 3 (variability for Weigth column) applied only when \textit{equation} argument value is set to "withWeight": there are enough data points in subsets per genotype/sex combinations. The number of values from Weight column should exceed \textit{dataPointsThreshold} in all subsets, otherwise \textit{equation} "withoutWeight" is used;
-\item Number of \textit{depVariable} levels is 10 or less for the FE framework.
+\item \textit{depVariable} column values are numeric.
+\item Variability check 1  (whole column): \textit{depVariable} column values are variable enough (the ratio of different values to all values in the column $\geq$ 0.5\%);
+\item Variability check 2 (variability within a group): there are enough data points in subsets per genotype/sex combinations. The number of values from \textit{depVariable} column should exceed \textit{dataPointsThreshold} in all subsets.
+\item Variability check 3 (variability for "Weigth" column) applied only when \textit{equation} argument value is set to "withWeight": there are enough weight records in subsets per genotype/sex combinations. The number of values from "Weight" column should exceed \textit{dataPointsThreshold} in all subsets, otherwise \textit{equation} "withoutWeight" is used;
 \end{enumerate}
+\item Reference Range Plus (RR) framework's checks:
+\begin{enumerate}
+\item \textit{depVariable} column values are numeric.
+\item There are data: the number of levels in \textit{depVariable} column after filtering out of null values exceeds zero. 
+\item Control points: there are enough data points in subsets per reference genotype/sex combinations. The number of values from \textit{depVariable} column should exceed \textit{RR\_controlPointsThreshold} in all subsets. 
+\end{enumerate}
+\item Fisher Exact Test (FE) framework's checks: 
+\begin{enumerate}
+\item There are data: the number of levels in \textit{depVariable} column after filtering out of null values exceeds zero.
+\item Number of levels: number of \textit{depVariable} levels is less than 10.
+\end{enumerate}
+\end{itemize}
 
 If issues are identified, clear guidance is returned to the user. 
 After the checking procedures, \textit{testDataset} function runs the selected framework to analyse dependent variable. 
@@ -1143,10 +1164,10 @@ At times phenotyping data has been collected in such a way, that typical analysi
 The reference range methodology is considered a conservative method where data are classed normal, low or high depending on whether they lie within the natural variation seen within the control. Once the data are classified, then a Fisher Exact Test is used to compare the proportion of normal, low and high between the test and reference genotype. 
 
 \subsubsection{Implementation}
-The RR methodology is driven from the \textit{testDataset} function manager. To analyse the data using the RR methodology the argument \textit{method} needs to be set to "RR".  For the RR methodology there are a number of additional arguments that determine how the RR is executed. The \textit{RR\_naturalVariation} argument (defaults to 95) determines how much of the data is classified as normal and thus is used in the calculations of the classification threshold. The thresholds are determined using a percentile method, which avoids any distribution assumptions. 
+The RR methodology is driven from the \textit{testDataset} function manager. To analyse the data using the RR methodology the argument \textit{method} needs to be set to "RR".  For the RR methodology there are a number of additional arguments that determine how the RR is executed. The \textit{RR\_naturalVariation} argument (defaults to 95, minimal value is set to 60) determines how much of the data is classified as normal and thus is used in the calculations of the classification threshold. The thresholds are determined using a percentile method, which avoids any distribution assumptions. 
 For example, when \textit{RR\_naturalVariation} defaults to 95, then 95\%  of the data will be classed as normal, i.e. the 2.5 and 97.5 percentile thresholds of the dependent variable are used to define the boundaries of normal. 
 
-The \textit{RR\_controlPointsThreshold} argument (defaults to 60)  determines the minimum number of data points per sex that are used to determine a reference range.  The mathematical minimum is recommended as 40 data points, see \cite{Solberg} for details.
+The \textit{RR\_controlPointsThreshold} argument (defaults to 60)  determines the minimum number of data points per sex that are used to determine a reference range.  Since the mathematical minimum is recommended as 40 data points (see \cite{Solberg} for details) \textit{RR\_controlPointsThreshold} minimal value is also set to 40.
 
 Data is analysed in three ways: 1) male only, 2) female only, and 3)  all. In the all classification, the classifications of normal, low, and high are combined in the count table but please note the classification of normal, low, or high are run on a sex specific basis.  In the situation where only one sex is present the output is returned in the all category.
 
