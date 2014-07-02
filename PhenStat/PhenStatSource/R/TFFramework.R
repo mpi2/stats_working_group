@@ -421,7 +421,7 @@ finalTFModel <- function(phenTestResult, outputMessages=TRUE)
     
     ## END Checks and stop messages
     
-    numberofsexes <- result$numberSexes
+    numberofSexes <- result$numberSexes
     
     
     ## Build final null model
@@ -602,7 +602,7 @@ parserOutputTFSummary<-function(phenTestResult)
     sex_MvKO_estimate <- NA
     sex_MvKO_SE <- NA
     sex_MvKO_p_value <- NA
-    
+
     lengthoftable <- {
         table_length <- NA
         
@@ -653,9 +653,8 @@ parserOutputTFSummary<-function(phenTestResult)
     intercept_estimate_SE = modeloutput_summary[["tTable"]][[(1+lengthoftable)]]
 
     if((result$model.effect.sex && result$model.effect.interaction)
-    |( !result$model.effect.sex&& result$model.effect.interaction)){
+    |( !result$model.effect.sex && result$model.effect.interaction)){
         sex_index <- match(c("SexFemale"),row.names(modeloutput_summary[["tTable"]]))
-
         sex_estimate <- modeloutput_summary[["tTable"]][[sex_index]]
         sex_estimate_SE <- modeloutput_summary[["tTable"]][[(sex_index+lengthoftable)]]
         sex_p_value <- modeloutput_summary[["tTable"]][[(sex_index+3*lengthoftable)]]
