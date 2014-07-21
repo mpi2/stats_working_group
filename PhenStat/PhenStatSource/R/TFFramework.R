@@ -147,7 +147,7 @@ startTFModel <- function(phenList, depVariable, equation="withWeight",
     WT <- subset(phenList$dataset,Genotype==phenList$refGenotype)
     mean_all <- mean(WT[,c(depVariable)],na.rm=TRUE)  
     mean_list <- c(mean_all)  
-    if (numberofsexes==2){  
+    if (numberofSexes==2){  
         WT_f <- subset(WT,Sex=="Female")
         WT_m <- subset(WT,Sex=="Male")
         mean_f <- mean(WT_f[,c(depVariable)],na.rm=TRUE)
