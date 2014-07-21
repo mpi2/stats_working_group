@@ -55,8 +55,6 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
         message(paste("Classification tag:", 
                         classificationTag(phenTestResult,phenotypeThreshold=phenotypeThreshold)))
         
-        summary(phenTestResult$model.output)$tTable
-        
         if (!is.null(phenTestResult$model.output.percentageChanges)){
             if (phenTestResult$numberSexes==2){
                 message(paste("Genotype percentage change Female:",
@@ -70,6 +68,8 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
                 
             }   
         }
+        message("")
+        summary(phenTestResult$model.output)$tTable
     }
     
     else if (phenTestResult$method %in% c("FE","RR")){
