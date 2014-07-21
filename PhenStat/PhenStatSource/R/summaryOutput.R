@@ -1,4 +1,4 @@
-## Copyright © 2011-2013 EMBL - European Bioinformatics Institute
+## Copyright © 2012-2014 EMBL - European Bioinformatics Institute
 ## 
 ## Licensed under the Apache License, Version 2.0 (the "License"); 
 ## you may not use this file except in compliance with the License.  
@@ -33,9 +33,13 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
         message(paste("Was variance equal?",phenTestResult$model.effect.variance))
         
         if (phenTestResult$model.effect.interaction)
-            sexualDimorphism = "yes"
-        else 
-            sexualDimorphism = "no"
+        {
+            sexualDimorphism <- "yes"
+        }
+        else {
+            sexualDimorphism <- "no"
+        }
+        
         message(paste("Was there evidence of sexual dimorphism? ",
                         sexualDimorphism," (p-value ",
                         round(phenTestResult$model.output.interaction,digits=3),")",sep=""))
@@ -52,6 +56,20 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
                         classificationTag(phenTestResult,phenotypeThreshold=phenotypeThreshold)))
         
         summary(phenTestResult$model.output)$tTable
+        
+        if (!is.null(phenTestResult$model.output.percentageChanges)){
+            if (phenTestResult$numberSexes==2){
+                message(paste("Genotype percentage change Female:",
+                                round(phenTestResult$model.output.percentageChanges[1],digits=2)),"%")
+                message(paste("Genotype percentage change Male:",
+                                round(phenTestResult$model.output.percentageChanges[2],digits=2)),"%")
+            } 
+            else {
+                message(paste("Genotype percentage change:",
+                                round(phenTestResult$model.output.percentageChanges[1],digits=2)),"%")
+                
+            }   
+        }
     }
     
     else if (phenTestResult$method %in% c("FE","RR")){

@@ -29,6 +29,7 @@ High-throughput phenotyping generates large volumes of varied data including bot
 
 PhenStat is a package that provides statistical methods for the identification of abnormal phenotypes with an emphasize on high-throughput dataflows. The package contains dataset checks and cleaning in preparation for the analysis, four statistical frameworks for the phenodeviants identification and additional functions that help to decide the correct method for analysis. 
 
+Simple explanation of statistical frameworks is given below. More details can be found in the appropriate sections of the User's Guide. 
 %For continuous data, an iterative fitting process is used to fit a regression model that is the most appropriate for the data (Mixed Model framework), whilst for categorical data, a Fisher Exact Test is implemented (Fisher Exact Test framework). In addition, the reference range method (Reference Range Plus framework) is added into the package as a conservative method of identifying phenodeviants.
 
 \begin{enumerate}
@@ -38,7 +39,7 @@ Model optimisation starting with:
 $Y=Genotype+Sex+Genotype*Sex + Weight + (1|Batch)$
 
 Assume batch is normally distributed with defined variance. This framework can be used in case when you have controls measured over multiple batches and you ideally have knockout mice measured in multiple batches. The knockouts do not have to be concurrent with controls.
-\begin{figure}[!htpb]%figure01a
+\begin{figure}[H]%figure01a
 \centerline{\includegraphics[scale=0.4]{MM_simple.png}}
 \end{figure}
 
@@ -48,21 +49,21 @@ Model optimisation starting with:
 $Y=Genotype+Sex+Genotype*Sex + Weight + Batch$
 
 This framework can be used in case when there are up to 5 batches and concurrent controls approach had been used. 
-\begin{figure}[!htpb]%figure01a
+\begin{figure}[H]%figure01a
 \centerline{\includegraphics[scale=0.4]{TFE_simple.png}}
 \end{figure}
 
 \item Reference Range Plus framework identifies the normal variation form the wild-type animals, classifies dependent variables from the genotype of interest as low, normal or high and compare proportions.  
-\begin{figure}[!htpb]%figure01a
+\begin{figure}[H]%figure01a
 \centerline{\includegraphics[scale=0.4]{RR1_simple.png}}
 \end{figure} 
-\begin{figure}[!htpb]%figure01a
+\begin{figure}[H]%figure01a
 \centerline{\includegraphics[scale=0.4]{RR2_simple.png}}
 \end{figure}
 
 This framework requires sufficient number of controls (more than 60 records) in order to correctly identify normal variation and can be used when other methods are not applicable or as a first simple data assessment method. 
 \item Fisher Exact Test is a standard framework for categorical data which compares data proportions and calculates the percentage change in classification.
-\begin{figure}[!htpb]%figure01a
+\begin{figure}[H]%figure01a
 \centerline{\includegraphics[scale=0.4]{FE_simple.png}}
 \end{figure}
 \end{enumerate}
@@ -77,17 +78,17 @@ This package has been tested and demonstrated with an application of 420 lines o
 \\
 
 \begin{figure}[!htpb]%figure01
-\centerline{\includegraphics[scale=0.5]{PhenStat.png}}
-\caption{The PhenStat package's three stage structure: dataset processing, analysis, and result output. Dotted boxes show the place-holders for new functions that could implement other methods for data analysis and/or output of results.}\label{fig:01}
+\centerline{\includegraphics[scale=0.5]{PhenStat_simple.png}}
+\caption{The PhenStat package's three stage structure: dataset processing, statistical analysis, and result output.}\label{fig:01}
 \end{figure}
 
 The package consists of three stages as shown in Figure \ref{fig:01}:
 \begin{enumerate}
 \item Dataset processing: includes checking, cleaning and terminology unification procedures and is completed by function \textit{PhenList} which creates a \textit{PhenList} object. 
 \item Statistical analysis: is managed by function \textit{testDataset} and consists of Mixed Model or Fisher Exact framework implementations. The results are stored in \textit{PhenTestResult} object. 
-Potentially this layer can be extended adding new statistical methods (dotted box in Figure \ref{fig:01}). 
+Potentially this layer can be extended adding new statistical methods. 
 \item Results Output: depending on user needs there are two functions for the test results output: \textit{summaryOutput} 
-and \textit{vectorOutput} that present data from \textit{PhenTestResult} object in a particular format. The output layer is also easily extendible (shown as dotted box in Figure \ref{fig:01}).
+and \textit{vectorOutput} that present data from \textit{PhenTestResult} object in a particular format. The output layer is also easily extendible.
 \end{enumerate}
 
 Package run time depends on a variety of factors including dataset size, computational resources, etc. Average analysis \textbf{run time} of the pilot dataset in our local environement is \textbf{1.34 seconds}. 
@@ -1158,7 +1159,7 @@ NA&$\textless$ X&$\textless$ X&Significant for the sex tested\\
 \end{center}
 \end{table}
 
-\subsection{Reference Range Framework}
+\subsection{Reference Range Plus Framework}
 At times phenotyping data has been collected in such a way, that typical analysis routes are not considered reliable. The conservative, easy to understand reference range method (RR framework) can have a role in identifying phenodeviants.   
 \subsubsection{Theory}
 The reference range methodology is considered a conservative method where data are classed normal, low or high depending on whether they lie within the natural variation seen within the control. Once the data are classified, then a Fisher Exact Test is used to compare the proportion of normal, low and high between the test and reference genotype. 

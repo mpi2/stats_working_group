@@ -1,4 +1,4 @@
-## Copyright © 2011-2013 EMBL - European Bioinformatics Institute
+## Copyright © 2012-2014 EMBL - European Bioinformatics Institute
 ##
 ## Licensed under the Apache License, Version 2.0 (the "License");
 ## you may not use this file except in compliance with the License.
@@ -12,51 +12,149 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ##------------------------------------------------------------------------------
-## RAFramework.R contains ... functions for regression analysis of data with no more than 5 batches (assays dates)
+## TFFramework.R contains functions for regression analysis of data with no more than 5 batches (assays dates)
 ## Time as a fixed effect
 ##------------------------------------------------------------------------------
+## Cleans dataset to make it suitable for the TF framework - 
+## data points in all genotype/batch level combinations at least for one sex
+TFDataset <- function(phenList, depVariable, outputMessages=TRUE)
+{
+    x <- phenList$dataset
+    
+    if ('Batch' %in% colnames(x)){
+        # Remove NA records (Batch and/or depVariable are not defined)
+        x<-x[!is.na(x$Batch),] 
+        x<-x[!is.na(x[,c(depVariable)]),] 
 
+        # Lists possible combinations
+        Genotype_levels <- levels(factor(x$Genotype))
+        Batch_levels <- levels(factor(x$Batch))
+        Sex_levels <- levels(factor(x$Sex)) 
+        
+        countsAll <- nrow(x)
+        countsRemoved <- 0
+        if (outputMessages){
+        line <- "-----------"
+            message(printTabStyle(c(rep(line,each=5)),12))
+            message(printTabStyle(c("",Genotype_levels,Genotype_levels),12))
+            message(printTabStyle(c(rep(line,each=5)),12))
+            message(printTabStyle(c("Batch",Sex_levels,Sex_levels),12))
+            message(printTabStyle(c(rep(line,each=5)),12))
+        }
+        for (i in 1:length(Batch_levels)){
+            BatchSubset <- subset(x, x$Batch==Batch_levels[i])
+            sex_counts <- c()
+            for (j in 1:length(Genotype_levels)){           
+                GenotypeBatchSubset <- subset(BatchSubset, 
+                        BatchSubset$Genotype==Genotype_levels[j]) 
+                
+                for (s in 1:length(Sex_levels)){
+                    GenotypeBatchSexSubset <- subset(GenotypeBatchSubset, 
+                            GenotypeBatchSubset$Sex==Sex_levels[s]) 
+                    columnOfInterestSubsetbySex <- na.omit(GenotypeBatchSexSubset[,c(depVariable)])
+                    sex_counts <- c(sex_counts,length(columnOfInterestSubsetbySex))
+                }
+                columnOfInterestSubset <- na.omit(GenotypeBatchSubset[,c(depVariable)])
+                  
+                if (length(columnOfInterestSubset)==0){
+                    countsMinus <- nrow(x[x$Batch==Batch_levels[i],])
+                    #message(Batch_levels[i]," - ",countsMinus)
+                    countsRemoved <- countsRemoved + countsMinus    
+                    x<- subset(x,!(x$Batch==Batch_levels[i]))
+                }
+            }   
+            if (outputMessages){
+                message(printTabStyle(c(Batch_levels[i],sex_counts),12)) 
+                message(printTabStyle(c(rep(line,each=5)),12))      
+            }        
+        }
+        if (outputMessages)
+            message(paste("number of batch levels left: ",length(levels(factor(x$Batch))),
+                        " removed: ",round(countsRemoved*100/countsAll),"%",sep=""))
+        
+        new_phenList <-PhenList(dataset=x, testGenotype=phenList$testGenotype, 
+                refGenotype=phenList$refGenotype, hemiGenotype=phenList$hemiGenotype)
+        
+        return (new_phenList)
+        
+    }
+}
+##------------------------------------------------------------------------------
+## Formats list of words into 'tab delimented' string 
+printTabStyle <- function(textList,positions,tabSep="|"){
+    result <- ""
+    for (j in 1:length(textList)){
+                textToPrint <- textList[j]
+                if (nchar(textToPrint)<positions){
+                    empty <- positions - nchar(textToPrint)
+                }
+                else {
+                    empty <- 1
+                }
+                for (i in 1:empty){
+                    textToPrint <- paste(" ",textToPrint,sep="")
+                }
+                result <- paste(result,tabSep,textToPrint," ",sep="")
+    }
+    return (paste(result,tabSep,sep=""))
+}
+##------------------------------------------------------------------------------
+## Creates formula for the start model based on equation and number of Sexes
+## in the data
 startTFModel <- function(phenList, depVariable, equation="withWeight",
         outputMessages=TRUE, pThreshold=0.05, keepList=NULL)
 {
     x <- phenList$dataset
     
-    if (!is.null(keepList)){
+    #if (!is.null(keepList)){
         ## User's values for effects
-        user_keep_weight <- keepList[3]
-        user_keep_sex <- keepList[4]
-        user_keep_interaction <- keepList[5]
-        user_keep_batch <- keepList[1]
-        user_keep_equalvar <- keepList[2]
+        #user_keep_weight <- keepList[3]
+        #user_keep_sex <- keepList[4]
+        #user_keep_interaction <- keepList[5]
+        #user_keep_batch <- keepList[1]
+        #user_keep_equalvar <- keepList[2]
         
-        if (!('Weight' %in% colnames(x)) && user_keep_weight){
-            if (outputMessages)
-            message(paste("Warning:\nWeight column is missed in the dataset.",
-                    "'keepWeight' is set to FALSE.\n"))
+        #if (!('Weight' %in% colnames(x)) && user_keep_weight){
+        #    if (outputMessages)
+        #    message(paste("Warning:\nWeight column is missed in the dataset.",
+        #            "'keepWeight' is set to FALSE.\n"))
             
-            user_keep_weight <- FALSE
-        }
+        #    user_keep_weight <- FALSE
+        #}
         
         
-        if (equation=="withoutWeight" && user_keep_weight){
-            if (outputMessages)
-            message(paste("Warning:\nEquation is set to 'withoutWeight'.",
-                            "'keepWeight' is set to FALSE.\n"))
+        #if (equation=="withoutWeight" && user_keep_weight){
+        #    if (outputMessages)
+        #    message(paste("Warning:\nEquation is set to 'withoutWeight'.",
+        #                    "'keepWeight' is set to FALSE.\n"))
             
-            user_keep_weight <- FALSE
-        }
+        #    user_keep_weight <- FALSE
+        #}
         
-        if (!('Batch' %in% colnames(x)) && user_keep_batch){
-            if (outputMessages)
-            message(paste("Warning:\nBatch column is missed in the dataset.",
-                    "'keepBatch' is set to FALSE.\n"))
+        #if (!('Batch' %in% colnames(x)) && user_keep_batch){
+        #    if (outputMessages)
+        #    message(paste("Warning:\nBatch column is missed in the dataset.",
+        #            "'keepBatch' is set to FALSE.\n"))
             
-            user_keep_batch <- FALSE
-        }
+        #    user_keep_batch <- FALSE
+        #}
         
-    }
+    #}
     
     numberofSexes <- length(levels(x$Sex))
+    # Averages for percentage changes - is the ratio of the genotype effect for a sex relative to 
+    # the wildtype signal for that variable for that sex - calculation        
+    WT <- subset(phenList$dataset,Genotype==phenList$refGenotype)
+    mean_all <- mean(WT[,c(depVariable)],na.rm=TRUE)  
+    mean_list <- c(mean_all)  
+    if (numberofsexes==2){  
+        WT_f <- subset(WT,Sex=="Female")
+        WT_m <- subset(WT,Sex=="Male")
+        mean_f <- mean(WT_f[,c(depVariable)],na.rm=TRUE)
+        mean_m <- mean(WT_m[,c(depVariable)],na.rm=TRUE)
+        mean_list <- c(mean_all,mean_f,mean_m)  
+    }
+    # end of percentage change calculations 
     
     
     ## Start model formula: homogenous residual variance,
@@ -128,13 +226,13 @@ startTFModel <- function(phenList, depVariable, equation="withWeight",
     }
     else {
         keep_equalvar <- TRUE
-        if (!is.null(keepList)){
-            if (outputMessages && !user_keep_equalvar)
-            message(paste("Warning:\n'keepEqualVariance' is set to TRUE ", 
-                            "otherwise the model can't be fitted - false convergence.\n",sep=""))
+        #if (!is.null(keepList)){
+         #   if (outputMessages && !user_keep_equalvar)
+         #   message(paste("Warning:\n'keepEqualVariance' is set to TRUE ", 
+         #                   "otherwise the model can't be fitted - false convergence.\n",sep=""))
             
-            user_keep_equalvar <- TRUE
-        }
+         #   user_keep_equalvar <- TRUE
+        #}
     }
     
     
@@ -230,58 +328,58 @@ startTFModel <- function(phenList, depVariable, equation="withWeight",
                     ", keepInteraction=",keep_interaction,".\n",sep=""))
     
     ## Results for user defined model effects values
-    if (!is.null(keepList)){
-        if (outputMessages)
-        message(paste("Information:\nUser's values for model effects are: ",
-                        "keepBatch=",user_keep_batch,
-                        ", keepEqualVariance=",user_keep_equalvar,
-                        ", keepWeight=",user_keep_weight,
-                        ", keepSex=",user_keep_sex,
-                        ", keepInteraction=",user_keep_interaction,".\n",sep=""))
+    #if (!is.null(keepList)){
+    #    if (outputMessages)
+    #    message(paste("Information:\nUser's values for model effects are: ",
+    #                    "keepBatch=",user_keep_batch,
+    #                    ", keepEqualVariance=",user_keep_equalvar,
+    #                    ", keepWeight=",user_keep_weight,
+    #                    ", keepSex=",user_keep_sex,
+    #                    ", keepInteraction=",user_keep_interaction,".\n",sep=""))
         ## Model fit is selected according to user defined model effects
-        if(user_keep_batch && user_keep_equalvar){
+    #    if(user_keep_batch && user_keep_equalvar){
             ## Model 1
-            model <- model.withBatch
-        }else if(user_keep_batch && !user_keep_equalvar){
+     #       model <- model.withBatch
+     #   }else if(user_keep_batch && !user_keep_equalvar){
             ## Model 2
-            model <- model_hetvariance
-        }else if(!user_keep_batch && user_keep_equalvar){
+     #       model <- model_hetvariance
+     #   }else if(!user_keep_batch && user_keep_equalvar){
             ## Model 1A
-            model <- model.noBatch
-        }else if(!user_keep_batch && !user_keep_equalvar){
+     #       model <- model.noBatch
+     #   }else if(!user_keep_batch && !user_keep_equalvar){
             ## Modify model 1A to heterogeneous residual variances
-            model <- do.call("gls", args=list(modelFormulaNoBatch(equation,numberofSexes, depVariable),
-                            weights=varIdent(form=~1|Genotype), x, na.action="na.omit"))
-        }
+     #       model <- do.call("gls", args=list(modelFormulaNoBatch(equation,numberofSexes, depVariable),
+     #                      weights=varIdent(form=~1|Genotype), x, na.action="na.omit"))
+     #   }
         
-        if(numberofSexes==2){
-            index <- 6
-            if (equation=="withoutWeight"){
-                index <- index-1
-                
-            }
-            if (!keep_batch) {
-                index <- index-1
-            }
-            interactionTest <- anova(model, type="marginal")$"p-value"[index]
-        }
-        else {
-            interactionTest <- NA
-        }
+      #  if(numberofSexes==2){
+      #      index <- 6
+      #      if (equation=="withoutWeight"){
+      #         index <- index-1
+      #          
+      #      }
+      #      if (!keep_batch) {
+      #          index <- index-1
+      #      }
+      #      interactionTest <- anova(model, type="marginal")$"p-value"[index]
+      #  }
+      #  else {
+      #      interactionTest <- NA
+      #  }
         
-        compList <- (keepList==c(keep_batch,keep_equalvar,keep_weight,
-                        keep_sex,keep_interaction))
+      #  compList <- (keepList==c(keep_batch,keep_equalvar,keep_weight,
+      #                  keep_sex,keep_interaction))
         
-        if (length(compList[compList==FALSE])>0 && outputMessages)
-        message("Warning:\nCalculated values differ from user defined values for model effects.\n")
+      #  if (length(compList[compList==FALSE])>0 && outputMessages)
+      #  message("Warning:\nCalculated values differ from user defined values for model effects.\n")
         
-        keep_weight <- user_keep_weight
-        keep_sex <- user_keep_sex
-        keep_interaction <- user_keep_interaction
-        keep_batch <- user_keep_batch
-        keep_equalvar <- user_keep_equalvar
+      #  keep_weight <- user_keep_weight
+      #  keep_sex <- user_keep_sex
+      #  keep_interaction <- user_keep_interaction
+      #  keep_batch <- user_keep_batch
+      #  keep_equalvar <- user_keep_equalvar
         
-    }
+    #}
     
     
     result <- new("PhenTestResult",list(
@@ -298,7 +396,8 @@ startTFModel <- function(phenList, depVariable, equation="withWeight",
                     model.effect.weight=keep_weight,
                     numberSexes=numberofSexes,
                     pThreshold=pThreshold,
-                    model.formula.genotype=model.formula))
+                    model.formula.genotype=model.formula,
+                    model.output.averageRefGenotype=mean_list))
     return(result)
 }
 
@@ -573,6 +672,83 @@ finalTFModel <- function(phenTestResult, outputMessages=TRUE)
     
     ## Parse modeloutput and choose output depending on model
     result$model.output.summary <- parserOutputTFSummary(result)
+    # Percentage changes - is the ratio of the genotype effect for a sex relative to 
+    # the wildtype signal for that variable for that sex - calculation        
+    if(result$numberSexes==2){
+        # without weight
+        if (is.na(result$model.output.summary['weight_estimate'])){ 
+            if (!is.na(result$model.output.summary['sex_estimate']) &&
+            !is.na(result$model.output.summary['sex_FvKO_estimate']))
+            {
+                denominator_f <- result$model.output.summary['intercept_estimate']
+                denominator_m <- result$model.output.summary['intercept_estimate']+
+                result$model.output.summary['sex_estimate']
+                ratio_f <- result$model.output.summary['sex_FvKO_estimate']/denominator_f                       
+                ratio_m <- result$model.output.summary['sex_MvKO_estimate']/denominator_m 
+            }
+            else if (!is.na(result$model.output.summary['sex_FvKO_estimate']))
+            {
+                denominator <- result$model.output.summary['intercept_estimate']
+                ratio_f <- result$model.output.summary['sex_FvKO_estimate']/denominator                            
+                ratio_m <- result$model.output.summary['sex_MvKO_estimate']/denominator            
+            }
+            else if (!is.na(result$model.output.summary['sex_estimate']))
+            {
+                denominator_f <- result$model.output.summary['intercept_estimate']
+                denominator_m <- result$model.output.summary['intercept_estimate']+
+                result$model.output.summary['sex_estimate']
+                ratio_f <- result$model.output.summary['genotype_estimate']/denominator_f                        
+                ratio_m <- result$model.output.summary['genotype_estimate']/denominator_m 
+            }
+            else
+            {
+                denominator <- result$model.output.summary['intercept_estimate']
+                ratio_f <- result$model.output.summary['genotype_estimate']/denominator                            
+                ratio_m <- ratio_f                      
+            }
+        }
+        # with weight
+        else{
+            mean_list <- result$model.output.averageRefGenotype
+            denominator_f <- mean_list[2]
+            denominator_m <- mean_list[3]
+            if (!is.na(result$model.output.summary['sex_estimate']) &&
+            !is.na(result$model.output.summary['sex_FvKO_estimate']))
+            {
+                ratio_f <- result$model.output.summary['sex_FvKO_estimate']/denominator_f                       
+                ratio_m <- result$model.output.summary['sex_MvKO_estimate']/denominator_m 
+            }
+            else if (!is.na(result$model.output.summary['sex_FvKO_estimate']))
+            {
+                ratio_f <- result$model.output.summary['sex_FvKO_estimate']/denominator_f                            
+                ratio_m <- result$model.output.summary['sex_MvKO_estimate']/denominator_m            
+            }
+            else 
+            {
+                ratio_f <- result$model.output.summary['genotype_estimate']/denominator_f                        
+                ratio_m <- result$model.output.summary['genotype_estimate']/denominator_m 
+            }
+        }
+    }
+    else{
+        # without weight
+        if (is.na(result$model.output.summary['weight_estimate'])){ 
+            denominator <- result$model.output.summary['intercept_estimate']
+            ratio_f <- result$model.output.summary['genotype_estimate']/denominator                            
+            ratio_m <- ratio_f  
+        }
+        # with weight
+        else{
+            mean_list <- result$model.output.averageRefGenotype
+            denominator <- mean_list[1]
+            ratio_f <- result$model.output.summary['genotype_estimate']/denominator   
+            ratio_m <- ratio_f   
+        }
+    }
+    # end of percentage changes calculation
+    
+    result$model.output.percentageChanges <- c(ratio_f*100,ratio_m*100)
+    names(result$model.output.percentageChanges) <- c('female*genotype ratio','male*genotype ratio')
     
     return(result)
 }

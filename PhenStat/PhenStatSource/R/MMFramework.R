@@ -1,4 +1,4 @@
-## Copyright © 2011-2013 EMBL - European Bioinformatics Institute
+## Copyright © 2012-2014 EMBL - European Bioinformatics Institute
 ##
 ## Licensed under the Apache License, Version 2.0 (the "License");
 ## you may not use this file except in compliance with the License.
@@ -71,6 +71,20 @@ startModel <- function(phenList, depVariable, equation="withWeight",
     }
     
     numberofsexes <- length(levels(x$Sex))
+    # Averages for percentage changes - is the ratio of the genotype effect for a sex relative to 
+    # the wildtype signal for that variable for that sex - calculation        
+    WT <- subset(phenList$dataset,Genotype==phenList$refGenotype)
+    mean_all <- mean(WT[,c(depVariable)],na.rm=TRUE)  
+    mean_list <- c(mean_all)  
+    if (numberofsexes==2){  
+        WT_f <- subset(WT,Sex=="Female")
+        WT_m <- subset(WT,Sex=="Male")
+        mean_f <- mean(WT_f[,c(depVariable)],na.rm=TRUE)
+        mean_m <- mean(WT_m[,c(depVariable)],na.rm=TRUE)
+        mean_list <- c(mean_all,mean_f,mean_m)  
+    }
+    # end of percentage change calculations    
+    
     
     
     ## Start model formula: homogenous residual variance,
@@ -299,7 +313,8 @@ startModel <- function(phenList, depVariable, equation="withWeight",
                                 model.effect.weight=keep_weight,
                                 numberSexes=numberofsexes,
                                 pThreshold=pThreshold,
-                                model.formula.genotype=model.formula))
+                                model.formula.genotype=model.formula,
+                                model.output.averageRefGenotype=mean_list))
             },
             #END OF tryCatch    
             error=function(error_mes) {
@@ -582,7 +597,84 @@ finalModel <- function(phenTestResult, outputMessages=TRUE)
                 
                 ## Parse modeloutput and choose output depending on model
                 result$model.output.summary <- parserOutputSummary(result)
-                
+
+                # Percentage changes - is the ratio of the genotype effect for a sex relative to 
+                # the wildtype signal for that variable for that sex - calculation        
+                if(result$numberSexes==2){
+                   # without weight
+                   if (is.na(result$model.output.summary['weight_estimate'])){ 
+                        if (!is.na(result$model.output.summary['sex_estimate']) &&
+                            !is.na(result$model.output.summary['sex_FvKO_estimate']))
+                        {
+                            denominator_f <- result$model.output.summary['intercept_estimate']
+                            denominator_m <- result$model.output.summary['intercept_estimate']+
+                                             result$model.output.summary['sex_estimate']
+                            ratio_f <- result$model.output.summary['sex_FvKO_estimate']/denominator_f                       
+                            ratio_m <- result$model.output.summary['sex_MvKO_estimate']/denominator_m 
+                        }
+                        else if (!is.na(result$model.output.summary['sex_FvKO_estimate']))
+                        {
+                                denominator <- result$model.output.summary['intercept_estimate']
+                                ratio_f <- result$model.output.summary['sex_FvKO_estimate']/denominator                            
+                                ratio_m <- result$model.output.summary['sex_MvKO_estimate']/denominator            
+                        }
+                        else if (!is.na(result$model.output.summary['sex_estimate']))
+                        {
+                            denominator_f <- result$model.output.summary['intercept_estimate']
+                            denominator_m <- result$model.output.summary['intercept_estimate']+
+                            result$model.output.summary['sex_estimate']
+                            ratio_f <- result$model.output.summary['genotype_estimate']/denominator_f                        
+                            ratio_m <- result$model.output.summary['genotype_estimate']/denominator_m 
+                        }
+                        else
+                        {
+                            denominator <- result$model.output.summary['intercept_estimate']
+                            ratio_f <- result$model.output.summary['genotype_estimate']/denominator                            
+                            ratio_m <- ratio_f                      
+                        }
+                   }
+                   # with weight
+                   else{
+                        mean_list <- result$model.output.averageRefGenotype
+                        denominator_f <- mean_list[2]
+                        denominator_m <- mean_list[3]
+                        if (!is.na(result$model.output.summary['sex_estimate']) &&
+                        !is.na(result$model.output.summary['sex_FvKO_estimate']))
+                        {
+                            ratio_f <- result$model.output.summary['sex_FvKO_estimate']/denominator_f                       
+                            ratio_m <- result$model.output.summary['sex_MvKO_estimate']/denominator_m 
+                        }
+                        else if (!is.na(result$model.output.summary['sex_FvKO_estimate']))
+                        {
+                            ratio_f <- result$model.output.summary['sex_FvKO_estimate']/denominator_f                            
+                            ratio_m <- result$model.output.summary['sex_MvKO_estimate']/denominator_m            
+                        }
+                        else 
+                        {
+                            ratio_f <- result$model.output.summary['genotype_estimate']/denominator_f                        
+                            ratio_m <- result$model.output.summary['genotype_estimate']/denominator_m 
+                        }
+                   }
+                }
+                else{
+                    # without weight
+                    if (is.na(result$model.output.summary['weight_estimate'])){ 
+                        denominator <- result$model.output.summary['intercept_estimate']
+                        ratio_f <- result$model.output.summary['genotype_estimate']/denominator                            
+                        ratio_m <- ratio_f  
+                    }
+                    # with weight
+                    else{
+                        mean_list <- result$model.output.averageRefGenotype
+                        denominator <- mean_list[1]
+                        ratio_f <- result$model.output.summary['genotype_estimate']/denominator   
+                        ratio_m <- ratio_f   
+                    }
+                }
+                # end of percentage changes calculation
+
+                result$model.output.percentageChanges <- c(ratio_f*100,ratio_m*100)
+                names(result$model.output.percentageChanges) <- c('female*genotype ratio','male*genotype ratio')
                 finalResult <- result
             },
             
@@ -612,8 +704,9 @@ finalModel <- function(phenTestResult, outputMessages=TRUE)
             )        
     return(finalResult)
 }
+
 ##------------------------------------------------------------------------------
-## Parser model output summary and return in readable vector format
+## Parses model output summary and returns in readable vector format
 parserOutputSummary<-function(phenTestResult)
 {
     result <- phenTestResult
