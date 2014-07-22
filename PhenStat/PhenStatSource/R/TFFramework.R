@@ -34,9 +34,14 @@ TFDataset <- function(phenList, depVariable, outputMessages=TRUE)
         countsAll <- nrow(x)
         countsRemoved <- 0
         if (outputMessages){
-        line <- "-----------"
+            message("")
+            line <- "-----------"
             message(printTabStyle(c(rep(line,each=5)),12))
-            message(printTabStyle(c("",Genotype_levels,Genotype_levels),12))
+            printGenotypes <- c("")
+            for (j in 1:length(Genotype_levels)){   
+                printGenotypes <- c(printGenotypes,Genotype_levels[j],Genotype_levels[j])
+            }
+            message(printTabStyle(printGenotypes,12))
             message(printTabStyle(c(rep(line,each=5)),12))
             message(printTabStyle(c("Batch",Sex_levels,Sex_levels),12))
             message(printTabStyle(c(rep(line,each=5)),12))
@@ -44,6 +49,7 @@ TFDataset <- function(phenList, depVariable, outputMessages=TRUE)
         for (i in 1:length(Batch_levels)){
             BatchSubset <- subset(x, x$Batch==Batch_levels[i])
             sex_counts <- c()
+            removed <- FALSE
             for (j in 1:length(Genotype_levels)){           
                 GenotypeBatchSubset <- subset(BatchSubset, 
                         BatchSubset$Genotype==Genotype_levels[j]) 
@@ -61,19 +67,26 @@ TFDataset <- function(phenList, depVariable, outputMessages=TRUE)
                     #message(Batch_levels[i]," - ",countsMinus)
                     countsRemoved <- countsRemoved + countsMinus    
                     x<- subset(x,!(x$Batch==Batch_levels[i]))
+                    removed <- TRUE
                 }
             }   
+            printBatchLevel <- Batch_levels[i]
+            if (removed){
+                printBatchLevel <- paste("*", printBatchLevel)
+            }
             if (outputMessages){
-                message(printTabStyle(c(Batch_levels[i],sex_counts),12)) 
+                message(printTabStyle(c(printBatchLevel,sex_counts),12)) 
                 message(printTabStyle(c(rep(line,each=5)),12))      
             }        
         }
-        if (outputMessages)
-            message(paste("number of batch levels left: ",length(levels(factor(x$Batch))),
-                        " removed: ",round(countsRemoved*100/countsAll),"%",sep=""))
+        if (outputMessages){
+            message("")
+            message(paste("Number of batch levels left: ",length(levels(factor(x$Batch))),sep=""))
+            message(paste("Records removed: ",round(countsRemoved*100/countsAll),"%",sep=""))
+        }
         
         new_phenList <-PhenList(dataset=x, testGenotype=phenList$testGenotype, 
-                refGenotype=phenList$refGenotype, hemiGenotype=phenList$hemiGenotype)
+                refGenotype=phenList$refGenotype, hemiGenotype=phenList$hemiGenotype,outputMessages=FALSE)
         
         return (new_phenList)
         
