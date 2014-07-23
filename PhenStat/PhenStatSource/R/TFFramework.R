@@ -17,7 +17,7 @@
 ##------------------------------------------------------------------------------
 ## Cleans dataset to make it suitable for the TF framework - 
 ## data points in all genotype/batch level combinations at least for one sex
-TFDataset <- function(phenList, depVariable, outputMessages=TRUE)
+TFDataset <- function(phenList, depVariable, outputMessages=TRUE, forDecisionTree=FALSE)
 {
     x <- phenList$dataset
     
@@ -30,65 +30,101 @@ TFDataset <- function(phenList, depVariable, outputMessages=TRUE)
         Genotype_levels <- levels(factor(x$Genotype))
         Batch_levels <- levels(factor(x$Batch))
         Sex_levels <- levels(factor(x$Sex)) 
+        #numberofSexes <- length(Sex_levels)
+        tableWidth <- length(Sex_levels)*2+1
         
         countsAll <- nrow(x)
-        countsRemoved <- 0
+        countsRemovedRef <- 0
+        countsRemovedTest <- 0
         if (outputMessages){
             message("")
+            if (outputMessages){
+                message(paste("Data points containing '",depVariable,"' by batch levels:",sep=""))
+            }
             line <- "-----------"
-            message(printTabStyle(c(rep(line,each=5)),12))
+            message(printTabStyle(c(rep(line,each=tableWidth)),12))
             printGenotypes <- c("")
             for (j in 1:length(Genotype_levels)){   
-                printGenotypes <- c(printGenotypes,Genotype_levels[j],Genotype_levels[j])
+                for (s in 1:length(Sex_levels)){
+                    printGenotypes <- c(printGenotypes,Genotype_levels[j])
+                }
             }
             message(printTabStyle(printGenotypes,12))
-            message(printTabStyle(c(rep(line,each=5)),12))
+            message(printTabStyle(c(rep(line,each=tableWidth)),12))
             message(printTabStyle(c("Batch",Sex_levels,Sex_levels),12))
-            message(printTabStyle(c(rep(line,each=5)),12))
+            message(printTabStyle(c(rep(line,each=tableWidth)),12))
         }
+        removeRecords <- FALSE
+        # Batch loop
         for (i in 1:length(Batch_levels)){
             BatchSubset <- subset(x, x$Batch==Batch_levels[i])
-            sex_counts <- c()
-            removed <- FALSE
+            sex_counts_batch <- c()
+            removeBatch <- FALSE
+            # Genotype loop
             for (j in 1:length(Genotype_levels)){           
                 GenotypeBatchSubset <- subset(BatchSubset, 
                         BatchSubset$Genotype==Genotype_levels[j]) 
-                
+                # Sex loop
                 for (s in 1:length(Sex_levels)){
                     GenotypeBatchSexSubset <- subset(GenotypeBatchSubset, 
                             GenotypeBatchSubset$Sex==Sex_levels[s]) 
                     columnOfInterestSubsetbySex <- na.omit(GenotypeBatchSexSubset[,c(depVariable)])
-                    sex_counts <- c(sex_counts,length(columnOfInterestSubsetbySex))
+                    sex_counts_batch <- c(sex_counts_batch,length(columnOfInterestSubsetbySex) )
                 }
                 columnOfInterestSubset <- na.omit(GenotypeBatchSubset[,c(depVariable)])
                   
                 if (length(columnOfInterestSubset)==0){
                     countsMinus <- nrow(x[x$Batch==Batch_levels[i],])
-                    #message(Batch_levels[i]," - ",countsMinus)
-                    countsRemoved <- countsRemoved + countsMinus    
-                    x<- subset(x,!(x$Batch==Batch_levels[i]))
-                    removed <- TRUE
+                    if (Genotype_levels[j]==phenList$testGenotype){
+                        countsRemovedRef <- countsRemovedRef + countsMinus 
+                    }
+                    else {
+                        countsRemovedTest <- countsRemovedTest + countsMinus 
+                    }
+                    #x<- subset(x,!(x$Batch==Batch_levels[i]))
+                    removeBatch <- TRUE
+                    removeRecords <- TRUE
                 }
             }   
             printBatchLevel <- Batch_levels[i]
-            if (removed){
+            if (removeBatch){
+                x<- subset(x,!(x$Batch==Batch_levels[i]))
                 printBatchLevel <- paste("*", printBatchLevel)
             }
             if (outputMessages){
-                message(printTabStyle(c(printBatchLevel,sex_counts),12)) 
-                message(printTabStyle(c(rep(line,each=5)),12))      
+                message(printTabStyle(c(printBatchLevel,sex_counts_batch),12)) 
+                message(printTabStyle(c(rep(line,each=tableWidth)),12))      
             }        
         }
-        if (outputMessages){
+        if (outputMessages && removeRecords){
+            message("* - removed record(s)")
+        }
+        if (outputMessages || forDecisionTree){
             message("")
+            if (forDecisionTree){
+                message("TF Dataset Construction:")
+            }
             message(paste("Number of batch levels left: ",length(levels(factor(x$Batch))),sep=""))
-            message(paste("Records removed: ",round(countsRemoved*100/countsAll),"%",sep=""))
+            message(paste("Records removed (reference genotype): ",round(countsRemovedRef*100/countsAll),"%",sep=""))
+            message(paste("Records removed (test genotype): ",round(countsRemovedTest*100/countsAll),"%\n",sep=""))
         }
         
-        new_phenList <-PhenList(dataset=x, testGenotype=phenList$testGenotype, 
-                refGenotype=phenList$refGenotype, hemiGenotype=phenList$hemiGenotype,outputMessages=FALSE)
-        
-        return (new_phenList)
+
+        if (length(levels(factor(x$Batch))) >= 2 && length(levels(factor(x$Batch))) <= 5) {
+            new_phenList <-PhenList(dataset=x, testGenotype=phenList$testGenotype, 
+                    refGenotype=phenList$refGenotype, hemiGenotype=phenList$hemiGenotype,outputMessages=FALSE)
+            return (new_phenList)
+        }
+        else {
+            stop_message <- paste("Error: \nThere are not enough records for TF method after",
+                    " the removal of all non-concurrent batches.",sep="")
+            
+            if (outputMessages)  { 
+                message(stop_message)
+            }
+            return(phenList)
+        }
+    
         
     }
 }
@@ -686,7 +722,8 @@ finalTFModel <- function(phenTestResult, outputMessages=TRUE)
     ## Parse modeloutput and choose output depending on model
     result$model.output.summary <- parserOutputTFSummary(result)
     # Percentage changes - is the ratio of the genotype effect for a sex relative to 
-    # the wildtype signal for that variable for that sex - calculation        
+    # the wildtype signal for that variable for that sex - calculation   
+
     if(result$numberSexes==2){
         # without weight
         if (is.na(result$model.output.summary['weight_estimate'])){ 
@@ -748,15 +785,17 @@ finalTFModel <- function(phenTestResult, outputMessages=TRUE)
         if (is.na(result$model.output.summary['weight_estimate'])){ 
             denominator <- result$model.output.summary['intercept_estimate']
             ratio_f <- result$model.output.summary['genotype_estimate']/denominator                            
-            ratio_m <- ratio_f  
         }
         # with weight
         else{
             mean_list <- result$model.output.averageRefGenotype
             denominator <- mean_list[1]
             ratio_f <- result$model.output.summary['genotype_estimate']/denominator   
-            ratio_m <- ratio_f   
         }
+        
+        result$model.output.percentageChanges <- c(ratio_f*100)
+        names(result$model.output.percentageChanges) <- c('all*genotype ratio')
+        finalResult <- result
     }
     # end of percentage changes calculation
     
@@ -843,13 +882,12 @@ parserOutputTFSummary<-function(phenTestResult)
 
     if((result$model.effect.sex && result$model.effect.interaction)
     |( !result$model.effect.sex && result$model.effect.interaction)){
-        sex_index <- match(c("SexFemale"),row.names(modeloutput_summary[["tTable"]]))
+        sex_index <- match(c("SexMale"),row.names(modeloutput_summary[["tTable"]]))
+        sex_FvKO_index <- lengthoftable-1
+        sex_MvKO_index <- lengthoftable
         sex_estimate <- modeloutput_summary[["tTable"]][[sex_index]]
         sex_estimate_SE <- modeloutput_summary[["tTable"]][[(sex_index+lengthoftable)]]
         sex_p_value <- modeloutput_summary[["tTable"]][[(sex_index+3*lengthoftable)]]
-        
-        sex_FvKO_index <- lengthoftable
-        sex_MvKO_index <- lengthoftable-1
         
         sex_FvKO_estimate= modeloutput_summary[["tTable"]][[sex_FvKO_index]]
         sex_FvKO_SE=modeloutput_summary[["tTable"]][[(sex_FvKO_index+lengthoftable)]]
@@ -860,15 +898,13 @@ parserOutputTFSummary<-function(phenTestResult)
     
     } else if( !result$model.effect.sex && !result$model.effect.interaction){    
         genotype_index <- grep("Genotype",row.names(modeloutput_summary[["tTable"]]))[1] 
-
         genotype_estimate = modeloutput_summary[["tTable"]][[genotype_index]]
         genotype_estimate_SE = modeloutput_summary[["tTable"]][[(genotype_index+lengthoftable)]]
         genotype_p_value =  modeloutput_summary[["tTable"]][[(genotype_index+3*lengthoftable)]]
     
     }else{
-        sex_index <- match(c("SexFemale"),row.names(modeloutput_summary[["tTable"]]))
+        sex_index <- match(c("SexMale"),row.names(modeloutput_summary[["tTable"]]))
         genotype_index <- grep("Genotype",row.names(modeloutput_summary[["tTable"]]))[1]      
-        
         genotype_estimate = modeloutput_summary[["tTable"]][[genotype_index]]
         genotype_estimate_SE = modeloutput_summary[["tTable"]][[(genotype_index+lengthoftable)]]
         genotype_p_value =  modeloutput_summary[["tTable"]][[(genotype_index+3*lengthoftable)]]

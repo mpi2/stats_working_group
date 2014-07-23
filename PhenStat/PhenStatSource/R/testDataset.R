@@ -1045,14 +1045,13 @@ columnChecks <- function(dataset, columnName, dataPointsThreshold=4){
 }
 
 ##------------------------------------------------------------------------------
-##------------------------------------------------------------------------------
 decisionTree <- function(phenList=NULL, depVariable=NULL, 
         outputMessages=TRUE)
 {
     
 # evaluate    dataPointsThreshold, RR_controlPointsThreshold
     stop_message <- ""
-    dataPointsThreshold <- 2
+    dataPointsThreshold <- 4
     RR_controlPointsThreshold <- 40
     suggestedFramework <- "NO"
     
@@ -1138,49 +1137,45 @@ decisionTree <- function(phenList=NULL, depVariable=NULL,
          
             # check for TF
             if ('Batch' %in% colnames(x) && variabilityPass){
-                # There 2-5 batches
-                if (length(levels(factor(x$Batch))) >= 2 && length(levels(factor(x$Batch))) <= 5) {                   
-                    Sex_levels <- levels(factor(x$Sex))
-                    batch<-x$Batch
-                    genotype <- x$Genotype
-                    if (length(Sex_levels==1)){                       
-                        t <- na.omit(data.frame(batch,columnOfInterest,genotype))                        
-                        t2 <- xtabs( ~ genotype + batch, t)
-                        
-                        # There are ALL data points in count matrix????
-                        if (length(t2[t2==0])==0){
-                            # correlation?
-                            suggestedFramework <- "TF"
-                        }      
-                                                
+                phenListTF <- TFDataset(phenList,depVariable,outputMessages=FALSE,forDecisionTree=TRUE)
+                xTF <- phenListTF$dataset            
+                
+                # check for batches - shoud be from 2 to 5 batches
+                if (length(levels(factor(xTF$Batch))) >= 2 && length(levels(factor(xTF$Batch))) <= 5) {   
+                    TF <- TRUE 
+                    Genotype_levels <- levels(factor(x$Genotype))
+                    Batch_levels <- levels(factor(x$Batch))
+                    # check for data points in all genotype/batch level combinations (records at least in on Sex)
+                    for (i in 1:length(Batch_levels)){
+                        BatchSubset <- subset(x, x$Batch==Batch_levels[i])
+                        # Genotype loop
+                        for (j in 1:length(Genotype_levels)){           
+                            GenotypeBatchSubset <- subset(BatchSubset, 
+                                    BatchSubset$Genotype==Genotype_levels[j]) 
+                            columnOfInterestSubset <- na.omit(GenotypeBatchSubset[,c(depVariable)])
+                            if (length(columnOfInterestSubset)==0){
+                                TF <- FALSE
+                            }
+                        }                        
+                    }
+                    if (suggestedFramework=="NO"){
+                        suggestedFramework <- "TF"
                     }
                     else {
-                        sex <-x$Sex
-                        t <- na.omit(data.frame(batch,columnOfInterest,genotype,sex))
-                        t_males <- subset(t,t$sex=="Male")
-                        t_females <- subset(t,t$sex=="Female")
-                        
-                        t2_males <- xtabs( ~ genotype + batch, t_males)
-                        t2_females <- xtabs( ~ genotype + batch, t_females)
-                        
-                        # There are ALL data points in count matrices ????
-                        if (length(t2_males[t2_males==0])==0 && length(t2_females[t2_females==0])==0){
-                            # correlation?
-                            suggestedFramework <- "TF"
-                        }      
-                        
+                        suggestedFramework <- paste(suggestedFramework,", TF",sep="") 
                     }
-                    
-                    
-                    # control matrices - to find out which one control style dataset belongs to
                 }
+                
             }
             
             # check for MM
-            if (suggestedFramework!="TF" && variabilityPass) {
-     
-                        suggestedFramework <- "MM"
-                
+            if (variabilityPass) {     
+                if (suggestedFramework=="NO"){
+                    suggestedFramework <- "MM"
+                }
+                else {
+                    suggestedFramework <- paste(suggestedFramework,", MM",sep="") 
+                }                
             }
                 
             # checks for RR
