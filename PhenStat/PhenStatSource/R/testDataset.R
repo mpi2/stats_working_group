@@ -31,7 +31,6 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
         keepList=NULL, dataPointsThreshold=4, RR_naturalVariation=95, RR_controlPointsThreshold=60)
 {
 
-    
     stop_message <- ""
     
     ## CHECK ARGUMENTS   
@@ -49,7 +48,7 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
     
     # 3
     if (!(equation %in% c("withWeight","withoutWeight")) && method=="MM")
-    stop_message <- paste(stop_message,"Error:\nPlease define equation you ", 
+        stop_message <- paste(stop_message,"Error:\nPlease define equation you ", 
             "would like to use from the following options: 'withWeight', 'withoutWeight'.\n",sep="")
     
     # 4  Checks for rovided significance values
@@ -105,7 +104,6 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
         stop_message <- paste("Error:\nDependent variable column '",
                 depVariable,"' is missed in the dataset.\n",sep="")
     }
-    
     
     ## STOP CHECK ARGUMENTS   
     
@@ -244,42 +242,53 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
         
         # RR checks
         if (method=="RR"){
-            if (checkDepVLevels[2]==0)
-            stop_message <- paste("Error:\nInsufficient data in the dependent variable '",
-                    depVariable,
-                    "' to allow the application of RR plus framework.\n",sep="") 
-            # Number of control data
+            # Numeric
+            if (!checkDepV[2]) {
+                method <- "FE"
+                if (outputMessages)
+                message(paste("Warning:\nDependent variable '",depVariable,
+                                "' is not numeric. Fisher Exact Test will be used for the ", 
+                                "analysis of this dependent variable.\n",sep=""))
+            }
+            else{
             
-
-            controlSubset <- subset(x, x$Genotype==phenList$refGenotype)
-            columnOfInterestSubset <- na.omit(controlSubset[,c(depVariable)])
-
-            Sex_levels <- levels(factor(x$Sex))
-
-            controlNotEnough <- FALSE
-            errorText <- ""
-            
-            for (j in 1:length(Sex_levels)){           
-                GenotypeSexSubset <- subset(controlSubset, 
-                        controlSubset$Sex==Sex_levels[j]) 
+                if (checkDepVLevels[2]==0)
+                    stop_message <- paste("Error:\nInsufficient data in the dependent variable '",
+                        depVariable,
+                        "' to allow the application of RR plus framework.\n",sep="") 
+                # Number of control data
+                
+                
+                controlSubset <- subset(x, x$Genotype==phenList$refGenotype)
+                columnOfInterestSubset <- na.omit(controlSubset[,c(depVariable)])
+                
+                Sex_levels <- levels(factor(x$Sex))
+                
+                controlNotEnough <- FALSE
+                errorText <- ""
+                
+                for (j in 1:length(Sex_levels)){           
+                    GenotypeSexSubset <- subset(controlSubset, 
+                            controlSubset$Sex==Sex_levels[j]) 
+                        
+                    columnOfInterestSubset <- na.omit(GenotypeSexSubset[,c(depVariable)])
                     
-                columnOfInterestSubset <- na.omit(GenotypeSexSubset[,c(depVariable)])
+                    errorText <- paste(errorText, Sex_levels[j], " - ", length(columnOfInterestSubset),", ",sep="") 
+                    
+                    if (length(columnOfInterestSubset)<RR_controlPointsThreshold) {
+                        controlNotEnough <- TRUE
+                    }
+                }                
+                errorText <- substr(errorText, 1, nchar(errorText)-2) 
                 
-                errorText <- paste(errorText, Sex_levels[j], " - ", length(columnOfInterestSubset),", ",sep="") 
                 
-                if (length(columnOfInterestSubset)<RR_controlPointsThreshold) {
-                    controlNotEnough <- TRUE
-                }
-            }                
-            errorText <- substr(errorText, 1, nchar(errorText)-2) 
-            
-            
-            if (controlNotEnough) 
-                stop_message <- paste("Error:\nInsufficient data in the dependent variable '",
-                    depVariable,
-                    "' control subset (",errorText,
-                            ") to allow the application of RR plus framework.",
-                    "\nThe threshold is ",RR_controlPointsThreshold," datapoints. \n",sep="") 
+                if (controlNotEnough) 
+                    stop_message <- paste("Error:\nInsufficient data in the dependent variable '",
+                        depVariable,
+                        "' control subset (",errorText,
+                                ") to allow the application of RR plus framework.",
+                        "\nThe threshold is ",RR_controlPointsThreshold," datapoints. \n",sep="") 
+            }
         } 
         
     }    
@@ -402,7 +411,7 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
         keepList=NULL, dataPointsThreshold=4, RR_naturalVariation=95, RR_controlPointsThreshold=60)
 {
 
-    
+
     stop_message <- ""
     
     ## CHECK ARGUMENTS   
@@ -615,42 +624,52 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
         
         # RR checks
         if (method=="RR"){
-            if (checkDepVLevels[2]==0)
-            stop_message <- paste("Error:\nInsufficient data in the dependent variable '",
-                    depVariable,
-                    "' to allow the application of RR plus framework.\n",sep="") 
-            # Number of control data
-            
-
-            controlSubset <- subset(x, x$Genotype==phenList$refGenotype)
-            columnOfInterestSubset <- na.omit(controlSubset[,c(depVariable)])
-
-            Sex_levels <- levels(factor(x$Sex))
-
-            controlNotEnough <- FALSE
-            errorText <- ""
-            
-            for (j in 1:length(Sex_levels)){           
-                GenotypeSexSubset <- subset(controlSubset, 
-                        controlSubset$Sex==Sex_levels[j]) 
+            # Numeric
+                message(checkDepV[2])
+            if (!checkDepV[2]) {
+                    method <- "FE"
+                    if (outputMessages)
+                    message(paste("Warning:\nDependent variable '",depVariable,
+                                    "' is not numeric. Fisher Exact Test will be used for the ", 
+                                    "analysis of this dependent variable.\n",sep=""))
+            }
+            else {
+                    if (checkDepVLevels[2]==0)
+                    stop_message <- paste("Error:\nInsufficient data in the dependent variable '",
+                            depVariable,
+                            "' to allow the application of RR plus framework.\n",sep="") 
                     
-                columnOfInterestSubset <- na.omit(GenotypeSexSubset[,c(depVariable)])
-                
-                errorText <- paste(errorText, Sex_levels[j], " - ", length(columnOfInterestSubset),", ",sep="") 
-                
-                if (length(columnOfInterestSubset)<RR_controlPointsThreshold) {
-                    controlNotEnough <- TRUE
-                }
-            }                
-            errorText <- substr(errorText, 1, nchar(errorText)-2) 
-            
-            
-            if (controlNotEnough) 
-                stop_message <- paste("Error:\nInsufficient data in the dependent variable '",
-                    depVariable,
-                    "' control subset (",errorText,
-                            ") to allow the application of RR plus framework.",
-                    "\nThe threshold is ",RR_controlPointsThreshold," datapoints. \n",sep="") 
+                    # Number of control data
+                    controlSubset <- subset(x, x$Genotype==phenList$refGenotype)
+                    columnOfInterestSubset <- na.omit(controlSubset[,c(depVariable)])
+                    
+                    Sex_levels <- levels(factor(x$Sex))
+                    
+                    controlNotEnough <- FALSE
+                    errorText <- ""
+                    
+                    for (j in 1:length(Sex_levels)){           
+                        GenotypeSexSubset <- subset(controlSubset, 
+                                controlSubset$Sex==Sex_levels[j]) 
+                        
+                        columnOfInterestSubset <- na.omit(GenotypeSexSubset[,c(depVariable)])
+                        
+                        errorText <- paste(errorText, Sex_levels[j], " - ", length(columnOfInterestSubset),", ",sep="") 
+                        
+                        if (length(columnOfInterestSubset)<RR_controlPointsThreshold) {
+                            controlNotEnough <- TRUE
+                        }
+                    }                
+                    errorText <- substr(errorText, 1, nchar(errorText)-2) 
+                    
+                    
+                    if (controlNotEnough) 
+                    stop_message <- paste("Error:\nInsufficient data in the dependent variable '",
+                            depVariable,
+                            "' control subset (",errorText,
+                                    ") to allow the application of RR plus framework.",
+                            "\nThe threshold is ",RR_controlPointsThreshold," datapoints. \n",sep="") 
+            }
         } 
         
     }    

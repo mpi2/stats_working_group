@@ -210,22 +210,26 @@ startTFModel <- function(phenList, depVariable, equation="withWeight",
     ## genotype and sex interaction included
     
     model.formula  <- modelFormulaNoBatch(equation,numberofSexes, depVariable)
-    model.noBatch <- do.call("gls",args=list(model.formula, x, na.action="na.omit"))
+    model.noBatch <- do.call("gls",args=list(model.formula, data = x, na.action="na.omit", method="ML"))
     
     if ('Batch' %in% colnames(x)){
         x<-x[!is.na(x$Batch),] 
         
         model.formula.withBatch  <- modelFormulaWithBatch(equation,numberofSexes, depVariable)
         
-        model.withBatch <- do.call("gls",args=list(model.formula.withBatch, x, na.action="na.omit"))
+        model.withBatch <- do.call("gls",args=list(model.formula.withBatch, data = x, na.action="na.omit", method="ML"))
         ## Result of the test for Batch significance (fixed effect 5.)
-        anova_results <- anova(model.withBatch, type="marginal")$"p-value" < pThreshold
-        if(numberofSexes==2){
-            keep_batch <- anova_results[5]
-        }
-        else {
-            keep_batch <- anova_results[4]
-        }
+        #anova_results <- anova(model.withBatch, type="marginal")$"p-value" < pThreshold
+        p.value.batch <- (anova(model.withBatch, model.noBatch)$p[2])
+        
+        keep_batch <- p.value.batch > pThreshold
+        
+        #if(numberofSexes==2){
+        #    keep_batch <- anova_results[5]
+        #}
+        #else {
+        #    keep_batch <- anova_results[4]
+        #}
         
         if (keep_batch){
             model <- model.withBatch
@@ -250,7 +254,7 @@ startTFModel <- function(phenList, depVariable, equation="withWeight",
     model_hetvariance <-
     tryCatch(
             model_hetvariance <- do.call("gls", args=list(model.formula, x,
-                            weights=varIdent(form=~1|Genotype), na.action="na.omit")),
+                            weights=varIdent(form=~1|Genotype), na.action="na.omit", method="ML")),
             error=function(error_mes) {
                 if (outputMessages)
                 message(paste("Warning:\nMixed model with heterogeneous ",
