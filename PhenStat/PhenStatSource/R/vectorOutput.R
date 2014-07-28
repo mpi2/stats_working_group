@@ -1,4 +1,4 @@
-## Copyright © 2011-2013 EMBL - European Bioinformatics Institute
+## Copyright © 2012-2014 EMBL - European Bioinformatics Institute
 ## 
 ## Licensed under the Apache License, Version 2.0 (the "License"); 
 ## you may not use this file except in compliance with the License.  
@@ -17,7 +17,7 @@
 ## Wrapper to prepare the output of the modeling and testing results in vector 
 ## form. Assumes that modeling results are stored in the phenTestResult object 
 ## (output from functions testDataset and buildFinalModel)
-vectorOutput <- function(phenTestResult)
+vectorOutput <- function(phenTestResult, phenotypeThreshold=0.01)
 {
  
     if (phenTestResult$method %in% c("MM","TF")) {
@@ -128,12 +128,24 @@ vectorOutput <- function(phenTestResult)
         male_ES <- NA
         female_ES <- NA
         if (!is.null(phenTestResult$model.output$male)){
-            male_pval<-as.numeric(phenTestResult$model.output$male$p.val)
-            male_ES<-as.numeric(phenTestResult$model.output$ES_male)
+            #male_pval<-as.numeric(phenTestResult$model.output$male$p.val)
+            male_pval <- switch(phenTestResult$method,FE = as.character(as.numeric(phenTestResult$model.output$male$p.val)),
+                            RR = paste(phenTestResult$model.output$male[1],
+                            phenTestResult$model.output$male[3],sep=","))
+            #male_ES<-as.numeric(phenTestResult$model.output$ES_male)
+            male_ES <- switch(phenTestResult$method,FE = as.character(as.numeric(phenTestResult$model.output$ES_male)),
+                            RR = paste(phenTestResult$model.output$male[2],
+                            phenTestResult$model.output$male[4],sep=","))
         }
         if (!is.null(phenTestResult$model.output$female)){
-            female_pval<-as.numeric(phenTestResult$model.output$female$p.val)
-            female_ES<-as.numeric(phenTestResult$model.output$ES_female)
+            #female_pval<-as.numeric(phenTestResult$model.output$female$p.val)
+            female_pval <- switch(phenTestResult$method,FE = as.character(as.numeric(phenTestResult$model.output$female$p.val)),
+                    RR = paste(phenTestResult$model.output$female[1],
+                            phenTestResult$model.output$female[3],sep=","))
+            #female_ES<-as.numeric(phenTestResult$model.output$ES_female)
+            female_ES <- switch(phenTestResult$method,FE = as.character(as.numeric(phenTestResult$model.output$ES_female)),
+                    RR = paste(phenTestResult$model.output$female[2],
+                            phenTestResult$model.output$female[4],sep=","))
         }
         
         classificationValue <- classificationTag(phenTestResult,                
@@ -161,15 +173,23 @@ vectorOutput <- function(phenTestResult)
             addInfo = "NA"
         }
         
+        ES_all <- switch(phenTestResult$method,FE = as.character(as.numeric(phenTestResult$model.output$ES)),
+                        RR = paste(phenTestResult$model.output$all[2],
+                        phenTestResult$model.output$all[4],sep=","))
+        p_value_all <- switch(phenTestResult$method,FE = as.character(as.numeric(phenTestResult$model.output$p.val)),
+                        RR = paste(phenTestResult$model.output$all[1],
+                        phenTestResult$model.output$all[3],sep=","))
+ 
+        
         vectorOutput <- c(switch(phenTestResult$method,FE = "Fisher Exact Test framework",
                         RR = "Reference Ranges Plus framework"),
                 as.character(phenTestResult$depVariable), 
                 "NA", 
                 "NA",
                 "NA",
-                as.character(as.numeric(phenTestResult$model.output$ES)),
+                ES_all,
                 "NA",  
-                as.character(as.numeric(phenTestResult$model.output$all$p.val)),
+                p_value_all,
                 "NA",
                 "NA", #10 
                 "NA", 
