@@ -213,7 +213,7 @@ RRTest <- function(phenList, depVariable,
     model_all_nl <- fisher.test(count_matrix_all_nl)
     ###### ALL two rows: High, Normal/Low ######    
     
-    
+    model <- NULL
     model_male <- NULL
     model_female <- NULL
     count_matrix_female <-NULL

@@ -1,38 +1,27 @@
-\name{startModel}
-\alias{startModel}
-\title{Method "startModel"}
+\name{startTFModel}
+\alias{startTFModel}
+\title{Method "startTFModel"}
 \description{      
-    This is an internal function run within MM framework. It completes the testing stage of which effects are significant.  
+    This is an internal function run within TF framework. It completes the testing stage of which effects are significant.  
     As an internal function, it doesn't include extensive error testing of inputs. Please use cautiously if calling directly.  
     
-    It creates start model and modify it after testing of different hypothesis (the model fixed effects).
+    It creates start model and modify it after testing of different hypothesis.
     
-    The model random effects are: 
+    The tested fixed effects are: 
     
-        -batch effect (TRUE if batch variation is significant, FALSE if not)
+    -batch effect (TRUE if batch variation is significant, FALSE if not), 
     
-    The model fixed effects are: 
+    -variance effect (TRUE if residual variances for genotype groups are homogeneous and FALSE if they are heterogeneous), 
     
-        -variance effect (TRUE if residual variances for genotype groups are homogeneous and FALSE if they are heterogeneous), 
+    -interaction effect (TRUE if genotype by sex interaction is significant), 
     
-        -interaction effect (TRUE if genotype by sex interaction is significant), 
+    -sex effect (TRUE if sex is significant), 
     
-        -sex effect (TRUE if sex is significant), 
+    -weight effect (TRUE if weight is significant).
     
-        -weight effect (TRUE if weight is significant).
-    
-    If user would like to assign other TRUE/FALSE values to the fixed effects of the model 
-    then he or she has to define keepList argument which is vector of TRUE/FALSE values.
-    
-    If user has defined model fixed effects (keepList argument) then function prints out calculated and user defined effects 
-    (only when outputMessages argument is set to TRUE), checks user defined effects for consistency 
-    (for instance, if there are no "Weight" column in the dataset then weight effect can't be assigned to TRUE, etc.)
-    and modifies start model according to user defined effects. 
-    
-    As the result PhenTestResult object that contains calculated or user defined model fixed effects and MM start model is created.     
 }    
 \usage{
-    startModel(phenList, depVariable, 
+    startTFModel(phenList, depVariable, 
             equation="withWeight", outputMessages=TRUE, 
             pThreshold=0.05, keepList=NULL)
 }
@@ -60,23 +49,18 @@
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenList}}}
 \examples{
-    file <- system.file("extdata", "test1.csv", package="PhenStat")
+    file <- system.file("extdata", "test6_RR.csv", package="PhenStat")
     test <- PhenList(dataset=read.csv(file),
-            testGenotype="Sparc/Sparc")
+            testGenotype="Oxr1/Oxr1")
     # when "testDataset" function's argument "callAll" is set to FALSE 
     # only "startModel" function is called - the first step of MM framework
     result <- testDataset(test,
-            depVariable="Lean.Mass",
-            callAll=FALSE)
+            depVariable="Ca",
+            callAll=FALSE,
+            method="TF",
+            dataPointsThreshold=2)
     # print out formula that has been created
     result$model.formula.genotype
     # print out batch effect's significance 
     result$model.effect.batch
-    # change the model
-    result <- testDataset(test,
-            depVariable="Lean.Mass",
-            equation="withWeight",
-            callAll=FALSE) 
-    # print out new formula
-    result$model.formula.genotype
 }

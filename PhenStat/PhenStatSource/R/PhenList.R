@@ -1,4 +1,4 @@
-## Copyright © 2011-2013 EMBL - European Bioinformatics Institute
+## Copyright © 2012-2014 EMBL - European Bioinformatics Institute
 ##
 ## Licensed under the Apache License, Version 2.0 (the "License");
 ## you may not use this file except in compliance with the License.
@@ -29,8 +29,9 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
     ## Rename columns if needed
     if (dataset.clean){
         
+      
         if(!is.null(dataset.colname.batch))
-        colnames(dataset)[colnames(dataset) == dataset.colname.batch] <-'Batch'
+            colnames(dataset)[colnames(dataset) == dataset.colname.batch] <-'Batch'
         else {
             if ('Assay.Date' %in% colnames(dataset)){
                 colnames(dataset)[colnames(dataset) == 'Assay.Date'] <-'Batch'
@@ -39,19 +40,27 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
                         "renamed to 'Batch' and will be used for the batch effect modelling.\n",sep=""))
             }
             else
-            if (length(colnames(dataset)[grep("batch",
-                                            tolower(colnames(dataset)))])>0 && outputMessages){
-                batch_potential_columns<-paste(colnames(dataset)[grep
-                                ("batch", tolower(colnames(dataset)))], collapse="', '" )
-                
-                message(paste("Warning:\nDataset contains columns that might ",
-                                "be used for Batch effect modeling, for instance '",
-                                batch_potential_columns,"'.\n",sep=""))
-            }
+                if ('AssayDate' %in% colnames(dataset)){
+                    colnames(dataset)[colnames(dataset) == 'AssayDate'] <-'Batch'
+                    if (outputMessages)
+                    message(paste("Warning:\nDataset's column 'AssayDate' has been ",
+                                    "renamed to 'Batch' and will be used for the batch effect modelling.\n",sep=""))
+                }
+                else 
+                if (length(colnames(dataset)[grep("batch",
+                                                tolower(colnames(dataset)))])>0 && outputMessages){
+                    batch_potential_columns<-paste(colnames(dataset)[grep
+                                    ("batch", tolower(colnames(dataset)))], collapse="', '" )
+                    
+                    message(paste("Warning:\nDataset contains columns that might ",
+                                    "be used for Batch effect modeling, for instance '",
+                                    batch_potential_columns,"'.\n",sep=""))
+                }
             
         }
-        if(!is.null(dataset.colname.genotype))
-        colnames(dataset)[colnames(dataset) == dataset.colname.genotype] <-'Genotype'
+        if(!is.null(dataset.colname.genotype)){
+            colnames(dataset)[colnames(dataset) == dataset.colname.genotype] <-'Genotype'
+        }
         if(!is.null(dataset.colname.sex)) {
             colnames(dataset)[colnames(dataset) == dataset.colname.sex] <-'Sex'
         }
@@ -111,14 +120,17 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
         if ('Batch' %in% colnames(dataset))
         dataset$Batch<-factor(dataset$Batch)
 
-        
-        # # Replace values for sexes with 'Male','Female' if needed
+            
+        # # Replace values for sexes with 'Male','Female'
+        levels(dataset$Sex)[levels(dataset$Sex)=="female"] <- "Female"
+        levels(dataset$Sex)[levels(dataset$Sex)=="male"] <- "Male"
+            
         if(!is.null(dataset.values.female))
         levels(dataset$Sex)[levels(dataset$Sex)==dataset.values.female] <- "Female"
   
         if(!is.null(dataset.values.male)) 
         levels(dataset$Sex)[levels(dataset$Sex)==dataset.values.male] <- "Male"
-        
+            
         ## Hemi to test genotype replacement
         if (!is.null(hemiGenotype)) {
             if (length(rownames(dataset[dataset$Genotype==hemiGenotype,]))>0) {
@@ -162,6 +174,7 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
     if ('Batch' %in% colnames(dataset))
     dataset$Batch<-factor(dataset$Batch)
         
+            
         checkWeight <- columnChecks(dataset,"Weight",2) 
         
         if (! checkWeight[1]){
@@ -193,6 +206,8 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
     
     Genotype_levels <- levels(dataset$Genotype)
     Sex_levels <- levels(dataset$Sex)
+        
+
     
     ## Calculate statistics
     dataset.stat <- data.frame(

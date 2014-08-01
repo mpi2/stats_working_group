@@ -73,12 +73,12 @@ startModel <- function(phenList, depVariable, equation="withWeight",
     numberofsexes <- length(levels(x$Sex))
     # Averages for percentage changes - is the ratio of the genotype effect for a sex relative to 
     # the wildtype signal for that variable for that sex - calculation        
-    WT <- subset(phenList$dataset,Genotype==phenList$refGenotype)
+    WT <- subset(x,x$Genotype==phenList$refGenotype)
     mean_all <- mean(WT[,c(depVariable)],na.rm=TRUE)  
     mean_list <- c(mean_all)  
     if (numberofsexes==2){  
-        WT_f <- subset(WT,Sex=="Female")
-        WT_m <- subset(WT,Sex=="Male")
+        WT_f <- subset(WT,WT$Sex=="Female")
+        WT_m <- subset(WT,WT$Sex=="Male")
         mean_f <- mean(WT_f[,c(depVariable)],na.rm=TRUE)
         mean_m <- mean(WT_m[,c(depVariable)],na.rm=TRUE)
         mean_list <- c(mean_all,mean_f,mean_m)  

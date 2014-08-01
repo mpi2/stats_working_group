@@ -193,12 +193,12 @@ startTFModel <- function(phenList, depVariable, equation="withWeight",
     numberofSexes <- length(levels(x$Sex))
     # Averages for percentage changes - is the ratio of the genotype effect for a sex relative to 
     # the wildtype signal for that variable for that sex - calculation        
-    WT <- subset(phenList$dataset,Genotype==phenList$refGenotype)
+    WT <- subset(x,x$Genotype==phenList$refGenotype)
     mean_all <- mean(WT[,c(depVariable)],na.rm=TRUE)  
     mean_list <- c(mean_all)  
     if (numberofSexes==2){  
-        WT_f <- subset(WT,Sex=="Female")
-        WT_m <- subset(WT,Sex=="Male")
+        WT_f <- subset(WT,WT$Sex=="Female")
+        WT_m <- subset(WT,WT$Sex=="Male")
         mean_f <- mean(WT_f[,c(depVariable)],na.rm=TRUE)
         mean_m <- mean(WT_m[,c(depVariable)],na.rm=TRUE)
         mean_list <- c(mean_all,mean_f,mean_m)  
@@ -209,13 +209,64 @@ startTFModel <- function(phenList, depVariable, equation="withWeight",
     ## Start model formula: homogenous residual variance,
     ## genotype and sex interaction included
     
-    model.formula  <- modelFormulaNoBatch(equation,numberofSexes, depVariable)
+    model.formula  <- switch(equation,
+                ## Eq.2
+                withWeight = {
+                    ## Fixed effects: 1) Genotype 2) Sex 3) Genotype by Sex
+                    ## interaction 4) Weight
+                    if(numberofSexes==2){
+                        as.formula(paste(depVariable, "~", paste("Genotype",
+                                                "Sex", "Genotype*Sex","Weight", sep= "+")))
+                    }else{
+                        as.formula(paste(depVariable, "~", paste("Genotype",
+                                                "Weight", sep= "+")))
+                    }
+                },
+                ## Eq.1
+                withoutWeight = {
+                    ## Fixed effects: 1) Genotype 2) Sex 3) Genotype by Sex
+                    ## interaction
+                    if(numberofSexes==2){
+                        as.formula(paste(depVariable, "~",
+                                        paste("Genotype", "Sex", "Genotype*Sex", sep= "+")))
+                    }else{
+                        as.formula(paste(depVariable, "~",
+                                        paste("Genotype", sep= "+")))
+                    }
+                }
+                )
     model.noBatch <- do.call("gls",args=list(model.formula, data = x, na.action="na.omit", method="ML"))
     
     if ('Batch' %in% colnames(x)){
         x<-x[!is.na(x$Batch),] 
         
-        model.formula.withBatch  <- modelFormulaWithBatch(equation,numberofSexes, depVariable)
+        model.formula.withBatch  <- switch(equation,
+                    ## Eq.2
+                    withWeight = {
+                        ## Fixed effects: 1) Genotype 2) Sex 3) Genotype by Sex
+                        ## interaction 4) Weight
+                        if(numberofSexes==2){
+                            as.formula(paste(depVariable, "~", 
+                                            paste("Genotype", "Sex", "Genotype*Sex", "Weight", "Batch", sep= "+")))
+                        }else{
+                            as.formula(paste(depVariable, "~", 
+                                            paste("Genotype", "Weight", "Batch", sep= "+")))
+                        }
+                    },
+                    ## Eq.1
+                    withoutWeight = {
+                        ## Fixed effects: 1) Genotype 2) Sex 3) Genotype by Sex
+                        ## interaction
+                        if(numberofSexes==2){
+                            as.formula(paste(depVariable, "~",
+                                            paste("Genotype", "Sex", "Genotype*Sex", "Batch", sep= "+")))
+                        }else{
+                            as.formula(paste(depVariable, "~",
+                                            paste("Genotype", "Batch", sep= "+")))
+                        }
+                    }
+            )
+        
         
         model.withBatch <- do.call("gls",args=list(model.formula.withBatch, data = x, na.action="na.omit", method="ML"))
         ## Result of the test for Batch significance (fixed effect 5.)
@@ -434,7 +485,7 @@ startTFModel <- function(phenList, depVariable, equation="withWeight",
         
     #}
     
-    
+
     result <- new("PhenTestResult",list(
                     model.dataset=x,
                     model.output=model,
@@ -452,75 +503,6 @@ startTFModel <- function(phenList, depVariable, equation="withWeight",
                     model.formula.genotype=model.formula,
                     model.output.averageRefGenotype=mean_list))
     return(result)
-}
-
-##------------------------------------------------------------------------------
-## Creates formula for the start model based on equation and number of Sexes
-## in the data
-modelFormulaWithBatch <- function(equation, numberofSexes, depVariable)
-{
-    
-    model.formula <- switch(equation,
-            ## Eq.2
-            withWeight = {
-                ## Fixed effects: 1) Genotype 2) Sex 3) Genotype by Sex
-                ## interaction 4) Weight
-                if(numberofSexes==2){
-                    as.formula(paste(depVariable, "~", 
-                                    paste("Genotype", "Sex", "Genotype*Sex", "Weight", "Batch", sep= "+")))
-                }else{
-                    as.formula(paste(depVariable, "~", 
-                                    paste("Genotype", "Weight", "Batch", sep= "+")))
-                }
-            },
-            ## Eq.1
-            withoutWeight = {
-                ## Fixed effects: 1) Genotype 2) Sex 3) Genotype by Sex
-                ## interaction
-                if(numberofSexes==2){
-                    as.formula(paste(depVariable, "~",
-                                    paste("Genotype", "Sex", "Genotype*Sex", "Batch", sep= "+")))
-                }else{
-                    as.formula(paste(depVariable, "~",
-                                    paste("Genotype", "Batch", sep= "+")))
-                }
-            }
-            )
-    return(model.formula)
-}
-##------------------------------------------------------------------------------
-## Creates formula for the start model based on equation and number of Sexes
-## in the data
-modelFormulaNoBatch <- function(equation, numberofSexes, depVariable)
-{
-    
-    model.formula <- switch(equation,
-            ## Eq.2
-            withWeight = {
-                ## Fixed effects: 1) Genotype 2) Sex 3) Genotype by Sex
-                ## interaction 4) Weight
-                if(numberofSexes==2){
-                    as.formula(paste(depVariable, "~", paste("Genotype",
-                                            "Sex", "Genotype*Sex","Weight", sep= "+")))
-                }else{
-                    as.formula(paste(depVariable, "~", paste("Genotype",
-                                            "Weight", sep= "+")))
-                }
-            },
-            ## Eq.1
-            withoutWeight = {
-                ## Fixed effects: 1) Genotype 2) Sex 3) Genotype by Sex
-                ## interaction
-                if(numberofSexes==2){
-                    as.formula(paste(depVariable, "~",
-                                    paste("Genotype", "Sex", "Genotype*Sex", sep= "+")))
-                }else{
-                    as.formula(paste(depVariable, "~",
-                                    paste("Genotype", sep= "+")))
-                }
-            }
-            )
-    return(model.formula)
 }
 
 ##------------------------------------------------------------------------------
@@ -901,6 +883,7 @@ parserOutputTFSummary<-function(phenTestResult)
         sex_MvKO_p_value=modeloutput_summary[["tTable"]][[(sex_MvKO_index+3*lengthoftable)]]   
     
     } else if( !result$model.effect.sex && !result$model.effect.interaction){    
+
         genotype_index <- grep("Genotype",row.names(modeloutput_summary[["tTable"]]))[1] 
         genotype_estimate = modeloutput_summary[["tTable"]][[genotype_index]]
         genotype_estimate_SE = modeloutput_summary[["tTable"]][[(genotype_index+lengthoftable)]]

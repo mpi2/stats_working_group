@@ -9,7 +9,7 @@
 }
 \arguments{
     \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{\link{testDataset}}; mandatory argument}
-    \item{phenotypeThreshold}{a numerical value defining the threshold to use in classificationTag; ; default value 0.01}
+    \item{phenotypeThreshold}{a numerical value defining the threshold to use in classificationTag; default value 0.01}
 }
 \value{
     Returns model fitting results in a text format for the screen
