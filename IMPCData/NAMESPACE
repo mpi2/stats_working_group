@@ -1,1 +1,3 @@
+importFrom(rjson, fromJSON)
+
 exportPattern("^[[:alpha:]]+")

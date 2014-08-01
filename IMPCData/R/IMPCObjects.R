@@ -15,7 +15,6 @@
 ## impress_lists.R contains functions to get and to print out IMPC objects retrieved 
 ## from IMPC database by using Impress SOLR REST API
 ##------------------------------------------------------------------------------
-library("rjson")
 ##------------------------------------------------------------------------------
 ## Returns name (fieldNameTo) of the IMPC object by id (fieldValueFrom) and object class (fieldNameFrom)
 getName <- function(fieldNameFrom,fieldNameTo,fieldValueFrom)

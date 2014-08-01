@@ -14,7 +14,6 @@
 ##------------------------------------------------------------------------------
 ## impress_sets.R contains functions that are using ... REST API to retrieve datasets 
 ##------------------------------------------------------------------------------
-library("rjson")
 ##------------------------------------------------------------------------------
 # R wrapper around java class getExperimentDTO from Impress REST API
 getIMPCDataset <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL, ParameterID=NULL, 
@@ -51,7 +50,7 @@ getIMPCDataset <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NUL
         print(url)
     },
     error = function(err){
-        print(paste("ERROR: ",war))
+        print(paste("ERROR: ",err))
         print(url)
     })
    
