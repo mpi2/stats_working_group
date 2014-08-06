@@ -1,20 +1,15 @@
 \name{testDataset}
 \alias{testDataset}
 \title{Method "testDataset"}
-\description{      
-    Performs the following checks for dependent variable:
+\description{  
+    Statistical analysis manager function in PhenStat package. 
     
-    1. "depVariable" column should present in the dataset
+    Firstly, it performs the checks for dependent variable in the dataset. 
+    Some checks are generic, some depends on selected statistical framework/method.
     
-    2. "depVariable" should be numeric for Mixed Model (MM) framework, otherwise performs Fisher Exact Test (FE)
-    
-    3. Each one genotype level should have more than one "depVariable" level
-    (variability) for MM framework, otherwise recommends FE framework. 
-    
-    Runs the stages of selected framework to analyse dependent variable. 
+    Secondly, if checks are passed it runs the stages of selected framework to analyse dependent variable. 
     
     For instance, runs startModel and finalModel for the MM framework if the argument "callAll" is set to TRUE.
-
     If framework contains only one stage like in Fisher Exact Test case then runs that one stage regardless "callAll" value.
 
 }    
@@ -27,16 +22,24 @@
 \arguments{
     \item{phenList}{instance of the \code{\linkS4class{PhenList}} class; mandatory argument}       
     \item{depVariable}{a character string defining the dependent variable of interest; mandatory argument}
-    \item{equation}{a character string defining the equation to use. Possible values "withWeight" (default),"withoutWeight"}
-    \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages; default value TRUE}        
-    \item{pThreshold}{a numerical value for the p-value threshold to use in tests, default value 0.05}    
-    \item{method}{a character string ("MM", "FE" or "RR") defining the method to use for model building, default value "MM" mixed model}
-    \item{callAll}{flag: "FALSE" value to run only the first stage of the selected framework; "TRUE" value (default) to run all stages of framework one after another}        
+    \item{equation}{a character string defining the equation to use. 
+        Possible values "withWeight" (default), "withoutWeight"}
+    \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages; 
+        default value TRUE}        
+    \item{pThreshold}{a numerical value for the p-value threshold used to determine which fixed effects 
+        to keep in the model, default value 0.05}    
+    \item{method}{a character string ("MM", "FE" or "RR") defining the method to use for model building; 
+        default value "MM" for mixed model}
+    \item{callAll}{flag: "FALSE" value to run only the first stage of the selected framework; "TRUE" value (default) 
+        to run all stages of framework one after another}        
     \item{keepList}{a logical vector defining the significance of different model effects: keep_batch, keep_equalvar,
         keep_weight, keep_sex, keep_interaction; default value NULL}
-    \item{dataPointsThreshold}{threshold for the number of data points in the MM framework, default value is 4, minimal value is 2}
-    \item{RR_naturalVariation}{threshold for the variation ranges in the RR framework, default value is 95, minimal value is 60}
-    \item{RR_controlPointsThreshold}{threshold for the number of control data points in the RR framework, default value is 60, minimal value is 40}
+    \item{dataPointsThreshold}{threshold for the number of data points in the MM framework; default value is 4
+        ; minimal value is 2}
+    \item{RR_naturalVariation}{threshold for the variation ranges in the RR framework; default value is 95
+        ; minimal value is 60}
+    \item{RR_controlPointsThreshold}{threshold for the number of control data points in the RR framework
+        ; default value is 60; minimal value is 40}
 }
 \value{
     Returns results stored in instance of the \code{\linkS4class{PhenTestResult}} class

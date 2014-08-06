@@ -31,7 +31,9 @@ PhenTestResult <- function(model.output=NULL,
         model.formula.genotype=NULL, 
         model.output.genotype.nulltest.pVal=NULL, 
         model.output.quality=NULL,
-        model.output.summary=NULL) 
+        model.output.summary=NULL,
+        model.output.averageRefGenotype=NULL,
+        model.output.percentageChanges=NULL) 
 
 ## Construct PhenTestResult object from components
 

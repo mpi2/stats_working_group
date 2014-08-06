@@ -13,7 +13,9 @@
             model.effect.weight=NULL, numberSexes=NULL,pThreshold=0.05, 
             model.formula.null=NULL,model.formula.genotype=NULL, 
             model.output.genotype.nulltest.pVal=NULL, 
-            model.output.quality=NULL,model.output.summary=NULL) 
+            model.output.quality=NULL,model.output.summary=NULL,
+            model.output.averageRefGenotype = NULL,
+            model.output.percentageChanges = NULL) 
 }
 \arguments{
     \item{model.output}{representing the model fit gls object or lme object}
@@ -34,6 +36,8 @@
     \item{model.output.genotype.nulltest.pVal}{Genotype test results: p-value}
     \item{model.output.quality}{vector that contains diagnostic test output for mixed model quality of fit}
     \item{model.output.summary}{named vector that contains summary of the model output}
+    \item{model.output.averageRefGenotype}{named vector that contains mean values calculated for reference genotype records}
+    \item{model.output.percentageChanges}{named vector that contains percentage changes values per sex}
 }
 \value{
     Returns an instance of the \code{\linkS4class{PhenTestResult}} class.

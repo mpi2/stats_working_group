@@ -7,10 +7,11 @@
     (output from function \code{\link{testDataset}}).
 }
 \usage{
-    vectorOutput(phenTestResult)
+    vectorOutput(phenTestResult, phenotypeThreshold = 0.01)
 }
 \arguments{
     \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{\link{testDataset}}; mandatory argument}
+    \item{phenotypeThreshold}{a numerical value defining the threshold to use in classificationTag; default value 0.01}
 }
 \value{
     Returns a vector with model fitting results: model output summary and other values
