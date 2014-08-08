@@ -780,6 +780,13 @@ parserOutputSummary<-function(phenTestResult)
     switch(result$equation,
             withoutWeight = {
                 sex_index <- match(c("SexMale"),row.names(modeloutput_summary[["tTable"]]))
+                sex_FvKO_index <- 3
+                sex_MvKO_index <- 4
+                if (is.na(sex_index)){
+                    sex_index <- match(c("SexFemale"),row.names(modeloutput_summary[["tTable"]]))
+                    sex_FvKO_index <- 4
+                    sex_MvKO_index <- 3
+                }
                 if(result$model.effect.batch){
                     ## for mixed model
                     intercept_estimate = modeloutput_summary[["tTable"]][[1]]
@@ -789,12 +796,12 @@ parserOutputSummary<-function(phenTestResult)
                         sex_estimate=modeloutput_summary[["tTable"]][[sex_index]]
                         sex_estimate_SE=modeloutput_summary[["tTable"]][[(sex_index+lengthoftable)]]
                         sex_p_value= modeloutput_summary[["tTable"]][[(sex_index+4*lengthoftable)]]
-                        sex_FvKO_estimate= modeloutput_summary[["tTable"]][[3]]
-                        sex_FvKO_SE=modeloutput_summary[["tTable"]][[(3+lengthoftable)]]
-                        sex_FvKO_p_value=modeloutput_summary[["tTable"]][[(3+4*lengthoftable)]]
-                        sex_MvKO_estimate=modeloutput_summary[["tTable"]][[4]]
-                        sex_MvKO_SE=modeloutput_summary[["tTable"]][[(4+lengthoftable)]]
-                        sex_MvKO_p_value=modeloutput_summary[["tTable"]][[(4+4*lengthoftable)]]
+                        sex_FvKO_estimate= modeloutput_summary[["tTable"]][[sex_FvKO_index]]
+                        sex_FvKO_SE=modeloutput_summary[["tTable"]][[(sex_FvKO_index+lengthoftable)]]
+                        sex_FvKO_p_value=modeloutput_summary[["tTable"]][[(sex_FvKO_index+4*lengthoftable)]]
+                        sex_MvKO_estimate=modeloutput_summary[["tTable"]][[sex_MvKO_index]]
+                        sex_MvKO_SE=modeloutput_summary[["tTable"]][[(sex_MvKO_index+lengthoftable)]]
+                        sex_MvKO_p_value=modeloutput_summary[["tTable"]][[(sex_MvKO_index+4*lengthoftable)]]
                     } else if( !result$model.effect.sex && !result$model.effect.interaction){
                         genotype_estimate = modeloutput_summary[["tTable"]][[2]]
                         genotype_estimate_SE = modeloutput_summary[["tTable"]][[(2+lengthoftable)]]
@@ -821,12 +828,12 @@ parserOutputSummary<-function(phenTestResult)
                         sex_estimate=modeloutput_summary[["tTable"]][[sex_index]]
                         sex_estimate_SE=modeloutput_summary[["tTable"]][[(sex_index+lengthoftable)]]
                         sex_p_value= modeloutput_summary[["tTable"]][[(sex_index+3*lengthoftable)]]
-                        sex_FvKO_estimate= modeloutput_summary[["tTable"]][[3]]
-                        sex_FvKO_SE=modeloutput_summary[["tTable"]][[(3+lengthoftable)]]
-                        sex_FvKO_p_value=modeloutput_summary[["tTable"]][[(3+3*lengthoftable)]]
-                        sex_MvKO_estimate=modeloutput_summary[["tTable"]][[4]]
-                        sex_MvKO_SE=modeloutput_summary[["tTable"]][[(4+lengthoftable)]]
-                        sex_MvKO_p_value=modeloutput_summary[["tTable"]][[(4+3*lengthoftable)]]
+                        sex_FvKO_estimate= modeloutput_summary[["tTable"]][[sex_FvKO_index]]
+                        sex_FvKO_SE=modeloutput_summary[["tTable"]][[(sex_FvKO_index+lengthoftable)]]
+                        sex_FvKO_p_value=modeloutput_summary[["tTable"]][[(sex_FvKO_index+3*lengthoftable)]]
+                        sex_MvKO_estimate=modeloutput_summary[["tTable"]][[sex_MvKO_index]]
+                        sex_MvKO_SE=modeloutput_summary[["tTable"]][[(sex_MvKO_index+lengthoftable)]]
+                        sex_MvKO_p_value=modeloutput_summary[["tTable"]][[(sex_MvKO_index+3*lengthoftable)]]
                         
                         
                     } else if( !result$model.effect.sex && !result$model.effect.interaction){
@@ -850,6 +857,13 @@ parserOutputSummary<-function(phenTestResult)
             },
             withWeight = {
                 sex_index <- match(c("SexMale"),row.names(modeloutput_summary[["tTable"]]))
+                sex_FvKO_index <- 4
+                sex_MvKO_index <- 5
+                if (is.na(sex_index)){
+                    sex_index <- match(c("SexFemale"),row.names(modeloutput_summary[["tTable"]]))
+                    sex_FvKO_index <- 5
+                    sex_MvKO_index <- 4
+                }
                 if(!result$model.effect.weight){
                     
                     ## If weight is not significant then the output is the
@@ -872,12 +886,12 @@ parserOutputSummary<-function(phenTestResult)
                             sex_estimate=modeloutput_summary[["tTable"]][[sex_index]]
                             sex_estimate_SE=modeloutput_summary[["tTable"]][[(sex_index+lengthoftable)]]
                             sex_p_value= modeloutput_summary[["tTable"]][[(sex_index+4*lengthoftable)]]
-                            sex_FvKO_estimate= modeloutput_summary[["tTable"]][[4]]
-                            sex_FvKO_SE=modeloutput_summary[["tTable"]][[(4+lengthoftable)]]
-                            sex_FvKO_p_value=modeloutput_summary[["tTable"]][[(4+4*lengthoftable)]]
-                            sex_MvKO_estimate=modeloutput_summary[["tTable"]][[5]]
-                            sex_MvKO_SE=modeloutput_summary[["tTable"]][[(5+lengthoftable)]]
-                            sex_MvKO_p_value=modeloutput_summary[["tTable"]][[(5+4*lengthoftable)]]
+                            sex_FvKO_estimate= modeloutput_summary[["tTable"]][[sex_FvKO_index]]
+                            sex_FvKO_SE=modeloutput_summary[["tTable"]][[(sex_FvKO_index+lengthoftable)]]
+                            sex_FvKO_p_value=modeloutput_summary[["tTable"]][[(sex_FvKO_index+4*lengthoftable)]]
+                            sex_MvKO_estimate=modeloutput_summary[["tTable"]][[sex_MvKO_index]]
+                            sex_MvKO_SE=modeloutput_summary[["tTable"]][[(sex_MvKO_index+lengthoftable)]]
+                            sex_MvKO_p_value=modeloutput_summary[["tTable"]][[(sex_MvKO_index+4*lengthoftable)]]
                             weight_estimate=modeloutput_summary[["tTable"]][[3]]
                             weight_estimate_SE=modeloutput_summary[["tTable"]][[(3+lengthoftable)]]
                             weight_p_value=modeloutput_summary[["tTable"]][[(3+4*lengthoftable)]]
@@ -927,12 +941,12 @@ parserOutputSummary<-function(phenTestResult)
                             weight_estimate=modeloutput_summary[["tTable"]][[3]]
                             weight_estimate_SE=modeloutput_summary[["tTable"]][[(3+lengthoftable)]]
                             weight_p_value=modeloutput_summary[["tTable"]][[(3+3*lengthoftable)]]
-                            sex_FvKO_estimate= modeloutput_summary[["tTable"]][[4]]
-                            sex_FvKO_SE=modeloutput_summary[["tTable"]][[(4+lengthoftable)]]
-                            sex_FvKO_p_value=modeloutput_summary[["tTable"]][[(4+3*lengthoftable)]]
-                            sex_MvKO_estimate=modeloutput_summary[["tTable"]][[5]]
-                            sex_MvKO_SE=modeloutput_summary[["tTable"]][[(5+lengthoftable)]]
-                            sex_MvKO_p_value=modeloutput_summary[["tTable"]][[(5+3*lengthoftable)]]
+                            sex_FvKO_estimate= modeloutput_summary[["tTable"]][[sex_FvKO_index]]
+                            sex_FvKO_SE=modeloutput_summary[["tTable"]][[(sex_FvKO_index+lengthoftable)]]
+                            sex_FvKO_p_value=modeloutput_summary[["tTable"]][[(sex_FvKO_index+3*lengthoftable)]]
+                            sex_MvKO_estimate=modeloutput_summary[["tTable"]][[sex_MvKO_index]]
+                            sex_MvKO_SE=modeloutput_summary[["tTable"]][[(sex_MvKO_index+lengthoftable)]]
+                            sex_MvKO_p_value=modeloutput_summary[["tTable"]][[(sex_MvKO_index+3*lengthoftable)]]
                             
                         } else if (result$model.effect.weight &&
                                 result$model.effect.sex &&
