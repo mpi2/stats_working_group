@@ -271,9 +271,9 @@ startTFModel <- function(phenList, depVariable, equation="withWeight",
         model.withBatch <- do.call("gls",args=list(model.formula.withBatch, data = x, na.action="na.omit", method="ML"))
         ## Result of the test for Batch significance (fixed effect 5.)
         #anova_results <- anova(model.withBatch, type="marginal")$"p-value" < pThreshold
-        p.value.batch <- (anova(model.withBatch, model.noBatch)$p[2])
+        p.value.batch <- (anova(model.withBatch, model.noBatch)$p[2])/2
         
-        keep_batch <- p.value.batch > pThreshold
+        keep_batch <- p.value.batch < pThreshold
         
         #if(numberofSexes==2){
         #    keep_batch <- anova_results[5]
@@ -871,6 +871,12 @@ parserOutputTFSummary<-function(phenTestResult)
         sex_index <- match(c("SexMale"),row.names(modeloutput_summary[["tTable"]]))
         sex_FvKO_index <- lengthoftable-1
         sex_MvKO_index <- lengthoftable
+        if (is.na(sex_index)){
+            sex_index <- match(c("SexFemale"),row.names(modeloutput_summary[["tTable"]]))
+            sex_FvKO_index <- lengthoftable
+            sex_MvKO_index <- lengthoftable-1
+        }
+
         sex_estimate <- modeloutput_summary[["tTable"]][[sex_index]]
         sex_estimate_SE <- modeloutput_summary[["tTable"]][[(sex_index+lengthoftable)]]
         sex_p_value <- modeloutput_summary[["tTable"]][[(sex_index+3*lengthoftable)]]
@@ -891,6 +897,9 @@ parserOutputTFSummary<-function(phenTestResult)
     
     }else{
         sex_index <- match(c("SexMale"),row.names(modeloutput_summary[["tTable"]]))
+        if (is.na(sex_index)){
+            sex_index <- match(c("SexFemale"),row.names(modeloutput_summary[["tTable"]]))
+        }
         genotype_index <- grep("Genotype",row.names(modeloutput_summary[["tTable"]]))[1]      
         genotype_estimate = modeloutput_summary[["tTable"]][[genotype_index]]
         genotype_estimate_SE = modeloutput_summary[["tTable"]][[(genotype_index+lengthoftable)]]

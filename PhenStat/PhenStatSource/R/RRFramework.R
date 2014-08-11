@@ -363,9 +363,9 @@ RRTest <- function(phenList, depVariable,
     
     # Combine the results
     results_all <- matrix(0,4,1)
-    results_all[1] <- sprintf("%.4f",round(model_all_nh$p.value, 4))
+    results_all[1] <- sprintf("%.4f",round(p.adjust(model_all_nh$p.value, method = "bonferroni", n = 2),4))
     results_all[2] <- paste(format(ES_all_nh, nsmall = 0),"%",sep="")
-    results_all[3] <- sprintf("%.4f",round(model_all_nl$p.value, 4))
+    results_all[3] <- sprintf("%.4f",round(p.adjust(model_all_nl$p.value, method = "bonferroni", n = 2),4))
     results_all[4] <- paste(format(ES_all_nl, nsmall = 0),"%",sep="")
     rownames(results_all) <- c("High classification p-value:","High classification effect size:",
             "Low classification p-value:","Low classification effect size:")
@@ -395,19 +395,19 @@ RRTest <- function(phenList, depVariable,
         colnames(thresholds) <- c("")
         
         results_male <- matrix(0,4,1)
-        results_male[1] <- sprintf("%.4f",round(model_male_nh$p.value,4))
-        results_male[2] <- paste(format(ES_male_nh, nsmmale = 0),"%",sep="")
-        results_male[3] <- sprintf("%.4f",round(model_male_nl$p.value, 4))
-        results_male[4] <- paste(format(ES_male_nl, nsmmale = 0),"%",sep="")
+        results_male[1] <- sprintf("%.4f",round(p.adjust(model_male_nh$p.value, method = "bonferroni", n = 2),4))
+        results_male[2] <- paste(format(ES_male_nh, nsmall = 0),"%",sep="")
+        results_male[3] <- sprintf("%.4f",round(p.adjust(model_male_nl$p.value, method = "bonferroni", n = 2),4))
+        results_male[4] <- paste(format(ES_male_nl, nsmall = 0),"%",sep="")
         rownames(results_male) <- c("High classification p-value:","High classification effect size:",
                 "Low classification p-value:","Low classification effect size:")
         colnames(results_male) <- c("")
         
         results_female <- matrix(0,4,1)
-        results_female[1] <- sprintf("%.4f",round(model_female_nh$p.value, 4))
-        results_female[2] <- paste(format(ES_female_nh, nsmfemale = 0),"%",sep="")
-        results_female[3] <- sprintf("%.4f",round(model_female_nl$p.value, 4))
-        results_female[4] <- paste(format(ES_female_nl, nsmfemale = 0),"%",sep="")
+        results_female[1] <- sprintf("%.4f",round(p.adjust(model_female_nh$p.value, method = "bonferroni", n = 2),4))
+        results_female[2] <- paste(format(ES_female_nh, nsmall = 0),"%",sep="")
+        results_female[3] <- sprintf("%.4f",round(p.adjust(model_female_nl$p.value, method = "bonferroni", n = 2),4))
+        results_female[4] <- paste(format(ES_female_nl, nsmall = 0),"%",sep="")
         rownames(results_female) <- c("High classification p-value:","High classification effect size:",
                 "Low classification p-value:","Low classification effect size:")
         colnames(results_female) <- c("")

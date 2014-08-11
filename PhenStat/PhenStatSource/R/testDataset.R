@@ -96,6 +96,7 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
     
     # 7 
     if (nchar(stop_message)==0) {
+        phenList$dataset$Gender=levels(phenList$dataset$Gender)
         x <- phenList$dataset 
         
         ## NUMERIC ISSUE ???????????????????????????
