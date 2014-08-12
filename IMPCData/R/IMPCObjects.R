@@ -15,6 +15,7 @@
 ## impress_lists.R contains functions to get and to print out IMPC objects retrieved 
 ## from IMPC database by using Impress SOLR REST API
 ##------------------------------------------------------------------------------
+library("rjson")
 ##------------------------------------------------------------------------------
 ## Returns name (fieldNameTo) of the IMPC object by id (fieldValueFrom) and object class (fieldNameFrom)
 getName <- function(fieldNameFrom,fieldNameTo,fieldValueFrom)
@@ -37,24 +38,33 @@ getName <- function(fieldNameFrom,fieldNameTo,fieldValueFrom)
 }
 ##------------------------------------------------------------------------------
 ## Phenotyping center
-getPhenCenters <- function()
+getPhenCenters <- function(excludeLegacyPipelines=TRUE)
 {
-    json_file <- "http://www.ebi.ac.uk/mi/impc/solr/experiment/select?q=*%3A*&rows=0&wt=json&facet=true&facet.field=phenotyping_center"
+    json_file <- paste("http://www.ebi.ac.uk/mi/impc/solr/experiment/select?q=*%3A*&rows=0&",
+            "wt=json&facet=true&facet.field=phenotyping_center",sep="")
     json_data <- fromJSON(paste(readLines(json_file), collapse=""))
     centers <- unlist(json_data$facet_counts$facet_fields$phenotyping_center)
     centers <- centers[seq(1,length(centers),2)]
     
+    if (excludeLegacyPipelines){
+        for (centerIndex in 1:length(centers) ) {
+            listPipelines <- getPipelines(centers[centerIndex],excludeLegacyPipelines)
+            if (length(listPipelines)==0){
+                centers <- centers[-centerIndex]
+            }
+        }
+    }
     return (as.list(centers))
 }
 ##------------------------------------------------------------------------------
 ## Phenotyping center
-printPhenCenters <- function()
+printPhenCenters <- function(excludeLegacyPipelines=TRUE)
 {
-    print(unlist(getPhenCenters()))
+    print(unlist(getPhenCenters(excludeLegacyPipelines)))
 }
 ##------------------------------------------------------------------------------
 ## Pipelines within phenotyping center
-getPipelines <- function(PhenCenterName=NULL)
+getPipelines <- function(PhenCenterName=NULL,excludeLegacyPipelines=TRUE)
 {
     if(is.null(PhenCenterName)){
         stop("Please define phenotyping center")
@@ -64,6 +74,8 @@ getPipelines <- function(PhenCenterName=NULL)
         
     }
 
+    legacy_pipelines <- c("M-G-P_001","ESLIM_001","ESLIM_002","ESLIM_003","GMC_001")
+    
     json_file <- URLencode(paste("http://www.ebi.ac.uk/mi/impc/solr/experiment/select?q=phenotyping_center:",
             PhenCenterName,"&rows=0&wt=json&facet=true&"
             ,"facet.field=pipeline_stable_id",sep=""))
@@ -78,19 +90,23 @@ getPipelines <- function(PhenCenterName=NULL)
     pipeline_ids <- pipeline_ids[seq(1,length(pipeline_ids),2)]
     
     result_ids <- as.list(pipeline_ids[selected])
+    
+    if (excludeLegacyPipelines){
+        result_ids <- result_ids[!(result_ids %in% legacy_pipelines)]
+    }
 
     return (unlist(result_ids))
    
 }
 ##------------------------------------------------------------------------------
 ## Pipelines within phenotyping center
-printPipelines <- function(PhenCenterName=NULL)
+printPipelines <- function(PhenCenterName=NULL,excludeLegacyPipelines=TRUE)
 {
     if(is.null(PhenCenterName)){
         stop("Please define phenotyping center")
     }
     else {
-        listPipelines  <- getPipelines(PhenCenterName)
+        listPipelines  <- getPipelines(PhenCenterName,excludeLegacyPipelines)
         for (pipelineIndex in 1:length(listPipelines)) {
             print(paste(listPipelines[pipelineIndex],"-",
                             getName("pipeline_stable_id","pipeline_name",listPipelines[pipelineIndex])))
