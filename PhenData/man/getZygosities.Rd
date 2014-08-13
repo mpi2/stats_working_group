@@ -2,8 +2,8 @@
 \alias{getZygosities}
 \title{Method "getZygosities"}
 \description{
-    Returns the list of IMPC zygosities (IDS of genes) of genes/alleles that are processed measuring specified parameter 
-    within the procedure in the pipeline run by phenotyping center.
+    Returns the list of zygosities (homozygous, heterozygous and hemizygous) for mice that were measured 
+    for a gene/allele  for a specificed combination of parameter, procedure, pipeline and phenotyping center.
 }
 \usage{
     getZygosities(PhenCenterName=NULL,PipelineID=NULL,ProcedureID=NULL,ParameterID=NULL,
@@ -24,7 +24,7 @@
 }
 
 \author{Natalja Kurbatova, Jeremy Mason}
-\example{
+\examples{
     listZygosities  <- getZygosities("WTSI","MGP_001","IMPC_CBC_001","IMPC_CBC_003_001",GeneID="MGI:1194894")
     for (zygosityIndex in 1:length(listZygosities)) {
         print(listZygosities[zygosityIndex])

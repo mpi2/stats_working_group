@@ -765,6 +765,8 @@ finalTFModel <- function(phenTestResult, outputMessages=TRUE)
                 ratio_m <- result$model.output.summary['genotype_estimate']/denominator_m 
             }
         }
+        result$model.output.percentageChanges <- c(ratio_f*100,ratio_m*100)
+        names(result$model.output.percentageChanges) <- c('female*genotype ratio','male*genotype ratio')
     }
     else{
         # without weight
@@ -779,14 +781,12 @@ finalTFModel <- function(phenTestResult, outputMessages=TRUE)
             ratio_f <- result$model.output.summary['genotype_estimate']/denominator   
         }
         
-        result$model.output.percentageChanges <- c(ratio_f*100)
-        names(result$model.output.percentageChanges) <- c('all*genotype ratio')
-        finalResult <- result
+    result$model.output.percentageChanges <- c(ratio_f*100)
+    names(result$model.output.percentageChanges) <- c('all*genotype ratio')
     }
     # end of percentage changes calculation
     
-    result$model.output.percentageChanges <- c(ratio_f*100,ratio_m*100)
-    names(result$model.output.percentageChanges) <- c('female*genotype ratio','male*genotype ratio')
+   
     
     return(result)
 }

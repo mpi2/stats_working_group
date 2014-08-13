@@ -2,7 +2,7 @@
 \alias{getPipelines}
 \title{Method "getPipelines"}
 \description{
-    Returns the list of IMPC pipelines (IDS of pipelines) that are run by specified phenotyping center.
+    Returns the list of IMPC pipelines (IMPReSS IDs) that are run by specified phenotyping center.
 }
 \usage{
     getPipelines(PhenCenterName=NULL,excludeLegacyPipelines=TRUE)

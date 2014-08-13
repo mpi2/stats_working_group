@@ -19,6 +19,8 @@
 getIMPCDataset <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL, ParameterID=NULL, 
         AlleleID=NULL, StrainID=NULL){
     
+ # Example of dataset with different metagroups:
+ # df <- getIMPCDataset('WTSI','ESLIM_001','ESLIM_021_001','ESLIM_021_001_001','MGI:4362924')   
     url_main <- "http://dev.mousephenotype.org/data/exportraw?"
     
     if(is.null(PhenCenterName)||is.null(PipelineID)||is.null(ProcedureID)||is.null(ParameterID)){
@@ -51,7 +53,7 @@ getIMPCDataset <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NUL
     },
     error = function(err){
         print(paste("ERROR: ",err))
-        print(url)
+        print(paste("URL:",url))
     })
    
 }   
@@ -96,10 +98,21 @@ getIMPCDataset <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NUL
 ## Prints or saves as csv file the table of Impress objects combinations together with the appropriate for this
 ## combination call of getImpressDataset function. Table can be filtered out by user. Additional table parser is needed
 ## in oder to call getImpressDataset multiple times (ideal case is to call function in parallel). 
-getIMPCTable <- function(fileName="ImpressData.csv",PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL, ParameterID=NULL, 
-        AlleleID=NULL, StrainID=NULL){#, SexType=NULL, Zygosity=NULL){
-    
-    
+getIMPCTable <- function(fileName="PhenData_IMPC",
+                PhenCenterName=NULL, PipelineID=NULL, 
+                ProcedureID=NULL, ParameterID=NULL, AlleleID=NULL, StrainID=NULL,
+                multipleFiles=TRUE,recordsPerFile=10000)#, SexType=NULL, Zygosity=NULL){
+{
+        
+    message(paste("Start",Sys.time()))
+    if(!multipleFiles){
+            message("Warning:\nAll records will be saved into one file. The size of the resulting file can be enormous.")
+    }
+    if(multipleFiles && recordsPerFile<1000){
+            message("Warning\nMinimal number of records per file is 1000.")
+            recordsPerFile <- 1000
+    }
+        
     if (!is.null(PhenCenterName)){
         listCenters <- c(PhenCenterName)
     } 
@@ -110,13 +123,23 @@ getIMPCTable <- function(fileName="ImpressData.csv",PhenCenterName=NULL, Pipelin
     #        SexType sex "female"
     #        List<String> zygosity "homozygous" "hemizygous" "heterozygous"
     #        String strain "C57BL/6" name or id ?
+    
     header <- c("Phenotyping Center","Pipeline","Screen/Procedure"
             ,"Parameter","Allele","Function to get IMPC Dataset")
     
-    write.table(as.matrix(t(header)), file=fileName, sep=",",
-            col.names = FALSE,row.names = FALSE)
-    
     countRows <- 1
+    totalRows <- 1
+    fileNumber <- 1
+    if (multipleFiles){
+            currentFileName <- paste(fileName,"_",fileNumber,".csv",sep="")
+    }    
+    else{
+            currentFileName <- fileName
+    }
+        
+    write.table(as.matrix(t(header)), file=currentFileName, sep=",",
+                col.names = FALSE,row.names = FALSE)
+                
     for (centerIndex in 1:length(listCenters) ) {
         #print(listCenters[centerIndex])
         if (!is.null(PipelineID)){
@@ -177,6 +200,7 @@ getIMPCTable <- function(fileName="ImpressData.csv",PhenCenterName=NULL, Pipelin
                     }
                     for (alleleIndex in 1:length(listAlleles)) {
                         countRows <- countRows + 1
+                        totalRows <- totalRows + 1
                         #print(paste(listCenters[centerIndex],listPipelines[pipelineIndex],
                          #           listProcedures[procedureIndex],listParameters[parameterIndex],
                          #           listAlleles[alleleIndex])) 
@@ -191,7 +215,15 @@ getIMPCTable <- function(fileName="ImpressData.csv",PhenCenterName=NULL, Pipelin
                         row_values <- c(listCenters[centerIndex],pipeline_name,
                                     procedure_name,parameter_name,
                                     allele_name, function_call)
-                        write.table(as.matrix(t(row_values)), file = fileName, sep = ",", 
+                        if (multipleFiles && countRows>=recordsPerFile){
+                            fileNumber <- fileNumber + 1
+                            currentFileName <- paste(fileName,"_",fileNumber,".csv",sep="")
+                            countRows <- 1
+                            write.table(as.matrix(t(header)), file=currentFileName, sep=",",
+                            col.names = FALSE,row.names = FALSE)
+                    
+                        }
+                        write.table(as.matrix(t(row_values)), file = currentFileName, sep = ",", 
                         col.names = FALSE, row.names = FALSE, append=TRUE)  
                     }   
                     #}
@@ -199,6 +231,7 @@ getIMPCTable <- function(fileName="ImpressData.csv",PhenCenterName=NULL, Pipelin
             }
         }
     }
-    print(countRows)
+    message(paste("End",Sys.time()))
+    print(totalRows)
 }
 ##------------------------------------------------------------------------------

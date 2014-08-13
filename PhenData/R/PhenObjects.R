@@ -396,16 +396,3 @@ getZygosities <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL
     return (as.list(zygosities[selected]))
 }
 ##------------------------------------------------------------------------------
-## Zygosities
-printZygosities <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL, 
-        ParameterID=NULL, StrainID=NULL, GeneID=NULL, AlleleID=NULL)
-{
-    if(is.null(PhenCenterName)||is.null(PipelineID)||is.null(ProcedureID)||is.null(ParameterID)){
-        stop("Please define phenotyping center, pipeline, procedure and parameter of interest")
-    }
-    else {
-        listZygosities  <- getZygosities(PhenCenterName,PipelineID,ProcedureID,ParameterID,StrainID,GeneID,AlleleID)
-        print(unlist(listZygosities))
-    }
-}
-##------------------------------------------------------------------------------

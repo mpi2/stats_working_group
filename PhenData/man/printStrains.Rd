@@ -2,7 +2,8 @@
 \alias{printStrains}
 \title{Method "printStrains"}
 \description{
-    Prins out IMPC strains (ID and name) that are processed measuring specified parameter 
+    Prints out the genetic background (MGI IDs and strain name) from which the knockout mice were derived 
+    for a specific combination of pipeline, procedure and paramater for a phenotyping centre 
     within the procedure in the pipeline run by phenotyping center.
 }
 \usage{
@@ -16,6 +17,6 @@
 }
 
 \author{Natalja Kurbatova, Jeremy Mason}
-\example{
+\examples{
     printStrains("WTSI","MGP_001","IMPC_CBC_001","IMPC_CBC_003_001")
 }

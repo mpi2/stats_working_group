@@ -2,7 +2,9 @@
 \alias{getIMPCDataset}
 \title{Method "getIMPCDataset"}
 \description{
-    Returns the IMPC dataset.
+    Returns the IMPC dataset for a knockout line for a specified combination of parameter, procedure, pipeline, 
+    phenotyping centre, allele and strain (genetic background) 
+    that is used within the data analysis pipeline implemented on the IMPC database.
 }
 \usage{
     getIMPCDataset(PhenCenterName=NULL,PipelineID=NULL,ProcedureID=NULL,ParameterID=NULL,
@@ -17,10 +19,10 @@
     \item{StrainID}{IMPC strain ID; optional argument}
 }
 \value{
-    Returns the IMPC dataset.
+    Returns the IMPC dataset as a data frame.
 }
 
 \author{Natalja Kurbatova, Jeremy Mason}
-\example{
-    df2 <- getIMPCDataset('WTSI','MGP_001','IMPC_CBC_001','IMPC_CBC_008_001','MGI:4433526')
+\examples{
+    df <- getIMPCDataset("WTSI","MGP_001","IMPC_CBC_001","IMPC_CBC_008_001","MGI:4433526")
 }

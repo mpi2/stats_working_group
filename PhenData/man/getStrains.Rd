@@ -2,7 +2,8 @@
 \alias{getStrains}
 \title{Method "getStrains"}
 \description{
-    Returns the list of IMPC strains (IDS of strains) that are processed measuring specified parameter 
+    Returns the genetic background (MGI IDs) from which the knockout mice were derived 
+    for a specific combination of pipeline, procedure and paramater for a phenotyping centre 
     within the procedure in the pipeline run by phenotyping center.
 }
 \usage{
@@ -20,7 +21,7 @@
 }
 
 \author{Natalja Kurbatova, Jeremy Mason}
-\example{
+\examples{
     listStrains  <- getStrains("WTSI","MGP_001","IMPC_CBC_001","IMPC_CBC_003_001")
     for (strainIndex in 1:length(listStrains)) {
         print(paste(listStrains[strainIndex],"-",

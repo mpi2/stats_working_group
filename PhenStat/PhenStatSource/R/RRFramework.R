@@ -367,8 +367,8 @@ RRTest <- function(phenList, depVariable,
     results_all[2] <- paste(format(ES_all_nh, nsmall = 0),"%",sep="")
     results_all[3] <- sprintf("%.4f",round(p.adjust(model_all_nl$p.value, method = "bonferroni", n = 2),4))
     results_all[4] <- paste(format(ES_all_nl, nsmall = 0),"%",sep="")
-    rownames(results_all) <- c("High classification p-value:","High classification effect size:",
-            "Low classification p-value:","Low classification effect size:")
+    rownames(results_all) <- c("Low classification p-value:","Low classification effect size:",
+            "High classification p-value:","High classification effect size:")
     colnames(results_all) <- c("")
     
     model$count_matrix_female <- count_matrix_female
@@ -399,8 +399,8 @@ RRTest <- function(phenList, depVariable,
         results_male[2] <- paste(format(ES_male_nh, nsmall = 0),"%",sep="")
         results_male[3] <- sprintf("%.4f",round(p.adjust(model_male_nl$p.value, method = "bonferroni", n = 2),4))
         results_male[4] <- paste(format(ES_male_nl, nsmall = 0),"%",sep="")
-        rownames(results_male) <- c("High classification p-value:","High classification effect size:",
-                "Low classification p-value:","Low classification effect size:")
+        rownames(results_male) <- c("Low classification p-value:","Low classification effect size:",
+                "High classification p-value:","High classification effect size:")
         colnames(results_male) <- c("")
         
         results_female <- matrix(0,4,1)
@@ -408,8 +408,8 @@ RRTest <- function(phenList, depVariable,
         results_female[2] <- paste(format(ES_female_nh, nsmall = 0),"%",sep="")
         results_female[3] <- sprintf("%.4f",round(p.adjust(model_female_nl$p.value, method = "bonferroni", n = 2),4))
         results_female[4] <- paste(format(ES_female_nl, nsmall = 0),"%",sep="")
-        rownames(results_female) <- c("High classification p-value:","High classification effect size:",
-                "Low classification p-value:","Low classification effect size:")
+        rownames(results_female) <- c("Low classification p-value:","Low classification effect size:",
+                "High classification p-value:","High classification effect size:")
         colnames(results_female) <- c("")
     }
     else {

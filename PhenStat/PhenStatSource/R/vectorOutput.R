@@ -61,6 +61,20 @@ vectorOutput <- function(phenTestResult, phenotypeThreshold=0.01)
         
         addInfo = paste("{",DSsize,variability,",",formula,"}",sep="")
         
+        percentageChanges <- "NA"
+        if (phenTestResult$numberSexes==2){
+            percentageChanges <- paste("Female: ",
+                            round(phenTestResult$model.output.percentageChanges[1],digits=2),"%",
+                            " ",
+                            "Male: ",
+                            round(phenTestResult$model.output.percentageChanges[2],digits=2),"%",sep="")
+        } 
+        else {
+            percentageChanges <- paste("Sex tested: ",
+                    round(phenTestResult$model.output.percentageChanges[1],digits=2),"%",sep="")
+            
+        }   
+        
         vectorOutput <- c(paste(framework,", ",fittingMethod, equation,sep=""),
                 as.character(phenTestResult$depVariable), 
                 as.character(phenTestResult$model.effect.batch), 
@@ -69,6 +83,7 @@ vectorOutput <- function(phenTestResult, phenotypeThreshold=0.01)
                 as.character(phenTestResult$model.output.summary["genotype_estimate"]), 
                 as.character(phenTestResult$model.output.summary["genotype_estimate_SE"]),  
                 as.character(phenTestResult$model.output.summary["genotype_p_value"]),
+                as.character(percentageChanges),
                 as.character(phenTestResult$model.output.summary["sex_estimate"]), 
                 as.character(phenTestResult$model.output.summary["sex_estimate_SE"]),  
                 as.character(phenTestResult$model.output.summary["sex_p_value"]), 
@@ -97,6 +112,7 @@ vectorOutput <- function(phenTestResult, phenotypeThreshold=0.01)
                 "Genotype estimate",
                 "Genotype standard error",
                 "Genotype p-Val",
+                "Genotype percentage change",
                 "Sex estimate",
                 "Sex standard error",
                 "Sex p-val",
@@ -191,6 +207,7 @@ vectorOutput <- function(phenTestResult, phenotypeThreshold=0.01)
                 "NA",  
                 p_value_all,
                 "NA",
+                "NA",
                 "NA", #10 
                 "NA", 
                 "NA", 
@@ -223,6 +240,7 @@ vectorOutput <- function(phenTestResult, phenotypeThreshold=0.01)
                 "Genotype estimate",
                 "Genotype standard error",
                 "Genotype p-Val",
+                "Genotype percentage change",
                 "Sex estimate",
                 "Sex standard error",
                 "Sex p-val", #11

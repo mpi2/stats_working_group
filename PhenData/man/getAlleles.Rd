@@ -2,8 +2,9 @@
 \alias{getAlleles}
 \title{Method "getAlleles"}
 \description{
-    Returns the list of IMPC alleles (IDS of alleles) that are processed measuring specified parameter 
-    within the procedure in the pipeline run by phenotyping center.
+    Returns alleles (MGI IDs or temporary IDs if the MGI ID is not assigned yet) 
+    that are processed for a specified combination of parameter, procedure, pipeline and phenotyping center. 
+    Temporary allele ID starts with "NULL".
 }
 \usage{
     getAlleles(PhenCenterName=NULL,PipelineID=NULL,ProcedureID=NULL,ParameterID=NULL,StrainID=NULL)
@@ -19,9 +20,8 @@
     Returns the list of IMPC alleles (IDS of alleles) that are processed measuring specified parameter 
     within the procedure in the pipeline run by phenotyping center.
 }
-
 \author{Natalja Kurbatova, Jeremy Mason}
-\example{
+\examples{
     listAlleles  <- getAlleles("WTSI","MGP_001","IMPC_CBC_001","IMPC_CBC_003_001")
     for (alleleIndex in 1:length(listAlleles)) {
         print(paste(listAlleles[alleleIndex],"-",
