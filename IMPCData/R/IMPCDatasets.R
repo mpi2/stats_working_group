@@ -118,7 +118,7 @@ getIMPCTable <- function(fileName="ImpressData.csv",PhenCenterName=NULL, Pipelin
     
     countRows <- 1
     for (centerIndex in 1:length(listCenters) ) {
-        print(listCenters[centerIndex])
+        #print(listCenters[centerIndex])
         if (!is.null(PipelineID)){
             listPipelines <- c(PipelineID)
         } 
