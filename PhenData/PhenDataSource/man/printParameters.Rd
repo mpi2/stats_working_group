@@ -2,8 +2,8 @@
 \alias{printParameters}
 \title{Method "printParameters"}
 \description{
-    Prints out IMPC parameters (ID and name) that are measured within specified procedure in 
-    the pipeline run by phenotyping center.
+    Prints out the list of parameters (IMPReSS IDs and names) that are measured within specified procedure 
+    for a pipeline run by phenotyping center.
 }
 \usage{
     printParameters(PhenCenterName=NULL,PipelineID=NULL,ProcedureID=NULL)
@@ -15,6 +15,6 @@
 }
 
 \author{Natalja Kurbatova, Jeremy Mason}
-\example{
+\examples{
     printParameters("WTSI","MGP_001","IMPC_CBC_001")
 }

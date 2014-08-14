@@ -2,7 +2,8 @@
 \alias{printProcedures}
 \title{Method "printProcedures"}
 \description{
-    Prints out IMPC procedures (ID and name) that are run by specified phenotyping center and pipeline.
+    Prints out the list of procedures (IMPReSS IDs and names) that are run 
+    for a specified phenotyping center and pipeline.
 }
 \usage{
     printProcedures(PhenCenterName=NULL,PipelineID=NULL)
@@ -13,6 +14,6 @@
 }
 
 \author{Natalja Kurbatova, Jeremy Mason}
-\example{
+\examples{
     printProcedures("WTSI","MGP_001")
 }

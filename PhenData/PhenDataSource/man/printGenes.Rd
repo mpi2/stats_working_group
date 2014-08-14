@@ -2,8 +2,8 @@
 \alias{printGenes}
 \title{Method "printGenes"}
 \description{
-    Prints out IMPC genes (ID and name) that are processed measuring specified parameter 
-    within the procedure in the pipeline run by phenotyping center.
+    Prints out genes (MGI IDs and symbols) that are reported for a specificed combination of parameter, 
+    procedure, pipeline and phenotyping center.
 }
 \usage{
     printGenes(PhenCenterName=NULL,PipelineID=NULL,ProcedureID=NULL,ParameterID=NULL,StrainID=NULL)
@@ -17,6 +17,6 @@
 }
 
 \author{Natalja Kurbatova, Jeremy Mason}
-\example{
+\examples{
     printGenes("WTSI","MGP_001","IMPC_CBC_001","IMPC_CBC_003_001")
 }

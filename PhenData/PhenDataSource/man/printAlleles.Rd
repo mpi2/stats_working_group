@@ -2,8 +2,9 @@
 \alias{printAlleles}
 \title{Method "printAlleles"}
 \description{
-    Prints out IMPC alleles (ID and name) that are processed measuring specified parameter 
-    within the procedure in the pipeline run by phenotyping center.
+    Prints out alleles (MGI IDs or temporary IDs if the MGI is not assigned yet and symbols) 
+    that are processed for a specified combination of parameter, procedure, pipeline and phenotyping center. 
+    Temporary allele ID starts with "NULL".
 }
 \usage{
     printAlleles(PhenCenterName=NULL,PipelineID=NULL,ProcedureID=NULL,ParameterID=NULL,StrainID=NULL)
@@ -16,6 +17,6 @@
     \item{StrainID}{IMPC strain ID; optional argument}
 }
 \author{Natalja Kurbatova, Jeremy Mason}
-\example{
+\examples{
     printAlleles("WTSI","MGP_001","IMPC_CBC_001","IMPC_CBC_003_001")
 }
