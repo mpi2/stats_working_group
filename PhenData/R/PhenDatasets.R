@@ -21,7 +21,7 @@ getIMPCDataset <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NUL
     
  # Example of dataset with different metagroups:
  # df <- getIMPCDataset('WTSI','ESLIM_001','ESLIM_021_001','ESLIM_021_001_001','MGI:4362924')   
-    url_main <- "http://dev.mousephenotype.org/data/exportraw?"
+    url_main <- "http://www.mousephenotype.org/data/exportraw?"
     
     if(is.null(PhenCenterName)||is.null(PipelineID)||is.null(ProcedureID)||is.null(ParameterID)){
         stop("Please define phenotyping center, pipeline, procedure and parameter of interest")
@@ -148,7 +148,10 @@ getIMPCTable <- function(fileName="PhenData_IMPC",
         else {
             listPipelines <- unlist(getPipelines(listCenters[centerIndex]))
         }
-        for (pipelineIndex in 1:length(listPipelines)) {
+        pipelineIndex = 0
+        while (pipelineIndex<length(listPipelines)){
+            pipelineIndex <- pipelineIndex+1
+        #for (pipelineIndex in 1:length(listPipelines)) {
             #print(paste(listCenters[centerIndex],listPipelines[pipelineIndex]))
             pipeline_name <- paste(
                     getName("pipeline_stable_id","pipeline_name",listPipelines[pipelineIndex]),
@@ -159,7 +162,10 @@ getIMPCTable <- function(fileName="PhenData_IMPC",
             else {
                 listProcedures <- unlist(getProcedures(listCenters[centerIndex],listPipelines[pipelineIndex]))
             } 
-            for (procedureIndex in 1:length(listProcedures)) {
+            procedureIndex = 0
+            while (procedureIndex<length(listProcedures)){
+                procedureIndex <- procedureIndex+1
+            #for (procedureIndex in 1:length(listProcedures)) {
                 #print(paste(listCenters[centerIndex],listPipelines[pipelineIndex],listProcedures[procedureIndex]))
                 procedure_name <- paste(
                         getName("procedure_stable_id","procedure_name",listProcedures[procedureIndex]),
@@ -171,9 +177,13 @@ getIMPCTable <- function(fileName="PhenData_IMPC",
                     listParameters <- unlist(getParameters(listCenters[centerIndex],
                                     listPipelines[pipelineIndex],listProcedures[procedureIndex]))
                 } 
-                for (parameterIndex in 1:length(listParameters)) {
+                
+                parameterIndex = 0
+                while (parameterIndex<length(listParameters)){
+                     parameterIndex <- parameterIndex+1
+                #for (parameterIndex in 1:length(listParameters)) {
                     #print(paste(listCenters[centerIndex],listPipelines[pipelineIndex],
-                     #                       listProcedures[procedureIndex],listParameters[parameterIndex]))
+                    #                        listProcedures[procedureIndex],listParameters[parameterIndex]))
                     #if (!is.null(StrainID)){
                     #    listStrains <- c(StrainID)
                     #} 
@@ -198,12 +208,16 @@ getIMPCTable <- function(fileName="PhenData_IMPC",
                                         listPipelines[pipelineIndex],listProcedures[procedureIndex],
                                         listParameters[parameterIndex]))#,listStrains[strainIndex]))
                     }
-                    for (alleleIndex in 1:length(listAlleles)) {
+                    
+                    alleleIndex = 0
+                    while (alleleIndex<length(listAlleles)){
+                        alleleIndex <- alleleIndex+1
+                
                         countRows <- countRows + 1
                         totalRows <- totalRows + 1
                         #print(paste(listCenters[centerIndex],listPipelines[pipelineIndex],
-                         #           listProcedures[procedureIndex],listParameters[parameterIndex],
-                         #           listAlleles[alleleIndex])) 
+                        #            listProcedures[procedureIndex],listParameters[parameterIndex],
+                        #           listAlleles[alleleIndex])) 
                         function_call <- paste("getIMPCDataset('",listCenters[centerIndex],"','",
                             listPipelines[pipelineIndex],"','",
                             listProcedures[procedureIndex],"','",
@@ -232,6 +246,6 @@ getIMPCTable <- function(fileName="PhenData_IMPC",
         }
     }
     message(paste("End",Sys.time()))
-    print(totalRows)
+    message(paste("Number of rows:",totalRows))
 }
 ##------------------------------------------------------------------------------
