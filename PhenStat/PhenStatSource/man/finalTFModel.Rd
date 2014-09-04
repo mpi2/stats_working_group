@@ -29,16 +29,25 @@
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \seealso{\code{\linkS4class{PhenTestResult}} and \code{\link{testDataset}}}
 \examples{
-    file <- system.file("extdata", "test6_RR.csv", package="PhenStat")
-    test <- PhenList(dataset=read.csv(file),
-            testGenotype="Oxr1/Oxr1")
+    file <- system.file("extdata", "test7_TFE.csv", package="PhenStat")
+    test <- PhenList(dataset=data,
+                     testGenotype="het",
+                     refGenotype = "WT",
+                     dataset.colname.sex="sex",
+                     dataset.colname.genotype="Genotype",
+                     dataset.values.female="f",
+                     dataset.values.male= "m",
+                     dataset.colname.weight="body.weight",
+                     dataset.colname.batch="Date_of_procedure_start")
+
+    test_TF <- TFDataset(test,depVariable="Cholesterol")
+    
     # when "testDataset" function's argument "callAll" is set to FALSE 
-    # only "startModel" function is called - the first step of MM framework
-    result <- testDataset(test,
-            depVariable="Ca",
-            callAll=FALSE,
-            method="TF",
-            dataPointsThreshold=2)
+    # only "startTFModel" function is called - the first step of TFE framework
+    result  <- testDataset(test_TF,
+                           depVariable="Cholesterol",
+                           callAll=FALSE,
+                           method="TF")
     # print out formula that has been created
     result$model.formula.genotype
     # print out batch effect's significance 

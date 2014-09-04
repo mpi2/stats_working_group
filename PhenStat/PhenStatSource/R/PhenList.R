@@ -218,13 +218,13 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
             Levels = sapply(dataset, function(x) length(unique(x)) ),
             NObs = sapply(dataset, function(x) length(na.omit(x))),
             Mean = sapply(dataset, function(x) 
-                    if(is.numeric(x)) round(mean(na.omit(x)),digits=2) else NA),
+                    if(is.numeric(x) && (length(unique(x))/length(x)>0.05)) round(mean(na.omit(x)),digits=2) else NA),
             StdDev = sapply(dataset, function(x) 
-                    if(is.numeric(x)) round(sd(na.omit(x)),digits=2) else NA),
+                    if(is.numeric(x) && (length(unique(x))/length(x)>0.05)) round(sd(na.omit(x)),digits=2) else NA),
             Minimum = sapply(dataset, function(x) 
-                    if(is.numeric(x)) round(min(na.omit(x)),digits=2) else NA),
+                    if(is.numeric(x) && (length(unique(x))/length(x)>0.05)) round(min(na.omit(x)),digits=2) else NA),
             Maximum = sapply(dataset, function(x) 
-                    if(is.numeric(x)) round(max(na.omit(x)),digits=2) else NA))
+                    if(is.numeric(x) && (length(unique(x))/length(x)>0.05)) round(max(na.omit(x)),digits=2) else NA))
     
     rownames(dataset.stat) <- NULL
     
