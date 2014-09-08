@@ -71,7 +71,7 @@ vectorOutput <- function(phenTestResult, phenotypeThreshold=0.01)
                             sep="")
         } 
         else {
-           if ("Female" %in% levels(result$model.dataset$Sex)){
+           if ("Female" %in% levels(phenTestResult$model.dataset$Sex)){
              percentageChanges <- paste("Female: ",round(phenTestResult$model.output.percentageChanges[1],digits=2),"%",
                                         ", ",
                                         "Male: NA",
