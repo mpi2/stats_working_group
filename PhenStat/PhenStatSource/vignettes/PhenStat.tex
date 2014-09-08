@@ -1,0 +1,442 @@
+%\VignetteIndexEntry{PhenStat Vignette}
+%\VignetteKeywords{statistical analysis, phenotypic data, Mixed Models, Fisher Exact Test}
+%\VignettePackage{PhenStat}
+\documentclass[a4paper]{article}
+
+\usepackage{times}
+\usepackage{a4wide}
+\usepackage{url}
+
+
+ 
+
+\usepackage{Sweave}
+\begin{document}
+\input{PhenStat-concordance}
+
+
+\title{PhenStat: statistical analysis of phenotypic data}
+\author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
+\date{Modified: 08 September, 2014. Compiled: \today}
+
+\maketitle
+
+PhenStat is a package that provides statistical methods for the identification of abnormal phenotypes. 
+The package contains dataset checks and cleaning in preparation for the analysis. For continuous data, an iterative fitting process is used to fit a regression model that is the most appropriate for the data, whilst for categorical data, a Fisher Exact Test is implemented. In addition, Reference Range Plus method has been implemented for a quick, simple analysis of the continuous data. It can be used in cases when regression model doesn't work.
+\newline\newline
+Depending on the user needs, the output can either be interactive where the user can view the graphical output and analysis summary or for a database implementation the output consists of a vector of output and saved graphical files. 
+PhenStat has been tested and demonstrated with an application of 420 lines of historic mouse phenotyping data. 
+\newline\newline
+The full PhenStat User's Guide with case studies and statistical analysis explanations is available as part of the online documentation, in "doc" section of the package and also through the github repository at \url{http://goo.gl/mKlX99}
+\newline\newline
+Project github repository including dev version of the package: \url{http://goo.gl/YKo54J} 
+\newline\newline
+Here we provide examples of functions usage. The package consists of three stages:
+\begin{enumerate}
+\item Dataset processing: includes checking, cleaning and terminology unification procedures and is completed by function \textit{PhenList} which creates a \textit{PhenList} object. 
+\item Statistical analysis: is managed by function \textit{testDataset} and consists of Mixed Model or Fisher Exact framework implementations. The results are stored in \textit{PhenTestResult} object. 
+\item Results Output: depending on user needs there are two functions for the test results output: \textit{summaryOutput} 
+and \textit{vectorOutput} that present data from \textit{PhenTestResult} object in a particular format. 
+\end{enumerate}
+
+
+\section{Data Processing}
+\textit{PhenList} function performs data processing and creates a \textit{PhenList} object. 
+As input, \textit{PhenList} function requires dataset of phenotypic data that can be presented as data frame. For instance, it can be dataset stored in csv or txt file.
+
+\begin{Schunk}
+\begin{Sinput}
+> library(PhenStat)
+> dataset1 <- system.file("extdata", "test1.csv", package="PhenStat")
+> dataset2 <- system.file("extdata", "test1.txt", package="PhenStat")
+\end{Sinput}
+\end{Schunk}
+Data is organised with a row for a sample and each column provides information such as meta data (strain, genotype, etc.) and the variable of interest.
+\newline
+The main tasks performed by the PhenStat package's function \textit{PhenList} are:
+\begin{itemize}
+\item terminology unification,
+\item filtering out undesirable records (when the argument \textit{dataset.clean} is set to TRUE),
+\item and checking if the dataset can be used for the statistical analysis.
+\end{itemize}
+All tasks are accompanied by error messages, warnings and/or other information: error messages explain why function stopped, 
+warning messages require user's attention (for instance, user is notified that column was renamed in the dataset), and information messages provide other details (for example, the values that are set in the Genotype column). 
+If messages are not desirable \textit{PhenList} function's argument \textit{outputMessages} can be set to FALSE meaning there will be no essages.
+\newline\newline
+Here is an example when the user sets out-messages to FALSE: 
+\begin{Schunk}
+\begin{Sinput}
+> # Default behaviour with messages
+> library(PhenStat)
+> dataset1 <- system.file("extdata", "test1.csv", package="PhenStat")
+> test <- PhenList(dataset=read.csv(dataset1),
++         testGenotype="Sparc/Sparc")
+> # Out-messages are switched off 
+> test <- PhenList(dataset=read.csv(dataset1),
++         testGenotype="Sparc/Sparc",
++         outputMessages=FALSE)
+\end{Sinput}
+\end{Schunk}
+We define "terminology unification" as the terminology used to describe data (variables) that are essential for the analysis. The PhenStat package uses the following nomenclature for the names of columns: "Sex", "Genotype", "Batch" or "Assay.Date" and "Weight". In addition, expected sex values are "Male" and "Female" and missing value is \textit{NA}. 
+\newline\newline
+In the example below dataset's values for females and males are 1 and 2 accordingly. Those values are changed to "Female" and "Male".  
+\begin{Schunk}
+\begin{Sinput}
+> library(PhenStat)
+> dataset1 <- system.file("extdata", "test3.csv", package="PhenStat")
+> test <- PhenList(dataset=read.csv(dataset1), 
++         dataset.clean=TRUE, 
++         dataset.values.female=1, 
++         dataset.values.male=2, 
++         testGenotype="Mysm1/+")
+\end{Sinput}
+\end{Schunk}
+Filtering is required, as the statistical analysis requires there to be only two genotype groups for comparison (e.g. wild-type versus knockout). Thus the function \textit{PhenList} requires users to define the reference genotype (mandatory argument \textit{refGenotype} with default value "+\slash+") and test genotype (mandatory argument \textit{testGenotype}). 
+If the \textit{PhenList} function argument \textit{dataset.clean} is set to TRUE then all records with genotype values others than reference or test genotype are filtered out. 
+The user may also specify hemizygotes genotype value (argument \textit{hemiGenotype}) when hemizygotes are treated as the test genotype. 
+This is necessary to manage sex linked genes, where the genotype will be described differently depending on the sex. 
+\newline\newline
+With \textit{hemiGenotype} argument of the PhenList function defined as "KO\slash Y", the actions of the function are:  "KO/Y" genotypes are relabelled to "KO/KO" for males;  females "+\slash KO" heterozygous are filtered out. 
+\newline\newline
+If a user would like to switch off filtering, (s)he can set \textit{PhenList} function's argument \textit{dataset.clean} to FALSE (default value is TRUE). 
+In the following example the same dataset is processed successfully passing the checks procedures when \textit{dataset.clean} is set to TRUE and fails at checks otherwise.
+
+\subsection{PhenList Object}
+The output of the \textit{PhenList} function is the \textit{PhenList} object that contains a cleaned dataset (\textit{PhenList} object's section \textit{dataset}), simple statistics about dataset columns and additional information. 
+\newline\newline
+The example below shows how to print out the whole cleaned dataset and how to view the statistics about it. 
+\textit{PhenList} object has stored many characteristics about the data: reference genotype, test genotype, hemizygotes genotype, original column names, etc.
+\newline
+An example is given below.
+\begin{Schunk}
+\begin{Sinput}
+> library(PhenStat)
+> dataset2 <- system.file("extdata", "test2.csv", package="PhenStat")
+> test2 <- PhenList(dataset=read.csv(dataset2),
++         testGenotype="Arid4a/Arid4a",
++         dataset.colname.weight="Weight.Value")
+> test2$testGenotype
+> test2$refGenotype
+> test2$dataset.colname.weight
+\end{Sinput}
+\end{Schunk}
+
+\section{Data Analysis}
+The package contains four statistical frameworks for the phenodeviants identification:
+\begin{enumerate}
+\item Mixed Models framework assumes that base line values of dependent variable are normally distributed but batch (assay date) adds noise and models variables accordingly in order to separate the batch and the genotype. Assume batch is normally distributed with defined variance. This framework can be used in case when you have controls measured over multiple batches and you ideally have knockout mice measured in multiple batches. The knockouts do not have to be concurrent with controls.
+\item Time Fixed Effect framework estimates each batch effect to separate it from genotype. This framework can be used in case when there are up to 5 batches and concurrent controls approach had been used. 
+\item Reference Range Plus framework identifies the normal variation form the wild-type animals, classifies dependent variables from the genotype of interest as low, normal or high and compare proportions. This framework requires sufficient number of controls (more than 60 records) in order to correctly identify normal variation and can be used when other methods are not applicable or as a first simple data assessment method.  
+\item Fisher Exact Test is a standard framework for categorical data which compares data proportions and calculates the percentage change in classification.
+\end{enumerate}
+All analysis frameworks output a statistical significance measure, an effect size measure, model diagnostics (when appropriate), and graphical visualisation of the genotype effect.
+\newline\newline
+PhenStat's function \textit{testDataset} works as a manager for the different statistical analyses methods. It checks the dependent variable, runs the selected statistical analysis framework and  returns modelling\slash testing results in the \textit{PhenTestResult} object.
+\newline\newline
+The \textit{testDataset} function's argument \textit{phenList} defines the dataset stored in \textit{PhenList} object.
+\newline\newline
+The \textit{testDataset} function's argument \textit{depVariable} defines the dependent variable.
+\newline\newline
+The \textit{testDataset} function's argument \textit{method} defines which statistical analysis framework to use. 
+The default value is "MM" which stands for mixed model framework. To perform Time as Fixed Effect method the argument \textit{method} is set to "TF". To perform Fisher Exact Test, the argument \textit{method} is set to "FE". For the Reference Range Plus framework \textit{method} is set to "RR".
+\newline\newline
+Function's argument \textit{dataPointsThreshold} defines the required number of data points in a group (subsets per genotype and sex combinations) for a successful analysis within "MM". The default value is 4. The minimal value is 2.
+\newline\newline
+There are two more arguments specific for the "RR" framework: 
+\begin{itemize}
+\item \textit{RR\_naturalVariation} for the variation ranges in the RR framework with default value set to 95 and minimal value set to 60; 
+\item \textit{RR\_controlPointsThreshold} for the number of control data points in the RR framework with default value 60 and minimal value set to 40.
+\end{itemize}
+The \textit{testDataset} function performs basic checks which ensure the statistical analysis would be appropriate and successful: \textit{depVariable} column is present in the dataset; thresholds value are set and do not exceed minimal values.
+\newline\newline
+After the basic checks the \textit{testDataset} function performs framework specific checks:
+\begin{itemize}
+\item Mixed Model (MM) and Time as Fixed Effect (TF) framework checks:
+\begin{enumerate}
+\item \textit{depVariable} column values are numeric.
+\item Variability check 1  (whole column): \textit{depVariable} column values are variable enough (the ratio of different values to all values in the column $\geq$ 0.5\%);
+\item Variability check 2 (variability within a group): there are enough data points in subsets per genotype/sex combinations. The number of values from \textit{depVariable} column should exceed \textit{dataPointsThreshold} in all subsets.
+\item Variability check 3 (variability for "Weigth" column) applied only when \textit{equation} argument value is set to "withWeight": there are enough weight records in subsets per genotype/sex combinations. The number of values from "Weight" column should exceed \textit{dataPointsThreshold} in all subsets, otherwise \textit{equation} "withoutWeight" is used;
+\end{enumerate}
+\item Additional Time as Fixed Effect (TF) framework's checks:
+\begin{enumerate}
+\item Number of batches: there are from 2 to 5 batches (assay dates) in the dataset.
+\item Control points: there are concurrent controls data in the dataset, meaning the presence of data points for at least one sex in all genotype/batch level combinations.
+\end{enumerate}
+\item Reference Range Plus (RR) framework's checks:
+\begin{enumerate}
+\item \textit{depVariable} column values are numeric.
+\item There are data: the number of levels in \textit{depVariable} column after filtering out of null values exceeds zero. 
+\item Control points: there are enough data points in subsets per reference genotype/sex combinations. The number of values from \textit{depVariable} column should exceed \textit{RR\_controlPointsThreshold} in all subsets. 
+\end{enumerate}
+\item Fisher Exact Test (FE) framework's checks: 
+\begin{enumerate}
+\item There are data: the number of levels in \textit{depVariable} column after filtering out of null values exceeds zero.
+\item Number of levels: number of \textit{depVariable} levels is less than 10.
+\end{enumerate}
+\end{itemize}
+If issues are identified, clear guidance is returned to the user. 
+After the checking procedures, \textit{testDataset} function runs the selected framework to analyse dependent variable. 
+\begin{Schunk}
+\begin{Sinput}
+> library(PhenStat)
+> dataset1 <- system.file("extdata", "test1.csv", package="PhenStat")
+> test <- PhenList(dataset=read.csv(dataset1),
++         testGenotype="Sparc/Sparc", 
++         outputMessages=FALSE)
+> # Default behaviour
+> result <- testDataset(test,
++         depVariable="Bone.Area", 
++         equation="withoutWeight")
+> # Perform each step of the MM framework separatly
+> result <- testDataset(test,
++         depVariable="Bone.Area", 
++         equation="withoutWeight",callAll=FALSE)
+> # Estimated model effects
+> result$model.effect.batch
+> result$model.effect.variance
+> result$model.effect.weight
+> result$model.effect.sex
+> result$model.effect.interaction
+> result$numberSexes
+> # Change the effect values: interaction effect will stay in the model
+> result <- testDataset(test,
++         depVariable="Bone.Area", 
++         equation="withoutWeight",
++         keepList=c(TRUE,TRUE,FALSE,TRUE,TRUE),
++         callAll=FALSE)
+> result <- finalModel(result)
+> summaryOutput(result)
+\end{Sinput}
+\end{Schunk}
+
+There are two functions we've implemented for the diagnostics and classification of MM framework results: \textit{testFinalModel} and \textit{classificationTag}.
+
+\begin{Schunk}
+\begin{Sinput}
+> testFinalModel(result)
+> classificationTag(result)
+\end{Sinput}
+\end{Schunk}
+
+
+Example of Time Fixed Effect framework:
+
+\begin{Schunk}
+\begin{Sinput}
+> file <- system.file("extdata", "test7_TFE.csv", package="PhenStat")
+> test <- PhenList(dataset=read.csv(file),
++                      testGenotype="het",
++                      refGenotype = "WT",
++                      dataset.colname.sex="sex",
++                      dataset.colname.genotype="Genotype",
++                      dataset.values.female="f",
++                      dataset.values.male= "m",
++                      dataset.colname.weight="body.weight",
++                      dataset.colname.batch="Date_of_procedure_start")
+> # TFDataset function creates cleaned dataset - concurrent controls dataset
+> test_TF <- TFDataset(test,depVariable="Cholesterol")
+> # TF method is called
+> result  <- testDataset(test_TF,
++                            depVariable="Cholesterol",
++                            method="TF")
+> summaryOutput(result)
+\end{Sinput}
+\end{Schunk}
+
+Example of Reference Range Plus framework:
+
+\begin{Schunk}
+\begin{Sinput}
+> library(PhenStat)
+> file <- system.file("extdata", "test1.csv", package="PhenStat")
+> test <- PhenList(dataset=read.csv(file),
++             testGenotype="Sparc/Sparc")
+> # RR method is called
+> result <- testDataset(test,
++             depVariable="Lean.Mass",
++             method="RR")
+> summaryOutput(result)
+\end{Sinput}
+\end{Schunk}
+
+Example of Fisher Exact Test framework:
+\begin{Schunk}
+\begin{Sinput}
+> library(PhenStat)
+> dataset_cat <- system.file("extdata", "test_categorical.csv", package="PhenStat")
+> test_cat <- PhenList(read.csv(dataset_cat),testGenotype="Aff3/Aff3")
+> result_cat <- testDataset(test_cat,
++         depVariable="Thoracic.Processes",
++         method="FE")
+> result_cat$depVariable
+> result_cat$method
+> result_cat$numberSexes
+> # Chi squared table for all data
+> result_cat$model.output$count_matrix_all
+> # Chi squared table for males only records
+> result_cat$model.output$count_matrix_male
+> # Percentage matrix for all data
+> result_cat$model.output$percentage_matrix_all
+> # Percentage matrix for females only records
+> result_cat$model.output$percentage_matrix_female
+> # Matrix statistics for all data
+> result_cat$model.output$stat_all
+> # Matrix statistics for males only records
+> result_cat$model.output$stat_male
+> # Effect size for all data
+> result_cat$model.output$ES
+> # Effect size for females only records
+> result_cat$model.output$ES_female
+> # Fisher Exact Test results for all data
+> result_cat$model.output$all
+> # p-value for all data
+> result_cat$model.output$all$p.value
+\end{Sinput}
+\end{Schunk}
+\section{Output of Results}
+The PhenStat package stores the results of statistical analyses in the \textit{PhenTestResult} object.  
+For numeric summary of the analysis, there are two functions to present \textit{PhenTestResult} object data to the user: 
+\textit{summaryOutput} that provides a printed summary output and \textit{vectorOutput} that creates a vector form output. 
+These output forms were generated for differing users needs. 
+\newline\newline
+The \textit{summaryOutput} function supports interactive analysis of the data and prints results on the screen.
+\newline\newline
+The following is an example of summary output of MM framework:
+\begin{Schunk}
+\begin{Sinput}
+> library(PhenStat)
+> dataset1 <- system.file("extdata", "test1.csv", package="PhenStat")
+> # MM framework
+> test <- PhenList(dataset=read.csv(dataset1),
++         testGenotype="Sparc/Sparc",outputMessages=FALSE)
+> result <- testDataset(test,
++         depVariable="Lean.Mass",
++         outputMessages=FALSE)
+> summaryOutput(result)
+\end{Sinput}
+\end{Schunk}
+
+
+For the "FE" framework results \textit{summaryOutput} function's output includes count matrices, statistics and effect size measures.
+
+\begin{Schunk}
+\begin{Sinput}
+> library(PhenStat)
+> dataset_cat <- system.file("extdata", "test_categorical.csv", package="PhenStat")
+> test2 <- PhenList(dataset=read.csv(dataset_cat),
++         testGenotype="Aff3/Aff3",outputMessages=FALSE)
+> result2 <- testDataset(test2,
++         depVariable="Thoracic.Processes",
++         method="FE",outputMessages=FALSE)  
+> summaryOutput(result2)
+\end{Sinput}
+\end{Schunk}
+
+\textit{vectorOutput} function was developed for large scale application where automatic implementation would be required. 
+
+\begin{Schunk}
+\begin{Sinput}
+> library(PhenStat)
+> dataset_cat <- system.file("extdata", "test_categorical.csv", package="PhenStat")
+> test_cat <- PhenList(dataset=read.csv(dataset_cat),
++         testGenotype="Aff3/Aff3",outputMessages=FALSE)
+> result_cat <- testDataset(test_cat,
++         depVariable="Thoracic.Processes",
++         method="FE",outputMessages=FALSE)  
+> vectorOutput(result_cat)
+\end{Sinput}
+\end{Schunk}
+
+There is an additional function to support the FE framework: \textit{vectorOutputMatrices}. This function returns values from count matrices in the vector format.
+
+\begin{Schunk}
+\begin{Sinput}
+> library(PhenStat)
+> dataset_cat <- system.file("extdata", "test_categorical.csv", package="PhenStat")
+> test_cat <- PhenList(dataset=read.csv(dataset_cat),
++         testGenotype="Aff3/Aff3",outputMessages=FALSE)
+> result_cat <- testDataset(test_cat,
++         depVariable="Thoracic.Processes",
++         method="FE",outputMessages=FALSE) 
+> vectorOutputMatrices(result_cat)
+\end{Sinput}
+\end{Schunk}
+
+\section{Graphics}
+For graphical output of the analysis, multiple graphical functions have been generated and these can be called by a user individually or alternatively, 
+\textit{generateGraphs} generates all relevant graphs for an analysis and stores the graphs in the defined directory. 
+
+There is only one graphical output for FE framework: categorical bar plots. This graph allows a visual representation of the count data, comparing observed proportions between reference and test genotypes.  
+
+\begin{Schunk}
+\begin{Sinput}
+> library(PhenStat)
+> dataset_cat <- system.file("extdata", "test_categorical.csv", package="PhenStat")
+> test_cat <- PhenList(dataset=read.csv(dataset_cat),
++         testGenotype="Aff3/Aff3",outputMessages=FALSE)
+> result_cat <- testDataset(test_cat,
++         depVariable="Thoracic.Processes",
++         method="FE",outputMessages=FALSE) 
+> categoricalBarplot(result_cat)
+\end{Sinput}
+\end{Schunk}
+
+There are many graphic functions for the MM framework results. They can be divided into two types: dataset based graphs and results based graphs.
+There are three functions in the dataset based graphs category:
+\begin{itemize}
+\item \textit{boxplotSexGenotype} creates a box plot split by sex and genotype.
+\item \textit{boxplotSexGenotypeBatch} creates a box plot split by sex, genotype and batch if batch data present in the dataset. Please note the batches are not ordered with time but allow assessment of how the treatment groups lie relative to the normal control variation.
+\item \textit{scatterplotGenotypeWeight} creates a scatter plot body weight versus dependent variable. Both a regression line and a loess line (locally weighted line) is fitted for each genotype.
+\end{itemize}
+
+\begin{Schunk}
+\begin{Sinput}
+> library(PhenStat)
+> dataset1 <- system.file("extdata", "test1.csv", package="PhenStat")
+> # MM framework
+> test <- PhenList(dataset=read.csv(dataset1),
++         testGenotype="Sparc/Sparc",outputMessages=FALSE)
+> result <- testDataset(test,
++         depVariable="Lean.Mass",
++         outputMessages=FALSE)
+> boxplotSexGenotype(test,
++         depVariable="Lean.Mass",
++         graphingName="Lean Mass")
+> boxplotSexGenotypeBatch(test,
++         depVariable="Lean.Mass",
++         graphingName="Lean Mass")
+> scatterplotGenotypeWeight(test,
++         depVariable="Bone.Mineral.Content",
++         graphingName="BMC")
+\end{Sinput}
+\end{Schunk}
+
+There are five functions in the results based graphs category:
+\begin{itemize}
+\item \textit{qqplotGenotype} creates a Q-Q plot of residuals for each genotype.
+\item \textit{qqplotRandomEffects} creates a Q-Q plot of blups (best linear unbiased predictions).
+\item \textit{qqplotRotatedResiduals} creates a Q-Q plot of ``rotated'' residuals.
+\item \textit{plotResidualPredicted} creates predicted versus residual values plots split by genotype.
+\item \textit{boxplotResidualBatch} creates a box plot with residue versus batch split by genotype.
+\end{itemize}
+
+\begin{Schunk}
+\begin{Sinput}
+> library(PhenStat)
+> dataset1 <- system.file("extdata", "test1.csv", package="PhenStat")
+> # MM framework
+> test <- PhenList(dataset=read.csv(dataset1),
++         testGenotype="Sparc/Sparc",outputMessages=FALSE)
+> result <- testDataset(test,
++         depVariable="Lean.Mass",
++         outputMessages=FALSE)
+> qqplotGenotype(result)
+> qqplotRandomEffects(result)
+> qqplotRotatedResiduals(result)
+> plotResidualPredicted(result)
+> boxplotResidualBatch(result)
+\end{Sinput}
+\end{Schunk}
+
+\end{document}
