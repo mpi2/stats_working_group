@@ -30,7 +30,7 @@
 \seealso{\code{\linkS4class{PhenTestResult}} and \code{\link{testDataset}}}
 \examples{
     file <- system.file("extdata", "test7_TFE.csv", package="PhenStat")
-    test <- PhenList(dataset=data,
+    test <- PhenList(dataset=read.csv(file),
                      testGenotype="het",
                      refGenotype = "WT",
                      dataset.colname.sex="sex",
