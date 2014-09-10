@@ -283,3 +283,104 @@ scatterplotGenotypeWeight<-function(phenList, depVariable=NULL,
     }
 }
 ##------------------------------------------------------------------------------
+#Raw data scatterplot:  split by sex,genotype and batch 
+
+scatterplotSexGenotypeBatch<-function(phenList, depVariable=NULL, 
+		graphingName=NULL, outputMessages=TRUE){
+	stop_message <- ""
+	## Checks
+	
+	if (is.null(depVariable)) 
+		stop_message <- paste(stop_message,
+				"Error:\nPlease define dependent variable 'depVariable'.\n",sep="")
+	else {
+		if (is.null(graphingName))
+			graphingName <- depVariable
+	}
+	
+	if(is(phenList,"PhenList")) {
+		x <- phenList$dataset
+		refGenotype <- phenList$refGenotype   
+		
+		if (nchar(stop_message)==0){
+			if (!(depVariable %in% colnames(x)))
+				stop_message <- paste(stop_message,
+						"Error:\n",depVariable," column is missed in the dataset.",sep="")
+			else {
+				columnOfInterest <- x[,c(depVariable)]
+				
+				## Test: depVariable is numeric 
+				if(!is.numeric(columnOfInterest))
+					stop_message <- paste(stop_message,
+							"Error:\n",depVariable," variable is not numeric. ",
+							"Can't create a plot based on it.",sep="")
+			}       
+			
+			if (!('Batch' %in% colnames(x)))
+				stop_message <- paste(stop_message,
+						"Error:\nBatch column is missed in the dataset.\n",sep="")
+		}
+		
+	} else {
+		stop_message <- paste(stop_message,"Error:\nPlease define PhenList object.\n",sep="")
+	}
+	
+	
+	if (nchar(stop_message)>0){
+		if (outputMessages){
+			message(stop_message)
+			opt <- options(show.error.messages=FALSE)
+			on.exit(options(opt))
+			stop()
+		}
+		else {
+			stop(stop_message)
+		}
+	} 
+	else {
+		## Plot creation
+		numberofsexes <- length(levels(x$Sex))
+		if (is.numeric(x[ ,depVariable]))   
+			y_range <- c(min(x[ ,depVariable], na.rm=TRUE), 
+					max((x[ ,depVariable]), na.rm=TRUE))
+		else
+			y_range <- c(1, length(levels(x[ ,depVariable])))
+		
+		if(numberofsexes==2){
+			Male <- subset(x, x$Sex=="Male")
+			Female <- subset(x, x$Sex=="Female")
+			Male$Batch <- factor(Male$Batch)
+			Female$Batch <- factor(Female$Batch)
+			
+			op <- par(mfrow=c(1,2)) 
+			
+			stripchart(Male[ , depVariable]~Male$Batch, ,pch=1,vertical=T, subset=(Male$Genotype==phenList$refGenotype),	ylab=graphingName, ylim=y_range, xlab="Batch", xaxt='n')
+			
+			points(Male[ , depVariable]~Male$Batch, subset=(Male$Genotype!=phenList$refGenotype), col="red")
+			
+			
+			legend("topright", "Male", cex=1.3, bty="n")
+			
+			stripchart(Female[ , depVariable]~Female$Batch, ,pch=1,vertical=T, subset=(Female$Genotype==phenList$refGenotype),	ylab=graphingName, ylim=y_range, xlab="Batch", xaxt='n')
+			
+			points(Female[ , depVariable]~Female$Batch, subset=(Female$Genotype!=phenList$refGenotype), col="red")
+			
+			
+			legend("topright", "Female", cex=1.3, bty="n")
+			
+			par(op)
+			
+			op_normal <- par(mfrow=c(1,1))
+			par(op_normal) 
+		}else{
+			op <- par(mfrow=c(1,1))
+			
+			stripchart(x[ , depVariable]~x$Batch, ,pch=1,vertical=T, subset=(x$Genotype==phenList$refGenotype),	ylab=graphingName, ylim=y_range, xlab="Batch", xaxt='n')
+			
+			points(x[ , depVariable]~x$Batch, subset=(x$Genotype!=phenList$refGenotype), col="red")
+			
+			par(op)
+		}
+	}    
+}    
+
