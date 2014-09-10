@@ -61,9 +61,15 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
                                 round(phenTestResult$model.output.percentageChanges[2],digits=2)),"%")
             } 
             else {
-                message(paste("Genotype percentage change:",
-                                round(phenTestResult$model.output.percentageChanges[1],digits=2)),"%")
+              if ("Female" %in% levels(phenTestResult$model.dataset$Sex)){
+                message(paste("Genotype percentage change Female:",
+                              round(phenTestResult$model.output.percentageChanges[1],digits=2)),"%")
+              }  
+              else {
+                message(paste("Genotype percentage change Male:",
+                              round(phenTestResult$model.output.percentageChanges[1],digits=2)),"%")
                 
+              }
             }   
         }
         

@@ -21,7 +21,7 @@ getIMPCDataset <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NUL
     
  # Example of dataset with different metagroups:
  # df <- getIMPCDataset('WTSI','ESLIM_001','ESLIM_021_001','ESLIM_021_001_001','MGI:4362924')   
-    url_main <- "http://dev.mousephenotype.org/data/exportraw?"
+    url_main <- "http://www.mousephenotype.org/data/exportraw?"
     
     if(is.null(PhenCenterName)||is.null(PipelineID)||is.null(ProcedureID)||is.null(ParameterID)){
         stop("Please define phenotyping center, pipeline, procedure and parameter of interest")

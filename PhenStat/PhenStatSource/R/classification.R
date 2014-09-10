@@ -241,12 +241,12 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
                 RROutput <- phenTestResult$model.output$all
                 # High classification p-val is less than threshold and low classification p-val is more that threshold
                 if (RROutput[1] < phenotypeThreshold && RROutput[3] >= phenotypeThreshold){
-                    direction_all <- "High"
+                    direction_all <- "Low"
                     all_p.value <- RROutput[1]
                 }
                 # Low classification p-val is less than threshold and high classification p-val is more that threshold
                 else if (RROutput[1] >= phenotypeThreshold && RROutput[3] < phenotypeThreshold){
-                    direction_all <- "Low"
+                    direction_all <- "High"
                     all_p.value <- RROutput[3]
                 }
                 
@@ -275,11 +275,11 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
                 if (!is.null(phenTestResult$model.output$male)){
                     RROutput <- phenTestResult$model.output$male
                     if (RROutput[1] < phenotypeThreshold && RROutput[3] >= phenotypeThreshold){
-                        direction_males <- "High"
+                        direction_males <- "Low"
                         male_p.value <- RROutput[1]
                     }
                     else if (RROutput[1] >= phenotypeThreshold && RROutput[3] < phenotypeThreshold){
-                        direction_males <- "Low"
+                        direction_males <- "High"
                         male_p.value <- RROutput[3]
                     }
                     #male_p.value <- result$model.output$male$p.value
@@ -290,11 +290,11 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
                 if (!is.null(phenTestResult$model.output$female)){
                     RROutput <- phenTestResult$model.output$female
                     if (RROutput[1] < phenotypeThreshold && RROutput[3] >= phenotypeThreshold){
-                        direction_females <- "High"
+                        direction_females <- "Low"
                         female_p.value <- RROutput[1]
                     }
                     else if (RROutput[1] >= phenotypeThreshold && RROutput[3] < phenotypeThreshold){
-                        direction_females <- "Low"
+                        direction_females <- "High"
                         female_p.value <- RROutput[3]
                     }
                     #female_p.value <- result$model.output$female$p.value

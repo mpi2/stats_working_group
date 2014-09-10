@@ -36,23 +36,24 @@ TFDataset <- function(phenList, depVariable, outputMessages=TRUE, forDecisionTre
         countsAll <- nrow(x)
         countsRemovedRef <- 0
         countsRemovedTest <- 0
+        cellWidth <- 13
         if (outputMessages){
             message("")
             if (outputMessages){
                 message(paste("Data points containing '",depVariable,"' by batch levels:",sep=""))
             }
             line <- "-----------"
-            message(printTabStyle(c(rep(line,each=tableWidth)),12))
+            message(printTabStyle(c(rep(line,each=tableWidth)),cellWidth))
             printGenotypes <- c("")
             for (j in 1:length(Genotype_levels)){   
                 for (s in 1:length(Sex_levels)){
                     printGenotypes <- c(printGenotypes,Genotype_levels[j])
                 }
             }
-            message(printTabStyle(printGenotypes,12))
-            message(printTabStyle(c(rep(line,each=tableWidth)),12))
-            message(printTabStyle(c("Batch",Sex_levels,Sex_levels),12))
-            message(printTabStyle(c(rep(line,each=tableWidth)),12))
+            message(printTabStyle(printGenotypes,cellWidth))
+            message(printTabStyle(c(rep(line,each=tableWidth)),cellWidth))
+            message(printTabStyle(c("Batch",Sex_levels,Sex_levels),cellWidth))
+            message(printTabStyle(c(rep(line,each=tableWidth)),cellWidth))
         }
         removeRecords <- FALSE
         # Batch loop
@@ -92,8 +93,8 @@ TFDataset <- function(phenList, depVariable, outputMessages=TRUE, forDecisionTre
                 printBatchLevel <- paste("*", printBatchLevel)
             }
             if (outputMessages){
-                message(printTabStyle(c(printBatchLevel,sex_counts_batch),12)) 
-                message(printTabStyle(c(rep(line,each=tableWidth)),12))      
+                message(printTabStyle(c(printBatchLevel,sex_counts_batch),cellWidth)) 
+                message(printTabStyle(c(rep(line,each=tableWidth)),cellWidth))      
             }        
         }
         if (outputMessages && removeRecords){

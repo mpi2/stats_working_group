@@ -56,23 +56,36 @@ vectorOutput <- function(phenTestResult, phenotypeThreshold=0.01)
             }
         }
         
-        formula <- paste('"Formula":','"',
-                        format(phenTestResult$model.formula.genotype),'"',sep="")
+        formula <- paste('"Formula":','"',paste(format(phenTestResult$model.formula.genotype), collapse= ' '),'"',sep="")
+        
+        
         
         addInfo = paste("{",DSsize,variability,",",formula,"}",sep="")
         
         percentageChanges <- "NA"
         if (phenTestResult$numberSexes==2){
-            percentageChanges <- paste("Female: ",
-                            round(phenTestResult$model.output.percentageChanges[1],digits=2),"%",
-                            " ",
+            percentageChanges <- paste("Female: ",round(phenTestResult$model.output.percentageChanges[1],digits=2),"%",
+                            ", ",
                             "Male: ",
-                            round(phenTestResult$model.output.percentageChanges[2],digits=2),"%",sep="")
+                            round(phenTestResult$model.output.percentageChanges[2],digits=2),"%",
+                            sep="")
         } 
         else {
-            percentageChanges <- paste("Sex tested: ",
-                    round(phenTestResult$model.output.percentageChanges[1],digits=2),"%",sep="")
-            
+           if ("Female" %in% levels(phenTestResult$model.dataset$Sex)){
+             percentageChanges <- paste("Female: ",round(phenTestResult$model.output.percentageChanges[1],digits=2),"%",
+                                        ", ",
+                                        "Male: NA",
+                                        sep="")
+             
+           }
+           else{
+             percentageChanges <- paste("Female: NA",
+                                        ", ",
+                                        "Male: ",round(phenTestResult$model.output.percentageChanges[1],digits=2),"%",
+                                        sep="")
+             
+           }
+          
         }   
         
         vectorOutput <- c(paste(framework,", ",fittingMethod, equation,sep=""),
