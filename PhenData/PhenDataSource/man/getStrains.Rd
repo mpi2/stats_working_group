@@ -3,8 +3,7 @@
 \title{Method "getStrains"}
 \description{
     Returns the genetic background (MGI IDs) from which the knockout mice were derived 
-    for a specific combination of pipeline, procedure and paramater for a phenotyping centre 
-    within the procedure in the pipeline run by phenotyping center.
+    for a specific combination of pipeline, procedure and paramater for a phenotyping center. 
 }
 \usage{
     getStrains(PhenCenterName=NULL,PipelineID=NULL,ProcedureID=NULL,ParameterID=NULL)

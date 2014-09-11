@@ -177,8 +177,8 @@ vectorOutput <- function(phenTestResult, phenotypeThreshold=0.01)
                             phenTestResult$model.output$female[4],sep=","))
         }
         
-        classificationValue <- classificationTag(phenTestResult,                
-                userMode="vectorOutput",outputMessages=FALSE)
+        classificationValue <- classificationTag(phenTestResult,phenotypeThreshold=phenotypeThreshold,
+                outputMessages=FALSE)
         
         if (phenTestResult$method=="RR"){
             addInfo = paste('"',rownames(phenTestResult$model.output.quality)[1],

@@ -10,16 +10,16 @@
             AlleleID=NULL, StrainID=NULL, multipleFiles=TRUE,recordsPerFile=10000)
 }
 \arguments{
-    \item{fileName}{name of the file where to save resulting table with IMPC objects; mandatory argument}
-    \item{PhenCenterName}{IMPC phenotyping center; mandatory argument}
-    \item{PipelineID}{IMPC pipeline ID; mandatory argument}
-    \item{ProcedureID}{IMPC procedure ID; mandatory argument}
-    \item{ParameterID}{IMPC parameter ID; mandatory argument}
-    \item{AlleleID}{IMPC allele ID; mandatory argument}
-    \item{StrainID}{IMPC strain ID; optional argument}
+    \item{fileName}{name of the file where to save resulting table with IMPC objects; mandatory argument; 
+        default value is set to 'PhenData_IMPC'}
+    \item{PhenCenterName}{IMPC phenotyping center}
+    \item{PipelineID}{IMPC pipeline ID}
+    \item{ProcedureID}{IMPC procedure ID}
+    \item{ParameterID}{IMPC parameter ID}
+    \item{AlleleID}{allele ID}
+    \item{StrainID}{strain ID}
     \item{multipleFiles}{flag: "FALSE" value to get all records into one specified file; 
-        "TRUE" value (default) to split records across multiple files named starting with 'fileName' and 
-        with digit at the end}
+        "TRUE" value (default) to split records across multiple files named starting with 'fileName'}
     \item{recordsPerFile}{number that specifies how many records to write into one file; default value is 10000}
 }
 \value{
@@ -28,5 +28,5 @@
 
 \author{Natalja Kurbatova, Jeremy Mason}
 \examples{
-    getIMPCTable("./IMPCData_WTSI","WTSI","MGP_001","IMPC_CBC_001")
+    getIMPCTable("./IMPCData_WTSI","WTSI","MGP_001","IMPC_CBC_001","IMPC_CBC_003_001","MGI:4431644")
 }

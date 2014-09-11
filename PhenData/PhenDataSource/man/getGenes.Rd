@@ -2,7 +2,7 @@
 \alias{getGenes}
 \title{Method "getGenes"}
 \description{
-    Returns the genes (MGI IDs) that are reported for a specificed combination of parameter, 
+    Returns the genes (MGI IDs) that are reported for a specified combination of parameter, 
     procedure, pipeline and phenotyping center.
 }
 \usage{

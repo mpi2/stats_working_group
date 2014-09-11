@@ -8,6 +8,7 @@ Take the first row and the last column with dataset function call:
 
 Now dataset is ready to use with PhenStat:
 
+> library(PhenStat)
 > testIMPC1 <- PhenList(dataset=IMPC_dataset1,
         testGenotype="MDTZ",refGenotype="+/+",
         dataset.colname.genotype="Colony")

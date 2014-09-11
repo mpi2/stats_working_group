@@ -244,7 +244,7 @@ classificationTag(result)
 
 Example of Time Fixed Effect framework:
 
-<<R.hide, results=hide, echo=TRUE, eval=TRUE>>=
+<<R.hide, results=hide, echo=TRUE, eval=FALSE>>=
 file <- system.file("extdata", "test7_TFE.csv", package="PhenStat")
 test <- PhenList(dataset=read.csv(file),
                      testGenotype="het",

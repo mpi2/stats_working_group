@@ -2,7 +2,7 @@
 \alias{printGenes}
 \title{Method "printGenes"}
 \description{
-    Prints out genes (MGI IDs and symbols) that are reported for a specificed combination of parameter, 
+    Prints out genes (MGI IDs and symbols) that are reported for a specified combination of parameter, 
     procedure, pipeline and phenotyping center.
 }
 \usage{
