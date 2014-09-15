@@ -53,7 +53,7 @@ This framework can be used in case when there are up to 5 batches and concurrent
 \centerline{\includegraphics[scale=0.4]{TFE_simple.png}}
 \end{figure}
 
-\item Reference Range Plus framework identifies the normal variation form the wild-type animals, classifies dependent variables from the genotype of interest as low, normal or high and compares proportions to assess for movement towards high or low class borders.  
+\item Reference Range Plus framework identifies the normal variation form the wildtype animals, classifies dependent variables from the genotype of interest as low, normal or high and compares proportions to assess for movement towards high or low class borders.  
 \begin{figure}[H]%figure01a
 \centerline{\includegraphics[scale=0.4]{RR1_simple.png}}
 \end{figure} 
@@ -283,7 +283,7 @@ Dataset's 'Sex' column has following value(s): 'Female', 'Male'
 
 \subsection{Filtering}
 \label{section:Filtering}
-Filtering is required, as the statistical analysis requires there to be only two genotype groups for comparison (e.g. wild-type versus knockout). Thus the function \textit{PhenList} requires users to define the reference genotype (mandatory argument \textit{refGenotype} with default value "+\slash+") and test genotype (mandatory argument \textit{testGenotype}). 
+Filtering is required, as the statistical analysis requires there to be only two genotype groups for comparison (e.g. wildtype versus knockout). Thus the function \textit{PhenList} requires users to define the reference genotype (mandatory argument \textit{refGenotype} with default value "+\slash+") and test genotype (mandatory argument \textit{testGenotype}). 
 If the \textit{PhenList} function argument \textit{dataset.clean} is set to TRUE then all records with genotype values others than reference or test genotype are filtered out. 
 The user may also specify hemizygotes genotype value (argument \textit{hemiGenotype}) when hemizygotes are treated as the test genotype. 
 This is necessary to manage sex linked genes, where the genotype will be described differently depending on the sex. 
@@ -975,11 +975,11 @@ Genotype3    1.308597 0.4792220 238  2.730669  6.793528e-03
 \label{section:BiologicalEffect}
 The biological effect is reported in two formats: estimate and a percentage change. 
 
-The first measure is on a scale specific to that variable; whilst the second is relative to the wild-type signal and is as scaled comparable across variables. 
+The first measure is on a scale specific to that variable; whilst the second is relative to the wildtype signal and is as scaled comparable across variables. 
 
 The estimate is in the scale of the variable and is the estimated change arising from being a knockout animal relative to the reference data. In the presence of sexual dimorphism it is estimated separately for the male and female knockout animals. In the \textit{summaryOutput} view these estimates are reported in the ANOVA table. In the \textit{vectorOutput} view these values are captured and reported as either Genotype estimate or Sex FvKO estimate and Sex MvKO estimate depending on whether sexual dimorphism was found to be significant.
 
-The percentage change is the ratio of the genotype effect for a sex relative to the wild-type signal for that variable for that sex. When weight is not included in the model, it is entirely estimated from the coefficients returned from the model. When weight is included in the model, then the estimated genotype effect is reported relative to the average for that sex from the wild-type data. This distinction arises, because when weight is included the model the intercept is an estimate of the wild-type female animal with zero body weight. The table below shows the various models and how the percentage change is estimated such the genotype effect is relative to the wild-type signal for that sex.  It is shown in the \textit{summaryOutput} and reported in the \textit{vectorOutput} as "Genotype percentage change Male" and/or "Genotype percentage change Female".  
+The percentage change is the ratio of the genotype effect for a sex relative to the wildtype signal for that variable for that sex. When weight is not included in the model, it is entirely estimated from the coefficients returned from the model. When weight is included in the model, then the estimated genotype effect is reported relative to the average for that sex from the wildtype data. This distinction arises, because when weight is included the model the intercept is an estimate of the wildtype female animal with zero body weight. The table below shows the various models and how the percentage change is estimated such the genotype effect is relative to the wildtype signal for that sex.  It is shown in the \textit{summaryOutput} and reported in the \textit{vectorOutput} as "Genotype percentage change Male" and/or "Genotype percentage change Female".  
 
 See Figures \ref{fig:05_be1} and \ref{fig:05_be2} for the percentage change calculation details.
 
@@ -1219,7 +1219,7 @@ Similarly to the MM framework there are two functions in the PhenStat package th
 By default, both functions will be called from \textit{testDataset} manager sequentially.
 
 \subsubsection{Diagnostics}
-The vectorOutput function includes statistical tests for normality on the residuals for the wild-type and residuals for the knockout (see section \ref{MMDiagnostics}). These normality tests are provide to assist in the building automated tools for assessing model fit, however when there is a lot of data (e.g. in a dataset where the wild-type arises from a high throughput program with a running baseline), the statistical test can be overall sensitive to departures from normality and when the number of data points is low (e.g. in many knockout groups), the test can lack ability to detect deviations from normality.
+The vectorOutput function includes statistical tests for normality on the residuals for the wildtype and residuals for the knockout (see section \ref{MMDiagnostics}). These normality tests are provide to assist in the building automated tools for assessing model fit, however when there is a lot of data (e.g. in a dataset where the wildtype arises from a high throughput program with a running baseline), the statistical test can be overall sensitive to departures from normality and when the number of data points is low (e.g. in many knockout groups), the test can lack ability to detect deviations from normality.
 
 The normality tests are driven by the function \textit{testFinalModel} and it returns a list of the following values:
 \begin{itemize}
@@ -1857,7 +1857,7 @@ In the Table \ref{table:07} vector output values are described.
 6&Genotype estimate&Numeric&MM, TF, RR, FE&Estimated coefficient that describes genotype value calculated by MM and TF or effect size estimates in FE and RR.\\
 7&Genotype standard error&Numeric&MM, TF&Standard error of the coefficient estimate for genotype.\\
 8&Genotype p-val&Numeric&MM, TF, RR, FE&Genotype p-value that represents the probability the genotype is NOT relevant. p-value for combined set in FE and RR. In case of RR framework there are two values reported: low classification p-value, high classification p-value.\\
-9&Genotype percentage change&Numeric&MM, TF&The ratio of the genotype effect for a sex relative to the wild-type signal for that variable for that sex. Format: "Female: <value>, Male: <value>". If sex is not present in the dataset value is set to "NA".\\
+9&Genotype percentage change&Numeric&MM, TF&The ratio of the genotype effect for a sex relative to the wildtype signal for that variable for that sex. Format: "Female: <value>, Male: <value>". If sex is not present in the dataset value is set to "NA".\\
 10&Sex estimate&Numeric&MM, TF&Estimated coefficient that describes sex value calculated.\\
 11&Sex standard error&Numeric&MM, TF&Standard error of the coefficient estimate for sex.\\
 12&Sex p-val&Numeric&MM, TF&Sex p-value that represents the probability the sex is NOT relevant.\\
@@ -2338,7 +2338,7 @@ SexMale            4.620361 0.1581236 1048 29.219943 8.940893e-138
 \endgroup 
 
 A regression model estimates each component of the model, by isolating how that effect influences the dependent variable (i.e. lean mass) as though all other parts of the model had been fixed and isolated.   
-From the table of output, we can see that the intercept (the expected reading for lean mass for female reference genotype (aka female wild-type animals) is 18.5.  
+From the table of output, we can see that the intercept (the expected reading for lean mass for female reference genotype (aka female wildtype animals) is 18.5.  
 Then we can see the effect of the genotype is -3.5 in that knockout animals are predicted to have 3.5 grams less lean mass relative to the control animals.  
 Finally we can see that being a male animals leads to an increase of 4.6 grams.  
 As there was no evidence for sexual dimorphism, and thus the genotype effect was estimated independently of sex, then a classification tag “both sexes equally” has been assigned.  
@@ -2391,9 +2391,9 @@ Five functions are available and they focus on looking at residual behaviour.
 A residual, is the difference between the estimated dependent variable from the final model estimates and the actual measured dependent variable response. 
 A model is a good fit, when the residuals are normally distributed and there is no systematic pattern in the distribution of the residuals relative to the dependent variable. 
 
-The \textit{vectorOutput} function includes statistical tests for normality on the residuals for the wild-type, residuals for the knockout, the blups and ``rotated'' residuals (see section \ref{MMDiagnostics}). 
+The \textit{vectorOutput} function includes statistical tests for normality on the residuals for the wildtype, residuals for the knockout, the blups and ``rotated'' residuals (see section \ref{MMDiagnostics}). 
 These normality tests are provide to assist in the building automated tools for assessing model fit, 
-however when there is a lot of data (e.g. in a dataset where the wild-type arises from a high throughput program with a running baseline), 
+however when there is a lot of data (e.g. in a dataset where the wildtype arises from a high throughput program with a running baseline), 
 the statistical test can be overall sensitive to departures from normality and when the number of data points is low (e.g. in many knockout groups), the test can lack ability to detect deviations from normality. 
 
 \begin{itemize}
@@ -2421,7 +2421,7 @@ This is not concerning as we have a very large control dataset and we do have ou
 
 \item \textbf{boxplotResidualBatch} 
 
-This function allows visualisation to assist the user to assess whether the deviation in the residual is consistent across all the batches and similar in size between the wild-type and knockout line. 
+This function allows visualisation to assist the user to assess whether the deviation in the residual is consistent across all the batches and similar in size between the wildtype and knockout line. 
 For the \textit{Akt2} example, we can see that the variation in residual is consistent across all the batches and similar in size between the knockout and wildtype group.
 
 A few of the wildtype (control) dataset points have large residuals and it would be worth looking at these data points further to see why these are outliers. They do not suggest the model should be discarded because as a proportion of the dataset they are few and scattered through the dataset.
@@ -2512,12 +2512,12 @@ There are two advantages to including weight:
 If differences in animal weight lead to greater variability in the dependent variable, then by adding weight and accounting for this variability then the statistical model will be more sensitive to a genotype effect. 
 
  \item \textbf{Adjusting for weight differences between the knockout and control group.}  
-When there is a weight difference between the knockout and wild-type animals, the genotype effect is confounded by the weight effect in that there is a difference in the dependent variable but you cannot assess whether it is due to the differences in body weight of the knockout and control animals or genotype differences between the knockout and control animals. When weight is included in the equation, the genotype effect is then testing for a genotype difference after adjusting for the weight difference.
+When there is a weight difference between the knockout and wildtype animals, the genotype effect is confounded by the weight effect in that there is a difference in the dependent variable but you cannot assess whether it is due to the differences in body weight of the knockout and control animals or genotype differences between the knockout and control animals. When weight is included in the equation, the genotype effect is then testing for a genotype difference after adjusting for the weight difference.
 
 \end{enumerate}
 
 We have found that the majority of continuous phenotypic variables monitored in the WTSI Mouse Genetics Project (\href{http://www.sanger.ac.uk/resources/mouse/}{MGP}) have a relationship with body weight. 
-Looking at the \textit{Akt2} dataset we can see that there is a difference in body weight between the wild-type and knockout group and thus body weight can be a confounding factor to isolating the genotype effect.   
+Looking at the \textit{Akt2} dataset we can see that there is a difference in body weight between the wildtype and knockout group and thus body weight can be a confounding factor to isolating the genotype effect.   
 
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
@@ -2535,7 +2535,7 @@ When body weight is included, the inclusion can be seen in the final fitted mode
 With weight included the genotype effect is estimating the impact of genotype after adjusting for weight differences in the animals. 
 
 Looking at the \textit{summaryOutput} for the \textit{Akt2} example, the table shows that for each gram of body weight the lean mass increased by 0.32g.  
-When weight is included in the equation it changes the definition of the intercept from the lean mass value of a wild-type female animal to the lean mass value of a wild-type female animal of zero body weight. 
+When weight is included in the equation it changes the definition of the intercept from the lean mass value of a wildtype female animal to the lean mass value of a wildtype female animal of zero body weight. 
 This happens as the model is estimating each of these terms influences in isolation of the other terms. 
 In contrast to the earlier fitted results (section \ref{cs1_output}), when weight is included in the model, the classification tag identifies the change as “no significant change” 
 as the global genotype test is now not significant with a p-value of 0.64.  
@@ -2745,7 +2745,7 @@ We can also see in this section the assessment of the “Genotype effect" report
 
 In this example the null model would thus be $HDL \backsim Sex + Weight + Batch$. Looking at the output the “Genotype effect" is statistical significant as a 0.0001 value is reported. 
 
-The final section of the output "Model Output Summary" provides a summary table showing the estimates for each component of the final model fitted. As a regression model estimates each component of the model, by isolating how that effect influences the dependent variable (i.e. HDL) as though all other parts of the model had been fixed and isolated. From the summary output, we can see that the intercept (the expected reading for HDL) for female reference genotype (aka female wild-type animals of 0 body weight for the first batch) is 0.185. Then we can see that being male is statistical significant and leads to an increase in HDL of 0.152.  We can also see the impact of weight 0.0528\//g.  As batch was significant source of variation, and it is treated as a fixed effect we can see the estimated impact of each batch on the readings.  Finally, we can see the impact of being het male mouse where the values were lower by -0.3 units with standard error of 0.078.  The lack of significance of the female het mice can be seen in that the estimated effect is -0.01 with an error term 0.09 which is larger than the estimated effect and therefore this effect cannot be classed as significant.
+The final section of the output "Model Output Summary" provides a summary table showing the estimates for each component of the final model fitted. As a regression model estimates each component of the model, by isolating how that effect influences the dependent variable (i.e. HDL) as though all other parts of the model had been fixed and isolated. From the summary output, we can see that the intercept (the expected reading for HDL) for female reference genotype (aka female wildtype animals of 0 body weight for the first batch) is 0.185. Then we can see that being male is statistical significant and leads to an increase in HDL of 0.152.  We can also see the impact of weight 0.0528\//g.  As batch was significant source of variation, and it is treated as a fixed effect we can see the estimated impact of each batch on the readings.  Finally, we can see the impact of being het male mouse where the values were lower by -0.3 units with standard error of 0.078.  The lack of significance of the female het mice can be seen in that the estimated effect is -0.01 with an error term 0.09 which is larger than the estimated effect and therefore this effect cannot be classed as significant.
 
 \subsubsection{Assessment of raw data and distribution characteristics}
 Graph of the knockout data against the baseline controls:
@@ -2805,7 +2805,7 @@ Graph showing batch variation for the concurrent controls only:
 \subsubsection{Assessment of model fit}
 Three functions are available and they focus on looking at residual behaviour. The mixed model methodology has an additional two (\textit{qqplotRandomEffects} and \textit{qqplotRotatedResiduals}) which are not relevant to this framework as they assess the assumptions around batch when treated as a random effect. A residual, is the difference between the estimated dependent variable from the final model estimates and the actual measured dependent variable response. A model is a good fit, when the residuals are normally distributed and there is no systematic pattern in the distribution of the residuals relative to the dependent variable.
 
-The \textit{vectorOutput} function includes statistical tests for normality on the residuals for the wild-type and residuals for the knockout (see section \ref{section:vectorOutput}). These normality tests are provide to assist in the building automated tools for assessing model fit, however when there is a lot of data (e.g. in a dataset where the wild-type arises from a high throughput program with a running baseline), the statistical test can be overall sensitive to departures from normality and when the number of data points is low (e.g. in many knockout groups), the test can lack ability to detect deviations from normality.
+The \textit{vectorOutput} function includes statistical tests for normality on the residuals for the wildtype and residuals for the knockout (see section \ref{section:vectorOutput}). These normality tests are provide to assist in the building automated tools for assessing model fit, however when there is a lot of data (e.g. in a dataset where the wildtype arises from a high throughput program with a running baseline), the statistical test can be overall sensitive to departures from normality and when the number of data points is low (e.g. in many knockout groups), the test can lack ability to detect deviations from normality.
 
 \begin{itemize}
 \item \textbf{qqplotGenotype} 
@@ -2826,7 +2826,7 @@ This function assesses the normality of the residuals are assessed for each geno
 
 \item \textbf{boxplotResidualBatch} 
 
-This function allows visualisation to assist the user to assess whether the deviation in the residual is consistent across all the batches and similar in size between the wild-type and knockout line. For the \textit{Dbn1} High Density Lipoprotein example, we can see that the variation in residual is consistent across all the batches.  It is higher in the knockout dataset which is why the final fitted model did not assume equal variance.  
+This function allows visualisation to assist the user to assess whether the deviation in the residual is consistent across all the batches and similar in size between the wildtype and knockout line. For the \textit{Dbn1} High Density Lipoprotein example, we can see that the variation in residual is consistent across all the batches.  It is higher in the knockout dataset which is why the final fitted model did not assume equal variance.  
 
 \begingroup
 \fontsize{8pt}{12pt}\selectfont
@@ -3001,7 +3001,7 @@ High    3         0         3
 \endgroup 
 Example count and percentage output.  Shown are the male only results for the \textit{Akt2} lean mass example.
 \subsubsection{Understanding the maximum effect size reported}
-The effect size reported is the maximum percentage change seen in the low or high classification. For each trait level (i.e. the observed phenotype), the change in percentage effect size is seen by subtracting the percentage observed in the knockout from the wild-type. Then across the low and high levels, the maximum percentage change is selected after ignoring the direction of the change. Thus in the \textit{Akt2} example, the maximum effect size would be 47\% for the male data as the increase in classification of low ($|3-50|=47$\%) was larger than the change in the high classification ($|3-0|=3$\%). 
+The effect size reported is the maximum percentage change seen in the low or high classification. For each trait level (i.e. the observed phenotype), the change in percentage effect size is seen by subtracting the percentage observed in the knockout from the wildtype. Then across the low and high levels, the maximum percentage change is selected after ignoring the direction of the change. Thus in the \textit{Akt2} example, the maximum effect size would be 47\% for the male data as the increase in classification of low ($|3-50|=47$\%) was larger than the change in the high classification ($|3-0|=3$\%). 
 
 \subsection{PhenStat FE framework Usage Example}
 The following dataset, provided by Wellcome Trust Sanger Institute (WTSI) Mouse Genetics Project (\href{http://www.sanger.ac.uk/resources/mouse/}{MGP}) of high resolution X-ray data obtained from 
@@ -3009,7 +3009,7 @@ a study on gene knockout mice carrying the \textit{Aff3tm1a(EUCOMM)Wtsi} targete
 Data was collected on a standardized high throughput phenotyping pipeline following a multi-batch workflow, where regular control animals are collected and knockout animals of the correct age are then issued to the pipeline as they arise. 
 At WTSI, batch to batch variation has not been found to be significant for these rare event categorical variables. 
 Consequently, we ignore batch and combine data for the same genetic background when collected with the same protocol and housing and husbandry conditions. 
-This increases the sensitivity of the analysis as we have more accuracy on the estimate of the prevalence of the condition in the wild-type population.
+This increases the sensitivity of the analysis as we have more accuracy on the estimate of the prevalence of the condition in the wildtype population.
 
 \begin{table}[!h]
 \begin{center}
@@ -3019,7 +3019,7 @@ Genotype&Sex&Number Animals&Number Batches\\\hline
 \multirow{2}{*}{\textit{Aff3}\slash \textit{Aff3}}&Female&7&4\\
 			    &Male&6&4\\
 			    \hline
-\multirow{2}{*}{wild-type}&Female&446&70\\
+\multirow{2}{*}{wildtype}&Female&446&70\\
 			    &Male&451&70\\
 
 \hline  
@@ -3125,8 +3125,8 @@ Normal   363         0
 \subsubsection{Understanding the maximum effect size reported}
 \label{FE_EffectSize}
 The maximum effect size is the maximum percentage change seen for an observation type. 
-Below is a table showing an artificial example where the majority of the wild-type are normal but the abnormality is spread across multiple levels in the knockout. 
-For each trait level (i.e. the observed phenotype), the change in percentage effect size is seen by subtracting the percentage observed in the knockout from the wild-type. 
+Below is a table showing an artificial example where the majority of the wildtype are normal but the abnormality is spread across multiple levels in the knockout. 
+For each trait level (i.e. the observed phenotype), the change in percentage effect size is seen by subtracting the percentage observed in the knockout from the wildtype. 
 Then across all the observed levels, the maximum percentage change is selected after ignoring the direction of the change. 
 Thus in the example below, the maximum effect size would be 86.5\% which indicates that there has been 86.5\% change in how often a level is observed.
 
