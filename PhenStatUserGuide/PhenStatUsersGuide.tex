@@ -27,7 +27,7 @@
 \section{Introduction}
 High-throughput phenotyping generates large volumes of varied data including both categorical and continuous data. Operational and cost constraints can lead to a work-flow that precludes traditional analysis methods. Furthermore, for a high throughput environment, a robust automated statistical pipeline that alleviates manual intervention is required. 
 
-PhenStat is a package that provides statistical methods for the identification of abnormal phenotypes with an emphasize on high-throughput dataflows. The package contains dataset checks and cleaning in preparation for the analysis, four statistical frameworks for the phenodeviants identification and additional functions that help to decide the correct method for analysis. 
+PhenStat is a package that provides statistical methods for the identification of abnormal phenotypes with an emphasize on high-throughput data-flows. The package contains dataset checks and cleaning in preparation for the analysis, four statistical frameworks for the phenodeviants identification and additional functions that help to decide the correct method for analysis. 
 
 Simple explanation of statistical frameworks is given below. More details can be found in the appropriate sections of the User's Guide. 
 %For continuous data, an iterative fitting process is used to fit a regression model that is the most appropriate for the data (Mixed Model framework), whilst for categorical data, a Fisher Exact Test is implemented (Fisher Exact Test framework). In addition, the reference range method (Reference Range Plus framework) is added into the package as a conservative method of identifying phenodeviants.
@@ -1851,8 +1851,8 @@ In the Table \ref{table:07} vector output values are described.
 \#&Name&Value&Framework&Description\\\hline
 1&Method&String&MM, TF, FE, RR&Possible values: "Mixed Model/Time as Fixed Effect framework, linear mixed-effects model/generalized least squares, equation with weight/equation without weight", "Reference Range Plus framework" and "Fisher Exact Test framework".\\
 2&Dependent variable&String&MM, TF, RR, FE&Name of the dependent variable.\\
-3&Batch included&TRUE/FALSE&MM, TF&Was batch significant in MM?\\
-4&Residual variances homogeneity&TRUE/FALSE&MM, TF&Was variance equal in MM?\\
+3&Batch included&TRUE/FALSE&MM, TF&Was batch significant in the model?\\
+4&Residual variances homogeneity&TRUE/FALSE&MM, TF&Was variance equal in the model?\\
 5&Genotype contribution&Numeric&MM, TF, RR, FE&For the MM and TF it is the p-value from the test of genotype contribution.  Whilst for the FE and RR it is the p-value from either a test of one sex (if only one sex exists) or it is the output of the combined datasets.\\
 6&Genotype estimate&Numeric&MM, TF, RR, FE&Estimated coefficient that describes genotype value calculated by MM and TF or effect size estimates in FE and RR.\\
 7&Genotype standard error&Numeric&MM, TF&Standard error of the coefficient estimate for genotype.\\
@@ -3118,7 +3118,7 @@ Normal   390         1
          +/+ Aff3/Aff3
 Abnormal  83         7
 Normal   363         0
-\end{verbatim}p
+\end{verbatim}
 \endgroup 
 
 
