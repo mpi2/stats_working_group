@@ -43,7 +43,7 @@ getIMPCDataset <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NUL
     #print(url)
     tryCatch(
     {
-        df <- read.csv(url)
+        df <- read.csv(url,sep=",")
         df_trimmed <- as.data.frame(lapply(df,function (x) gsub("^\\s+|\\s+|\\n+$", "", x)))
         return (df_trimmed)
     },

@@ -15,7 +15,7 @@
 
 
 %opening
-\title{\textbf{PhenStat}: \\ statistical analysis of phenotypic data using Linear Mixed Models and Fisher Exact Test\\ \textbf{User's Guide}}
+\title{\textbf{PhenStat}: \\ statistical analysis of phenotypic data\\ \textbf{User's Guide}}
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \date{Last revised: \today}
 
@@ -538,7 +538,7 @@ An example is given below.
 \endgroup
 
 \section{Statistical Analysis}
-The PhenStat package provides four methods (frameworks) for statistical analysis: Linear Mixed Models (MM), Time as Fixed Effect (TF) and Reference Range method (RR) for continuous data, Fisher Exact Test (FE) for categorical data. For all the MM, TF, FE and RR framework, 
+The PhenStat package provides four methods (frameworks) for statistical analysis: Linear Mixed Models (MM), Time as Fixed Effect (TF) and Reference Range method (RR) for continuous data, Fisher Exact Test (FE) for categorical data. In all frameworks, 
 the statistical significance is assessed, the biological significance measured through an effect size estimate and finally the genotype effect is classified e.g. "If phenotype is significant - both sexes equally".  
 
 
@@ -975,11 +975,13 @@ Genotype3    1.308597 0.4792220 238  2.730669  6.793528e-03
 \label{section:BiologicalEffect}
 The biological effect is reported in two formats: estimate and a percentage change. 
 
-The first measure is on a scale specific to that variable; whilst the second is relative to the wildtype signal and is as scaled comparable across variables. 
+The first measure is on a scale specific to that variable; whilst the second is relative to the wildtype signal and thus is scaled comparable across variables. 
 
 The estimate is in the scale of the variable and is the estimated change arising from being a knockout animal relative to the reference data. In the presence of sexual dimorphism it is estimated separately for the male and female knockout animals. In the \textit{summaryOutput} view these estimates are reported in the ANOVA table. In the \textit{vectorOutput} view these values are captured and reported as either Genotype estimate or Sex FvKO estimate and Sex MvKO estimate depending on whether sexual dimorphism was found to be significant.
 
-The percentage change is the ratio of the genotype effect for a sex relative to the wildtype signal for that variable for that sex. When weight is not included in the model, it is entirely estimated from the coefficients returned from the model. When weight is included in the model, then the estimated genotype effect is reported relative to the average for that sex from the wildtype data. This distinction arises, because when weight is included the model the intercept is an estimate of the wildtype female animal with zero body weight. The table below shows the various models and how the percentage change is estimated such the genotype effect is relative to the wildtype signal for that sex.  It is shown in the \textit{summaryOutput} and reported in the \textit{vectorOutput} as "Genotype percentage change Male" and/or "Genotype percentage change Female".  
+The percentage change is the ratio of the genotype effect for a sex relative to the wildtype signal for that variable for that sex. When weight is not included in the model, it is entirely estimated from the coefficients returned from the model. When weight is included in the model, then the estimated genotype effect is reported relative to the average for that sex from the wildtype data. This distinction arises, because when weight is included the model the intercept is an estimate of the wildtype female animal with zero body weight.
+
+The Figures \ref{fig:05_be1} and \ref{fig:05_be2} shows the various models and how the percentage change is estimated such the genotype effect is relative to the wildtype signal for that sex. The calculated values are in the \textit{summaryOutput} and reported in the \textit{vectorOutput} as "Genotype percentage change Male" and/or "Genotype percentage change Female".  
 
 See Figures \ref{fig:05_be1} and \ref{fig:05_be2} for the percentage change calculation details.
 
@@ -1045,7 +1047,7 @@ Genotype\:percentage\:change\:Female = (-1.86/18.44)*100=-10.1\%
 \]
 
 
-If the weight is included the results are different:
+If the weight is included in the fitted model the results are different:
 \begingroup
 \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -1112,7 +1114,7 @@ depVariable \backsim Genotype + Sex +
 Genotype*Sex + Weight + Batch\tag{Eq4}\label{Eq2TF}
 \]
 
-The same top-down approach can be used here as in Mixed Models framework for the model optimization process. In case of batch insignificance Mixed Model formula is the same as Time Fixed Effect framework's formula.
+The same top-down approach can be used here as in Mixed Models framework for the model optimization process. When batch is insignificant then the Mixed Model formula is the same as Time Fixed Effect framework's formula.
 
 As in the case of Mixed Model framework the final model construct is influenced by a number of criteria. The only one difference is that there are no random effects in the model. 
 
@@ -1190,6 +1192,25 @@ Number of batch levels left: 3
 Records removed (reference genotype): 92%
 Records removed (test genotype): 0%
 ...
+
+result <- testDataset(test_TF,depVariable="Cholesterol",method="TF")
+
+Information:
+Dependent variable: 'Cholesterol'.
+
+Information:
+Perform all TF framework stages: startTFModel and finalTFModel.
+
+Information:
+Method: Time as Fixed Effect framework.
+
+Information:
+Equation: 'withWeight'.
+
+Information:
+Calculated values for model effects are: keepBatch=TRUE, keepEqualVariance=FALSE, keepWeight=TRUE, 
+keepSex=FALSE, keepInteraction=TRUE.
+
 \end{verbatim}
 \endgroup
 
@@ -1219,18 +1240,27 @@ Similarly to the MM framework there are two functions in the PhenStat package th
 By default, both functions will be called from \textit{testDataset} manager sequentially.
 
 \subsubsection{Diagnostics}
-The vectorOutput function includes statistical tests for normality on the residuals for the wildtype and residuals for the knockout (see section \ref{MMDiagnostics}). These normality tests are provide to assist in the building automated tools for assessing model fit, however when there is a lot of data (e.g. in a dataset where the wildtype arises from a high throughput program with a running baseline), the statistical test can be overall sensitive to departures from normality and when the number of data points is low (e.g. in many knockout groups), the test can lack ability to detect deviations from normality.
+The vectorOutput function includes statistical tests for normality on the residuals for the wildtype and residuals for the knockout (see section \ref{MMDiagnostics}). These normality tests are provide to assist in the building automated tools for assessing model fit, however when there is a lot of data, the statistical test can be overall sensitive to departures from normality and when the number of data points is low, the test can lack ability to detect deviations from normality.
 
 The normality tests are driven by the function \textit{testFinalModel} and it returns a list of the following values:
-\begin{itemize}
+\begin{enumerate}
 \item Reference genotype value.
 \item Normality test result (p-value) for the reference genotype's residuals.
 \item Test genotype value.
 \item Normality test result (p-value) for the test genotype's residuals.
 \item NA
 \item NA
-\end{itemize}
+\end{enumerate}
 
+For example:
+\begingroup
+\fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> testFinalModel(result)
+[1] "WT"                "0.803172853943264" "het"              
+[4] "0.788809875034823" NA                  NA                 
+\end{verbatim}
+\endgroup
 Graphical methods are the recommended method for assessing model fits. Model fit quality can also be assessed graphically using \textit{qqplotGenotype},  \textit{boxplotResidualBatch} and  \textit{plotResidualPredicted} (see case study example \ref{cs_tf} for example usage).
 
 \subsubsection{Classification Tag}
@@ -1248,7 +1278,7 @@ The \textit{classificationTag} function returns a classification tag to assign a
 When the function is called through \textit{vectorOutput} function, the tag will be proceeded by the phrase “If phenotype is significant", meaning that globally the test has not assessed whether there was a statistical significant difference just that if there was this would be the classification if it was statistically significant. When the function is called through \textit{summaryOutput} function or directly there is an argument \textit{phenotypeThreshold} (default value is 0.01), which sets the significance threshold of whether there is a phenotype of interest. If globally, the analysis indicates there is a statistically significant phenotype then the classification tag is appended to the phrase “With phenotype threshold value XXX".
 
 \subsubsection{Reporting Biological Effect}
-Within Time Fixed Effect framework the biological effect is also reported in two formats: estimate and a percentage change. The meaning of the effects is the same as in Mixed Model framework. Please see section \ref{section:BiologicalEffect} for details. 
+Within Time Fixed Effect framework the biological effect is also reported in two formats: estimate and a percentage change. The meaning of the calculated values is the same as in Mixed Model framework. Please see section \ref{section:BiologicalEffect} for details. 
 \subsection{Fisher Exact Test Framework}
 \label{section:FET}
 Fisher Exact Test is a standard framework for categorical data which compares data proportions and calculates the percentage change in classification. 
@@ -1429,7 +1459,7 @@ Other    0         0
 \endgroup
 \subsubsection{Classification Tag}
 We've implemented the function \textit{classificationTag} also for the FE framework. 
-However, in the case of Fisher Exact Test it is not sexual dimorphism classification, but rather the overall estimation of the signals significance.
+However, in the case of Fisher Exact Test it is not sexual dimorphism classification, but rather the overall estimation of the signals significance across the different datasets.
 
 Having the Fisher Exact Test results for three datasets: males only, females only, all (combined set) the p-values are compared with \textit{phenotypeThreshold} argument which default value is 0.01. For each one set the function calculates is genotype significant or not (significant if p-value is less than \textit{phenotypeThreshold}) and then assigns classification tag. In the Table \ref{table:06}, the possible classification tags are presented.  
 
@@ -1483,7 +1513,7 @@ The \textit{RR\_controlPointsThreshold} argument (defaults to 60)  determines th
 
 Data is analysed in three ways: 1) male only, 2) female only, and 3)  all (combined dataset). In the all classification, the classifications of normal, low, and high are combined in the count table but please note the classification to normal, low, or high are run on a sex specific basis.  In the situation where only one sex is present the output is returned in the all category.
 
-When we are comparing normal vs low and high classification simultaneously there is a potential problem of having a highly significant p-value yet an ES that is low. This can arise when there is movement away from the normal classification to both a low and high classification at the same time. As people want to use one filter this was a problem. 
+If we had compared normal vs low and high classification simultaneously there would have been a potential problem of having a highly significant p-value yet an ES that is low. This can arise when there is movement away from the normal classification to both a low and high classification at the same time. As people want to use one filter this was a problem. 
 
 Our solution is to compare movement towards low separately from movement towards high classifications. As a result an adjustment for the multiple testing is needed (we use simple multiplication of p-value by two) since there are two tests performed: low vs normal/high (low classification) and high vs normal/low (high classification).  
 
@@ -1566,7 +1596,7 @@ High    15         0
 \endgroup 
 
 \subsubsection{Classification Tag}
-We've implemented the function \textit{classificationTag} also for the RR framework with the same restrictions as for Fisher Exact Test -- it is not sexual dimorphism classification, but rather the overall estimation of the signals significance.
+We've also implemented the function \textit{classificationTag}  for the RR framework with the same restrictions as for Fisher Exact Test -- it is not sexual dimorphism classification, but rather the overall estimation of the signals significance across various datasets.
 
 The table of possible classification tags is very similar to the Fisher Exact Test classification table (see Table \ref{table:06}) with one additional element: next to each one dataset name (males only, females only, combined) we added the classification movement value. The possible values are "Low, "High" and "NA". "NA" value is assigned when there are both low and high classifications significant for the particular subset.
 
@@ -1575,7 +1605,7 @@ For example, if in all three subsets the genotype is significant and movement is
 \section{Method Recommendation for Dataset}
 \label{section:Recommendation}
 
-Sometimes the analysis path to follow is obvious. For example, the variable "head shape" with options "Normal" or "Abnormal" is clearly categorical and therefore Fisher Exact Test (FE) framework appropriate. At times, it is however less obvious. An example, could be the variable "number of vertebrates". Initial as this is a number this suggest continuous methods (e.g. MM, TF or RR)  however on inspection there is no variation and in fact this variable is best treated as categorical. Based on our experience, we have prepared a function called \textit{recommendMethod} which explores the data and makes recommendations on analysis that can be conducted. Please note, at times multiple analysis paths could be suitable. 
+Sometimes the analysis path to follow is obvious. For example, the variable "head shape" with options "Normal" or "Abnormal" is clearly categorical and therefore the Fisher Exact Test (FE) framework appropriate. At times, it is however less obvious. An example, could be the variable "number of vertebrates". Initial as this is a number this suggest continuous methods (e.g. MM, TF or RR)  however on inspection there is no variation and in fact this variable is best treated as categorical. Based on our experience, we have prepared a function called \textit{recommendMethod} which explores the data and makes recommendations on analysis that can be conducted. Please note, at times multiple analysis paths could be suitable. 
 
 
 \begingroup
@@ -1857,7 +1887,7 @@ In the Table \ref{table:07} vector output values are described.
 6&Genotype estimate&Numeric&MM, TF, RR, FE&Estimated coefficient that describes genotype value calculated by MM and TF or effect size estimates in FE and RR.\\
 7&Genotype standard error&Numeric&MM, TF&Standard error of the coefficient estimate for genotype.\\
 8&Genotype p-val&Numeric&MM, TF, RR, FE&Genotype p-value that represents the probability the genotype is NOT relevant. p-value for combined set in FE and RR. In case of RR framework there are two values reported: low classification p-value, high classification p-value.\\
-9&Genotype percentage change&Numeric&MM, TF&The ratio of the genotype effect for a sex relative to the wildtype signal for that variable for that sex. Format: "Female: <value>, Male: <value>". If sex is not present in the dataset value is set to "NA".\\
+9&Genotype percentage change&Numeric&MM, TF&The ratio of the genotype effect for a sex relative to the wildtype signal for that variable for that sex. Format: "Female: \textit{value}, Male: \textit{value}". If sex is not present in the dataset value is set to "NA".\\
 10&Sex estimate&Numeric&MM, TF&Estimated coefficient that describes sex value calculated.\\
 11&Sex standard error&Numeric&MM, TF&Standard error of the coefficient estimate for sex.\\
 12&Sex p-val&Numeric&MM, TF&Sex p-value that represents the probability the sex is NOT relevant.\\
@@ -2128,15 +2158,12 @@ The example of bar plot is shown in Fig. \ref{fig:06}. This graph allows a visua
 
 \subsection{Graphics for MM and TF frameworks}
 There are many graphic functions for the MM framework results. They can be divided into two types: dataset based graphs and results based graphs.
-There are four functions in the dataset based graphs category:
+There are three functions in the dataset based graphs category:
 \begin{itemize}
 \item \textit{boxplotSexGenotype} creates a box plot split by sex and genotype.
-\item \textit{boxplotSexGenotypeBatch} creates a box plot split by sex, genotype and batch if batch data present in the dataset. Please note the batches are not ordered with time but allow assessment of how the treatment groups lie relative to the normal control variation. The test genotype data is coloured in red whilst reference genotype data is in black. 
 \item \textit{scatterplotSexGenotypeBatch} creates a scatter plot split by sex, genotype and batch if batch data present in the dataset. Please note the batches are not ordered with time but allow assessment of how the treatment groups lie relative to the normal control variation.
 \item \textit{scatterplotGenotypeWeight} creates a scatter plot body weight versus dependent variable. Both a regression line and a loess line (locally weighted line) is fitted for each genotype. 
 \end{itemize}
-
-We would like to suggest to use \textit{scatterplotGenotypeBatch} function instead of textit{boxplotSexGenotypeBatch} which remains in the package for compatibility with previous package version reasons and might disappear in the future. 
 
 \begingroup
 \fontsize{8pt}{12pt}\selectfont
@@ -2236,7 +2263,7 @@ The example of box plot with residue versus batch split by genotype is shown in 
 The following dataset, provided by Wellcome Trust Sanger Institute (WTSI) Mouse Genetics Project (\href{http://www.sanger.ac.uk/resources/mouse/}{MGP}) 
 is Dual-energy X-ray absorptiometry data obtained for a study on gene knockout mice carrying the \textit{Akt2$\textless$tm1Wcs$\textgreater$} targeted allele which were created by blastocyst 
 injection of targeted ES cells, and bred on the 129S5\//SvEvBrd genetic background.  
-Data was collected doing a standardized high throughput phenotyping pipeline following a multi-batch workflow, where regular control animals are collected and knockout animals of the correct age are issued to the pipeline as they arise.  
+Data were collected doing a standardized high throughput phenotyping pipeline following a multi-batch workflow, where regular control animals are collected and knockout animals of the correct age are issued to the pipeline as they arise.  
 
 \begin{table}[!h]
 \begin{center}
@@ -2277,7 +2304,7 @@ We can then explore the data and fitted results using the visualisation and outp
 
 
 
-\subsubsection{Exploring and understanding the output}
+\subsubsection{Exploring and understanding the summary output}
 \label{cs1_output}
 The first two lines of the \textit{summaryOutput} confirm the statistical framework used and the dependent variable studied.   
 The next section of the output clarifies the final fitted model details. As the MM framework is an optimisation process exploring the data to fit the best model to the data, 
@@ -2693,10 +2720,10 @@ Records removed (test genotype): 0%
 
 The cleaning of the data is reported in the output of the \textit{TFDataset} function.  First the output shows the number of data points by batch for each sex and genotype combination.  For data to be retained for a date, there needs to be both test and ref genotype data for a sex. Summary statistics on the cleaning impact are then provided following the table of data.  
 
-\subsubsection{Exploring and understanding the output}
+\subsubsection{Exploring and understanding the summary output}
 The first two lines of the \textit{summaryOutput} confirm the statistical framework used and the dependent variable studied. The next section of the output clarifies the final fitted model details. As the TF framework is an optimisation process exploring the data to fit the best model to the data, the final fitted model details will vary. We can see that batch variation, the variation in readings between different assay dates, were found to be statistical significant and hence a model including batch as a fixed effect was fitted.  The next line of output, “was variance equal?", indicating whether the model assumes equal variance between genotype groups or unequal. In this case, the variance was not found to be equal and therefore the final model estimated the variance for each group separately.
 
-Furthermore, we can see that there was statistical evidence of sexual dimorphism and therefore the final model would estimate the genotype effect for each sex separately. The next stage of the output, classification tag, details the classification of the effect seen as discussed in section \ref{TF_classificationTag} and in this case the genotype effect was specific to the males at the 0.01 threshold. 
+Furthermore, we can see that there was statistical evidence of sexual dimorphism and therefore the final model would estimate the genotype effect for each sex separately. The next stage of the output, classification tag, details the classification of the effect seen as discussed in section \ref{TF_classificationTag} and in this case the genotype effect was specific to the males at the default (0.01) threshold. 
 
 \begingroup
 \fontsize{8pt}{12pt}\selectfont

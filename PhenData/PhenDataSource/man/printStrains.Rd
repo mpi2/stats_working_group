@@ -2,11 +2,12 @@
 \alias{printStrains}
 \title{Method "printStrains"}
 \description{
-    Prints out the genetic background (MGI IDs and strain name) from which the knockout mice were derived 
-    for a specific combination of pipeline, procedure and paramater for a phenotyping center.
+    Prints out the genetic background (MGI IDs and strain name) from which the 
+    knockout mice were derived for a specific combination of pipeline, 
+    procedure and paramater for a phenotyping center.
 }
 \usage{
-    printStrains(PhenCenterName=NULL,PipelineID=NULL,ProcedureID=NULL,ParameterID=NULL)
+printStrains(PhenCenterName=NULL,PipelineID=NULL,ProcedureID=NULL,ParameterID=NULL)
 }
 \arguments{
     \item{PhenCenterName}{IMPC phenotyping center; mandatory argument}
@@ -14,7 +15,7 @@
     \item{ProcedureID}{IMPC procedure ID; mandatory argument}
     \item{ParameterID}{IMPC parameter ID; mandatory argument}
 }
-
+\value{Function doesn't return anything but prints out the list of strains.}
 \author{Natalja Kurbatova, Jeremy Mason}
 \examples{
     printStrains("WTSI","MGP_001","IMPC_CBC_001","IMPC_CBC_003_001")

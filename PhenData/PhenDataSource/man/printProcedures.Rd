@@ -12,7 +12,7 @@
     \item{PhenCenterName}{IMPC phenotyping center; mandatory argument}
     \item{PipelineID}{IMPC pipeline ID; mandatory argument}
 }
-
+\value{Function doesn't return anything but prints out the list of procedures.}
 \author{Natalja Kurbatova, Jeremy Mason}
 \examples{
     printProcedures("WTSI","MGP_001")

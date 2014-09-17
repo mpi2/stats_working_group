@@ -2,7 +2,8 @@
 \alias{printParameters}
 \title{Method "printParameters"}
 \description{
-    Prints out the list of parameters (IMPReSS IDs and names) that are measured within specified procedure 
+    Prints out the list of parameters (IMPReSS IDs and names) that are 
+    measured within specified procedure 
     for a pipeline run by phenotyping center.
 }
 \usage{
@@ -13,7 +14,7 @@
     \item{PipelineID}{IMPC pipeline ID; mandatory argument}
     \item{ProcedureID}{IMPC procedure ID; mandatory argument}
 }
-
+\value{Function doesn't return anything but prints out the list of parameters.}
 \author{Natalja Kurbatova, Jeremy Mason}
 \examples{
     printParameters("WTSI","MGP_001","IMPC_CBC_001")

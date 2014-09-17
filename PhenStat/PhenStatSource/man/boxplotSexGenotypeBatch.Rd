@@ -2,7 +2,7 @@
 \alias{boxplotSexGenotypeBatch}
 \title{Method "boxplotSexGenotypeBatch"}
 \description{
-    NB! Deprecated
+    NB! Function is deprecated, please use scatterplotSexGenotypeBatch function instead.
     Graph function for the phenotypic dataset. Creates a box plot split by sex, genotype and batch. 
     
     Note: the batches are not ordered with time but allow assessment of how the treatment groups lie relative to the normal control variation.

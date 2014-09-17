@@ -8,11 +8,13 @@
     printPhenCenters(excludeLegacyPipelines=TRUE)
 }
 \arguments{
-    \item{excludeLegacyPipelines}{flag: "FALSE" value to print all IMPC phenotyping centers that run all kind of 
-        pipelines including legacy pipelines; "TRUE" value (default) to print IMPC phenotyping centers 
-        excluding centers that run only legacy pipelines}
+    \item{excludeLegacyPipelines}{flag: "FALSE" value to print all IMPC 
+    phenotyping centers that run all kind of pipelines including legacy 
+    pipelines; "TRUE" value (default) to print IMPC phenotyping centers 
+    excluding centers that run only legacy pipelines}
 }
-
+\value{Function doesn't return anything but prints out the list of 
+phenotyping centers.}
 \author{Natalja Kurbatova, Jeremy Mason}
 \examples{
     printPhenCenters()
