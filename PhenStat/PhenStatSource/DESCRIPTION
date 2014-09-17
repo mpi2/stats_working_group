@@ -8,7 +8,7 @@ Maintainer: Natasha Karp <nk3@sanger.ac.uk>
 Depends: R (>= 2.3.0)
 Imports: methods, car, nlme, nortest, vcd, limma
 Suggests: RUnit, BiocGenerics
-Description: Package contains methods for statistical analysis of phenotypic data such as Mixed Models and Fisher Exact Test. 
+Description: Package contains methods for statistical analysis of phenotypic data.
 License: file LICENSE
 
 
