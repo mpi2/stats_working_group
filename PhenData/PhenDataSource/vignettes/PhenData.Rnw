@@ -24,7 +24,8 @@ produced by the International Mouse
 Phenotyping Consortium (IMPC).  For more information about the IMPC project, 
 please visit \url{http://www.mousephenotype.org}.   
 \newline\newline
-The IMPC implements a standardized set of phenotyping protocols to generate data. 
+The IMPC implements a standardized set of phenotyping protocols to generate 
+data. 
 These standardized protocols are defined in the International Mouse Phenotyping 
 Resource of Standardised Screens,
 IMPReSS (\url{http://www.mousephenotype.org/impress}).  
@@ -54,7 +55,8 @@ There are "print" and "get" options for each one function in this group.
 function returns the list of IMPC IDs. There are following objects in IMPC 
 database that can be obtained through appropriate functions:
 \begin{itemize}
-\item IMPC \textbf{phenotyping centers}: \textit{getPhenCenters}, \textit{printPhenCenters}.
+\item IMPC \textbf{phenotyping centers}: \textit{getPhenCenters}, 
+\textit{printPhenCenters}.
 <<R.hide, results=hide, echo=TRUE, eval=TRUE>>=
 library(PhenData)
 getPhenCenters()
@@ -92,7 +94,8 @@ printParameters("WTSI","MGP_001","IMPC_CBC_001")
 @
 \item Genetic backgrounds or, in other words, \textbf{strains} from which 
 the knockout mice were derived for a specific combination of pipeline, procedure
-and parameter for a phenotyping center: \textit{getStrains}, \textit{printStrains}.
+and parameter for a phenotyping center: \textit{getStrains}, 
+\textit{printStrains}.
  Strain's ID is MGI (\url{http://www.informatics.jax.org/}) ID or temporary ID 
  if the MGI is not assigned yet.  
 There are following arguments for both functions: \textit{PhenCenterName},

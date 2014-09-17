@@ -7,20 +7,27 @@
         
         \itemize{
             
-            \item Two new statistical methods implemented RR (Reference Range Plus) and TF (Time Fixed Effect) that can
-            be called from \code{testDataset()} function with argument method set to RR and TF correspondingly.
+            \item Two new statistical methods implemented RR 
+            (Reference Range Plus) and TF (Time Fixed Effect) that can
+            be called from \code{testDataset()} function with argument 
+            method set to RR and TF correspondingly.
             
-            \item Additional measure of biological effect added: Percentage Change to \code{summaryOutput()} 
+            \item Additional measure of biological effect added: 
+            Percentage Change to \code{summaryOutput()} 
             and \code{vectorOutput} functions.
             
-            \item New function is added to suggest analysis paths for dataset: \code{recommendMethod()}
+            \item New function is added to suggest analysis paths for dataset: 
+            \code{recommendMethod()}
             
             \item Function to implement the RR method: \code{RRTest()}.
             
-            \item Functions to implement the TF method: \code{TFDataset()} creates dataset suitanle for TF, 
-            \code{startTFModel()}, \code{finalTFModel} create model and fit it.
+            \item Functions to implement the TF method: \code{TFDataset()} 
+            creates dataset suitable for TF, 
+            \code{startTFModel()}, \code{finalTFModel} creates model and 
+            fits it.
             
-            \item Changes in function \code{summaryOutput()} - additional information and clearer layout.
+            \item Changes in function \code{summaryOutput()} - additional 
+            information and clearer layout.
             
         }
     }
@@ -29,10 +36,13 @@
         
         \itemize{
             
-            \item The \code{vectorOutput()} had additional elements which have increased its length. 
-            \item The function \code{boxplotSexGenotypeBatch()} has been deprecated and replace with 
+            \item The \code{vectorOutput()} had additional elements which have 
+            increased its length. 
+            \item The function \code{boxplotSexGenotypeBatch()} has been 
+            deprecated and replace with 
             \code{scatterplotSexGenotypeBatch()}. 
-            \item Additional argument (phenotypeThreshold) with default value 0.01 has been added 
+            \item Additional argument (phenotypeThreshold) with default 
+            value 0.01 has been added 
             to the \code{summaryOutput()} function
             
         }
@@ -43,9 +53,10 @@
         \itemize{
             
             \item Number of critical bugs fixed. These are detailed at 
-            \url{https://github.com/mpi2/stats_working_group/issues?q=is%3Aissue+is%3Aclosed} 
+\url{https://github.com/mpi2/stats_working_group/issues?q=is%3Aissue+is%3Aclosed} 
             GitHub software tracking tools.
             
         }
+    }
     }
 }

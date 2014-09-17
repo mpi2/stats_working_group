@@ -471,7 +471,7 @@ columnChecks <- function(dataset, columnName, dataPointsThreshold=4){
 }
 
 ##------------------------------------------------------------------------------
-decisionTree <- function(phenList=NULL, depVariable=NULL, 
+recommendMethod <- function(phenList=NULL, depVariable=NULL, 
         outputMessages=TRUE)
 {
     

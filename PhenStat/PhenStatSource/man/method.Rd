@@ -10,8 +10,7 @@
 \arguments{
     \item{x}{an object of class \code{PhenTestResult}}
 }
-\value{
-    Character describing the method used
+\value{Character describing the method used
 }
 \author{Natalja Kurbatova}
 \examples{

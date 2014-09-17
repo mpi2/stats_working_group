@@ -2,7 +2,8 @@
 \alias{as.matrix.PhenList}
 \title{as.matrix function}
 \description{
-    Turn a phenotypic data object into a numeric matrix by extracting the dataset or model output values.
+    Turn a phenotypic data object into a numeric matrix by extracting the 
+    dataset or model output values.
 }
 \usage{
     \method{as.matrix}{PhenList}(x,\dots)
@@ -14,11 +15,10 @@
 \details{
     This method extracts the matrix of phenotypic data.
     
-    This involves loss of information, so the original data object is not recoverable.
+    This involves loss of information, so the original data object is not 
+    recoverable.
 }
-\value{
-    A numeric matrix.
-}
+\value{A numeric matrix.}
 \author{Natalja Kurbatova}
 \seealso{
     \code{\link{as.matrix}} in the base package.

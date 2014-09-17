@@ -5,22 +5,30 @@
 
 \title{Class "PhenTestResult"}
 
-\description{A list-based S4 class for storing of model fitting results and other information like dependent variable, method used to build a model, etc.
-    Helps to support operations needed for model fitting process and modelling/testing results storage. 
-    In the package PhenTestResult object is created by function \code{\link{testDataset}} which in turn calls internal function \code{\link{PhenTestResult}}.}
+\description{A list-based S4 class for storing of model fitting results and 
+other information like dependent variable, method used to build a model, etc.
+    Helps to support operations needed for model fitting process and
+    modelling/testing results storage. 
+    In the package PhenTestResult object is created by function 
+    \code{\link{testDataset}} which in turn calls internal function 
+    \code{\link{PhenTestResult}}.}
 
 \section{Explore PhenTestResult object}{
     PhenTestResults object instance contains the following sections:
     
-    1. "model.dataset" contains cleaned and checked dataset that was used for the modelling/testing:
+    1. "model.dataset" contains cleaned and checked dataset that was used for 
+    the modelling/testing:
     
     \code{phenTestResult$model.dataset}
     
-    2. "depVariable" contains dependent variable that was tested: \code{phenTestResult$depVariable}
+    2. "depVariable" contains dependent variable that was tested: 
+    \code{phenTestResult$depVariable}
     
-    3. "method" contains method name that was used for modelling/testing: \code{phenTestResult$method}
+    3. "method" contains method name that was used for modelling/testing: 
+    \code{phenTestResult$method}
     
-    4. "equation" is specific for the Mixed Model framework and contains equation that was used for modelling ("withWeight" or "withoutWeight"):
+    4. "equation" is specific for the Mixed Model framework and contains 
+    equation that was used for modelling ("withWeight" or "withoutWeight"):
     
     \code{phenTestResult$equation}
     
@@ -28,10 +36,13 @@
     
     \code{phenTestResult$pThreshold}
     
-    6. "numberSexes" contains the number of sexes in the dataset: \code{phenTestResult$numberSexes}
+    6. "numberSexes" contains the number of sexes in the dataset: 
+    \code{phenTestResult$numberSexes}
     
     
-    Modelling/testing results are stored in the sections "model.output", "model.formula" and "model.effect". The last two are specific for Mixed Model framework.
+    Modelling/testing results are stored in the sections "model.output", 
+    "model.formula" and "model.effect". The last two are specific for 
+    Mixed Model framework.
     
     The contents of the result sections depend on framework that was used.
     
@@ -46,31 +57,39 @@
     
     4. Sex effect significance: \code{phenTestResult$model.effect.interaction}     
     
-    5. Evidence of sex effect (p-value): \code{phenTestResult$model.output.interaction}
+    5. Evidence of sex effect (p-value): 
+    \code{phenTestResult$model.output.interaction}
     
     6. Evidence of genotype effect (p-value): 
     \code{phenTestResult$model.output.genotype.nulltest.pVal}
     
-    7. Formula for the final genotype model: \code{phenTestResult$model.formula.genotype}
+    7. Formula for the final genotype model: 
+    \code{phenTestResult$model.formula.genotype}
     
-    8. Formula for the final null model: \code{phenTestResult$model.formula.null}
+    8. Formula for the final null model: 
+    \code{phenTestResult$model.formula.null}
     
     9. Model fitting output: \code{phenTestResult$model.output}
     
-    10. Model fitting summary: \code{summary(phenTestResult$model.output)$tTable}
+    10. Model fitting summary: 
+    \code{summary(phenTestResult$model.output)$tTable}
     
     
     The results of Fisher Exact Test framework.
     
-    Fisher Exact Test framework output contains matrices, statistics about matrices and Fisher Exact Tests results.
+    Fisher Exact Test framework output contains matrices, statistics 
+    about matrices and Fisher Exact Tests results.
     
     1. Count matrices.
     
-        1.1 Count matrix for combined dataset: \code{phenTestResult$model.output$count_matrix_all}
+        1.1 Count matrix for combined dataset: 
+        \code{phenTestResult$model.output$count_matrix_all}
     
-        1.2 Count matrix for males only dataset: \code{phenTestResult$model.output$count_matrix_male}
+        1.2 Count matrix for males only dataset: 
+        \code{phenTestResult$model.output$count_matrix_male}
     
-        1.3 Count matrix for female only dataset: \code{phenTestResult$model.output$count_matrix_female}
+        1.3 Count matrix for female only dataset: 
+        \code{phenTestResult$model.output$count_matrix_female}
     
     2. Percentage matrices.
     
@@ -116,12 +135,13 @@
     
         5.6 p-value for females only dataset: \code{phenTestResult$model.output$female$p.value}
 }
-
+\value{PhenTestResult class}
 \references{
     Karp N, Melvin D, Sanger Mouse Genetics Project, Mott R (2012): Robust and Sensitive Analysis of Mouse Knockout Phenotypes. \emph{PLoS ONE} \bold{7}(12): e52410. doi:10.1371/journal.pone.0052410
     
     West B, Welch K, Galecki A (2007): Linear Mixed Models: A practical guide using statistical software  \emph{New York: Chapman & Hall/CRC} 353 p.
 }
+
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 
 \seealso{\code{\link{FisherExactTest}}, \code{\link{startModel}}, \code{\link{finalModel}} and \code{\link{PhenTestResult}}}  

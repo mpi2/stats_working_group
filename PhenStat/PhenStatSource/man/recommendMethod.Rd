@@ -1,14 +1,14 @@
-\name{TFDataset}
-\alias{TFDataset}
-\title{Method "TFDataset"}
-\description{  
-    Removes of all non-concurrent batches from the dataset. 
-    Returns dataset suitable for TF framework or original dataset if data 
-    removal was not successful. 
+\name{recommendMethod}
+\alias{recommendMethod}
+\title{Method "recommendMethod"}
+\description{     
+   Checks the dependent variable and dataset to make choose the 
+   appropriate statistical method. 
+   Returns the method or the list of methods that are appropriate for 
+   statistical analysis. 
 }    
 \usage{
-    TFDataset(phenList, depVariable, outputMessages=TRUE, 
-    forDecisionTree = FALSE)
+    recommendMethod(phenList=NULL, depVariable=NULL, outputMessages=TRUE)
 }
 \arguments{
     \item{phenList}{instance of the \code{\linkS4class{PhenList}} class; 
@@ -17,14 +17,10 @@
     interest; mandatory argument}
     \item{outputMessages}{flag: "FALSE" value to suppress output messages; 
     "TRUE" value to show output messages; 
-        default value TRUE}   
-    \item{forDecisionTree}{flag: "FALSE" value for normal procedure; 
-        "TRUE" value to indicate that is called form decisionTree function; 
-        default value FALSE}      
+        default value TRUE}        
 }
-\value{
-    Returns dataset suitable for TF framework or original dataset if data 
-    removal was not successful. 
+\value{Returns the method or the list of methods that are appropriate for 
+    statistical analysis.
 }
 
 \references{
@@ -43,5 +39,5 @@
     file <- system.file("extdata", "test1.csv", package="PhenStat")
     test <- PhenList(dataset=read.csv(file),
             testGenotype="Sparc/Sparc")
-    test2 <- TFDataset(test,"Lean.Mass")
+    recommendMethod(test,"Lean.Mass")
 }
