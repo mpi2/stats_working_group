@@ -19,7 +19,7 @@ combination of filters has been selected.
             
             \item The data retrieved from PhenData can be directly used by PhenStat -- 
             an R package that encapsulates the IMPC statistical pipeline, 
-            available at \url{http://www.bioconductor.org/packages/release/bioc/html/PhenStat.html}).
+            available at \url{http://www.bioconductor.org/packages/release/bioc/html/PhenStat.html}.
             
         }
     }
