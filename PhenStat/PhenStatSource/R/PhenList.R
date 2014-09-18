@@ -158,12 +158,18 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
     
     
     ## Clean the empty records  NB - after renaming/cleaning !
-    if ('Sex' %in% colnames(dataset))
-    dataset<-dataset[dataset$Sex!="",]
-    if ('Genotype' %in% colnames(dataset))
-    dataset<-dataset[dataset$Genotype!="",]
-    if ('Batch' %in% colnames(dataset))
-    dataset<-dataset[dataset$Batch!="",]
+    if ('Sex' %in% colnames(dataset)){
+            dataset<-dataset[dataset$Sex!="",]
+            dataset<-dataset[!is.na(dataset$Sex),]
+    }
+    if ('Genotype' %in% colnames(dataset)){
+            dataset<-dataset[dataset$Genotype!="",]
+            dataset<-dataset[!is.na(dataset$Genotype),]
+    }
+    if ('Batch' %in% colnames(dataset)){
+        dataset<-dataset[dataset$Batch!="",]
+        dataset<-dataset[!is.na(dataset$Batch),]
+    }
 
     
     ## Renew levels
@@ -446,7 +452,8 @@ checkDataset <- function(dataset, testGenotype, refGenotype="+/+",
                 message <- paste(message,message_dp,sep="")
                 
                 ## Check for reference genotype records
-                if (sum(grepl(refGenotype, Genotype_levels, fixed=TRUE))==1)
+                #if (sum(grepl(refGenotype, Genotype_levels, fixed=TRUE))==1)
+                if (refGenotype %in% Genotype_levels)
                 dataset$Genotype=relevel(dataset$Genotype, ref=refGenotype)
                 else {
                     pass <- FALSE
@@ -456,7 +463,8 @@ checkDataset <- function(dataset, testGenotype, refGenotype="+/+",
                 }
                 
                 ## Check for test genotype records
-                if (!(sum(grepl(testGenotype, Genotype_levels, fixed=TRUE))==1)){
+                #if (!(sum(grepl(testGenotype, Genotype_levels, fixed=TRUE))==1)){
+                if (!(testGenotype %in% Genotype_levels)){                
                     pass <- FALSE
                     message <- paste(message,"\nCheck failed:\nDataset ",
                                     "with not enough records for statistical analysis with test ", 
