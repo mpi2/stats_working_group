@@ -1,0 +1,249 @@
+%\VignetteIndexEntry{IMPCdata Vignette}
+%\VignetteKeywords{phenotypic data retrieval}
+%\VignettePackage{IMPCdata}
+\documentclass[a4paper]{article}
+
+\usepackage{times}
+\usepackage{a4wide}
+\usepackage{url}
+
+
+\SweaveOpts{keep.source=TRUE,eps=FALSE,include=FALSE,width=4,height=4.5} 
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+
+\title{IMPCdata: data retrieval from IMPC database}
+\author{Jeremy Mason, Natalja Kurbatova}
+\date{Modified: 08 September, 2014. Compiled: \today}
+
+\maketitle
+IMPCdata is an R package that allows easy access to the phenotyping data 
+produced by the International Mouse 
+Phenotyping Consortium (IMPC).  For more information about the IMPC project, 
+please visit \url{http://www.mousephenotype.org}.   
+\newline\newline
+The IMPC implements a standardized set of phenotyping protocols to generate 
+data. 
+These standardized protocols are defined in the International Mouse Phenotyping 
+Resource of Standardised Screens,
+IMPReSS (\url{http://www.mousephenotype.org/impress}).  
+Programmatically navigating the IMPC raw data APIs and the IMPReSS SOAP APIs 
+can be technically challenging -- \newline IMPCdata package makes the process easier for R users. 
+\newline\newline
+The intended users of the IMPCdata package are familiar with R and would like 
+easy access to the IMPC data. The data retrieved from IMPCdata can be directly 
+used by PhenStat -- an R package that encapsulates the IMPC statistical 
+pipeline, available at 
+\newline
+\url{http://www.bioconductor.org/packages/release/bioc/html/PhenStat.html}.
+
+\section*{IMPCdata functions}
+The idea of IMPCdata is to systematically explore the IMPC dataset's multiple 
+dimensions until the correct combination of filters has been selected and then 
+the data of interest downloaded.
+\newline\newline
+The IMPCdata functions can be divided into two logical groups: 
+\begin{itemize}
+\item "List" functions to retrieve lists of IMPC database objects and 
+\item "Dataset" functions to obtain datasets from IMPC database. 
+\end{itemize}
+\subsection*{"List" functions}
+Each function in this group has "print" and "get" version.  
+All "get" functions return lists of characters containing IMPC object IDs. 
+It is possible to obtain the name 
+of the IMPC object by using function \textit{getName}. 
+For instance, for pipeline name:
+<<R.hide, echo=TRUE, eval=TRUE>>=
+library(IMPCdata)
+getName("pipeline_stable_id","pipeline_name","MGP_001")
+@
+For the gene name:
+<<R.hide, echo=TRUE, eval=TRUE>>=
+library(IMPCdata)
+getName("gene_accession_id","gene_symbol","MGI:1931466")
+@
+From the examples above you can see that in order to get the name of 
+the IMPC object you have to provide the database fields where IMPC object ID 
+and name are stored together with the IMPC object ID you are interested in. 
+Assuming that it is complicated for the users not familiar with the IMPC 
+database structure we've implemented 
+"print" function for each IMPC object.\newline
+All "print" functions print out pairs containing ID and name of the IMPC object 
+hiding from the end user \textit{getName} function complexity. By default all objects defined by combination of "print" function's arguments will be printed out. However, it is possible to restrict the number of printed out objects by defining "print" function's argument \textit{n}.
+\newline\newline
+There are the following objects in IMPC 
+database that can be obtained through appropriate functions:
+\begin{itemize}
+\item IMPC \textbf{phenotyping centers}: \textit{getPhenCenters}, 
+\textit{printPhenCenters}. IMPC phenotyping center has the same ID and name, that 
+is why \textit{printPhenCenters} function prints out not the pairs of ID and 
+name as in all other cases but just the names of phenotyping centers.
+<<R.hide, echo=TRUE, eval=TRUE>>=
+library(IMPCdata)
+getPhenCenters()
+printPhenCenters()
+@
+\item IMPC \textbf{pipelines}: \textit{getPipelines}, \textit{printPipelines}. 
+Both functions have two arguments: 
+\textit{PhenCenterName} and \textit{excludeLegacyPipelines} to exclude legacy 
+pipelines from the list with default 
+value set to TRUE. For instance, to get and to print the pipeplines of 
+Wellcome Trust Sanger Institute (WTSI):
+<<R.hide, echo=TRUE, eval=TRUE>>=
+library(IMPCdata)
+getPipelines("WTSI")
+getPipelines("WTSI",excludeLegacyPipelines=FALSE)
+printPipelines("WTSI")
+@
+\item IMPC \textbf{procedures} (sometimes called \textbf{screens} or 
+\textbf{assays}) that are run 
+for a specified phenotyping center 
+and pipeline: \textit{getProcedures}, \textit{printProcedures}. There may be 
+multiple versions of a procedure. The version is defined by the number, i.e. 001
+means the first version of the procedure. 
+Both "get" and "print" functions for procedures have two arguments: 
+\textit{PhenCenterName} and \textit{PipelineID}. For instance, to get the first 
+two procedures that are run in WTSI within the MGP Select Pipeline:
+<<R.hide, echo=TRUE, eval=TRUE>>=
+library(IMPCdata)
+head(getProcedures("WTSI","MGP_001"),n=2)
+printProcedures("WTSI","MGP_001",n=2)
+@
+\item IMPC \textbf{parameters} that are measured within specified procedure 
+for a pipeline run by phenotyping center: 
+\textit{getParameters}, \textit{printParameters}. 
+Functions have three arguments: \textit{PhenCenterName}, 
+\textit{PipelineID} and \textit{ProcedureID}. 
+<<R.hide, echo=TRUE, eval=TRUE>>=
+library(IMPCdata)
+head(getParameters("WTSI","MGP_001","IMPC_CBC_001"),n=2)
+printParameters("WTSI","MGP_001","IMPC_CBC_001",n=2)
+@
+\item Genetic backgrounds (called \textbf{strains} in IMPC database) from which 
+the knockout mice were derived for a specific combination of pipeline, procedure
+and parameter for a phenotyping center: \textit{getStrains}, 
+\textit{printStrains}.
+ Strain ID is MGI ID (\url{http://www.informatics.jax.org/}) or temporary ID 
+ if the MGI is not assigned yet.  
+There are the following arguments for both functions: \textit{PhenCenterName},
+\textit{PipelineID}, \textit{ProcedureID} 
+and \textit{ParameterID}.
+<<R.hide, echo=TRUE, eval=TRUE>>=
+library(IMPCdata)
+head(getStrains("WTSI","MGP_001","IMPC_CBC_001","IMPC_CBC_003_001"),n=2)
+printStrains("WTSI","MGP_001","IMPC_CBC_001","IMPC_CBC_003_001",n=2)
+@
+\item \textbf{Genes} that are reported for a specified combination of parameter,
+procedure, pipeline and phenotyping 
+center: \textit{getGenes}, \textit{printGenes}. 
+Gene ID is MGI ID (\url{http://www.informatics.jax.org/}) or 
+temporary ID if the MGI is not assigned yet. 
+There are following arguments: \textit{PhenCenterName}, 
+\textit{PipelineID}, \textit{ProcedureID}, \textit{ParameterID}, 
+\textit{StrainID} is an optional argument.
+<<R.hide, echo=TRUE, eval=TRUE>>=
+library(IMPCdata)
+head(getGenes("WTSI","MGP_001","IMPC_CBC_001","IMPC_CBC_003_001"),n=2)
+printGenes("WTSI","MGP_001","IMPC_CBC_001",
+"IMPC_CBC_003_001","MGI:2159965",n=2)
+@
+\item \textbf{Alleles} that are processed for a specified combination of 
+parameter, procedure, pipeline and 
+phenotyping center: \textit{getAlleles}, \textit{printAlleles}. Allele ID 
+is MGI ID (\url{http://www.informatics.jax.org/}) or temporary ID 
+if the MGI is not assigned yet. 
+There are following arguments: \textit{PhenCenterName}, \textit{PipelineID}, 
+\textit{ProcedureID}, 
+\textit{ParameterID} and \textit{StrainID}, which is an optional argument.
+<<R.hide, echo=TRUE, eval=TRUE>>=
+library(IMPCdata)
+head(getAlleles("WTSI","MGP_001","IMPC_CBC_001",
+"IMPC_CBC_003_001","MGI:5446362"),n=2)
+printAlleles("WTSI","MGP_001","IMPC_CBC_001","IMPC_CBC_003_001",n=2)
+@
+\item \textbf{Zygosities} (homozygous, heterozygous and hemizygous) for 
+mice that were measured for a gene/allele 
+for a specified combination of parameter, procedure, pipeline and 
+phenotyping center: \textit{getZygosities}. 
+There are following arguments of the \textit{getZygosities} function:  
+\textit{PhenCenterName}, \textit{PipelineID}, 
+\textit{ProcedureID}, \textit{ParameterID}, \textit{StrainID}, which is an 
+optional argument, \textit{GeneID}, 
+which is an optional argument and finally \textit{AlleleID}, 
+which is also an optional argument. There is no "print" function version for 
+zygosities.
+<<R.hide, echo=TRUE, eval=TRUE>>=
+library(IMPCdata)
+getZygosities("WTSI","MGP_001","IMPC_CBC_001","IMPC_CBC_003_001",
+StrainID="MGI:5446362",AlleleID="EUROALL:64")
+@
+\end{itemize}
+
+
+\subsection*{"Dataset" functions}
+The IMPCdata package "dataset" functions allow extraction of IMPC datasets 
+where potential phenodeviants data and 
+control data are matched together according to the internal IMPC rules. 
+There are two functions in this group:  
+\textit{getIMPCTable} and  \textit{getIMPCDataset}.
+\newline\newline
+Function \textit{getIMPCTable} does not return any values, it creates 
+a table using a combination of objects 
+to define IMPC datasets according to 
+the parameters that have been passed to the function. Table is stored in 
+comma separated format 
+in the file specified by user.  Function's arguments are:
+\begin{itemize}
+\item \textit{fileName} -- defines name of the file where to save resulting 
+table with IMPC objects, 
+mandatory argument with default value set to "IMPCdata"; 
+\item \textit{PhenCenterName} -- IMPC phenotyping center; 
+\item \textit{PipelineID} -- IMPC pipeline ID;
+\item \textit{ProcedureID} -- IMPC procedure ID;
+\item \textit{ParameterID} -- IMPC parameter ID;
+\item \textit{AlleleID} -- allele ID;
+\item \textit{StrainID} -- strain ID;
+\item \textit{multipleFiles} -- flag: "FALSE" value to get all records into 
+one specified file; "TRUE" value (default) 
+to split records across multiple files named starting with "fileName";
+\item \textit{recordsPerFile} -- number that specifies how many records 
+to write into one file with default value set to 10000.
+\end{itemize}
+Example of usage: 
+<<R.hide, results=hide, echo=TRUE, eval=FALSE>>=
+library(IMPCdata)
+getIMPCTable("./IMPCData.csv","WTSI","MGP_001","IMPC_CBC_001")  
+@
+All possible combinations are stored now into the file "IMPCData.csv" 
+in comma separated format. 
+There are six columns in the saved file: "Phenotyping Center", "Pipeline", 
+"Screen/Procedure", "Parameter", 
+"Allele" and "Function to get IMPC Dataset". 
+The last one column "Function to get IMPC Dataset" contains the prepared R 
+code to call the function 
+\textit{getIMPCDataset} with appropriate parameters and to obtain the dataset.
+\newline\newline
+Function \textit{getIMPCDataset} returns a traditional \textit{data.frame}. 
+For example, take the value from the first row and the last column of the file 
+created by \textit{getIMPCTable} function where dataset function call is 
+prepared for you: 
+<<R.hide, results=hide, echo=TRUE, eval=FALSE>>=
+library(IMPCdata)
+IMPC_dataset1 <- getIMPCDataset("WTSI","MGP_001","IMPC_CBC_001",
+"IMPC_CBC_003_001","MGI:4431644") 
+@
+Now IMPC dataset is obtained and ready to use with PhenStat, for example:
+<<R.hide, results=hide, echo=TRUE, eval=FALSE>>=
+library(PhenStat)
+testIMPC1 <- PhenList(dataset=IMPC_dataset1,
+testGenotype="MDTZ",
+refGenotype="+/+",
+dataset.colname.genotype="Colony") 
+@
+For more information about the PhenStat package, 
+please read User Guide available in Bioconductor and here \url{https://github.com/mpi2/stats_working_group/blob/master/PhenStatUserGuide/PhenStatUsersGuide.pdf}. Bugs reports and suggestions 
+concerning IMPCdata package new versions can be submited by using github repository:
+\url{https://github.com/mpi2/stats_working_group}.
+\end{document}

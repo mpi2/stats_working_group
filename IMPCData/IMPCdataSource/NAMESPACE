@@ -1,0 +1,21 @@
+importFrom(rjson, fromJSON)
+export(getPhenCenters,
+       printPhenCenters,
+       getPipelines,
+       printPipelines,
+       getParameters,
+       printParameters,
+       getProcedures,
+       printProcedures,
+       getGenes,
+       printGenes,
+       getAlleles,
+       printAlleles,
+       getStrains,
+       printStrains,
+       getName,
+       getZygosities,
+       getIMPCTable,
+       getIMPCDataset)
+
+
