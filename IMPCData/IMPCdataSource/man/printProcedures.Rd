@@ -13,7 +13,9 @@
     \item{PipelineID}{IMPC pipeline ID; mandatory argument}
     \item{n}{print only first n procedures; optional argument}
 }
-
+\value{
+    Returns the character containing IMPC procedures (IDs and names of procedures) 
+}
 \author{Natalja Kurbatova, Jeremy Mason}
 \examples{
     printProcedures("WTSI","MGP_001")

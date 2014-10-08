@@ -13,7 +13,9 @@
         pipelines including legacy pipelines; "TRUE" value (default) to print IMPC phenotyping centers 
         excluding centers that run only legacy pipelines}
 }
-
+\value{
+    Returns the character with IMPC phenotyping centers.
+}
 \author{Natalja Kurbatova, Jeremy Mason}
 \examples{
     printPhenCenters()

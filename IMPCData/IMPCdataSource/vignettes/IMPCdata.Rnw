@@ -55,12 +55,12 @@ All "get" functions return lists of characters containing IMPC object IDs.
 It is possible to obtain the name 
 of the IMPC object by using function \textit{getName}. 
 For instance, for pipeline name:
-<<R.hide, echo=TRUE, eval=TRUE>>=
+<<echo=TRUE, eval=TRUE>>=
 library(IMPCdata)
 getName("pipeline_stable_id","pipeline_name","MGP_001")
 @
 For the gene name:
-<<R.hide, echo=TRUE, eval=TRUE>>=
+<<echo=TRUE, eval=TRUE>>=
 library(IMPCdata)
 getName("gene_accession_id","gene_symbol","MGI:1931466")
 @
@@ -80,7 +80,7 @@ database that can be obtained through appropriate functions:
 \textit{printPhenCenters}. IMPC phenotyping center has the same ID and name, that 
 is why \textit{printPhenCenters} function prints out not the pairs of ID and 
 name as in all other cases but just the names of phenotyping centers.
-<<R.hide, echo=TRUE, eval=TRUE>>=
+<<echo=TRUE, eval=TRUE>>=
 library(IMPCdata)
 getPhenCenters()
 printPhenCenters()
@@ -91,7 +91,7 @@ Both functions have two arguments:
 pipelines from the list with default 
 value set to TRUE. For instance, to get and to print the pipeplines of 
 Wellcome Trust Sanger Institute (WTSI):
-<<R.hide, echo=TRUE, eval=TRUE>>=
+<<echo=TRUE, eval=TRUE>>=
 library(IMPCdata)
 getPipelines("WTSI")
 getPipelines("WTSI",excludeLegacyPipelines=FALSE)
@@ -106,7 +106,7 @@ means the first version of the procedure.
 Both "get" and "print" functions for procedures have two arguments: 
 \textit{PhenCenterName} and \textit{PipelineID}. For instance, to get the first 
 two procedures that are run in WTSI within the MGP Select Pipeline:
-<<R.hide, echo=TRUE, eval=TRUE>>=
+<<echo=TRUE, eval=TRUE>>=
 library(IMPCdata)
 head(getProcedures("WTSI","MGP_001"),n=2)
 printProcedures("WTSI","MGP_001",n=2)
@@ -116,7 +116,7 @@ for a pipeline run by phenotyping center:
 \textit{getParameters}, \textit{printParameters}. 
 Functions have three arguments: \textit{PhenCenterName}, 
 \textit{PipelineID} and \textit{ProcedureID}. 
-<<R.hide, echo=TRUE, eval=TRUE>>=
+<<echo=TRUE, eval=TRUE>>=
 library(IMPCdata)
 head(getParameters("WTSI","MGP_001","IMPC_CBC_001"),n=2)
 printParameters("WTSI","MGP_001","IMPC_CBC_001",n=2)
@@ -130,7 +130,7 @@ and parameter for a phenotyping center: \textit{getStrains},
 There are the following arguments for both functions: \textit{PhenCenterName},
 \textit{PipelineID}, \textit{ProcedureID} 
 and \textit{ParameterID}.
-<<R.hide, echo=TRUE, eval=TRUE>>=
+<<echo=TRUE, eval=TRUE>>=
 library(IMPCdata)
 head(getStrains("WTSI","MGP_001","IMPC_CBC_001","IMPC_CBC_003_001"),n=2)
 printStrains("WTSI","MGP_001","IMPC_CBC_001","IMPC_CBC_003_001",n=2)
@@ -143,7 +143,7 @@ temporary ID if the MGI is not assigned yet.
 There are following arguments: \textit{PhenCenterName}, 
 \textit{PipelineID}, \textit{ProcedureID}, \textit{ParameterID}, 
 \textit{StrainID} is an optional argument.
-<<R.hide, echo=TRUE, eval=TRUE>>=
+<<echo=TRUE, eval=TRUE>>=
 library(IMPCdata)
 head(getGenes("WTSI","MGP_001","IMPC_CBC_001","IMPC_CBC_003_001"),n=2)
 printGenes("WTSI","MGP_001","IMPC_CBC_001",
@@ -157,7 +157,7 @@ if the MGI is not assigned yet.
 There are following arguments: \textit{PhenCenterName}, \textit{PipelineID}, 
 \textit{ProcedureID}, 
 \textit{ParameterID} and \textit{StrainID}, which is an optional argument.
-<<R.hide, echo=TRUE, eval=TRUE>>=
+<<echo=TRUE, eval=TRUE>>=
 library(IMPCdata)
 head(getAlleles("WTSI","MGP_001","IMPC_CBC_001",
 "IMPC_CBC_003_001","MGI:5446362"),n=2)
@@ -174,7 +174,7 @@ optional argument, \textit{GeneID},
 which is an optional argument and finally \textit{AlleleID}, 
 which is also an optional argument. There is no "print" function version for 
 zygosities.
-<<R.hide, echo=TRUE, eval=TRUE>>=
+<<echo=TRUE, eval=TRUE>>=
 library(IMPCdata)
 getZygosities("WTSI","MGP_001","IMPC_CBC_001","IMPC_CBC_003_001",
 StrainID="MGI:5446362",AlleleID="EUROALL:64")
@@ -212,7 +212,7 @@ to split records across multiple files named starting with "fileName";
 to write into one file with default value set to 10000.
 \end{itemize}
 Example of usage: 
-<<R.hide, results=hide, echo=TRUE, eval=FALSE>>=
+<<results=hide, echo=TRUE, eval=FALSE>>=
 library(IMPCdata)
 getIMPCTable("./IMPCData.csv","WTSI","MGP_001","IMPC_CBC_001")  
 @
@@ -229,13 +229,13 @@ Function \textit{getIMPCDataset} returns a traditional \textit{data.frame}.
 For example, take the value from the first row and the last column of the file 
 created by \textit{getIMPCTable} function where dataset function call is 
 prepared for you: 
-<<R.hide, results=hide, echo=TRUE, eval=FALSE>>=
+<<results=hide, echo=TRUE, eval=FALSE>>=
 library(IMPCdata)
 IMPC_dataset1 <- getIMPCDataset("WTSI","MGP_001","IMPC_CBC_001",
 "IMPC_CBC_003_001","MGI:4431644") 
 @
 Now IMPC dataset is obtained and ready to use with PhenStat, for example:
-<<R.hide, results=hide, echo=TRUE, eval=FALSE>>=
+<<results=hide, echo=TRUE, eval=FALSE>>=
 library(PhenStat)
 testIMPC1 <- PhenList(dataset=IMPC_dataset1,
 testGenotype="MDTZ",
