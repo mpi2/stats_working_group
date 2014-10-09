@@ -28,7 +28,7 @@
 ##------------------------------------------------------------------------------
 testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight", 
         outputMessages=TRUE, pThreshold=0.05, method="MM", callAll=TRUE, 
-        keepList=NULL, dataPointsThreshold=4, RR_naturalVariation=95, RR_controlPointsThreshold=60)
+        keepList=NULL, dataPointsThreshold=4, RR_naturalVariation=95, RR_controlPointsThreshold=60, baselineLevel)
 {
 
     stop_message <- ""
@@ -65,7 +65,7 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
     }
     
     # 5
-    if (!(method %in% c("MM","FE","RR","TF"))){
+    if (!(method %in% c("MM","FE","RR","TF", "LR"))){
         stop_message <- paste(stop_message,"Error:\nMethod define in the 'method' argument '",
                 method,"' is not supported.\nAt the moment we are supporting 'MM' ", 
                 "value for Mixed Model framework, 'FE' value for Fisher Exact Test framework",
@@ -102,7 +102,7 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
         ## NUMERIC ISSUE ???????????????????????????
         columnOfInterest <- x[,c(depVariable)]
 
-        if (class(columnOfInterest)=="factor"){
+        if (class(columnOfInterest)=="factor"&& (method!="LR")){
             columnOfInterest <- as.character(columnOfInterest)
             tryCatch({
                         # try to convert into numbers
@@ -396,6 +396,19 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
         result <- RRTest(phenList,depVariable,outputMessages,RR_naturalVariation,RR_controlPointsThreshold)
     }
     
+	else if (method=="LR"){
+		## Logistic Regression
+		if (outputMessages)
+			message(paste("Information:\nMethod: Logistic Regression framework.\n",sep="")) 
+			
+		firstStage <- LR_Model(phenList, depVariable, 	outputMessages=TRUE, pThreshold=0.05, baselineLevel=baselineLevel)
+		result <- queryFinalModel(firstStage,outputMessages=TRUE, baselineLevel)
+	
+	}
+	
+	
+	
+	
     return(result)   
 }
 ##------------------------------------------------------------------------------

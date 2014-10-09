@@ -93,3 +93,56 @@ testFinalModel<-function(phenTestResult)
     return(testresults)
 }
 ##------------------------------------------------------------------------------
+
+
+
+testFinal_LR_Model<-function(phenTestResult)
+{
+	result <- phenTestResult
+	x <- result$model.dataset
+	depVariable <- result$depVariable
+	keep_sex <- result$model.effect.sex
+	keep_interaction <- result$model.effect.interaction
+	keep_batch <- result$model.effect.batch
+	
+	
+	a <- levels(x$Genotype)
+	numberofsexes <- result$numberSexes
+	
+		
+		res <- resid(result$model.output)
+		data_all <- data.frame(x, res)
+		genotype_no <- length(a)
+		data_all[, c("Sex", "Batch")] <- lapply(data_all[, c("Sex", "Batch")], factor)
+		Gp1 <- subset(data_all, data_all$Genotype==a[1])
+		Gp2 <- subset(data_all, data_all$Genotype==a[2])
+		No_Gp1 <- sum(is.finite(Gp1[ , c("res")]))
+		No_Gp2 <- sum(is.finite(Gp2[ , c("res")]))
+		
+		
+		blups_test <- NA
+		rotated_residual_test <- NA
+		
+		##Problem with lack of variability means often fails.  How informative is the normality.  rather looking for outliers.  so have removed functionality
+		#if(No_Gp1>7){
+		#	gp1_norm_res <- suppressWarnings(cvm.test(Gp1$res)$p.value)
+		#}else{
+		#	gp1_norm_res <- NA
+		#}
+		#
+		#if(No_Gp2>7){
+		#	gp2_norm_res <- suppressWarnings(cvm.test(Gp2$res)$p.value)
+		#}else{
+		#	gp2_norm_res <- NA
+		#}
+		
+		gp1_norm_res<-NA
+		gp2_norm_res<-NA
+	
+		testresults <- c(a[1], gp1_norm_res, a[2], gp2_norm_res, blups_test, 
+				rotated_residual_test)
+	
+	
+		return(testresults)
+}
+

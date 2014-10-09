@@ -25,11 +25,13 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
     message(paste("\nMethod:\n*** ",switch(phenTestResult$method,
                             MM = "Mixed Model framework",
                             FE = "Fisher Exact Test framework",
+							LR = "Logistic Regression framework",
                             RR = "Reference Ranges Plus framework",
                             TF = "Time as Fixed Effect framework")," ***",
                     "\n",sep=""))
     
-    if (phenTestResult$method %in% c("MM","TF")) {
+   
+	if (phenTestResult$method %in% c("MM","TF")) {
         message(line)
         message("Model Output")
         message(line)
@@ -84,6 +86,41 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
         summary(phenTestResult$model.output)$tTable
     }
     
+	
+	if (phenTestResult$method =="LR") {
+		message(line)
+		message("Model Output")
+		message(line)
+		
+		message(paste("Genotype effect:",
+						sprintf("%.4f",round(phenTestResult$model.output.genotype.nulltest.pVal,digits=4))))
+		message(paste("\nFinal fitted model:",
+						format(phenTestResult$model.formula.genotype)))
+		
+		message(paste("Was batch significant?",phenTestResult$model.effect.batch))
+				
+		if (phenTestResult$model.effect.interaction)
+		{
+			sexualDimorphism <- "yes"
+		}
+		else {
+			sexualDimorphism <- "no"
+		}
+		message(paste("\nWas there evidence of sexual dimorphism? ",
+						sexualDimorphism," (p-value ",
+						sprintf("%.4f",round(phenTestResult$model.output.interaction,digits=4)),")",sep=""))
+		
+				
+		
+		
+		message(paste("\n",line,sep=""))
+		message("Model Output Summary")
+		message(line)
+		summary(phenTestResult$model.output)$coefficients
+	}
+	
+	
+	
     else if (phenTestResult$method %in% c("FE")){
         colnum <- 1
         message(line)

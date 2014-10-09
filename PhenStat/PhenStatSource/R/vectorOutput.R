@@ -280,7 +280,84 @@ vectorOutput <- function(phenTestResult, phenotypeThreshold=0.01)
                 "Additional information")
     }
     
-    vectorOutput[is.na(vectorOutput)] <-"NA"
+	else if (phenTestResult$method == "LR"){
+		
+		classificationValue <- "NA"
+		
+				
+		vectorOutput <- c(
+				"Logistic Regression framework",
+				as.character(phenTestResult$depVariable), 
+				as.character(phenTestResult$model.effect.batch), 
+				"NA",   #model.effect.variance NA for logistic framework
+				as.character(phenTestResult$model.output.genotype.nulltest.pVal), 
+				as.character(phenTestResult$model.output.summary["genotype_estimate"]), 
+				as.character(phenTestResult$model.output.summary["genotype_estimate_SE"]),  
+				as.character(phenTestResult$model.output.summary["genotype_p_value"]),
+				"NA" ,  #as.character(percentageChanges) not applicable for logistic framework
+				as.character(phenTestResult$model.output.summary["sex_estimate"]), 
+				as.character(phenTestResult$model.output.summary["sex_estimate_SE"]),  
+				as.character(phenTestResult$model.output.summary["sex_p_value"]), 
+				"NA", #as.character(phenTestResult$model.output.summary["weight_estimate"]),  # weight not included as a fixed effect
+				"NA", #as.character(phenTestResult$model.output.summary["weight_estimate_SE"]), # weight not included as a fixed effect
+				"NA", #as.character(phenTestResult$model.output.summary["weight_p_value"]), # weight not included as a fixed effect
+				as.character(phenTestResult$model.output.quality), 
+				as.character(phenTestResult$model.output.summary["intercept_estimate"]), 
+				as.character(phenTestResult$model.output.summary["intercept_estimate_SE"]), 
+				as.character(phenTestResult$model.effect.interaction),
+				as.character(phenTestResult$model.output.interaction),
+				as.character(phenTestResult$model.output.summary["sex_FvKO_estimate"]), 
+				as.character(phenTestResult$model.output.summary["sex_FvKO_SE"]), 
+				as.character(phenTestResult$model.output.summary["sex_FvKO_p_value"]),  
+				as.character(phenTestResult$model.output.summary["sex_MvKO_estimate"]),  
+				as.character(phenTestResult$model.output.summary["sex_MvKO_SE"]), 
+				as.character(phenTestResult$model.output.summary["sex_MvKO_p_value"]),
+				"NA",  #not yet implemented in logistic framework
+				"NA" )   #no additional information as yet in logistic framework as.character(addInfo))
+		
+		
+		
+		names(vectorOutput) <- c("Method",
+				"Dependent variable",
+				"Batch included",
+				"Residual variances homogeneity",
+				"Genotype contribution",
+				"Genotype estimate",
+				"Genotype standard error",
+				"Genotype p-Val",
+				"Genotype percentage change",
+				"Sex estimate",
+				"Sex standard error",
+				"Sex p-val", #11
+				"Weight estimate",
+				"Weight standard error",
+				"Weight p-val",
+				"Gp1 genotype",
+				"Gp1 Residuals normality test", #16
+				"Gp2 genotype",
+				"Gp2 Residuals normality test",
+				"Blups test",
+				"Rotated residuals normality test", #20
+				"Intercept estimate",
+				"Intercept standard error",
+				"Interaction included",
+				"Interaction p-val", #24
+				"Sex FvKO estimate",
+				"Sex FvKO standard error",
+				"Sex FvKO p-val",
+				"Sex MvKO estimate",
+				"Sex MvKO standard error",
+				"Sex MvKO p-val",
+				"Classification tag",
+				"Additional information")
+	}
+	
+	
+	
+	
+	
+	
+	vectorOutput[is.na(vectorOutput)] <-"NA"
    
     
     return(vectorOutput)
