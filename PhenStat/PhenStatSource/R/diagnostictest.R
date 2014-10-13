@@ -110,14 +110,14 @@ testFinal_LR_Model<-function(phenTestResult)
 	numberofsexes <- result$numberSexes
 	
 		
-		res <- resid(result$model.output)
-		data_all <- data.frame(x, res)
-		genotype_no <- length(a)
-		data_all[, c("Sex", "Batch")] <- lapply(data_all[, c("Sex", "Batch")], factor)
-		Gp1 <- subset(data_all, data_all$Genotype==a[1])
-		Gp2 <- subset(data_all, data_all$Genotype==a[2])
-		No_Gp1 <- sum(is.finite(Gp1[ , c("res")]))
-		No_Gp2 <- sum(is.finite(Gp2[ , c("res")]))
+		#res <- resid(result$model.output)
+		#data_all <- data.frame(x, res)
+		#genotype_no <- length(a)
+		#data_all[, c("Sex", "Batch")] <- lapply(data_all[, c("Sex", "Batch")], factor)
+		#Gp1 <- subset(data_all, data_all$Genotype==a[1])
+		#Gp2 <- subset(data_all, data_all$Genotype==a[2])
+		#No_Gp1 <- sum(is.finite(Gp1[ , c("res")]))
+		#No_Gp2 <- sum(is.finite(Gp2[ , c("res")]))
 		
 		
 		blups_test <- NA

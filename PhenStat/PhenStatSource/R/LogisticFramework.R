@@ -25,8 +25,10 @@
 ##
 ## As the result PhenTestResult object that contains calculated or user
 ## defined model effects and MM start model is created.
-##http://idiom.ucsd.edu/~rlevy/lign251/fall2007/lecture_15.pdf States for nested mixed effect models liklihood ratio can be used to compare model
-##provided only differ in fixed effects structure
+
+
+###Using Firth penalized logistic regression designed for low n with spearation issues.  Note cannot deal with random effect models so am testing for batch but then proceeding with standard model. 
+
 
 LR_Model <- function(phenList, depVariable, 	outputMessages=TRUE, pThreshold=0.0, baselineLevel)
 {
@@ -55,11 +57,7 @@ LR_Model <- function(phenList, depVariable, 	outputMessages=TRUE, pThreshold=0.0
 					## MM fit of model formula (with random effects)
 					## Model 1 (model_withBatch)
 					L_model_withBatch <- do.call("glmer", args = list(formula_withBatch, data = x, na.action="na.omit",family=binomial() ))	
-									
-					
-					
-					
-					
+										
 					## Test: the random effects associated with batch intercepts can be ommited from model
 					## Hypothesis 1
 					## Null Hypothesis: variance of batch = 0
@@ -82,49 +80,23 @@ LR_Model <- function(phenList, depVariable, 	outputMessages=TRUE, pThreshold=0.0
 				## Goal of this section is to tests for significance of fixed effects by comparing models with and without fixed effects included		
 				if(numberofsexes==2){
 					
-					if(keep_batch){
-						
+									
 						#test sexual dimorphism
-						formula_withBatch_noSD=modelFormula_LF(numberofsexes, depVariable, sexIncluded=TRUE, dimorphismIncluded=FALSE, IncludeBatch="Yes")
-						L_model_withBatch_noSD <- do.call("glmer", args = list(formula_withBatch_noSD, data = x, na.action="na.omit",family=binomial() ))
-												
-						#interactionTest <- pchisq((deviance(L_model_withBatch)-deviance(L_model_withBatch_noSD)), 1, lower=FALSE)  
-						interactionTest = anova(L_model_withBatch, L_model_withBatch_noSD, test = "Chisq")
-						interactionTest =interactionTestoutput["Pr(>Chi)"]$"Pr(>Chi)"[2]
-						keep_interaction <- interactionTest<pThreshold
-						
-						#test sex inclusion in model
-						formula_withBatch_noSex=modelFormula_LF(numberofsexes, depVariable, sexIncluded=FALSE, dimorphismIncluded=FALSE, IncludeBatch="Yes")
-						L_model_withBatch_noSex <- do.call("glmer", args = list(formula_withBatch_noSex, data = x, na.action="na.omit",family=binomial() ))
-						
-						#sexTest <- pchisq((deviance(L_model_withBatch)-deviance(L_model_withBatch_noSex)), 1, lower=FALSE)
-						sexTest = anova(L_model_withBatch, L_model_withBatch_noSex, test = "Chisq")  
-						sexTest=sexTestoutput["Pr(>Chi)"]$"Pr(>Chi)"[2]
-						keep_sex <- sexTest<pThreshold
-						keep_weight <- NA
-						
-					}else{
-						
-						#test sexual dimorphism
-						L_model_withoutbatch <- do.call("glm",	args=list(formula_withOutBatch, x, na.action="na.omit", family=binomial()))
+						L_model_withoutbatch <- do.call("logistf",	args=list(formula_withOutBatch, x, na.action="na.omit", family=binomial()))
 						formula_withoutBatch_noSD=modelFormula_LF(numberofsexes, depVariable, sexIncluded=TRUE, dimorphismIncluded=FALSE, IncludeBatch="No")
-						L_model_withoutBatch_noSD <- do.call("glm", args = list(formula_withoutBatch_noSD, data = x, na.action="na.omit",family=binomial() ))
+						L_model_withoutBatch_noSD <- do.call("logistf", args = list(formula_withoutBatch_noSD, data = x, na.action="na.omit" ))
 						
-						#interactionTest <- pchisq((deviance(L_model_withoutbatch)-deviance(L_model_withoutBatch_noSD)), 1, lower=FALSE)
-						interactionTestoutput = anova(L_model_withoutbatch, L_model_withoutBatch_noSD, test = "Chisq")
-						interactionTest =interactionTestoutput["Pr(>Chi)"]$"Pr(>Chi)"[2]
+						interactionTest = anova(L_model_withoutbatch, L_model_withoutBatch_noSD)$pval
 						keep_interaction <- interactionTest<pThreshold
 						
 						#test sex inclusion in model
 						formula_withoutBatch_noSex=modelFormula_LF(numberofsexes, depVariable, sexIncluded=FALSE, dimorphismIncluded=FALSE, IncludeBatch="No")
-						L_model_withoutBatch_noSex <- do.call("glm", args = list(formula_withoutBatch_noSex, data = x, na.action="na.omit",family=binomial() ))
+						L_model_withoutBatch_noSex <- do.call("logistf", args = list(formula_withoutBatch_noSex, data = x, na.action="na.omit"))
 						
-						#sexTest <- pchisq((deviance(L_model_withoutbatch)-deviance(L_model_withoutBatch_noSex)), 1, lower=FALSE)  #error with df estimate
-						sexTestoutput = anova(L_model_withoutbatch, L_model_withoutBatch_noSex, test = "Chisq")  
-						sexTest=sexTestoutput["Pr(>Chi)"]$"Pr(>Chi)"[2]
+						sexTest = anova(L_model_withoutbatch, L_model_withoutBatch_noSex)$pval
 						keep_sex <- sexTest<pThreshold
 						keep_weight <- NA														
-					}												
+																	
 				}
 				else {
 					keep_sex <- FALSE
@@ -143,18 +115,11 @@ LR_Model <- function(phenList, depVariable, 	outputMessages=TRUE, pThreshold=0.0
 				## Need to obtain final model 
 				##step one build formula and then fit the model through glm or glmer route depending on whether batch is significant
 				
-				if(keep_batch=="TRUE"){
-					
-					FinalFormula=modelFormula_LF(numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="Yes")
-					finalModel <- do.call("glmer", args = list(FinalFormula, data = x, na.action="na.omit",family=binomial() ))
-					
-				}else{
-					
-					FinalFormula=modelFormula_LF(numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="No")	
-					finalModel <- do.call("glm", args = list(FinalFormula, data = x, na.action="na.omit",family=binomial() ))
 									
-				}
-				
+				FinalFormula=genotype_modelFormula_LF(numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="No")	
+				finalModel <- do.call("logistf", args = list(FinalFormula, data = x, na.action="na.omit"))
+									
+						
 						
 				finalResult <- new("PhenTestResult",list(
 								model.dataset=x,
@@ -305,8 +270,7 @@ genotype_modelFormula_LF <- function(numberofsexes, depVariable, sexIncluded, di
 	return(LR_model_formula)
 }
 
-
-##------------------------------------------------------------------------------
+###------------------------------------------------------------------------------
 ## Works with PhenTestResult object created by testDataset function.
 ## Builds null and uses final model to assess genotype effect
 ## final model results are then captured and stored.  
@@ -370,29 +334,16 @@ queryFinalModel <- function(phenTestResult, outputMessages=TRUE, baselineLevel)
 				#setlevels
 							
 				
-				if(keep_batch=="TRUE"){
-					#build null model
-					model_null.formula = null_modelFormula_LF (numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="Yes")
-					nullModel <- do.call("glmer", args = list(model_null.formula, data = x, na.action="na.omit",family=binomial() ))
-					#build genotype model
-					model_genotype.formula = genotype_modelFormula_LF (numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="Yes")
-					genotypeModel <- do.call("glmer", args = list(model_genotype.formula, data = x, na.action="na.omit",family=binomial() ))						
-					#compare with genotype model		
-					#genotypeTest_p.value <- pchisq((deviance(genotypeModel)-deviance(nullModel)), 1, lower=FALSE)  #problem with the estimate of df
-					genotypeTest = anova(genotypeModel, nullModel, test = "Chisq")   # usees likelihood ratio estimate approach
-					genotypeTest_p.value=genotypeTest["Pr(>Chi)"]$"Pr(>Chi)"[2]
-				}else{
-					#build null model
+				#build null model
 					model_null.formula = null_modelFormula_LF (numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="No")					
-					nullModel <- do.call("glm", args = list(model_null.formula, data = x, na.action="na.omit",family=binomial ()))
+					nullModel <- do.call("logistf", args = list(model_null.formula, data = x, na.action="na.omit"))
 					#build genotype model
 					model_genotype.formula = genotype_modelFormula_LF (numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="No")
-					genotypeModel <- do.call("glm", args = list(model_genotype.formula, data = x, na.action="na.omit",family=binomial() ))						
+					genotypeModel <- do.call("logistf", args = list(model_genotype.formula, data = x, na.action="na.omit" ))						
 					#compare with genotype model
 					#genotypeTest_p.value <- pchisq((deviance(genotypeModel)-deviance(nullModel)), 1, lower=FALSE)  #problem with the estimate of df
-					genotypeTest = anova(genotypeModel, nullModel, test = "Chisq") 
-					genotypeTest_p.value=genotypeTest["Pr(>Chi)"]$"Pr(>Chi)"[2]
-				}
+					genotypeTest_p.value = anova(genotypeModel, nullModel)$pval 
+					
 				
 								
 				## Store the results

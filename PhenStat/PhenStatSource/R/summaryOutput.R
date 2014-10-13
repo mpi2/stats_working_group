@@ -110,13 +110,16 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
 						sexualDimorphism," (p-value ",
 						sprintf("%.4f",round(phenTestResult$model.output.interaction,digits=4)),")",sep=""))
 		
-				
-		
+		#collect output into table (for this no function exists)		
+		ab=cbind(phenTestResult$model.output$coefficients, phenTestResult$model.output$ci.lower, phenTestResult$model.output$ci.upper, phenTestResult$model.output$prob)
+		ab=as.data.frame(ab)
+		colnames(ab)=c("coefficient", "ci.lower", "ci.upper", "probability")
 		
 		message(paste("\n",line,sep=""))
-		message("Model Output Summary")
+		message("Model Output")
 		message(line)
-		summary(phenTestResult$model.output)$coefficients
+		message(print(ab))
+		
 	}
 	
 	
