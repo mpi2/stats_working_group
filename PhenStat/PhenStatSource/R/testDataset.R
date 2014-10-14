@@ -28,7 +28,7 @@
 ##------------------------------------------------------------------------------
 testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight", 
         outputMessages=TRUE, pThreshold=0.05, method="MM", callAll=TRUE, 
-        keepList=NULL, dataPointsThreshold=4, RR_naturalVariation=95, RR_controlPointsThreshold=60, baselineLevel)
+        keepList=NULL, dataPointsThreshold=4, RR_naturalVariation=95, RR_controlPointsThreshold=60)
 {
 
     stop_message <- ""
@@ -401,8 +401,8 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
 		if (outputMessages)
 			message(paste("Information:\nMethod: Logistic Regression framework.\n",sep="")) 
 			
-		firstStage <- LR_Model(phenList, depVariable, 	outputMessages=TRUE, pThreshold=0.05, baselineLevel=baselineLevel)
-		result <- queryFinalModel(firstStage,outputMessages=TRUE, baselineLevel)
+		firstStage <- LR_Model(phenList, depVariable, 	outputMessages=TRUE, pThreshold=0.05)
+		result <- queryFinalModel(firstStage,outputMessages=TRUE)
 	
 	}
 	

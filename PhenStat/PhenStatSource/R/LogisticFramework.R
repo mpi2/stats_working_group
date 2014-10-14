@@ -30,7 +30,7 @@
 ###Using Firth penalized logistic regression designed for low n with spearation issues.  Note cannot deal with random effect models so am testing for batch but then proceeding with standard model. 
 
 
-LR_Model <- function(phenList, depVariable, 	outputMessages=TRUE, pThreshold=0.0, baselineLevel)
+LR_Model <- function(phenList, depVariable, 	outputMessages=TRUE, pThreshold=0.0)
 {
 	x <- phenList$dataset
 	numberofsexes <- length(levels(x$Sex))
@@ -299,7 +299,7 @@ genotype_modelFormula_LF <- function(numberofsexes, depVariable, sexIncluded, di
 ## Builds null and uses final model to assess genotype effect
 ## final model results are then captured and stored.  
 
-queryFinalModel <- function(phenTestResult, outputMessages=TRUE, baselineLevel)
+queryFinalModel <- function(phenTestResult, outputMessages=TRUE)
 {
 	## Checks and stop messages
 	stop_message <- ""
