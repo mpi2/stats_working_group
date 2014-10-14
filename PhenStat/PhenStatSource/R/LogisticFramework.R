@@ -397,7 +397,7 @@ queryFinalModel <- function(phenTestResult, outputMessages=TRUE)
 					
 					if(interceptAssessment==TRUE){
 						
-						genotypeTest_p.value=logistftest(genotypeModel, test=1)$prob   # alternate strategy needed to test when have intercept only null model as you cannot specify an intercept only model with logistf
+						genotypeTest_p.value=logistftest(genotypeModel)$prob   # alternate strategy needed to test when have intercept only null model as you cannot specify an intercept only model with logistf
 												
 						
 					}else{
