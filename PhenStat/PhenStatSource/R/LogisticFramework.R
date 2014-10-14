@@ -42,7 +42,7 @@ LR_Model <- function(phenList, depVariable, 	outputMessages=TRUE, pThreshold=0.0
 	
 	#setlevels
 	 x$Genotype=relevel(x$Genotype, ref="+/+")
-	 x[ , depVariable]=relevel(x[ ,depVariable], ref=baselineLevel)
+	 #x[ , depVariable]=relevel(x[ ,depVariable], ref=baselineLevel)
 	
 	#START OF tryCatch    
 	finalResult <- tryCatch({
@@ -233,6 +233,30 @@ null_modelFormula_LF <- function(numberofsexes, depVariable, sexIncluded, dimorp
 	return(null_LR_model_formula)
 }
 
+
+InterceptOnly_nullModel_assessment <- function(numberofsexes, depVariable, sexIncluded, dimorphismIncluded){
+	
+		## standard logistic model framework
+				if(numberofsexes==2){
+					if (!sexIncluded  && !dimorphismIncluded){
+						output=TRUE
+					} else if((sexIncluded && dimorphismIncluded)|(!sexIncluded && dimorphismIncluded)|(sexIncluded  && !dimorphismIncluded)){
+						output=FALSE
+					}
+				}else{
+					output=TRUE
+				}
+			
+	
+	
+	return(output)
+}
+
+
+
+
+
+
 #Second cycle needed as specification of model changes for the final fitting in the presence of sexual dimorphism
 genotype_modelFormula_LF <- function(numberofsexes, depVariable, sexIncluded, dimorphismIncluded, IncludeBatch){
 	
@@ -286,7 +310,7 @@ queryFinalModel <- function(phenTestResult, outputMessages=TRUE, baselineLevel)
 		x <- result$model.dataset
 		depVariable <- result$depVariable
 		x$Genotype=relevel(x$Genotype, ref="+/+")
-		x[ , depVariable]=relevel(x[ ,depVariable], ref=baselineLevel)
+		#x[ , depVariable]=relevel(x[ ,depVariable], ref=baselineLevel)
 		
 		
 		
@@ -334,22 +358,43 @@ queryFinalModel <- function(phenTestResult, outputMessages=TRUE, baselineLevel)
 				#setlevels
 							
 				
-				#build null model
-					model_null.formula = null_modelFormula_LF (numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="No")					
-					nullModel <- do.call("logistf", args = list(model_null.formula, data = x, na.action="na.omit"))
 					#build genotype model
-					model_genotype.formula = genotype_modelFormula_LF (numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="No")
+					model_genotype.formula = genotype_modelFormula_LF(numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="No")
 					genotypeModel <- do.call("logistf", args = list(model_genotype.formula, data = x, na.action="na.omit" ))						
-					#compare with genotype model
-					#genotypeTest_p.value <- pchisq((deviance(genotypeModel)-deviance(nullModel)), 1, lower=FALSE)  #problem with the estimate of df
-					genotypeTest_p.value = anova(genotypeModel, nullModel)$pval 
 					
-				
+					model_null.formula = null_modelFormula_LF (numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="No")					
+					
+					
+					interceptAssessment=InterceptOnly_nullModel_assessment(numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction)
+					
+					if(interceptAssessment==TRUE){
+						
+						genotypeTest_p.value=logistftest(genotypeModel, test=1)$prob   # alternate strategy needed to test when have intercept only null model as you cannot specify an intercept only model with logistf
+												
+						
+					}else{
+					
+						#build null model
+						model_null.formula = null_modelFormula_LF (numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="No")					
+						nullModel <- do.call("logistf", args = list(model_null.formula, data = x, na.action="na.omit"))
+						
+						#compare with genotype model
+						#genotypeTest_p.value <- pchisq((deviance(genotypeModel)-deviance(nullModel)), 1, lower=FALSE)  #problem with the estimate of df
+						genotypeTest_p.value = anova(genotypeModel, nullModel)$pval 
+					
+				}
 								
 				## Store the results
 				result$model.genotype <-genotypeModel
 				result$model.formula.genotype <- model_genotype.formula
-				result$model.null <-nullModel
+				
+				if(interceptAssessment==TRUE){
+					result$model.null <- NA   # there is no null model when there is an intercept only model
+				}else{
+					result$model.null <-nullModel
+				}
+				
+							
 				result$model.formula.null <- model_null.formula
 				result$model.output.genotype.nulltest.pVal <- genotypeTest_p.value 
 				result$model.effect.variance <- NA
