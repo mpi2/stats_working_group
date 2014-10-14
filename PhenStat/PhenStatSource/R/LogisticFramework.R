@@ -30,34 +30,34 @@
 ###Using Firth penalized logistic regression designed for low n with spearation issues.  Note cannot deal with random effect models so am testing for batch but then proceeding with standard model. 
 
 
-LR_Model <- function(phenList, depVariable, 	outputMessages=TRUE, pThreshold=0.0)
-{
+TestingBatch<-function(phenList, depVariable){
+	
 	x <- phenList$dataset
 	numberofsexes <- length(levels(x$Sex))
-			
-	## Start model formula: genotype, sex and genotype*sex interaction included.  Note if only one sex then sex and interaction omitted 
-	##very different to MM as random effect built in here into formula. 
+	
 	formula_withBatch=modelFormula_LF(numberofsexes, depVariable, sexIncluded=TRUE, dimorphismIncluded=TRUE, IncludeBatch="Yes")
 	formula_withOutBatch=modelFormula_LF(numberofsexes, depVariable, sexIncluded=TRUE, dimorphismIncluded=TRUE, IncludeBatch="No")		
 	
-	#setlevels
-	 x$Genotype=relevel(x$Genotype, ref="+/+")
-	 #x[ , depVariable]=relevel(x[ ,depVariable], ref=baselineLevel)
+	x$Genotype=relevel(x$Genotype, ref="+/+")
 	
 	#START OF tryCatch    
-	finalResult <- tryCatch({
-				
+	
+	
+	keep_batch="AssessmentFailed"
+	
+	
+	try(
 				
 				##Goal of this section is to assess whether batch is significant or not in explaining variation
-				if ('Batch' %in% colnames(x)){
+				{if ('Batch' %in% colnames(x)){
 					## LR fit of model formula with no random effects
 					## Model 1A (model_withoutbatch)
 					L_model_withoutbatch <- do.call("glm",args=list(formula_withOutBatch, x, na.action="na.omit", family=binomial()  ))
-						
+					
 					## MM fit of model formula (with random effects)
 					## Model 1 (model_withBatch)
 					L_model_withBatch <- do.call("glmer", args = list(formula_withBatch, data = x, na.action="na.omit",family=binomial() ))	
-										
+					
 					## Test: the random effects associated with batch intercepts can be ommited from model
 					## Hypothesis 1
 					## Null Hypothesis: variance of batch = 0
@@ -65,22 +65,50 @@ LR_Model <- function(phenList, depVariable, 	outputMessages=TRUE, pThreshold=0.0
 					##If p value below threshold then you reject null and accept alternative that batch is significant in explaining variation in the model
 					##Based on method shown here http://www.simonqueenborough.com/R/specialist/mixed-models.html
 					
-					#p.value.batch = anova(L_model_withBatch, L_model_withoutbatch, test = "Chisq")  NOT suitable for comparing mixed against standard model
 					p.value.batch <- pchisq(-2*(logLik(L_model_withBatch)-logLik(L_model_withoutbatch)), 1, lower=FALSE)[1] 
 					keep_batch <- p.value.batch<pThreshold
-					##within this framework we are not testing the concept that the variance might depend on the genotype group
-					keep_equalvar <- NA	
+				
 				}
 				else {
 					## No Batch effects
 					keep_batch <- FALSE
-					keep_equalvar <- NA	
+					
 				}
-				
+							
+			},
+			silent=TRUE)
+							
+		        
+	return(keep_batch)
+	
+}	
+	
+	
+#abc=TestingBatch(PhenObject, depVariable="V1")
+	
+
+
+
+LR_Model <- function(phenList, depVariable, 	outputMessages=TRUE, pThreshold=0.0)
+{
+	x <- phenList$dataset
+	numberofsexes <- length(levels(x$Sex))
+	keep_equalvar <- NA			
+	keep_batch<-TestingBatch(phenList, depVariable)
+	
+	
+	formula_withOutBatch=modelFormula_LF(numberofsexes, depVariable, sexIncluded=TRUE, dimorphismIncluded=TRUE, IncludeBatch="No")		
+	
+	#setlevels
+	x$Genotype=relevel(x$Genotype, ref="+/+")
+	#x[ , depVariable]=relevel(x[ ,depVariable], ref=baselineLevel)
+	
+	#START OF tryCatch    
+	finalResult <- tryCatch({
+									
 				## Goal of this section is to tests for significance of fixed effects by comparing models with and without fixed effects included		
 				if(numberofsexes==2){
-					
-									
+								
 						#test sexual dimorphism
 						L_model_withoutbatch <- do.call("logistf",	args=list(formula_withOutBatch, x, na.action="na.omit", family=binomial()))
 						formula_withoutBatch_noSD=modelFormula_LF(numberofsexes, depVariable, sexIncluded=TRUE, dimorphismIncluded=FALSE, IncludeBatch="No")
