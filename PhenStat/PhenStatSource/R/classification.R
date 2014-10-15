@@ -128,24 +128,24 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
 						ChangeClassification <- paste("If phenotype is significant - both sexes equally")
 					}
 				}else 
-				if(result$model.output.summary["sex_FvKO_p_value"]>=0.05 
-						&& result$model.output.summary["sex_MvKO_p_value"]>=0.05){
+				if(as.numeric(result$model.output.summary["sex_FvKO_p_value"])>=0.05 
+						&& as.numeric(result$model.output.summary["sex_MvKO_p_value"])>=0.05){
 					ChangeClassification <- paste("If phenotype is significant - can not classify effect")
 				}else 
-				if(result$model.output.summary["sex_FvKO_p_value"]<0.05 
-						&& result$model.output.summary["sex_MvKO_p_value"]>=0.05){
+				if(as.numeric(result$model.output.summary["sex_FvKO_p_value"])<0.05 
+						&& as.numeric(result$model.output.summary["sex_MvKO_p_value"])>=0.05){
 					ChangeClassification <- paste("If phenotype is significant - females only")
 				}else 
-				if(result$model.output.summary["sex_FvKO_p_value"]>=0.05 
-						&& result$model.output.summary["sex_MvKO_p_value"]<0.05){
+				if(as.numeric(result$model.output.summary["sex_FvKO_p_value"])>=0.05 
+						&& as.numeric(result$model.output.summary["sex_MvKO_p_value"])<0.05){
 					ChangeClassification <- paste("If phenotype is significant - males only")
 				}else 
-				if(result$model.output.summary["sex_FvKO_estimate"]>0 && 
-						result$model.output.summary["sex_MvKO_estimate"]>0 |
-						result$model.output.summary["sex_FvKO_estimate"]<0 && 
-						result$model.output.summary["sex_MvKO_estimate"]<0){
-					if(abs(result$model.output.summary["sex_FvKO_estimate"])
-							>abs(result$model.output.summary["sex_MvKO_estimate"])){
+				if(as.numeric(result$model.output.summary["sex_FvKO_estimate"])>0 && 
+								as.numeric(result$model.output.summary["sex_MvKO_estimate"])>0 |
+												as.numeric(result$model.output.summary["sex_FvKO_estimate"])<0 && 
+																as.numeric(result$model.output.summary["sex_MvKO_estimate"]<0)){
+					if(abs(as.numeric(result$model.output.summary["sex_FvKO_estimate"]))
+							>abs(as.numeric(result$model.output.summary["sex_MvKO_estimate"]))){
 						ChangeClassification <- paste("If phenotype is significant - different size as females greater")
 						## change could be positive or negative but size change greater
 					}else{
