@@ -282,8 +282,8 @@ vectorOutput <- function(phenTestResult, phenotypeThreshold=0.01)
     
 	else if (phenTestResult$method == "LR"){
 		
-		classificationValue <- "NA"
 		
+		classificationValue <- classificationTag(phenTestResult, userMode="vectorOutput",outputMessages=FALSE)
 				
 		vectorOutput <- c(
 				"Logistic Regression framework",
@@ -312,7 +312,7 @@ vectorOutput <- function(phenTestResult, phenotypeThreshold=0.01)
 				as.character(phenTestResult$model.output.summary["sex_MvKO_estimate"]),  
 				as.character(phenTestResult$model.output.summary["sex_MvKO_SE"]), 
 				as.character(phenTestResult$model.output.summary["sex_MvKO_p_value"]),
-				"NA",  #not yet implemented in logistic framework
+				as.character(classificationValue),
 				"NA" )   #no additional information as yet in logistic framework as.character(addInfo))
 		
 		
