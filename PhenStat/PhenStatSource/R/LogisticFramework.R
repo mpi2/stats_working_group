@@ -47,9 +47,9 @@ TestingBatch<-function(phenList, depVariable){
 	
 	
 	try(
-				
-				##Goal of this section is to assess whether batch is significant or not in explaining variation
-				{if ('Batch' %in% colnames(x)){
+			
+			##Goal of this section is to assess whether batch is significant or not in explaining variation
+			{if ('Batch' %in% colnames(x)){
 					## LR fit of model formula with no random effects
 					## Model 1A (model_withoutbatch)
 					L_model_withoutbatch <- do.call("glm",args=list(formula_withOutBatch, x, na.action="na.omit", family=binomial()  ))
@@ -67,25 +67,25 @@ TestingBatch<-function(phenList, depVariable){
 					
 					p.value.batch <- pchisq(-2*(logLik(L_model_withBatch)-logLik(L_model_withoutbatch)), 1, lower=FALSE)[1] 
 					keep_batch <- p.value.batch<pThreshold
-				
+					
 				}
 				else {
 					## No Batch effects
 					keep_batch <- FALSE
 					
 				}
-							
+				
 			},
 			silent=TRUE)
-							
-		        
+	
+	
 	return(keep_batch)
 	
 }	
-	
-	
+
+
 #abc=TestingBatch(PhenObject, depVariable="V1")
-	
+
 
 
 
@@ -105,26 +105,26 @@ LR_Model <- function(phenList, depVariable, 	outputMessages=TRUE, pThreshold=0.0
 	
 	#START OF tryCatch    
 	finalResult <- tryCatch({
-									
+				
 				## Goal of this section is to tests for significance of fixed effects by comparing models with and without fixed effects included		
 				if(numberofsexes==2){
-								
-						#test sexual dimorphism
-						L_model_withoutbatch <- do.call("logistf",	args=list(formula_withOutBatch, x, na.action="na.omit", family=binomial()))
-						formula_withoutBatch_noSD=modelFormula_LF(numberofsexes, depVariable, sexIncluded=TRUE, dimorphismIncluded=FALSE, IncludeBatch="No")
-						L_model_withoutBatch_noSD <- do.call("logistf", args = list(formula_withoutBatch_noSD, data = x, na.action="na.omit" ))
-						
-						interactionTest = anova(L_model_withoutbatch, L_model_withoutBatch_noSD)$pval
-						keep_interaction <- interactionTest<pThreshold
-						
-						#test sex inclusion in model
-						formula_withoutBatch_noSex=modelFormula_LF(numberofsexes, depVariable, sexIncluded=FALSE, dimorphismIncluded=FALSE, IncludeBatch="No")
-						L_model_withoutBatch_noSex <- do.call("logistf", args = list(formula_withoutBatch_noSex, data = x, na.action="na.omit"))
-						
-						sexTest = anova(L_model_withoutbatch, L_model_withoutBatch_noSex)$pval
-						keep_sex <- sexTest<pThreshold
-						keep_weight <- NA														
-																	
+					
+					#test sexual dimorphism
+					L_model_withoutbatch <- do.call("logistf",	args=list(formula_withOutBatch, x, na.action="na.omit"))
+					formula_withoutBatch_noSD=modelFormula_LF(numberofsexes, depVariable, sexIncluded=TRUE, dimorphismIncluded=FALSE, IncludeBatch="No")
+					L_model_withoutBatch_noSD <- do.call("logistf", args = list(formula_withoutBatch_noSD, data = x, na.action="na.omit" ))
+					
+					interactionTest = anova(L_model_withoutbatch, L_model_withoutBatch_noSD)$pval
+					keep_interaction <- interactionTest<pThreshold
+					
+					#test sex inclusion in model
+					formula_withoutBatch_noSex=modelFormula_LF(numberofsexes, depVariable, sexIncluded=FALSE, dimorphismIncluded=FALSE, IncludeBatch="No")
+					L_model_withoutBatch_noSex <- do.call("logistf", args = list(formula_withoutBatch_noSex, data = x, na.action="na.omit"))
+					
+					sexTest = anova(L_model_withoutbatch, L_model_withoutBatch_noSex)$pval
+					keep_sex <- sexTest<pThreshold
+					keep_weight <- NA														
+					
 				}
 				else {
 					keep_sex <- FALSE
@@ -143,12 +143,12 @@ LR_Model <- function(phenList, depVariable, 	outputMessages=TRUE, pThreshold=0.0
 				## Need to obtain final model 
 				##step one build formula and then fit the model through glm or glmer route depending on whether batch is significant
 				
-									
+				
 				FinalFormula=genotype_modelFormula_LF(numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="No")	
 				finalModel <- do.call("logistf", args = list(FinalFormula, data = x, na.action="na.omit"))
-									
-						
-						
+				
+				
+				
 				finalResult <- new("PhenTestResult",list(
 								model.dataset=x,
 								model.output=finalModel,
@@ -171,8 +171,8 @@ LR_Model <- function(phenList, depVariable, 	outputMessages=TRUE, pThreshold=0.0
 				finalResult <- NULL
 				
 				stop_message <- paste("Error:\nCan't fit the model ",
-							format(formula_withOutBatch),". Try FE method.\n",sep="")    
-					
+						format(formula_withOutBatch),". Try FE method.\n",sep="")    
+				
 				if (outputMessages){
 					message(stop_message)
 					opt <- options(show.error.messages=FALSE)
@@ -207,7 +207,7 @@ modelFormula_LF <- function(numberofsexes, depVariable, sexIncluded, dimorphismI
 					
 				}else{
 					as.formula(paste(depVariable, "~", paste("Genotype", "(1|Batch)", sep="+")))
-					}
+				}
 			},
 			No = {
 				## standard logistic model framework
@@ -256,7 +256,7 @@ null_modelFormula_LF <- function(numberofsexes, depVariable, sexIncluded, dimorp
 					as.formula(paste(depVariable, "~", "1", sep=" "))
 				}
 			}
-			
+	
 	)
 	return(null_LR_model_formula)
 }
@@ -264,17 +264,17 @@ null_modelFormula_LF <- function(numberofsexes, depVariable, sexIncluded, dimorp
 
 InterceptOnly_nullModel_assessment <- function(numberofsexes, depVariable, sexIncluded, dimorphismIncluded){
 	
-		## standard logistic model framework
-				if(numberofsexes==2){
-					if (!sexIncluded  && !dimorphismIncluded){
-						output=TRUE
-					} else if((sexIncluded && dimorphismIncluded)|(!sexIncluded && dimorphismIncluded)|(sexIncluded  && !dimorphismIncluded)){
-						output=FALSE
-					}
-				}else{
-					output=TRUE
-				}
-			
+	## standard logistic model framework
+	if(numberofsexes==2){
+		if (!sexIncluded  && !dimorphismIncluded){
+			output=TRUE
+		} else if((sexIncluded && dimorphismIncluded)|(!sexIncluded && dimorphismIncluded)|(sexIncluded  && !dimorphismIncluded)){
+			output=FALSE
+		}
+	}else{
+		output=TRUE
+	}
+	
 	
 	
 	return(output)
@@ -384,34 +384,34 @@ queryFinalModel <- function(phenTestResult, outputMessages=TRUE)
 				## Null Hypothesis: genotypes are not associated with dependent variable
 				## Alternative Hypothesis: genotypes are associated with dependent  variable
 				#setlevels
-							
 				
-					#build genotype model
-					model_genotype.formula = genotype_modelFormula_LF(numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="No")
-					genotypeModel <- do.call("logistf", args = list(model_genotype.formula, data = x, na.action="na.omit" ))						
+				
+				#build genotype model
+				model_genotype.formula = genotype_modelFormula_LF(numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="No")
+				genotypeModel <- do.call("logistf", args = list(model_genotype.formula, data = x, na.action="na.omit" ))						
+				
+				model_null.formula = null_modelFormula_LF (numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="No")					
+				
+				
+				interceptAssessment=InterceptOnly_nullModel_assessment(numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction)
+				
+				if(interceptAssessment==TRUE){
 					
+					genotypeTest_p.value=logistftest(genotypeModel)$prob   # alternate strategy needed to test when have intercept only null model as you cannot specify an intercept only model with logistf
+					
+					
+				}else{
+					
+					#build null model
 					model_null.formula = null_modelFormula_LF (numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="No")					
+					nullModel <- do.call("logistf", args = list(model_null.formula, data = x, na.action="na.omit"))
 					
-					
-					interceptAssessment=InterceptOnly_nullModel_assessment(numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction)
-					
-					if(interceptAssessment==TRUE){
-						
-						genotypeTest_p.value=logistftest(genotypeModel)$prob   # alternate strategy needed to test when have intercept only null model as you cannot specify an intercept only model with logistf
-												
-						
-					}else{
-					
-						#build null model
-						model_null.formula = null_modelFormula_LF (numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="No")					
-						nullModel <- do.call("logistf", args = list(model_null.formula, data = x, na.action="na.omit"))
-						
-						#compare with genotype model
-						#genotypeTest_p.value <- pchisq((deviance(genotypeModel)-deviance(nullModel)), 1, lower=FALSE)  #problem with the estimate of df
-						genotypeTest_p.value = anova(genotypeModel, nullModel)$pval 
+					#compare with genotype model
+					#genotypeTest_p.value <- pchisq((deviance(genotypeModel)-deviance(nullModel)), 1, lower=FALSE)  #problem with the estimate of df
+					genotypeTest_p.value = anova(genotypeModel, nullModel)$pval 
 					
 				}
-								
+				
 				## Store the results
 				result$model.genotype <-genotypeModel
 				result$model.formula.genotype <- model_genotype.formula
@@ -422,7 +422,7 @@ queryFinalModel <- function(phenTestResult, outputMessages=TRUE)
 					result$model.null <-nullModel
 				}
 				
-							
+				
 				result$model.formula.null <- model_null.formula
 				result$model.output.genotype.nulltest.pVal <- genotypeTest_p.value 
 				result$model.effect.variance <- NA
@@ -431,7 +431,7 @@ queryFinalModel <- function(phenTestResult, outputMessages=TRUE)
 				result$model.output.quality <- testFinal_LR_Model(phenTestResult)   
 				
 				## Parse modeloutput and choose output depending on model
-				result$model.output.summary <- parserOutputSummary(result)
+				result$model.output.summary <- parserOutputSummary_LR(result)
 				
 			},
 			
@@ -466,7 +466,7 @@ queryFinalModel <- function(phenTestResult, outputMessages=TRUE)
 
 ##------------------------------------------------------------------------------
 ## Parses model output summary and returns in readable vector format
-parserOutputSummary<-function(phenTestResult)
+parserOutputSummary_LR<-function(phenTestResult)
 {
 	result <- phenTestResult
 	modeloutput_summary <- summary(result$model.output)
@@ -504,46 +504,56 @@ parserOutputSummary<-function(phenTestResult)
 	if(no_of_sexes==1){
 		
 		intercept_estimate = modeloutput_summary$coefficients[1]
-		intercept_estimate_SE 	= modeloutput_summary$coefficients[3]
+		intercept_estimate_SE 	= "as yet cannot find in output"
 		
 		genotype_estimate = modeloutput_summary$coefficients[2]
-		genotype_estimate_SE = modeloutput_summary$coefficients[4]
-		genotype_p_value =  modeloutput_summary$coefficients[8]
+		genotype_estimate_SE = "as yet cannot find in output"
+		genotype_p_value =  modeloutput_summary$prob[2]
 		
 	}else if(keep_interaction==TRUE){
-					
-	
+		
 		intercept_estimate = modeloutput_summary$coefficients[1]
-		intercept_estimate_SE 	= modeloutput_summary$coefficients[5]
-					
+		intercept_estimate_SE 	= "as yet cannot find in output"
+		
 		sex_estimate=modeloutput_summary$coefficients[2]
-		sex_estimate_SE=modeloutput_summary$coefficients[6]
-		sex_p_value= modeloutput_summary$coefficients[14]
+		sex_estimate_SE="as yet cannot find in output"
+		sex_p_value= modeloutput_summary$prob[2]
 		
 		sex_FvKO_estimate= modeloutput_summary$coefficients[3]
-		sex_FvKO_SE=modeloutput_summary$coefficients[7]
-		sex_FvKO_p_value=modeloutput_summary$coefficients[15]
+		sex_FvKO_SE="as yet cannot find in output"
+		sex_FvKO_p_value=modeloutput_summary$prob[3]
 		sex_MvKO_estimate=modeloutput_summary$coefficients[4]
-		sex_MvKO_SE=modeloutput_summary$coefficients[8]
-		sex_MvKO_p_value=modeloutput_summary$coefficients[16]		
-	
-	}else{
+		sex_MvKO_SE="as yet cannot find in output"
+		sex_MvKO_p_value=modeloutput_summary$prob[4]		
+		
+	}else if(keep_interaction!=TRUE && keep_sex!=TRUE){
 		
 		intercept_estimate = modeloutput_summary$coefficients[1]
-		intercept_estimate_SE 	= modeloutput_summary$coefficients[4]
+		intercept_estimate_SE 	= "as yet cannot find in output"
 		
-		sex_estimate=modeloutput_summary$coefficients[3]
-		sex_estimate_SE=modeloutput_summary$coefficients[6]
-		sex_p_value= modeloutput_summary$coefficients[12]
 		
 		genotype_estimate = modeloutput_summary$coefficients[2]
-		genotype_estimate_SE = modeloutput_summary$coefficients[5]
-		genotype_p_value =  modeloutput_summary$coefficients[11]
+		genotype_estimate_SE = "as yet cannot find in output"
+		genotype_p_value =  modeloutput_summary$prob[2]
+		
+	}else{
+		intercept_estimate = modeloutput_summary$coefficients[1]
+		intercept_estimate_SE 	= "as yet cannot find in output"
+		
+		sex_estimate=modeloutput_summary$coefficients[2]
+		sex_estimate_SE="as yet cannot find in output"
+		sex_p_value= modeloutput_summary$prob[2]
+		
+		genotype_estimate = modeloutput_summary$coefficients[3]
+		genotype_estimate_SE = "as yet cannot find in output"
+		genotype_p_value =  modeloutput_summary$prob[3]	
+		
+		
 		
 	}	
-		
-	output <- c(genotype_estimate, genotype_estimate_SE,  genotype_p_value,
-			sex_estimate, sex_estimate_SE,  sex_p_value, 
+	
+	
+	output <- c(genotype_estimate, genotype_estimate_SE,  genotype_p_value,		sex_estimate, sex_estimate_SE,  sex_p_value, 
 			"NA", "NA", "NA", 
 			intercept_estimate, intercept_estimate_SE, 
 			sex_FvKO_estimate, sex_FvKO_SE, sex_FvKO_p_value,  
