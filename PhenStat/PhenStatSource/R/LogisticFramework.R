@@ -45,7 +45,7 @@ TestingBatch<-function(phenList, depVariable){
 	
 	keep_batch="AssessmentFailed"
 	
-	
+	suppressWarnings(
 	try(
 			
 			##Goal of this section is to assess whether batch is significant or not in explaining variation
@@ -77,7 +77,7 @@ TestingBatch<-function(phenList, depVariable){
 				
 			},
 			silent=TRUE)
-	
+)
 	
 	return(keep_batch)
 	
