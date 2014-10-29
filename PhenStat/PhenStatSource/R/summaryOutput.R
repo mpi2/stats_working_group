@@ -127,7 +127,7 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
 		message(paste("\n",line,sep=""))
 		message("Model Output")
 		message(line)
-		message(print(ab))
+		print(ab)
 		
 		
 		
