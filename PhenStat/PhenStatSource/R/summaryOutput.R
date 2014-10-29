@@ -117,10 +117,12 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
 		message(classificationTag(phenTestResult,phenotypeThreshold=phenotypeThreshold))
 		
 		
-		#collect output into table (for this no function exists)		
-		ab=cbind(phenTestResult$model.output$coefficients, phenTestResult$model.output$ci.lower, phenTestResult$model.output$ci.upper, phenTestResult$model.output$prob)
+		#collect output into table (for this no function exists)	
+		#how to calculate se for display was found in http://stats.stackexchange.com/questions/17571/how-to-store-the-standard-errors-with-the-lm-function-in-r
+		error_estimates=sqrt(diag(vcov(result$model.output)))	
+		ab=cbind(phenTestResult$model.output$coefficients,error_estimates, phenTestResult$model.output$ci.lower, phenTestResult$model.output$ci.upper, phenTestResult$model.output$prob)
 		ab=as.data.frame(ab)
-		colnames(ab)=c("coefficient", "ci.lower", "ci.upper", "probability")
+		colnames(ab)=c("coefficient", "standard error", "ci.lower", "ci.upper", "probability")
 		
 		message(paste("\n",line,sep=""))
 		message("Model Output")

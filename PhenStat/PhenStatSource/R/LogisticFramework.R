@@ -503,49 +503,53 @@ parserOutputSummary_LR<-function(phenTestResult)
 	#note position is not dependent on whether a mixed or standard logisitic model is fitted.
 	if(no_of_sexes==1){
 		
+		#capturing SE based on advice in http://stats.stackexchange.com/questions/17571/how-to-store-the-standard-errors-with-the-lm-function-in-r
+		error_estimates=sqrt(diag(vcov(result$model.output)))
 		intercept_estimate = modeloutput_summary$coefficients[1]
-		intercept_estimate_SE 	= "as yet cannot find in output"
+		intercept_estimate_SE 	= error_estimates[1]
 		
 		genotype_estimate = modeloutput_summary$coefficients[2]
-		genotype_estimate_SE = "as yet cannot find in output"
+		genotype_estimate_SE = error_estimates[2]
 		genotype_p_value =  modeloutput_summary$prob[2]
 		
 	}else if(keep_interaction==TRUE){
-		
+		error_estimates=sqrt(diag(vcov(result$model.output)))
 		intercept_estimate = modeloutput_summary$coefficients[1]
-		intercept_estimate_SE 	= "as yet cannot find in output"
+		intercept_estimate_SE 	= error_estimates[1]
 		
 		sex_estimate=modeloutput_summary$coefficients[2]
-		sex_estimate_SE="as yet cannot find in output"
+		sex_estimate_SE=error_estimates[2]
 		sex_p_value= modeloutput_summary$prob[2]
 		
 		sex_FvKO_estimate= modeloutput_summary$coefficients[3]
-		sex_FvKO_SE="as yet cannot find in output"
+		sex_FvKO_SE=error_estimates[3]
 		sex_FvKO_p_value=modeloutput_summary$prob[3]
 		sex_MvKO_estimate=modeloutput_summary$coefficients[4]
-		sex_MvKO_SE="as yet cannot find in output"
+		sex_MvKO_SE=error_estimates[4]
 		sex_MvKO_p_value=modeloutput_summary$prob[4]		
 		
 	}else if(keep_interaction!=TRUE && keep_sex!=TRUE){
-		
+		error_estimates=sqrt(diag(vcov(result$model.output)))
 		intercept_estimate = modeloutput_summary$coefficients[1]
-		intercept_estimate_SE 	= "as yet cannot find in output"
+		intercept_estimate_SE 	= error_estimates[1]
 		
 		
 		genotype_estimate = modeloutput_summary$coefficients[2]
-		genotype_estimate_SE = "as yet cannot find in output"
+		genotype_estimate_SE = error_estimates[2]
 		genotype_p_value =  modeloutput_summary$prob[2]
 		
 	}else{
+		error_estimates=sqrt(diag(vcov(result$model.output)))
+		
 		intercept_estimate = modeloutput_summary$coefficients[1]
-		intercept_estimate_SE 	= "as yet cannot find in output"
+		intercept_estimate_SE 	= error_estimates[1]
 		
 		sex_estimate=modeloutput_summary$coefficients[2]
-		sex_estimate_SE="as yet cannot find in output"
+		sex_estimate_SE=error_estimates[2]
 		sex_p_value= modeloutput_summary$prob[2]
 		
 		genotype_estimate = modeloutput_summary$coefficients[3]
-		genotype_estimate_SE = "as yet cannot find in output"
+		genotype_estimate_SE = error_estimates[3]
 		genotype_p_value =  modeloutput_summary$prob[3]	
 		
 		
