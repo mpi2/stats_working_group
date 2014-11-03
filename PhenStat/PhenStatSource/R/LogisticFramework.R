@@ -38,7 +38,7 @@ TestingBatch<-function(phenList, depVariable){
 	formula_withBatch=modelFormula_LF(numberofsexes, depVariable, sexIncluded=TRUE, dimorphismIncluded=TRUE, IncludeBatch="Yes")
 	formula_withOutBatch=modelFormula_LF(numberofsexes, depVariable, sexIncluded=TRUE, dimorphismIncluded=TRUE, IncludeBatch="No")		
 	
-	x$Genotype=relevel(x$Genotype, ref="+/+")
+	#x$Genotype=relevel(x$Genotype, ref="+/+")
 	
 	#START OF tryCatch    
 	
@@ -100,7 +100,7 @@ LR_Model <- function(phenList, depVariable, 	outputMessages=TRUE, pThreshold=0.0
 	formula_withOutBatch=modelFormula_LF(numberofsexes, depVariable, sexIncluded=TRUE, dimorphismIncluded=TRUE, IncludeBatch="No")		
 	
 	#setlevels
-	x$Genotype=relevel(x$Genotype, ref="+/+")
+	#x$Genotype=relevel(x$Genotype, ref="+/+")
 	#x[ , depVariable]=relevel(x[ ,depVariable], ref=baselineLevel)
 	
 	#START OF tryCatch    
@@ -337,7 +337,7 @@ queryFinalModel <- function(phenTestResult, outputMessages=TRUE)
 		result <- phenTestResult
 		x <- result$model.dataset
 		depVariable <- result$depVariable
-		x$Genotype=relevel(x$Genotype, ref="+/+")
+		#x$Genotype=relevel(x$Genotype, ref="+/+")
 		#x[ , depVariable]=relevel(x[ ,depVariable], ref=baselineLevel)
 		
 		
