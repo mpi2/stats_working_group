@@ -329,25 +329,30 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
 ## Generate graphs and store them in the defined directory
 generateGraphs <- function(phenTestResult, dir, graphingName=NULL, type="Xlib")
 {
-    if (phenTestResult$method=="MM"){
+    if (phenTestResult$method=="MM" || phenTestResult$method=="TF"){
         
         if (is.null(graphingName))
         graphingName = phenTestResult$depVariable
         
         
         #1
-        graph_name=file.path(dir, "boxplotSexGenotype.png")
-        png(graph_name,type=type)
-        boxplotSexGenotype(phenTestResult$model.dataset,
-                phenTestResult$depVariable, graphingName=graphingName)
+        #graph_name=file.path(dir, "boxplotSexGenotype.png")
+        #png(graph_name,type=type)
+        #boxplotSexGenotype(phenTestResult$model.dataset,
+        #        phenTestResult$depVariable, graphingName=graphingName)
         
-        dev.off()
+        #dev.off()
         
         #2
         if (('Batch' %in% colnames(phenTestResult$model.dataset))){
-            graph_name=file.path(dir, "boxplotSexGenotypeBatch.png")
+            graph_name=file.path(dir, "scatterplotSexGenotypeBatch.png")
             png(graph_name,type=type)
-            boxplotSexGenotypeBatch(phenTestResult$model.dataset,
+            genotypeValues <- levels(phenTestResult$model.dataset$Genotype)
+            testGenotypeValue <- genotypeValues[unlist(genotypeValues!=phenTestResult$refGenotype)]
+            phenList <- PhenList(dataset=phenTestResult$model.dataset,
+                    refGenotype=phenTestResult$refGenotype,
+                    testGenotype=testGenotypeValue,outputMessages=FALSE)
+            scatterplotSexGenotypeBatch(phenList,
                     phenTestResult$depVariable, graphingName=graphingName)
             
             dev.off()
@@ -357,7 +362,12 @@ generateGraphs <- function(phenTestResult, dir, graphingName=NULL, type="Xlib")
         if (('Weight' %in% colnames(phenTestResult$model.dataset))){
             graph_name=file.path(dir, "scatterplotGenotypeWeight.png")
             png(graph_name,type=type)
-            scatterplotGenotypeWeight(phenTestResult$model.dataset,
+            genotypeValues <- levels(phenTestResult$model.dataset$Genotype)
+            testGenotypeValue <- genotypeValues[unlist(genotypeValues!=phenTestResult$refGenotype)]
+            phenList <- PhenList(dataset=phenTestResult$model.dataset,
+                    refGenotype=phenTestResult$refGenotype,
+                    testGenotype=testGenotypeValue,outputMessages=FALSE)
+            scatterplotGenotypeWeight(phenList,
                     phenTestResult$depVariable, graphingName=graphingName)
             
             dev.off()
@@ -378,6 +388,7 @@ generateGraphs <- function(phenTestResult, dir, graphingName=NULL, type="Xlib")
         dev.off()
         
         if (('Batch' %in% colnames(phenTestResult$model.dataset)) 
+                && (phenTestResult$method=="MM") 
                 && phenTestResult$model.effect.batch){
             graph_name=file.path(dir, "qqplotRandomEffects.png")
             png(graph_name,type=type)
@@ -397,6 +408,7 @@ generateGraphs <- function(phenTestResult, dir, graphingName=NULL, type="Xlib")
         
         #8
         if (('Batch' %in% colnames(phenTestResult$model.dataset)) 
+                && (phenTestResult$method=="MM")              
                 && phenTestResult$model.effect.batch){
             graph_name=file.path(dir, "qqplotRotatedResiduals.png")
             png(graph_name,type=type)

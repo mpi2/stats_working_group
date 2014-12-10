@@ -195,7 +195,7 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
     
     
     result <- new("PhenTestResult",list(model.dataset=x, model.output=model,
-                    depVariable=depVariable,method="FE",model.effect.batch=keep_batch,
+                    depVariable=depVariable,refGenotype=phenList$refGenotype,method="FE",model.effect.batch=keep_batch,
                     model.effect.variance=keep_equalvar,model.effect.interaction=keep_interaction,
                     model.output.interaction=interactionTest,model.effect.sex=keep_sex,
                     model.effect.weight=keep_weight,numberSexes=numberofsexes))

@@ -367,7 +367,8 @@ scatterplotGenotypeWeight<-function(phenList, depVariable=NULL,
         model.formula <- as.formula(paste(depVariable, "~", 
                         paste("Weight", "Genotype", sep= "|")))
         
-        scatterplot(data=x, model.formula, ylab=graphingName)
+        scatterplot(data=x, model.formula, ylab=graphingName, 
+                pch=c(1,1),col=c("black","red"))
     }
 }
 ##------------------------------------------------------------------------------

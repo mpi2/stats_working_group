@@ -17,6 +17,7 @@
 PhenTestResult <- function(model.output=NULL, 
         model.dataset=NULL,
         depVariable=NULL, 
+        refGenotype=NULL,
         equation="withWeight", 
         method="MM", 
         model.effect.batch=NULL, 
@@ -43,6 +44,7 @@ PhenTestResult <- function(model.output=NULL,
     x$depVariable <- depVariable
     x$equation <- equation
     x$method <- method
+    x$refGenotype <- refGenotype
     x$model.effect.batch <- model.effect.batch
     x$model.effect.variance <- model.effect.variance
     x$model.effect.sex <- model.effect.sex

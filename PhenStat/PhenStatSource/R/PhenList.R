@@ -30,10 +30,18 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
     if (dataset.clean){
         
       
-        if(!is.null(dataset.colname.batch))
+        if(!is.null(dataset.colname.batch) && (dataset.colname.batch!='Batch')){
+            # check here for the existing column named 'Batch'
+            if ('Batch' %in% colnames(dataset)){
+                colnames(dataset)[colnames(dataset) == 'Batch'] <-'Original.Batch'   
+            }
             colnames(dataset)[colnames(dataset) == dataset.colname.batch] <-'Batch'
+        }
         else {
             if ('Assay.Date' %in% colnames(dataset)){
+                if ('Batch' %in% colnames(dataset)){
+                        colnames(dataset)[colnames(dataset) == 'Batch'] <-'Original.Batch'   
+                }
                 colnames(dataset)[colnames(dataset) == 'Assay.Date'] <-'Batch'
                 if (outputMessages)
                 message(paste("Warning:\nDataset's column 'Assay.Date' has been ",
@@ -41,6 +49,10 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
             }
             else
                 if ('AssayDate' %in% colnames(dataset)){
+                    # check for the existing column named 'Batch' 
+                    if ('Batch' %in% colnames(dataset)){
+                        colnames(dataset)[colnames(dataset) == 'Batch'] <-'Original.Batch'   
+                    }   
                     colnames(dataset)[colnames(dataset) == 'AssayDate'] <-'Batch'
                     if (outputMessages)
                     message(paste("Warning:\nDataset's column 'AssayDate' has been ",
@@ -58,14 +70,26 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
                 }
             
         }
-        if(!is.null(dataset.colname.genotype)){
+        if(!is.null(dataset.colname.genotype) && (dataset.colname.genotype!='Genotype')){
+            # check for the existing column named 'Genotype'   
+            if ('Genotype' %in% colnames(dataset)){
+                colnames(dataset)[colnames(dataset) == 'Genotype'] <-'Original.Genotype'   
+            } 
             colnames(dataset)[colnames(dataset) == dataset.colname.genotype] <-'Genotype'
         }
-        if(!is.null(dataset.colname.sex)) {
+        if(!is.null(dataset.colname.sex) && (dataset.colname.sex!='Sex')) {
+            # check for the existing column named 'Sex'  
+            if ('Sex' %in% colnames(dataset)){
+                colnames(dataset)[colnames(dataset) == 'Sex'] <-'Original.Sex'   
+            }      
             colnames(dataset)[colnames(dataset) == dataset.colname.sex] <-'Sex'
         }
         else {
             if ('Gender' %in% colnames(dataset)){
+                # check for the existing column named 'Sex' 
+                if ('Sex' %in% colnames(dataset)){
+                    colnames(dataset)[colnames(dataset) == 'Sex'] <-'Original.Sex'   
+                }         
                 colnames(dataset)[colnames(dataset) == 'Gender'] <-'Sex'
                 if (outputMessages)
                 message(paste("Warning:\nDataset's column 'Gender' has been ",
@@ -73,9 +97,13 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
             }
         }
         
-        if(!is.null(dataset.colname.weight))
-        colnames(dataset)[colnames(dataset) == dataset.colname.weight] <-'Weight'
-        
+        if(!is.null(dataset.colname.weight) && (dataset.colname.weight!='Weight')) {
+          # check for the existing column named 'Weight'  
+          if ('Weight' %in% colnames(dataset)){
+                 colnames(dataset)[colnames(dataset) == 'Weght'] <-'Original.Weight'   
+          }    
+          colnames(dataset)[colnames(dataset) == dataset.colname.weight] <-'Weight'
+        }
         ## Replace missing values specified in the user format with NA 
         if(!is.null(dataset.values.missingValue)) 
         dataset[dataset == dataset.values.missingValue] <- NA

@@ -28,11 +28,9 @@
     
     - presence of Batch column (Assay.Date).
     
-    Warning given in case of missed data indicating that you can only fit a 
-    glm or to use MM equation "withoutWeight".
+    Warning given in case of missed data indicating that you can only fit a glm or to use MM equation "withoutWeight".
     
-    Function \code{\link{checkDataset}} is called from \code{\link{PhenList}} 
-    function. 
+    Function \code{\link{checkDataset}} is called from \code{\link{PhenList}} function. 
 }
 \usage{
     checkDataset(dataset, testGenotype, refGenotype="+/+", 
@@ -40,26 +38,22 @@
     
 }
 \arguments{
-    \item{dataset}{data frame created from file or from another source; 
-    mandatory argument}
-    \item{testGenotype}{defines the test genotype to be compared to the 
-    reference genotype; mandatory argument}
-    \item{refGenotype}{defines the reference genotype; assigned default 
-    value is "+/+"}    
-    \item{outputMessages}{flag: "FALSE" value to suppress output messages; 
-    "TRUE" value to show output messages; assigned default value is TRUE}
-    \item{dataset.clean}{flag: "FALSE" value for no modification of the dataset;
-    "TRUE" value to clean dataset if needed; assigned default value is TRUE}
+    \item{dataset}{data frame created from file or from another source; mandatory argument}
+    \item{testGenotype}{defines the test genotype to be compared to the reference genotype; mandatory argument}
+    \item{refGenotype}{defines the reference genotype; assigned default value is "+/+"}    
+    \item{outputMessages}{flag: "FALSE" value to suppress output messages; "TRUE" value to show output messages; assigned default value is TRUE}
+    \item{dataset.clean}{flag: "FALSE" value for no modification of the dataset; "TRUE" value to clean dataset if needed; assigned default value is TRUE}
       
 }
-\value{Returns an instance of the \code{\linkS4class{PhenList}} class.}
+\value{
+    Returns an instance of the \code{\linkS4class{PhenList}} class.
+}
+
+
 \references{
-    Karp N, Melvin D, Sanger Mouse Genetics Project, Mott R (2012): Robust and 
-    Sensitive Analysis of Mouse Knockout Phenotypes. \emph{PLoS ONE} 
-    \bold{7}(12): e52410. doi:10.1371/journal.pone.0052410
+    Karp N, Melvin D, Sanger Mouse Genetics Project, Mott R (2012): Robust and Sensitive Analysis of Mouse Knockout Phenotypes. \emph{PLoS ONE} \bold{7}(12): e52410. doi:10.1371/journal.pone.0052410
     
-    West B, Welch K, Galecki A (2007): Linear Mixed Models: A practical 
-    guide using statistical software  \emph{New York: Chapman & Hall/CRC} 353 p.
+    West B, Welch K, Galecki A (2007): Linear Mixed Models: A practical guide using statistical software  \emph{New York: Chapman & Hall/CRC} 353 p.
 }
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 

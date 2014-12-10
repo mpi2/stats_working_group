@@ -563,7 +563,7 @@ recommendMethod <- function(phenList=NULL, depVariable=NULL,
          
             # check for TF
             if ('Batch' %in% colnames(x) && variabilityPass){
-                phenListTF <- TFDataset(phenList,depVariable,outputMessages=FALSE,forDecisionTree=outputMessages)
+                phenListTF <- TFDataset(phenList,depVariable,outputMessages=FALSE,forDecisionTree=FALSE)
                 xTF <- phenListTF$dataset            
                 
                 # check for batches - shoud be from 2 to 5 batches

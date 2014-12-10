@@ -2,10 +2,8 @@
 \alias{printTabStyle}
 \title{Method "printTabStyle"}
 \description{
-    Makes ready list of strings to be printed in tabular form, creates a 
-    table row from it. 
-    Adds empty positions if needed in order to make all strings the same by 
-    length and adds
+    Makes ready list of strings to be printed in tabular form, creates a table row from it. 
+    Adds empty positions if needed in order to make all strings the same by length and adds
     "tabSep" character between strings.
     Returns text that is ready to be printed (one row of a table). 
 }
@@ -15,10 +13,10 @@
 \arguments{
     \item{textList}{list of strings to prepare}
     \item{positions}{desired length of one cell in the table}
-    \item{tabSep}{character used to separate columns in the table; 
-    default value is "|"}
+    \item{tabSep}{character used to separate columns in the table; default value is "|"}
 }
-\value{Returns text that is ready to be printed (one row of a table). 
+\value{
+    Returns text that is ready to be printed (one row of a table). 
 }
 \author{Natalja Kurbatova}
 \examples{
