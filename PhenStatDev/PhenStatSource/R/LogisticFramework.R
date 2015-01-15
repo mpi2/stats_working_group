@@ -28,103 +28,42 @@
 ##http://idiom.ucsd.edu/~rlevy/lign251/fall2007/lecture_15.pdf States for nested mixed effect models liklihood ratio can be used to compare model
 ##provided only differ in fixed effects structure
 
-LR_Model <- function(phenList, depVariable, 	outputMessages=TRUE, pThreshold=0.0, baselineLevel)
+LR_Model <- function(phenList, depVariable, 	outputMessages=TRUE, pThreshold=0.0)
 {
 	x <- phenList$dataset
 	numberofsexes <- length(levels(x$Sex))
-			
-	## Start model formula: genotype, sex and genotype*sex interaction included.  Note if only one sex then sex and interaction omitted 
-	##very different to MM as random effect built in here into formula. 
-	formula_withBatch=modelFormula_LF(numberofsexes, depVariable, sexIncluded=TRUE, dimorphismIncluded=TRUE, IncludeBatch="Yes")
+	keep_equalvar <- NA			
+	keep_batch<-TestingBatch(phenList, depVariable)
+	
+	
 	formula_withOutBatch=modelFormula_LF(numberofsexes, depVariable, sexIncluded=TRUE, dimorphismIncluded=TRUE, IncludeBatch="No")		
 	
 	#setlevels
-	 x$Genotype=relevel(x$Genotype, ref="+/+")
-	 x[ , depVariable]=relevel(x[ ,depVariable], ref=baselineLevel)
+	#x$Genotype=relevel(x$Genotype, ref="+/+")
+	#x[ , depVariable]=relevel(x[ ,depVariable], ref=baselineLevel)
 	
 	#START OF tryCatch    
 	finalResult <- tryCatch({
 				
-				
-				##Goal of this section is to assess whether batch is significant or not in explaining variation
-				if ('Batch' %in% colnames(x)){
-					## LR fit of model formula with no random effects
-					## Model 1A (model_withoutbatch)
-					L_model_withoutbatch <- do.call("glm",args=list(formula_withOutBatch, x, na.action="na.omit", family=binomial()  ))
-						
-					## MM fit of model formula (with random effects)
-					## Model 1 (model_withBatch)
-					L_model_withBatch <- do.call("glmer", args = list(formula_withBatch, data = x, na.action="na.omit",family=binomial() ))	
-									
-					
-					
-					
-					
-					## Test: the random effects associated with batch intercepts can be ommited from model
-					## Hypothesis 1
-					## Null Hypothesis: variance of batch = 0
-					## Alternative Hypothesis: variance of batch > 0	
-					##If p value below threshold then you reject null and accept alternative that batch is significant in explaining variation in the model
-					##Based on method shown here http://www.simonqueenborough.com/R/specialist/mixed-models.html
-					
-					#p.value.batch = anova(L_model_withBatch, L_model_withoutbatch, test = "Chisq")  NOT suitable for comparing mixed against standard model
-					p.value.batch <- pchisq(-2*(logLik(L_model_withBatch)-logLik(L_model_withoutbatch)), 1, lower=FALSE)[1] 
-					keep_batch <- p.value.batch<pThreshold
-					##within this framework we are not testing the concept that the variance might depend on the genotype group
-					keep_equalvar <- NA	
-				}
-				else {
-					## No Batch effects
-					keep_batch <- FALSE
-					keep_equalvar <- NA	
-				}
-				
 				## Goal of this section is to tests for significance of fixed effects by comparing models with and without fixed effects included		
 				if(numberofsexes==2){
 					
-					if(keep_batch){
-						
-						#test sexual dimorphism
-						formula_withBatch_noSD=modelFormula_LF(numberofsexes, depVariable, sexIncluded=TRUE, dimorphismIncluded=FALSE, IncludeBatch="Yes")
-						L_model_withBatch_noSD <- do.call("glmer", args = list(formula_withBatch_noSD, data = x, na.action="na.omit",family=binomial() ))
-												
-						#interactionTest <- pchisq((deviance(L_model_withBatch)-deviance(L_model_withBatch_noSD)), 1, lower=FALSE)  
-						interactionTest = anova(L_model_withBatch, L_model_withBatch_noSD, test = "Chisq")
-						interactionTest =interactionTestoutput["Pr(>Chi)"]$"Pr(>Chi)"[2]
-						keep_interaction <- interactionTest<pThreshold
-						
-						#test sex inclusion in model
-						formula_withBatch_noSex=modelFormula_LF(numberofsexes, depVariable, sexIncluded=FALSE, dimorphismIncluded=FALSE, IncludeBatch="Yes")
-						L_model_withBatch_noSex <- do.call("glmer", args = list(formula_withBatch_noSex, data = x, na.action="na.omit",family=binomial() ))
-						
-						#sexTest <- pchisq((deviance(L_model_withBatch)-deviance(L_model_withBatch_noSex)), 1, lower=FALSE)
-						sexTest = anova(L_model_withBatch, L_model_withBatch_noSex, test = "Chisq")  
-						sexTest=sexTestoutput["Pr(>Chi)"]$"Pr(>Chi)"[2]
-						keep_sex <- sexTest<pThreshold
-						keep_weight <- NA
-						
-					}else{
-						
-						#test sexual dimorphism
-						L_model_withoutbatch <- do.call("glm",	args=list(formula_withOutBatch, x, na.action="na.omit", family=binomial()))
-						formula_withoutBatch_noSD=modelFormula_LF(numberofsexes, depVariable, sexIncluded=TRUE, dimorphismIncluded=FALSE, IncludeBatch="No")
-						L_model_withoutBatch_noSD <- do.call("glm", args = list(formula_withoutBatch_noSD, data = x, na.action="na.omit",family=binomial() ))
-						
-						#interactionTest <- pchisq((deviance(L_model_withoutbatch)-deviance(L_model_withoutBatch_noSD)), 1, lower=FALSE)
-						interactionTestoutput = anova(L_model_withoutbatch, L_model_withoutBatch_noSD, test = "Chisq")
-						interactionTest =interactionTestoutput["Pr(>Chi)"]$"Pr(>Chi)"[2]
-						keep_interaction <- interactionTest<pThreshold
-						
-						#test sex inclusion in model
-						formula_withoutBatch_noSex=modelFormula_LF(numberofsexes, depVariable, sexIncluded=FALSE, dimorphismIncluded=FALSE, IncludeBatch="No")
-						L_model_withoutBatch_noSex <- do.call("glm", args = list(formula_withoutBatch_noSex, data = x, na.action="na.omit",family=binomial() ))
-						
-						#sexTest <- pchisq((deviance(L_model_withoutbatch)-deviance(L_model_withoutBatch_noSex)), 1, lower=FALSE)  #error with df estimate
-						sexTestoutput = anova(L_model_withoutbatch, L_model_withoutBatch_noSex, test = "Chisq")  
-						sexTest=sexTestoutput["Pr(>Chi)"]$"Pr(>Chi)"[2]
-						keep_sex <- sexTest<pThreshold
-						keep_weight <- NA														
-					}												
+					#test sexual dimorphism
+					L_model_withoutbatch <- do.call("logistf",	args=list(formula_withOutBatch, x, na.action="na.omit"))
+					formula_withoutBatch_noSD=modelFormula_LF(numberofsexes, depVariable, sexIncluded=TRUE, dimorphismIncluded=FALSE, IncludeBatch="No")
+					L_model_withoutBatch_noSD <- do.call("logistf", args = list(formula_withoutBatch_noSD, data = x, na.action="na.omit" ))
+					
+					interactionTest = anova(L_model_withoutbatch, L_model_withoutBatch_noSD)$pval
+					keep_interaction <- interactionTest<pThreshold
+					
+					#test sex inclusion in model
+					formula_withoutBatch_noSex=modelFormula_LF(numberofsexes, depVariable, sexIncluded=FALSE, dimorphismIncluded=FALSE, IncludeBatch="No")
+					L_model_withoutBatch_noSex <- do.call("logistf", args = list(formula_withoutBatch_noSex, data = x, na.action="na.omit"))
+					
+					sexTest = anova(L_model_withoutbatch, L_model_withoutBatch_noSex)$pval
+					keep_sex <- sexTest<pThreshold
+					keep_weight <- NA														
+					
 				}
 				else {
 					keep_sex <- FALSE
@@ -143,19 +82,12 @@ LR_Model <- function(phenList, depVariable, 	outputMessages=TRUE, pThreshold=0.0
 				## Need to obtain final model 
 				##step one build formula and then fit the model through glm or glmer route depending on whether batch is significant
 				
-				if(keep_batch=="TRUE"){
-					
-					FinalFormula=modelFormula_LF(numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="Yes")
-					finalModel <- do.call("glmer", args = list(FinalFormula, data = x, na.action="na.omit",family=binomial() ))
-					
-				}else{
-					
-					FinalFormula=modelFormula_LF(numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="No")	
-					finalModel <- do.call("glm", args = list(FinalFormula, data = x, na.action="na.omit",family=binomial() ))
-									
-				}
 				
-						
+				FinalFormula=genotype_modelFormula_LF(numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="No")	
+				finalModel <- do.call("logistf", args = list(FinalFormula, data = x, na.action="na.omit"))
+				
+				
+				
 				finalResult <- new("PhenTestResult",list(
 								model.dataset=x,
 								model.output=finalModel,
@@ -178,8 +110,8 @@ LR_Model <- function(phenList, depVariable, 	outputMessages=TRUE, pThreshold=0.0
 				finalResult <- NULL
 				
 				stop_message <- paste("Error:\nCan't fit the model ",
-							format(formula_withOutBatch),". Try FE method.\n",sep="")    
-					
+						format(formula_withOutBatch),". Try FE method.\n",sep="")    
+				
 				if (outputMessages){
 					message(stop_message)
 					opt <- options(show.error.messages=FALSE)
@@ -214,7 +146,7 @@ modelFormula_LF <- function(numberofsexes, depVariable, sexIncluded, dimorphismI
 					
 				}else{
 					as.formula(paste(depVariable, "~", paste("Genotype", "(1|Batch)", sep="+")))
-					}
+				}
 			},
 			No = {
 				## standard logistic model framework
@@ -263,10 +195,34 @@ null_modelFormula_LF <- function(numberofsexes, depVariable, sexIncluded, dimorp
 					as.formula(paste(depVariable, "~", "1", sep=" "))
 				}
 			}
-			
+	
 	)
 	return(null_LR_model_formula)
 }
+
+
+InterceptOnly_nullModel_assessment <- function(numberofsexes, depVariable, sexIncluded, dimorphismIncluded){
+	
+	## standard logistic model framework
+	if(numberofsexes==2){
+		if (!sexIncluded  && !dimorphismIncluded){
+			output=TRUE
+		} else if((sexIncluded && dimorphismIncluded)|(!sexIncluded && dimorphismIncluded)|(sexIncluded  && !dimorphismIncluded)){
+			output=FALSE
+		}
+	}else{
+		output=TRUE
+	}
+	
+	
+	
+	return(output)
+}
+
+
+
+
+
 
 #Second cycle needed as specification of model changes for the final fitting in the presence of sexual dimorphism
 genotype_modelFormula_LF <- function(numberofsexes, depVariable, sexIncluded, dimorphismIncluded, IncludeBatch){
@@ -305,13 +261,12 @@ genotype_modelFormula_LF <- function(numberofsexes, depVariable, sexIncluded, di
 	return(LR_model_formula)
 }
 
-
 ##------------------------------------------------------------------------------
 ## Works with PhenTestResult object created by testDataset function.
 ## Builds null and uses final model to assess genotype effect
 ## final model results are then captured and stored.  
 
-queryFinalModel <- function(phenTestResult, outputMessages=TRUE, baselineLevel)
+queryFinalModel <- function(phenTestResult, outputMessages=TRUE)
 {
 	## Checks and stop messages
 	stop_message <- ""
@@ -321,8 +276,8 @@ queryFinalModel <- function(phenTestResult, outputMessages=TRUE, baselineLevel)
 		result <- phenTestResult
 		x <- result$model.dataset
 		depVariable <- result$depVariable
-		x$Genotype=relevel(x$Genotype, ref="+/+")
-		x[ , depVariable]=relevel(x[ ,depVariable], ref=baselineLevel)
+		#x$Genotype=relevel(x$Genotype, ref="+/+")
+		#x[ , depVariable]=relevel(x[ ,depVariable], ref=baselineLevel)
 		
 		
 		
@@ -368,37 +323,45 @@ queryFinalModel <- function(phenTestResult, outputMessages=TRUE, baselineLevel)
 				## Null Hypothesis: genotypes are not associated with dependent variable
 				## Alternative Hypothesis: genotypes are associated with dependent  variable
 				#setlevels
-							
 				
-				if(keep_batch=="TRUE"){
-					#build null model
-					model_null.formula = null_modelFormula_LF (numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="Yes")
-					nullModel <- do.call("glmer", args = list(model_null.formula, data = x, na.action="na.omit",family=binomial() ))
-					#build genotype model
-					model_genotype.formula = genotype_modelFormula_LF (numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="Yes")
-					genotypeModel <- do.call("glmer", args = list(model_genotype.formula, data = x, na.action="na.omit",family=binomial() ))						
-					#compare with genotype model		
-					#genotypeTest_p.value <- pchisq((deviance(genotypeModel)-deviance(nullModel)), 1, lower=FALSE)  #problem with the estimate of df
-					genotypeTest = anova(genotypeModel, nullModel, test = "Chisq")   # usees likelihood ratio estimate approach
-					genotypeTest_p.value=genotypeTest["Pr(>Chi)"]$"Pr(>Chi)"[2]
+				
+				#build genotype model
+				model_genotype.formula = genotype_modelFormula_LF(numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="No")
+				genotypeModel <- do.call("logistf", args = list(model_genotype.formula, data = x, na.action="na.omit" ))						
+				
+				model_null.formula = null_modelFormula_LF (numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="No")					
+				
+				
+				interceptAssessment=InterceptOnly_nullModel_assessment(numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction)
+				
+				if(interceptAssessment==TRUE){
+					
+					genotypeTest_p.value=logistftest(genotypeModel)$prob   # alternate strategy needed to test when have intercept only null model as you cannot specify an intercept only model with logistf
+					
+					
 				}else{
+					
 					#build null model
 					model_null.formula = null_modelFormula_LF (numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="No")					
-					nullModel <- do.call("glm", args = list(model_null.formula, data = x, na.action="na.omit",family=binomial ()))
-					#build genotype model
-					model_genotype.formula = genotype_modelFormula_LF (numberofsexes, depVariable, sexIncluded=keep_sex, dimorphismIncluded=keep_interaction, IncludeBatch="No")
-					genotypeModel <- do.call("glm", args = list(model_genotype.formula, data = x, na.action="na.omit",family=binomial() ))						
+					nullModel <- do.call("logistf", args = list(model_null.formula, data = x, na.action="na.omit"))
+					
 					#compare with genotype model
 					#genotypeTest_p.value <- pchisq((deviance(genotypeModel)-deviance(nullModel)), 1, lower=FALSE)  #problem with the estimate of df
-					genotypeTest = anova(genotypeModel, nullModel, test = "Chisq") 
-					genotypeTest_p.value=genotypeTest["Pr(>Chi)"]$"Pr(>Chi)"[2]
+					genotypeTest_p.value = anova(genotypeModel, nullModel)$pval 
+					
 				}
 				
-								
 				## Store the results
 				result$model.genotype <-genotypeModel
 				result$model.formula.genotype <- model_genotype.formula
-				result$model.null <-nullModel
+				
+				if(interceptAssessment==TRUE){
+					result$model.null <- NA   # there is no null model when there is an intercept only model
+				}else{
+					result$model.null <-nullModel
+				}
+				
+				
 				result$model.formula.null <- model_null.formula
 				result$model.output.genotype.nulltest.pVal <- genotypeTest_p.value 
 				result$model.effect.variance <- NA
@@ -407,7 +370,7 @@ queryFinalModel <- function(phenTestResult, outputMessages=TRUE, baselineLevel)
 				result$model.output.quality <- testFinal_LR_Model(phenTestResult)   
 				
 				## Parse modeloutput and choose output depending on model
-				result$model.output.summary <- parserOutputSummary(result)
+				result$model.output.summary <- parserOutputSummary_LR(result)
 				
 			},
 			
@@ -442,7 +405,7 @@ queryFinalModel <- function(phenTestResult, outputMessages=TRUE, baselineLevel)
 
 ##------------------------------------------------------------------------------
 ## Parses model output summary and returns in readable vector format
-parserOutputSummary<-function(phenTestResult)
+parserOutputSummary_LR<-function(phenTestResult)
 {
 	result <- phenTestResult
 	modeloutput_summary <- summary(result$model.output)
@@ -479,47 +442,61 @@ parserOutputSummary<-function(phenTestResult)
 	#note position is not dependent on whether a mixed or standard logisitic model is fitted.
 	if(no_of_sexes==1){
 		
+		#capturing SE based on advice in http://stats.stackexchange.com/questions/17571/how-to-store-the-standard-errors-with-the-lm-function-in-r
+		error_estimates=sqrt(diag(vcov(result$model.output)))
 		intercept_estimate = modeloutput_summary$coefficients[1]
-		intercept_estimate_SE 	= modeloutput_summary$coefficients[3]
+		intercept_estimate_SE 	= error_estimates[1]
 		
 		genotype_estimate = modeloutput_summary$coefficients[2]
-		genotype_estimate_SE = modeloutput_summary$coefficients[4]
-		genotype_p_value =  modeloutput_summary$coefficients[8]
+		genotype_estimate_SE = error_estimates[2]
+		genotype_p_value =  modeloutput_summary$prob[2]
 		
 	}else if(keep_interaction==TRUE){
-					
-	
+		error_estimates=sqrt(diag(vcov(result$model.output)))
 		intercept_estimate = modeloutput_summary$coefficients[1]
-		intercept_estimate_SE 	= modeloutput_summary$coefficients[5]
-					
+		intercept_estimate_SE 	= error_estimates[1]
+		
 		sex_estimate=modeloutput_summary$coefficients[2]
-		sex_estimate_SE=modeloutput_summary$coefficients[6]
-		sex_p_value= modeloutput_summary$coefficients[14]
+		sex_estimate_SE=error_estimates[2]
+		sex_p_value= modeloutput_summary$prob[2]
 		
 		sex_FvKO_estimate= modeloutput_summary$coefficients[3]
-		sex_FvKO_SE=modeloutput_summary$coefficients[7]
-		sex_FvKO_p_value=modeloutput_summary$coefficients[15]
+		sex_FvKO_SE=error_estimates[3]
+		sex_FvKO_p_value=modeloutput_summary$prob[3]
 		sex_MvKO_estimate=modeloutput_summary$coefficients[4]
-		sex_MvKO_SE=modeloutput_summary$coefficients[8]
-		sex_MvKO_p_value=modeloutput_summary$coefficients[16]		
-	
-	}else{
+		sex_MvKO_SE=error_estimates[4]
+		sex_MvKO_p_value=modeloutput_summary$prob[4]		
 		
+	}else if(keep_interaction!=TRUE && keep_sex!=TRUE){
+		error_estimates=sqrt(diag(vcov(result$model.output)))
 		intercept_estimate = modeloutput_summary$coefficients[1]
-		intercept_estimate_SE 	= modeloutput_summary$coefficients[4]
+		intercept_estimate_SE 	= error_estimates[1]
 		
-		sex_estimate=modeloutput_summary$coefficients[3]
-		sex_estimate_SE=modeloutput_summary$coefficients[6]
-		sex_p_value= modeloutput_summary$coefficients[12]
 		
 		genotype_estimate = modeloutput_summary$coefficients[2]
-		genotype_estimate_SE = modeloutput_summary$coefficients[5]
-		genotype_p_value =  modeloutput_summary$coefficients[11]
+		genotype_estimate_SE = error_estimates[2]
+		genotype_p_value =  modeloutput_summary$prob[2]
+		
+	}else{
+		error_estimates=sqrt(diag(vcov(result$model.output)))
+		
+		intercept_estimate = modeloutput_summary$coefficients[1]
+		intercept_estimate_SE 	= error_estimates[1]
+		
+		sex_estimate=modeloutput_summary$coefficients[2]
+		sex_estimate_SE=error_estimates[2]
+		sex_p_value= modeloutput_summary$prob[2]
+		
+		genotype_estimate = modeloutput_summary$coefficients[3]
+		genotype_estimate_SE = error_estimates[3]
+		genotype_p_value =  modeloutput_summary$prob[3]	
+		
+		
 		
 	}	
-		
-	output <- c(genotype_estimate, genotype_estimate_SE,  genotype_p_value,
-			sex_estimate, sex_estimate_SE,  sex_p_value, 
+	
+	
+	output <- c(genotype_estimate, genotype_estimate_SE,  genotype_p_value,		sex_estimate, sex_estimate_SE,  sex_p_value, 
 			"NA", "NA", "NA", 
 			intercept_estimate, intercept_estimate_SE, 
 			sex_FvKO_estimate, sex_FvKO_SE, sex_FvKO_p_value,  
@@ -535,3 +512,305 @@ parserOutputSummary<-function(phenTestResult)
 	
 	return(output)
 }
+
+
+PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL,
+		outputMessages=TRUE, dataset.clean=TRUE,
+		dataset.colname.batch=NULL, dataset.colname.genotype=NULL,
+		dataset.colname.sex=NULL, dataset.colname.weight=NULL,
+		dataset.values.missingValue=NULL, dataset.values.male=NULL,
+		dataset.values.female=NULL)
+{
+	if (class(dataset) == "data.frame") {
+		dataset <- dataset[,order(names(dataset))]
+		
+		## Rename columns if needed
+		if (dataset.clean){
+			
+			
+			if(!is.null(dataset.colname.batch))
+				colnames(dataset)[colnames(dataset) == dataset.colname.batch] <-'Batch'
+			else {
+				if ('Assay.Date' %in% colnames(dataset)){
+					colnames(dataset)[colnames(dataset) == 'Assay.Date'] <-'Batch'
+					if (outputMessages)
+						message(paste("Warning:\nDataset's column 'Assay.Date' has been ",
+										"renamed to 'Batch' and will be used for the batch effect modelling.\n",sep=""))
+				}
+				else
+				if ('AssayDate' %in% colnames(dataset)){
+					colnames(dataset)[colnames(dataset) == 'AssayDate'] <-'Batch'
+					if (outputMessages)
+						message(paste("Warning:\nDataset's column 'AssayDate' has been ",
+										"renamed to 'Batch' and will be used for the batch effect modelling.\n",sep=""))
+				}
+				else 
+				if (length(colnames(dataset)[grep("batch",
+										tolower(colnames(dataset)))])>0 && outputMessages){
+					batch_potential_columns<-paste(colnames(dataset)[grep
+											("batch", tolower(colnames(dataset)))], collapse="', '" )
+					
+					message(paste("Warning:\nDataset contains columns that might ",
+									"be used for Batch effect modeling, for instance '",
+									batch_potential_columns,"'.\n",sep=""))
+				}
+				
+			}
+			if(!is.null(dataset.colname.genotype)){
+				colnames(dataset)[colnames(dataset) == dataset.colname.genotype] <-'Genotype'
+			}
+			if(!is.null(dataset.colname.sex)) {
+				colnames(dataset)[colnames(dataset) == dataset.colname.sex] <-'Sex'
+			}
+			else {
+				if ('Gender' %in% colnames(dataset)){
+					colnames(dataset)[colnames(dataset) == 'Gender'] <-'Sex'
+					if (outputMessages)
+						message(paste("Warning:\nDataset's column 'Gender' has been ",
+										"renamed to 'Sex'.\n",sep=""))
+				}
+			}
+			
+			if(!is.null(dataset.colname.weight))
+				colnames(dataset)[colnames(dataset) == dataset.colname.weight] <-'Weight'
+			
+			## Replace missing values specified in the user format with NA 
+			if(!is.null(dataset.values.missingValue)) 
+				dataset[dataset == dataset.values.missingValue] <- NA
+			## Replace empty strings with NA
+			dataset[dataset == ""] <- NA
+			
+			
+			# make Weight column numeric if possible (if there are no strings)
+			if ('Weight' %in% colnames(dataset)){
+				#for (i in 1:length(colnames(dataset))){
+				columnName <- "Weight"
+				checkNA_transformed <- sum(is.na(suppressWarnings(as.numeric(as.character(dataset[,c(columnName)])))))
+				checkNA_initial <- sum(is.na(dataset[,c(columnName)])) 
+				if (checkNA_transformed == checkNA_initial) {
+					dataset[,c(columnName)]<-as.numeric(as.character(dataset[,c(columnName)]))
+				}
+				
+				#}
+			}
+			
+			
+			
+#        if ('Weight' %in% colnames(dataset)){
+#            if (is.numeric(dataset$Weight) && (!all(sapply(dataset$Weight,is.na)))) {
+#                dataset$Weight<-as.numeric(dataset$Weight)              
+#            }
+#            else {
+#                colnames(dataset)[colnames(dataset) == 'Weight'] <-'Weight_labels'
+#                if (outputMessages)
+#                message(paste("Warning:\nWeight column values are not numeric or NA. ", 
+#                              "In order to avoid erroneous execution of statistical ",
+#                              "functions column is renamed to 'Weight_labels'.\n",sep=""))
+#                
+#            }
+#        }
+			
+			## Renew levels
+			if ('Sex' %in% colnames(dataset))
+				dataset$Sex<-factor(dataset$Sex)
+			if ('Genotype' %in% colnames(dataset))
+				dataset$Genotype<-factor(dataset$Genotype)
+			if ('Batch' %in% colnames(dataset))
+				dataset$Batch<-factor(dataset$Batch)
+			
+			
+			# # Replace values for sexes with 'Male','Female'
+			levels(dataset$Sex)[levels(dataset$Sex)=="female"] <- "Female"
+			levels(dataset$Sex)[levels(dataset$Sex)=="male"] <- "Male"
+			
+			if(!is.null(dataset.values.female))
+				levels(dataset$Sex)[levels(dataset$Sex)==dataset.values.female] <- "Female"
+			
+			if(!is.null(dataset.values.male)) 
+				levels(dataset$Sex)[levels(dataset$Sex)==dataset.values.male] <- "Male"
+			
+			## Hemi to test genotype replacement
+			if (!is.null(hemiGenotype)) {
+				if (length(rownames(dataset[dataset$Genotype==hemiGenotype,]))>0) {
+					levels(dataset$Genotype)[levels(dataset$Genotype)==hemiGenotype] <- testGenotype
+					if (outputMessages)
+						message(paste("Warning:\nHemizygotes '",hemiGenotype,
+										"' have been relabelled to test genotype '",testGenotype,
+										"'.\nIf you don't want this behaviour then don't define ", 
+										"'hemiGenotype' argument.\n",sep=""))
+				}
+			}
+			
+			## Clean genotypes
+			if (length(setdiff(rownames(dataset),
+							rownames(dataset[dataset$Genotype %in% c(testGenotype,refGenotype),])))>0){
+				dataset <- dataset[dataset$Genotype %in% c(testGenotype,refGenotype),]
+				if (outputMessages)
+					message(paste("Warning:\nDataset has been cleaned by ",
+									"filtering out records with genotype value other than test ",
+									"genotype '", testGenotype,"' or reference genotype '",
+									refGenotype,"'.\n",sep=""))
+				
+			}
+		}
+		
+		
+		## Clean the empty records  NB - after renaming/cleaning !
+		if ('Sex' %in% colnames(dataset)){
+			dataset<-dataset[dataset$Sex!="",]
+			dataset<-dataset[!is.na(dataset$Sex),]
+		}
+		if ('Genotype' %in% colnames(dataset)){
+			dataset<-dataset[dataset$Genotype!="",]
+			dataset<-dataset[!is.na(dataset$Genotype),]
+		}
+		if ('Batch' %in% colnames(dataset)){
+			dataset<-dataset[dataset$Batch!="",]
+			dataset<-dataset[!is.na(dataset$Batch),]
+		}
+		
+		
+		## Renew levels
+		if ('Sex' %in% colnames(dataset))
+			dataset$Sex<-factor(dataset$Sex)
+		if ('Genotype' %in% colnames(dataset))
+			dataset$Genotype<-factor(dataset$Genotype)
+		if ('Batch' %in% colnames(dataset))
+			dataset$Batch<-factor(dataset$Batch)
+		
+		
+		checkWeight <- columnChecks(dataset,"Weight",2) 
+		
+		if (! checkWeight[1]){
+			if (outputMessages)
+				message("Warning:\nWeight column is not present in the database.\n")
+		}    
+		else {        
+			if (! checkWeight[2]){
+				if (outputMessages)
+					message(paste("Warning:\nWeight column values are not numeric.\n", 
+									"In order to avoid erroneous execution of statistical ",
+									"functions column is renamed to 'Weight_labels'.\n",sep=""))
+				colnames(dataset)[colnames(dataset) == 'Weight'] <-'Weight_labels'      
+			}    
+			if (! checkWeight[3]){
+				if (outputMessages)
+					message(paste("Warning:\nWeight column does not have enough data points ",
+									"for genotype/sex combinations.\n", 
+									"In order to avoid erroneous execution of statistical ",
+									"functions column is renamed to 'Weight_labels'.\n",sep=""))    
+				colnames(dataset)[colnames(dataset) == 'Weight'] <-'Weight_labels'      
+			}  
+		}     
+		
+		## CHECKS
+		dataset <- checkDataset(dataset, testGenotype, refGenotype, 
+				outputMessages, dataset.clean)
+		
+		
+		Genotype_levels <- levels(dataset$Genotype)
+		Sex_levels <- levels(dataset$Sex)
+		
+		
+		
+		## Calculate statistics
+		dataset.stat <- data.frame(
+				Variables = colnames(dataset),
+				Numeric = sapply(dataset, is.numeric),    
+				Continuous = sapply(dataset, function(x) if(is.numeric(x)) {
+								if (length(unique(x))/length(x)>0.05) TRUE else FALSE} else FALSE),
+				Levels = sapply(dataset, function(x) length(unique(x)) ),
+				NObs = sapply(dataset, function(x) length(na.omit(x))),
+				Mean = sapply(dataset, function(x) 
+							if(is.numeric(x) && (length(unique(x))/length(x)>0.05)) round(mean(na.omit(x)),digits=2) else NA),
+				StdDev = sapply(dataset, function(x) 
+							if(is.numeric(x) && (length(unique(x))/length(x)>0.05)) round(sd(na.omit(x)),digits=2) else NA),
+				Minimum = sapply(dataset, function(x) 
+							if(is.numeric(x) && (length(unique(x))/length(x)>0.05)) round(min(na.omit(x)),digits=2) else NA),
+				Maximum = sapply(dataset, function(x) 
+							if(is.numeric(x) && (length(unique(x))/length(x)>0.05)) round(max(na.omit(x)),digits=2) else NA))
+		
+		rownames(dataset.stat) <- NULL
+		
+		x <- new("PhenList",list(dataset=dataset))
+		x$refGenotype <- refGenotype
+		x$testGenotype <- testGenotype
+		x$hemiGenotype <- hemiGenotype
+		x$dataset.stat <- dataset.stat
+		x$dataset.colname.batch <- dataset.colname.batch
+		x$dataset.colname.genotype <- dataset.colname.genotype
+		x$dataset.colname.sex <- dataset.colname.sex
+		x$dataset.colname.weight <- dataset.colname.weight
+		x$dataset.values.missingValue <- dataset.values.missingValue
+		x$dataset.values.male <- dataset.values.male
+		x$dataset.values.female <- dataset.values.female
+		x$dataset.clean <- dataset.clean
+		x
+		
+	}
+	else {
+		message <- "Error: PhenList function's first argument should be data frame.\n"
+		if (outputMessages){            
+			message(message)
+			opt <- options(show.error.messages=FALSE)
+			on.exit(options(opt))
+			stop()
+		}
+		else {
+			stop(message)
+		}
+	}
+}
+########################################################################
+TestingBatch<-function(phenList, depVariable){
+	
+	x <- phenList$dataset
+	numberofsexes <- length(levels(x$Sex))
+	
+	formula_withBatch=modelFormula_LF(numberofsexes, depVariable, sexIncluded=TRUE, dimorphismIncluded=TRUE, IncludeBatch="Yes")
+	formula_withOutBatch=modelFormula_LF(numberofsexes, depVariable, sexIncluded=TRUE, dimorphismIncluded=TRUE, IncludeBatch="No")		
+	
+	#x$Genotype=relevel(x$Genotype, ref="+/+")
+	
+	#START OF tryCatch    
+	
+	
+	keep_batch="AssessmentFailed"
+	
+	suppressWarnings(
+			try(
+					
+					##Goal of this section is to assess whether batch is significant or not in explaining variation
+					{if ('Batch' %in% colnames(x)){
+							## LR fit of model formula with no random effects
+							## Model 1A (model_withoutbatch)
+							L_model_withoutbatch <- do.call("glm",args=list(formula_withOutBatch, x, na.action="na.omit", family=binomial()  ))
+							
+							## MM fit of model formula (with random effects)
+							## Model 1 (model_withBatch)
+							L_model_withBatch <- do.call("glmer", args = list(formula_withBatch, data = x, na.action="na.omit",family=binomial() ))	
+							
+							## Test: the random effects associated with batch intercepts can be ommited from model
+							## Hypothesis 1
+							## Null Hypothesis: variance of batch = 0
+							## Alternative Hypothesis: variance of batch > 0	
+							##If p value below threshold then you reject null and accept alternative that batch is significant in explaining variation in the model
+							##Based on method shown here http://www.simonqueenborough.com/R/specialist/mixed-models.html
+							
+							p.value.batch <- pchisq(-2*(logLik(L_model_withBatch)-logLik(L_model_withoutbatch)), 1, lower=FALSE)[1] 
+							keep_batch <- p.value.batch<pThreshold
+							
+						}
+						else {
+							## No Batch effects
+							keep_batch <- FALSE
+							
+						}
+						
+					},
+					silent=TRUE)
+	)
+	
+	return(keep_batch)
+	
+}	

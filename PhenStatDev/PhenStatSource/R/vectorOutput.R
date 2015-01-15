@@ -19,272 +19,272 @@
 ## (output from functions testDataset and buildFinalModel)
 vectorOutput <- function(phenTestResult, phenotypeThreshold=0.01)
 {
- 
-    if (phenTestResult$method %in% c("MM","TF")) {
-        equation <- switch(phenTestResult$equation,
-                withoutWeight = {"equation withoutWeight"},withWeight = {"equation withWeight"})
-        
-        framework <- switch(phenTestResult$method,
-                                MM = "Mixed Model framework",
-                                TF = "Time as Fixed Effect framework")
-        
-        fittingMethod <- "generalized least squares, "
-        if (phenTestResult$model.effect.batch && phenTestResult$method=="MM")
-            fittingMethod <- "linear mixed-effects model, "        
-        
-        classificationValue <- classificationTag(phenTestResult,
-                userMode="vectorOutput",outputMessages=FALSE)
-        
-        
-        x = phenTestResult$model.dataset
-        columnOfInterest <- x[,c(phenTestResult$depVariable)]
-        variability = paste('"variability":', round(length(unique(columnOfInterest))/length(columnOfInterest),digits=3),sep="")
-        
-        Genotype_levels=levels(x$Genotype)
-        Sex_levels=levels(x$Sex)
-        
-        DSsize = ""
-        
-        for (i in 1:length(Genotype_levels)){
-            GenotypeSubset <- subset(x, x$Genotype==Genotype_levels[i])
-            for (j in 1:length(Sex_levels)){
-                GenotypeSexSubset <- subset(GenotypeSubset, GenotypeSubset$Sex==Sex_levels[j])
-                columnOfInterest <- GenotypeSexSubset[,c(phenTestResult$depVariable)]
-                DSsize = paste(DSsize,paste('"',paste(Genotype_levels[i],Sex_levels[j],sep="_"),'"',sep=""),sep="")
-                DSsize = paste(DSsize,":",sep="")
-                DSsize = paste(DSsize,length(columnOfInterest),",",sep="")
-            }
-        }
-        
-        formula <- paste('"Formula":','"',paste(format(phenTestResult$model.formula.genotype), collapse= ' '),'"',sep="")
-        
-        
-        
-        addInfo = paste("{",DSsize,variability,",",formula,"}",sep="")
-        
-        percentageChanges <- "NA"
-        if (phenTestResult$numberSexes==2){
-            percentageChanges <- paste("Female: ",round(phenTestResult$model.output.percentageChanges[1],digits=2),"%",
-                            ", ",
-                            "Male: ",
-                            round(phenTestResult$model.output.percentageChanges[2],digits=2),"%",
-                            sep="")
-        } 
-        else {
-           if ("Female" %in% levels(phenTestResult$model.dataset$Sex)){
-             percentageChanges <- paste("Female: ",round(phenTestResult$model.output.percentageChanges[1],digits=2),"%",
-                                        ", ",
-                                        "Male: NA",
-                                        sep="")
-             
-           }
-           else{
-             percentageChanges <- paste("Female: NA",
-                                        ", ",
-                                        "Male: ",round(phenTestResult$model.output.percentageChanges[1],digits=2),"%",
-                                        sep="")
-             
-           }
-          
-        }   
-        
-        vectorOutput <- c(paste(framework,", ",fittingMethod, equation,sep=""),
-                as.character(phenTestResult$depVariable), 
-                as.character(phenTestResult$model.effect.batch), 
-                as.character(phenTestResult$model.effect.variance), 
-                as.character(phenTestResult$model.output.genotype.nulltest.pVal), 
-                as.character(phenTestResult$model.output.summary["genotype_estimate"]), 
-                as.character(phenTestResult$model.output.summary["genotype_estimate_SE"]),  
-                as.character(phenTestResult$model.output.summary["genotype_p_value"]),
-                as.character(percentageChanges),
-                as.character(phenTestResult$model.output.summary["sex_estimate"]), 
-                as.character(phenTestResult$model.output.summary["sex_estimate_SE"]),  
-                as.character(phenTestResult$model.output.summary["sex_p_value"]), 
-                as.character(phenTestResult$model.output.summary["weight_estimate"]), 
-                as.character(phenTestResult$model.output.summary["weight_estimate_SE"]), 
-                as.character(phenTestResult$model.output.summary["weight_p_value"]), 
-                as.character(phenTestResult$model.output.quality), 
-                as.character(phenTestResult$model.output.summary["intercept_estimate"]), 
-                as.character(phenTestResult$model.output.summary["intercept_estimate_SE"]), 
-                as.character(phenTestResult$model.effect.interaction),
-                as.character(phenTestResult$model.output.interaction),
-                as.character(phenTestResult$model.output.summary["sex_FvKO_estimate"]), 
-                as.character(phenTestResult$model.output.summary["sex_FvKO_SE"]), 
-                as.character(phenTestResult$model.output.summary["sex_FvKO_p_value"]),  
-                as.character(phenTestResult$model.output.summary["sex_MvKO_estimate"]),  
-                as.character(phenTestResult$model.output.summary["sex_MvKO_SE"]), 
-                as.character(phenTestResult$model.output.summary["sex_MvKO_p_value"]),
-                as.character(classificationValue),
-                as.character(addInfo))
-        
-        names(vectorOutput) <- c("Method",
-                "Dependent variable",
-                "Batch included",
-                "Residual variances homogeneity",
-                "Genotype contribution",
-                "Genotype estimate",
-                "Genotype standard error",
-                "Genotype p-Val",
-                "Genotype percentage change",
-                "Sex estimate",
-                "Sex standard error",
-                "Sex p-val",
-                "Weight estimate",
-                "Weight standard error",
-                "Weight p-val",
-                "Gp1 genotype",
-                "Gp1 Residuals normality test",
-                "Gp2 genotype",
-                "Gp2 Residuals normality test",
-                "Blups test",
-                "Rotated residuals normality test",
-                "Intercept estimate",
-                "Intercept standard error",
-                "Interaction included",
-                "Interaction p-val",
-                "Sex FvKO estimate",
-                "Sex FvKO standard error",
-                "Sex FvKO p-val",
-                "Sex MvKO estimate",
-                "Sex MvKO standard error",
-                "Sex MvKO p-val",
-                "Classification tag",
-                "Additional information")
-    }
-    else if (phenTestResult$method %in% c("FE","RR")){
-        male_pval <- NA
-        female_pval <- NA
-        male_ES <- NA
-        female_ES <- NA
-        if (!is.null(phenTestResult$model.output$male)){
-            #male_pval<-as.numeric(phenTestResult$model.output$male$p.val)
-            male_pval <- switch(phenTestResult$method,FE = as.character(as.numeric(phenTestResult$model.output$male$p.val)),
-                            RR = paste(phenTestResult$model.output$male[1],
-                            phenTestResult$model.output$male[3],sep=","))
-            #male_ES<-as.numeric(phenTestResult$model.output$ES_male)
-            male_ES <- switch(phenTestResult$method,FE = as.character(as.numeric(phenTestResult$model.output$ES_male)),
-                            RR = paste(phenTestResult$model.output$male[2],
-                            phenTestResult$model.output$male[4],sep=","))
-        }
-        if (!is.null(phenTestResult$model.output$female)){
-            #female_pval<-as.numeric(phenTestResult$model.output$female$p.val)
-            female_pval <- switch(phenTestResult$method,FE = as.character(as.numeric(phenTestResult$model.output$female$p.val)),
-                    RR = paste(phenTestResult$model.output$female[1],
-                            phenTestResult$model.output$female[3],sep=","))
-            #female_ES<-as.numeric(phenTestResult$model.output$ES_female)
-            female_ES <- switch(phenTestResult$method,FE = as.character(as.numeric(phenTestResult$model.output$ES_female)),
-                    RR = paste(phenTestResult$model.output$female[2],
-                            phenTestResult$model.output$female[4],sep=","))
-        }
-        
-        classificationValue <- classificationTag(phenTestResult,phenotypeThreshold=phenotypeThreshold,
-                outputMessages=FALSE)
-        
-        if (phenTestResult$method=="RR"){
-            addInfo = paste('"',rownames(phenTestResult$model.output.quality)[1],
-                    phenTestResult$model.output.quality[1],'"',",",sep="")
-            addInfo = paste(addInfo,'"',rownames(phenTestResult$model.output.quality)[2],
-                    phenTestResult$model.output.quality[2],'"',",",sep="")
-            
-            if (phenTestResult$numberSexes==2){
-                addInfo = paste(addInfo,'"',rownames(phenTestResult$model.output.quality)[3],
-                        phenTestResult$model.output.quality[3],'"',",",sep="")
-                addInfo = paste(addInfo,'"',rownames(phenTestResult$model.output.quality)[4],
-                    phenTestResult$model.output.quality[4],'"',sep="")
-            }
-            else {
-                addInfo = paste(addInfo,'"',rownames(phenTestResult$model.output.quality)[3],
-                        phenTestResult$model.output.quality[3],'"',sep="")
-            }
-            addInfo = paste("{",addInfo,"}",sep="")
-        }
-        else {
-            addInfo = "NA"
-        }
-        
-        ES_all <- switch(phenTestResult$method,FE = as.character(as.numeric(phenTestResult$model.output$ES)),
-                        RR = paste(phenTestResult$model.output$all[2],
-                        phenTestResult$model.output$all[4],sep=","))
-        p_value_all <- switch(phenTestResult$method,FE = as.character(as.numeric(phenTestResult$model.output$p.val)),
-                        RR = paste(phenTestResult$model.output$all[1],
-                        phenTestResult$model.output$all[3],sep=","))
- 
-        
-        vectorOutput <- c(switch(phenTestResult$method,FE = "Fisher Exact Test framework",
-                        RR = "Reference Ranges Plus framework"),
-                as.character(phenTestResult$depVariable), 
-                "NA", 
-                "NA",
-                "NA",
-                ES_all,
-                "NA",  
-                p_value_all,
-                "NA",
-                "NA",
-                "NA", #10 
-                "NA", 
-                "NA", 
-                "NA", 
-                "NA", 
-                as.character(colnames(phenTestResult$model.output$count_matrix_all)[1]), 
-                "NA",#16 
-                as.character(colnames(phenTestResult$model.output$count_matrix_all)[2]),  
-                "NA", 
-                "NA",
-                "NA", 
-                "NA", 
-                "NA",
-                "NA",
-                "NA", #24
-                as.character(female_ES),  
-                "NA",  
-                as.character(female_pval), 
-                as.character(male_ES),  
-                "NA",  
-                as.character(male_pval), #30
-                as.character(classificationValue),
-                addInfo)
-        
-        names(vectorOutput) <- c("Method",
-                "Dependent variable",
-                "Batch included",
-                "Residual variances homogeneity",
-                "Genotype contribution",
-                "Genotype estimate",
-                "Genotype standard error",
-                "Genotype p-Val",
-                "Genotype percentage change",
-                "Sex estimate",
-                "Sex standard error",
-                "Sex p-val", #11
-                "Weight estimate",
-                "Weight standard error",
-                "Weight p-val",
-                "Gp1 genotype",
-                "Gp1 Residuals normality test", #16
-                "Gp2 genotype",
-                "Gp2 Residuals normality test",
-                "Blups test",
-                "Rotated residuals normality test", #20
-                "Intercept estimate",
-                "Intercept standard error",
-                "Interaction included",
-                "Interaction p-val", #24
-                "Sex FvKO estimate",
-                "Sex FvKO standard error",
-                "Sex FvKO p-val",
-                "Sex MvKO estimate",
-                "Sex MvKO standard error",
-                "Sex MvKO p-val",
-                "Classification tag",
-                "Additional information")
-    }
-    
+	
+	if (phenTestResult$method %in% c("MM","TF")) {
+		equation <- switch(phenTestResult$equation,
+				withoutWeight = {"equation withoutWeight"},withWeight = {"equation withWeight"})
+		
+		framework <- switch(phenTestResult$method,
+				MM = "Mixed Model framework",
+				TF = "Time as Fixed Effect framework")
+		
+		fittingMethod <- "generalized least squares, "
+		if (phenTestResult$model.effect.batch && phenTestResult$method=="MM")
+			fittingMethod <- "linear mixed-effects model, "        
+		
+		classificationValue <- classificationTag(phenTestResult,
+				userMode="vectorOutput",outputMessages=FALSE)
+		
+		
+		x = phenTestResult$model.dataset
+		columnOfInterest <- x[,c(phenTestResult$depVariable)]
+		variability = paste('"variability":', round(length(unique(columnOfInterest))/length(columnOfInterest),digits=3),sep="")
+		
+		Genotype_levels=levels(x$Genotype)
+		Sex_levels=levels(x$Sex)
+		
+		DSsize = ""
+		
+		for (i in 1:length(Genotype_levels)){
+			GenotypeSubset <- subset(x, x$Genotype==Genotype_levels[i])
+			for (j in 1:length(Sex_levels)){
+				GenotypeSexSubset <- subset(GenotypeSubset, GenotypeSubset$Sex==Sex_levels[j])
+				columnOfInterest <- GenotypeSexSubset[,c(phenTestResult$depVariable)]
+				DSsize = paste(DSsize,paste('"',paste(Genotype_levels[i],Sex_levels[j],sep="_"),'"',sep=""),sep="")
+				DSsize = paste(DSsize,":",sep="")
+				DSsize = paste(DSsize,length(columnOfInterest),",",sep="")
+			}
+		}
+		
+		formula <- paste('"Formula":','"',paste(format(phenTestResult$model.formula.genotype), collapse= ' '),'"',sep="")
+		
+		
+		
+		addInfo = paste("{",DSsize,variability,",",formula,"}",sep="")
+		
+		percentageChanges <- "NA"
+		if (phenTestResult$numberSexes==2){
+			percentageChanges <- paste("Female: ",round(phenTestResult$model.output.percentageChanges[1],digits=2),"%",
+					", ",
+					"Male: ",
+					round(phenTestResult$model.output.percentageChanges[2],digits=2),"%",
+					sep="")
+		} 
+		else {
+			if ("Female" %in% levels(phenTestResult$model.dataset$Sex)){
+				percentageChanges <- paste("Female: ",round(phenTestResult$model.output.percentageChanges[1],digits=2),"%",
+						", ",
+						"Male: NA",
+						sep="")
+				
+			}
+			else{
+				percentageChanges <- paste("Female: NA",
+						", ",
+						"Male: ",round(phenTestResult$model.output.percentageChanges[1],digits=2),"%",
+						sep="")
+				
+			}
+			
+		}   
+		
+		vectorOutput <- c(paste(framework,", ",fittingMethod, equation,sep=""),
+				as.character(phenTestResult$depVariable), 
+				as.character(phenTestResult$model.effect.batch), 
+				as.character(phenTestResult$model.effect.variance), 
+				as.character(phenTestResult$model.output.genotype.nulltest.pVal), 
+				as.character(phenTestResult$model.output.summary["genotype_estimate"]), 
+				as.character(phenTestResult$model.output.summary["genotype_estimate_SE"]),  
+				as.character(phenTestResult$model.output.summary["genotype_p_value"]),
+				as.character(percentageChanges),
+				as.character(phenTestResult$model.output.summary["sex_estimate"]), 
+				as.character(phenTestResult$model.output.summary["sex_estimate_SE"]),  
+				as.character(phenTestResult$model.output.summary["sex_p_value"]), 
+				as.character(phenTestResult$model.output.summary["weight_estimate"]), 
+				as.character(phenTestResult$model.output.summary["weight_estimate_SE"]), 
+				as.character(phenTestResult$model.output.summary["weight_p_value"]), 
+				as.character(phenTestResult$model.output.quality), 
+				as.character(phenTestResult$model.output.summary["intercept_estimate"]), 
+				as.character(phenTestResult$model.output.summary["intercept_estimate_SE"]), 
+				as.character(phenTestResult$model.effect.interaction),
+				as.character(phenTestResult$model.output.interaction),
+				as.character(phenTestResult$model.output.summary["sex_FvKO_estimate"]), 
+				as.character(phenTestResult$model.output.summary["sex_FvKO_SE"]), 
+				as.character(phenTestResult$model.output.summary["sex_FvKO_p_value"]),  
+				as.character(phenTestResult$model.output.summary["sex_MvKO_estimate"]),  
+				as.character(phenTestResult$model.output.summary["sex_MvKO_SE"]), 
+				as.character(phenTestResult$model.output.summary["sex_MvKO_p_value"]),
+				as.character(classificationValue),
+				as.character(addInfo))
+		
+		names(vectorOutput) <- c("Method",
+				"Dependent variable",
+				"Batch included",
+				"Residual variances homogeneity",
+				"Genotype contribution",
+				"Genotype estimate",
+				"Genotype standard error",
+				"Genotype p-Val",
+				"Genotype percentage change",
+				"Sex estimate",
+				"Sex standard error",
+				"Sex p-val",
+				"Weight estimate",
+				"Weight standard error",
+				"Weight p-val",
+				"Gp1 genotype",
+				"Gp1 Residuals normality test",
+				"Gp2 genotype",
+				"Gp2 Residuals normality test",
+				"Blups test",
+				"Rotated residuals normality test",
+				"Intercept estimate",
+				"Intercept standard error",
+				"Interaction included",
+				"Interaction p-val",
+				"Sex FvKO estimate",
+				"Sex FvKO standard error",
+				"Sex FvKO p-val",
+				"Sex MvKO estimate",
+				"Sex MvKO standard error",
+				"Sex MvKO p-val",
+				"Classification tag",
+				"Additional information")
+	}
+	else if (phenTestResult$method %in% c("FE","RR")){
+		male_pval <- NA
+		female_pval <- NA
+		male_ES <- NA
+		female_ES <- NA
+		if (!is.null(phenTestResult$model.output$male)){
+			#male_pval<-as.numeric(phenTestResult$model.output$male$p.val)
+			male_pval <- switch(phenTestResult$method,FE = as.character(as.numeric(phenTestResult$model.output$male$p.val)),
+					RR = paste(phenTestResult$model.output$male[1],
+							phenTestResult$model.output$male[3],sep=","))
+			#male_ES<-as.numeric(phenTestResult$model.output$ES_male)
+			male_ES <- switch(phenTestResult$method,FE = as.character(as.numeric(phenTestResult$model.output$ES_male)),
+					RR = paste(phenTestResult$model.output$male[2],
+							phenTestResult$model.output$male[4],sep=","))
+		}
+		if (!is.null(phenTestResult$model.output$female)){
+			#female_pval<-as.numeric(phenTestResult$model.output$female$p.val)
+			female_pval <- switch(phenTestResult$method,FE = as.character(as.numeric(phenTestResult$model.output$female$p.val)),
+					RR = paste(phenTestResult$model.output$female[1],
+							phenTestResult$model.output$female[3],sep=","))
+			#female_ES<-as.numeric(phenTestResult$model.output$ES_female)
+			female_ES <- switch(phenTestResult$method,FE = as.character(as.numeric(phenTestResult$model.output$ES_female)),
+					RR = paste(phenTestResult$model.output$female[2],
+							phenTestResult$model.output$female[4],sep=","))
+		}
+		
+		classificationValue <- classificationTag(phenTestResult,phenotypeThreshold=phenotypeThreshold,
+				outputMessages=FALSE)
+		
+		if (phenTestResult$method=="RR"){
+			addInfo = paste('"',rownames(phenTestResult$model.output.quality)[1],
+					phenTestResult$model.output.quality[1],'"',",",sep="")
+			addInfo = paste(addInfo,'"',rownames(phenTestResult$model.output.quality)[2],
+					phenTestResult$model.output.quality[2],'"',",",sep="")
+			
+			if (phenTestResult$numberSexes==2){
+				addInfo = paste(addInfo,'"',rownames(phenTestResult$model.output.quality)[3],
+						phenTestResult$model.output.quality[3],'"',",",sep="")
+				addInfo = paste(addInfo,'"',rownames(phenTestResult$model.output.quality)[4],
+						phenTestResult$model.output.quality[4],'"',sep="")
+			}
+			else {
+				addInfo = paste(addInfo,'"',rownames(phenTestResult$model.output.quality)[3],
+						phenTestResult$model.output.quality[3],'"',sep="")
+			}
+			addInfo = paste("{",addInfo,"}",sep="")
+		}
+		else {
+			addInfo = "NA"
+		}
+		
+		ES_all <- switch(phenTestResult$method,FE = as.character(as.numeric(phenTestResult$model.output$ES)),
+				RR = paste(phenTestResult$model.output$all[2],
+						phenTestResult$model.output$all[4],sep=","))
+		p_value_all <- switch(phenTestResult$method,FE = as.character(as.numeric(phenTestResult$model.output$p.val)),
+				RR = paste(phenTestResult$model.output$all[1],
+						phenTestResult$model.output$all[3],sep=","))
+		
+		
+		vectorOutput <- c(switch(phenTestResult$method,FE = "Fisher Exact Test framework",
+						RR = "Reference Ranges Plus framework"),
+				as.character(phenTestResult$depVariable), 
+				"NA", 
+				"NA",
+				"NA",
+				ES_all,
+				"NA",  
+				p_value_all,
+				"NA",
+				"NA",
+				"NA", #10 
+				"NA", 
+				"NA", 
+				"NA", 
+				"NA", 
+				as.character(colnames(phenTestResult$model.output$count_matrix_all)[1]), 
+				"NA",#16 
+				as.character(colnames(phenTestResult$model.output$count_matrix_all)[2]),  
+				"NA", 
+				"NA",
+				"NA", 
+				"NA", 
+				"NA",
+				"NA",
+				"NA", #24
+				as.character(female_ES),  
+				"NA",  
+				as.character(female_pval), 
+				as.character(male_ES),  
+				"NA",  
+				as.character(male_pval), #30
+				as.character(classificationValue),
+				addInfo)
+		
+		names(vectorOutput) <- c("Method",
+				"Dependent variable",
+				"Batch included",
+				"Residual variances homogeneity",
+				"Genotype contribution",
+				"Genotype estimate",
+				"Genotype standard error",
+				"Genotype p-Val",
+				"Genotype percentage change",
+				"Sex estimate",
+				"Sex standard error",
+				"Sex p-val", #11
+				"Weight estimate",
+				"Weight standard error",
+				"Weight p-val",
+				"Gp1 genotype",
+				"Gp1 Residuals normality test", #16
+				"Gp2 genotype",
+				"Gp2 Residuals normality test",
+				"Blups test",
+				"Rotated residuals normality test", #20
+				"Intercept estimate",
+				"Intercept standard error",
+				"Interaction included",
+				"Interaction p-val", #24
+				"Sex FvKO estimate",
+				"Sex FvKO standard error",
+				"Sex FvKO p-val",
+				"Sex MvKO estimate",
+				"Sex MvKO standard error",
+				"Sex MvKO p-val",
+				"Classification tag",
+				"Additional information")
+	}
+	
 	else if (phenTestResult$method == "LR"){
 		
-		classificationValue <- "NA"
 		
-				
+		classificationValue <- classificationTag(phenTestResult, userMode="vectorOutput",outputMessages=FALSE)
+		
 		vectorOutput <- c(
 				"Logistic Regression framework",
 				as.character(phenTestResult$depVariable), 
@@ -312,7 +312,7 @@ vectorOutput <- function(phenTestResult, phenotypeThreshold=0.01)
 				as.character(phenTestResult$model.output.summary["sex_MvKO_estimate"]),  
 				as.character(phenTestResult$model.output.summary["sex_MvKO_SE"]), 
 				as.character(phenTestResult$model.output.summary["sex_MvKO_p_value"]),
-				"NA",  #not yet implemented in logistic framework
+				as.character(classificationValue),
 				"NA" )   #no additional information as yet in logistic framework as.character(addInfo))
 		
 		
@@ -358,11 +358,10 @@ vectorOutput <- function(phenTestResult, phenotypeThreshold=0.01)
 	
 	
 	vectorOutput[is.na(vectorOutput)] <-"NA"
-   
-    
-    return(vectorOutput)
+	
+	
+	return(vectorOutput)
 }
-
 #-------------------------------------------------------------------------------
 vectorOutputMatrices <- function(phenTestResult,outputMessages=TRUE){
     stop_message <- ""
