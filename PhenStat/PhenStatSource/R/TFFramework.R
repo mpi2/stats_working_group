@@ -17,22 +17,60 @@
 ##------------------------------------------------------------------------------
 ## Cleans dataset to make it suitable for the TF framework - 
 ## data points in all genotype/batch level combinations at least for one sex
-TFDataset <- function(phenList, depVariable, outputMessages=TRUE, forDecisionTree=FALSE)
+TFDataset <- function(phenList=NULL, depVariable=NULL, outputMessages=TRUE, forDecisionTree=FALSE)
 {
-    x <- phenList$dataset
+    stop_message <- ""
+    ## START CHECK ARGUMENTS   
+    # 1
+    if (is.null(phenList) || !is(phenList,"PhenList")){
+        stop_message <- paste(stop_message,"Error:\nPlease create and specify PhenList object.\n",sep="")
+    }
+    # 2
+    if (is.null(depVariable)){
+        stop_message <- paste(stop_message,"Error:\nPlease specify dependent variable, ",
+                "for example: depVariable='Lean.Mass'.\n",sep="")
+    }
+
+    if (nchar(stop_message)==0) {
+        # extract data frame 
+        x <- dataset(phenList)
+        columnOfInterest <- getColumn(phenList,depVariable)
+        # 3
+        if (!batchIn(phenList)){
+            stop_message <- paste("Error:\nBatch column is needed in the dataset to create make it suitable ",
+                    "for the TF framework.\n",sep="")
+        }
+        # Presence
+        if (is.null(columnOfInterest))
+            stop_message <- paste("Error:\nDependent variable column '",
+                depVariable,"' is missed in the dataset.\n",sep="")
+    }    
+    ## STOP CHECK ARGUMENTS   
+    # If problems are deteckted
+    if (nchar(stop_message)>0){
+        if (outputMessages)  { 
+            message(stop_message)
+            opt <- options(show.error.messages=FALSE)
+            on.exit(options(opt))      
+            stop()
+        }
+        else {
+            stop(stop_message)
+        }
+    }
     
-    if ('Batch' %in% colnames(x)){
+    # Creates a subset with analysable variable
+    if (nchar(stop_message)==0) {
         # Remove NA records (Batch and/or depVariable are not defined)
         x<-x[!is.na(x$Batch),] 
         x<-x[!is.na(x[,c(depVariable)]),] 
-
+        
         # Lists possible combinations
         Genotype_levels <- levels(factor(x$Genotype))
         Batch_levels <- levels(factor(x$Batch))
         Sex_levels <- levels(factor(x$Sex)) 
         #numberofSexes <- length(Sex_levels)
         tableWidth <- length(Sex_levels)*2+1
-        
         countsAll <- nrow(x)
         countsRemovedRef <- 0
         countsRemovedTest <- 0
@@ -76,7 +114,7 @@ TFDataset <- function(phenList, depVariable, outputMessages=TRUE, forDecisionTre
                   
                 if (length(columnOfInterestSubset)==0){
                     countsMinus <- nrow(x[x$Batch==Batch_levels[i],])
-                    if (Genotype_levels[j]==phenList$testGenotype){
+                    if (Genotype_levels[j]==testGenotype(phenList)){
                         countsRemovedRef <- countsRemovedRef + countsMinus 
                     }
                     else {
@@ -112,8 +150,13 @@ TFDataset <- function(phenList, depVariable, outputMessages=TRUE, forDecisionTre
         
 
         if (length(levels(factor(x$Batch))) >= 2 && length(levels(factor(x$Batch))) <= 5) {
-            new_phenList <-PhenList(dataset=x, testGenotype=phenList$testGenotype, 
-                    refGenotype=phenList$refGenotype, hemiGenotype=phenList$hemiGenotype,outputMessages=FALSE)
+            new_phenList <- new("PhenList",dataset=x,
+                    refGenotype = refGenotype(phenList),
+                    testGenotype = testGenotype(phenList),
+                    hemiGenotype = hemiGenotype(phenList))
+            
+            #PhenList(dataset=x, testGenotype=phenList$testGenotype, 
+             #       refGenotype=phenList$refGenotype, hemiGenotype=phenList$hemiGenotype,outputMessages=FALSE)
             return (new_phenList)
         }
         else {
@@ -154,7 +197,7 @@ printTabStyle <- function(textList,positions,tabSep="|"){
 startTFModel <- function(phenList, depVariable, equation="withWeight",
         outputMessages=TRUE, pThreshold=0.05, keepList=NULL)
 {
-    x <- phenList$dataset
+    x <- dataset(phenList)
     
     #if (!is.null(keepList)){
         ## User's values for effects
@@ -194,7 +237,7 @@ startTFModel <- function(phenList, depVariable, equation="withWeight",
     numberofSexes <- length(levels(x$Sex))
     # Averages for percentage changes - is the ratio of the genotype effect for a sex relative to 
     # the wildtype signal for that variable for that sex - calculation        
-    WT <- subset(x,x$Genotype==phenList$refGenotype)
+    WT <- subset(x,x$Genotype==refGenotype(phenList))
     mean_all <- mean(WT[,c(depVariable)],na.rm=TRUE)  
     mean_list <- c(mean_all)  
     if (numberofSexes==2){  
@@ -486,24 +529,32 @@ startTFModel <- function(phenList, depVariable, equation="withWeight",
         
     #}
     
+    # TF modelling output
+    linearRegressionOutput <- list(model.output=model,
+        equation=equation,
+        model.effect.batch=keep_batch,
+        model.effect.variance=keep_equalvar,
+        model.effect.interaction=keep_interaction,
+        model.output.interaction=interactionTest,
+        model.effect.sex=keep_sex,
+        model.effect.weight=keep_weight,
+        numberSexes=numberofSexes,
+        pThreshold=pThreshold,
+        model.formula.genotype=model.formula,
+        model.output.averageRefGenotype=mean_list)
+        
 
-    result <- new("PhenTestResult",list(
-                    model.dataset=x,
-                    model.output=model,
-                    depVariable=depVariable,
-                    refGenotype=phenList$refGenotype,
-                    equation=equation,
-                    method="TF",
-                    model.effect.batch=keep_batch,
-                    model.effect.variance=keep_equalvar,
-                    model.effect.interaction=keep_interaction,
-                    model.output.interaction=interactionTest,
-                    model.effect.sex=keep_sex,
-                    model.effect.weight=keep_weight,
-                    numberSexes=numberofSexes,
-                    pThreshold=pThreshold,
-                    model.formula.genotype=model.formula,
-                    model.output.averageRefGenotype=mean_list))
+    result <- new("PhenTestResult",
+            analysedDataset=x,
+            depVariable=depVariable,
+            refGenotype=refGenotype(phenList),
+            testGenotype=testGenotype(phenList),
+            method="TF",
+            transformationRequired = FALSE,
+            lambdaValue = integer(0),
+            scaleShift = integer(0),
+            analysisResults=linearRegressionOutput)
+
     return(result)
 }
 
@@ -518,16 +569,18 @@ finalTFModel <- function(phenTestResult, outputMessages=TRUE)
     
     ## Check PhenTestResult object
     if(is(phenTestResult,"PhenTestResult")) {
-        result <- phenTestResult
-        x <- result$model.dataset
-        depVariable <- result$depVariable
-        equation <- result$equation
-        keep_weight <- result$model.effect.weight
-        keep_sex <- result$model.effect.sex
-        keep_interaction <- result$model.effect.interaction
-        keep_batch <- result$model.effect.batch
-        keep_equalvar <- result$model.effect.variance
-        
+
+        finalResult <- phenTestResult
+        linearRegressionOutput <- analysisResults(phenTestResult)
+        x <- analysedDataset(finalResult)
+        depVariable <- getVariable(finalResult)
+        equation <- linearRegressionOutput$equation
+        keep_weight <- linearRegressionOutput$model.effect.weight
+        keep_sex <- linearRegressionOutput$model.effect.sex
+        keep_interaction <- linearRegressionOutput$model.effect.interaction
+        keep_batch <- linearRegressionOutput$model.effect.batch
+        keep_equalvar <- linearRegressionOutput$model.effect.variance
+
         ## Stop function if there are no datasets to work with
         if(is.null(x)){
             stop_message <- "Error:\nPlease create a PhenList object first and run function 'testDataset'.\n"
@@ -557,7 +610,7 @@ finalTFModel <- function(phenTestResult, outputMessages=TRUE)
     
     ## END Checks and stop messages
     
-    numberofSexes <- result$numberSexes
+    numberofSexes <- linearRegressionOutput$numberSexes
     
     
     ## Build final null model
@@ -696,107 +749,111 @@ finalTFModel <- function(phenTestResult, outputMessages=TRUE)
         x,weights=varIdent(form=~1|Genotype), na.action="na.exclude"))
     }
     
+
+    ## Store the results after the final TF modelling step
+    linearRegressionOutput$model.output <- model_genotype
+    linearRegressionOutput$model.null <- model_null
+    linearRegressionOutput$model.output.genotype.nulltest.pVal <- p.value
+    linearRegressionOutput$model.formula.null <- model_null.formula
+    linearRegressionOutput$model.formula.genotype <- model_genotype.formula
+    #linearRegressionOutput$model.effect.variance <- keep_equalvar
     
-    ## Store the results
-    result$model.output <- model_genotype
-    result$model.null <- model_null
-    result$model.output.genotype.nulltest.pVal <- p.value
-    result$model.formula.null <- model_null.formula
-    result$model.formula.genotype <- model_genotype.formula
     
-    ## Assign MM quality of fit
-    result$model.output.quality <- testFinalModel(result)
     
     ## Parse modeloutput and choose output depending on model
-    result$model.output.summary <- parserOutputTFSummary(result)
+    linearRegressionOutput$model.output.summary <- parserOutputTFSummary(linearRegressionOutput)
+
     # Percentage changes - is the ratio of the genotype effect for a sex relative to 
     # the wildtype signal for that variable for that sex - calculation   
 
-    if(result$numberSexes==2){
+    if(numberofSexes==2){
         # without weight
-        if (is.na(result$model.output.summary['weight_estimate'])){ 
-            if (!is.na(result$model.output.summary['sex_estimate']) &&
-            !is.na(result$model.output.summary['sex_FvKO_estimate']))
+        if (is.na(linearRegressionOutput$model.output.summary['weight_estimate'])){ 
+            if (!is.na(linearRegressionOutput$model.output.summary['sex_estimate']) &&
+            !is.na(linearRegressionOutput$model.output.summary['sex_FvKO_estimate']))
             {
-                denominator_f <- result$model.output.summary['intercept_estimate']
-                denominator_m <- result$model.output.summary['intercept_estimate']+
-                result$model.output.summary['sex_estimate']
-                ratio_f <- result$model.output.summary['sex_FvKO_estimate']/denominator_f                       
-                ratio_m <- result$model.output.summary['sex_MvKO_estimate']/denominator_m 
+                denominator_f <- linearRegressionOutput$model.output.summary['intercept_estimate']
+                denominator_m <- linearRegressionOutput$model.output.summary['intercept_estimate']+
+                linearRegressionOutput$model.output.summary['sex_estimate']
+                ratio_f <- linearRegressionOutput$model.output.summary['sex_FvKO_estimate']/denominator_f                       
+                ratio_m <- linearRegressionOutput$model.output.summary['sex_MvKO_estimate']/denominator_m 
             }
-            else if (!is.na(result$model.output.summary['sex_FvKO_estimate']))
+            else if (!is.na(linearRegressionOutput$model.output.summary['sex_FvKO_estimate']))
             {
-                denominator <- result$model.output.summary['intercept_estimate']
-                ratio_f <- result$model.output.summary['sex_FvKO_estimate']/denominator                            
-                ratio_m <- result$model.output.summary['sex_MvKO_estimate']/denominator            
+                denominator <- linearRegressionOutput$model.output.summary['intercept_estimate']
+                ratio_f <- linearRegressionOutput$model.output.summary['sex_FvKO_estimate']/denominator                            
+                ratio_m <- linearRegressionOutput$model.output.summary['sex_MvKO_estimate']/denominator            
             }
-            else if (!is.na(result$model.output.summary['sex_estimate']))
+            else if (!is.na(linearRegressionOutput$model.output.summary['sex_estimate']))
             {
-                denominator_f <- result$model.output.summary['intercept_estimate']
-                denominator_m <- result$model.output.summary['intercept_estimate']+
-                result$model.output.summary['sex_estimate']
-                ratio_f <- result$model.output.summary['genotype_estimate']/denominator_f                        
-                ratio_m <- result$model.output.summary['genotype_estimate']/denominator_m 
+                denominator_f <- linearRegressionOutput$model.output.summary['intercept_estimate']
+                denominator_m <- linearRegressionOutput$model.output.summary['intercept_estimate']+
+                linearRegressionOutput$model.output.summary['sex_estimate']
+                ratio_f <- linearRegressionOutput$model.output.summary['genotype_estimate']/denominator_f                        
+                ratio_m <- linearRegressionOutput$model.output.summary['genotype_estimate']/denominator_m 
             }
             else
             {
-                denominator <- result$model.output.summary['intercept_estimate']
-                ratio_f <- result$model.output.summary['genotype_estimate']/denominator                            
+                denominator <- linearRegressionOutput$model.output.summary['intercept_estimate']
+                ratio_f <- linearRegressionOutput$model.output.summary['genotype_estimate']/denominator                            
                 ratio_m <- ratio_f                      
             }
         }
         # with weight
         else{
-            mean_list <- result$model.output.averageRefGenotype
+            mean_list <- linearRegressionOutput$model.output.averageRefGenotype
             denominator_f <- mean_list[2]
             denominator_m <- mean_list[3]
-            if (!is.na(result$model.output.summary['sex_estimate']) &&
-            !is.na(result$model.output.summary['sex_FvKO_estimate']))
+            if (!is.na(linearRegressionOutput$model.output.summary['sex_estimate']) &&
+            !is.na(linearRegressionOutput$model.output.summary['sex_FvKO_estimate']))
             {
-                ratio_f <- result$model.output.summary['sex_FvKO_estimate']/denominator_f                       
-                ratio_m <- result$model.output.summary['sex_MvKO_estimate']/denominator_m 
+                ratio_f <- linearRegressionOutput$model.output.summary['sex_FvKO_estimate']/denominator_f                       
+                ratio_m <- linearRegressionOutput$model.output.summary['sex_MvKO_estimate']/denominator_m 
             }
-            else if (!is.na(result$model.output.summary['sex_FvKO_estimate']))
+            else if (!is.na(linearRegressionOutput$model.output.summary['sex_FvKO_estimate']))
             {
-                ratio_f <- result$model.output.summary['sex_FvKO_estimate']/denominator_f                            
-                ratio_m <- result$model.output.summary['sex_MvKO_estimate']/denominator_m            
+                ratio_f <- linearRegressionOutput$model.output.summary['sex_FvKO_estimate']/denominator_f                            
+                ratio_m <- linearRegressionOutput$model.output.summary['sex_MvKO_estimate']/denominator_m            
             }
             else 
             {
-                ratio_f <- result$model.output.summary['genotype_estimate']/denominator_f                        
-                ratio_m <- result$model.output.summary['genotype_estimate']/denominator_m 
+                ratio_f <- linearRegressionOutput$model.output.summary['genotype_estimate']/denominator_f                        
+                ratio_m <- linearRegressionOutput$model.output.summary['genotype_estimate']/denominator_m 
             }
         }
-        result$model.output.percentageChanges <- c(ratio_f*100,ratio_m*100)
-        names(result$model.output.percentageChanges) <- c('female*genotype ratio','male*genotype ratio')
+        linearRegressionOutput$model.output.percentageChanges <- c(ratio_f*100,ratio_m*100)
+        names(linearRegressionOutput$model.output.percentageChanges) <- c('female*genotype ratio','male*genotype ratio')
     }
     else{
         # without weight
-        if (is.na(result$model.output.summary['weight_estimate'])){ 
-            denominator <- result$model.output.summary['intercept_estimate']
-            ratio_f <- result$model.output.summary['genotype_estimate']/denominator                            
+        if (is.na(linearRegressionOutput$model.output.summary['weight_estimate'])){ 
+            denominator <- linearRegressionOutput$model.output.summary['intercept_estimate']
+            ratio_f <- linearRegressionOutput$model.output.summary['genotype_estimate']/denominator                            
         }
         # with weight
         else{
-            mean_list <- result$model.output.averageRefGenotype
+            mean_list <- linearRegressionOutput$model.output.averageRefGenotype
             denominator <- mean_list[1]
-            ratio_f <- result$model.output.summary['genotype_estimate']/denominator   
+            ratio_f <- linearRegressionOutput$model.output.summary['genotype_estimate']/denominator   
         }
         
-    result$model.output.percentageChanges <- c(ratio_f*100)
-    names(result$model.output.percentageChanges) <- c('all*genotype ratio')
+    linearRegressionOutput$model.output.percentageChanges <- c(ratio_f*100)
+    names(linearRegressionOutput$model.output.percentageChanges) <- c('all*genotype ratio')
     }
     # end of percentage changes calculation
+    finalResult@analysisResults <- linearRegressionOutput 
+    ## Assign MM quality of fit
+    finalResult@analysisResults$model.output.quality <- testFinalModel(finalResult)
     
    
     
-    return(result)
+    return(finalResult)
 }
 ##------------------------------------------------------------------------------
 ## Parser model output summary and return in readable vector format
-parserOutputTFSummary<-function(phenTestResult)
+parserOutputTFSummary<-function(linearRegressionOutput)
 {
-    result <- phenTestResult
+    result <- linearRegressionOutput
     modeloutput_summary <- summary(result$model.output)
     genotype_estimate <- NA
     genotype_estimate_SE <- NA

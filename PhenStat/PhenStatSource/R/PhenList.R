@@ -77,7 +77,8 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
             } 
             colnames(dataset)[colnames(dataset) == dataset.colname.genotype] <-'Genotype'
         }
-        if(!is.null(dataset.colname.sex) && (dataset.colname.sex!='Sex')) {
+        if(!is.null(dataset.colname.sex) && (dataset.colname.sex!='Sex') && 
+                    (dataset.colname.sex %in% colnames(dataset))) {
             # check for the existing column named 'Sex'  
             if ('Sex' %in% colnames(dataset)){
                 colnames(dataset)[colnames(dataset) == 'Sex'] <-'Original.Sex'   
@@ -240,42 +241,19 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
     
     Genotype_levels <- levels(dataset$Genotype)
     Sex_levels <- levels(dataset$Sex)
-        
-
     
-    ## Calculate statistics
-    dataset.stat <- data.frame(
-            Variables = colnames(dataset),
-            Numeric = sapply(dataset, is.numeric),    
-            Continuous = sapply(dataset, function(x) if(is.numeric(x)) {
-                        if (length(unique(x))/length(x)>0.05) TRUE else FALSE} else FALSE),
-            Levels = sapply(dataset, function(x) length(unique(x)) ),
-            NObs = sapply(dataset, function(x) length(na.omit(x))),
-            Mean = sapply(dataset, function(x) 
-                    if(is.numeric(x) && (length(unique(x))/length(x)>0.05)) round(mean(na.omit(x)),digits=2) else NA),
-            StdDev = sapply(dataset, function(x) 
-                    if(is.numeric(x) && (length(unique(x))/length(x)>0.05)) round(sd(na.omit(x)),digits=2) else NA),
-            Minimum = sapply(dataset, function(x) 
-                    if(is.numeric(x) && (length(unique(x))/length(x)>0.05)) round(min(na.omit(x)),digits=2) else NA),
-            Maximum = sapply(dataset, function(x) 
-                    if(is.numeric(x) && (length(unique(x))/length(x)>0.05)) round(max(na.omit(x)),digits=2) else NA))
-    
-    rownames(dataset.stat) <- NULL
-    
-    x <- new("PhenList",list(dataset=dataset))
-    x$refGenotype <- refGenotype
-    x$testGenotype <- testGenotype
-    x$hemiGenotype <- hemiGenotype
-    x$dataset.stat <- dataset.stat
-    x$dataset.colname.batch <- dataset.colname.batch
-    x$dataset.colname.genotype <- dataset.colname.genotype
-    x$dataset.colname.sex <- dataset.colname.sex
-    x$dataset.colname.weight <- dataset.colname.weight
-    x$dataset.values.missingValue <- dataset.values.missingValue
-    x$dataset.values.male <- dataset.values.male
-    x$dataset.values.female <- dataset.values.female
-    x$dataset.clean <- dataset.clean
-    x
+    new("PhenList",dataset=as.data.frame(dataset),
+    refGenotype = refGenotype,
+    testGenotype = testGenotype,
+    hemiGenotype = ifelse(is.null(hemiGenotype),character(0),hemiGenotype),
+    dataset.colname.batch = ifelse(is.null(dataset.colname.batch),character(0),dataset.colname.batch),
+    dataset.colname.genotype = ifelse(is.null(dataset.colname.genotype),character(0),dataset.colname.genotype),
+    dataset.colname.sex = ifelse(is.null(dataset.colname.sex),character(0),dataset.colname.sex),
+    dataset.colname.weight = ifelse(is.null(dataset.colname.weight),character(0),dataset.colname.weight),
+    dataset.values.missingValue = ifelse(is.null(dataset.values.missingValue),character(0),dataset.values.missingValue),
+    dataset.values.male = ifelse(is.null(dataset.values.male),character(0),as.character(dataset.values.male)),
+    dataset.values.female = ifelse(is.null(dataset.values.female),character(0),as.character(dataset.values.female)),
+    dataset.clean = dataset.clean)
         
   }
   else {

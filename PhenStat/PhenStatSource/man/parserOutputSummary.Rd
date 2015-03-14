@@ -5,13 +5,13 @@
     Parsers model output summary and returns it in readable named vector format
 }
 \usage{
-    parserOutputSummary(phenTestResult)
+    parserOutputSummary(linearRegressionOutput)
 }
 \arguments{
-    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{\link{testDataset}}; mandatory argument}
+    \item{linearRegressionOutput}{linear regression output that comes from the MM methods; mandatory argument}
 }
 \value{
-    Returns a named vector with model output summary results
+    Returns a named vector with linear regression model output summary results
 }
 
 \references{
@@ -27,5 +27,6 @@
             testGenotype="Sparc/Sparc")
     result <- testDataset(test,
             depVariable="Lean.Mass")
-    parserOutputSummary(result)
+    linearRegressionOutput <- analysisResults(result)
+    parserOutputSummary(linearRegressionOutput)
 }

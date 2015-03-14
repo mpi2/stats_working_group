@@ -5,10 +5,10 @@
     Parsers model output summary from TF framework and returns it in readable named vector format
 }
 \usage{
-    parserOutputTFSummary(phenTestResult)
+    parserOutputTFSummary(linearRegressionOutput)
 }
 \arguments{
-    \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{\link{testDataset}}; mandatory argument}
+    \item{linearRegressionOutput}{linear regression output that comes from the TF method; mandatory argument}
 }
 \value{
     Returns a named vector with model output summary results
@@ -29,5 +29,6 @@
             depVariable="Ca",
             method="TF",
             dataPointsThreshold=2)
-    parserOutputTFSummary(result)
+    linearRegressionOutput <- analysisResults(result)
+    parserOutputTFSummary(linearRegressionOutput)
 }

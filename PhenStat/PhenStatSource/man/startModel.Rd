@@ -69,14 +69,14 @@
             depVariable="Lean.Mass",
             callAll=FALSE)
     # print out formula that has been created
-    result$model.formula.genotype
+    analysisResults(result)$model.formula.genotype
     # print out batch effect's significance 
-    result$model.effect.batch
+    analysisResults(result)$model.effect.batch
     # change the model
     result <- testDataset(test,
             depVariable="Lean.Mass",
             equation="withWeight",
             callAll=FALSE) 
     # print out new formula
-    result$model.formula.genotype
+    analysisResults(result)$model.formula.genotype
 }

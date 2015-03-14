@@ -30,7 +30,7 @@ boxplotSexGenotype<-function(phenList, depVariable=NULL,
     }
     
     if(is(phenList,"PhenList")) {
-        x <- phenList$dataset
+        x <- dataset(phenList)
         
         if (nchar(stop_message)==0){
             if (!(depVariable %in% colnames(x)))
@@ -88,6 +88,83 @@ boxplotSexGenotype<-function(phenList, depVariable=NULL,
     }
 }    
 ##------------------------------------------------------------------------------
+##Graphing after accounting for batch
+boxplotSexGenotypeBatchAdjusted<-function(phenList, depVariable=NULL, 
+        graphingName=NULL, outputMessages=TRUE){
+    stop_message <- ""
+    ## Checks
+    if (is.null(depVariable)) 
+    stop_message <- paste(stop_message,
+            "Error:\nPlease define dependent variable 'depVariable'.\n",sep="")
+    else {
+        if (is.null(graphingName))
+        graphingName <- paste(depVariable," adjusted for batch",sep="")
+    }
+    
+    if(is(phenList,"PhenList")) {
+        x <- dataset(phenList)
+        
+        if (nchar(stop_message)==0){
+            if (!(depVariable %in% colnames(x)))
+            stop_message <- paste(stop_message,
+                    "Error:\n",depVariable," column is missed in the dataset.",sep="")
+            else {
+                columnOfInterest <- x[,c(depVariable)]
+                
+                ## Test: depVariable is numeric 
+                if(!is.numeric(columnOfInterest))
+                stop_message <- paste(stop_message,
+                        "Error:\n",depVariable," variable is not numeric. ",
+                        "Can't create a plot based on it.",sep="")
+            }       
+            
+        }
+        
+    } else {
+        stop_message <- paste(stop_message,"Error:\nPlease define PhenList object.\n",sep="")
+    }
+    
+    
+    if (nchar(stop_message)>0){
+        if (outputMessages){
+            message(stop_message)
+            opt <- options(show.error.messages=FALSE)
+            on.exit(options(opt))
+            stop()
+        }
+        else {
+            stop(stop_message)
+        }
+    } 
+    else {
+        ## Plot creation             
+        # relies on having batch variation        
+        x[, depVariable] <- getColumnBatchAdjusted(phenList,depVariable)
+        
+        ## Plot creation
+        numberofsexes <- length(levels(x$Sex))
+        if(numberofsexes==2){
+            Male <- subset(x, x$Sex=="Male")
+            Female <- subset(x, x$Sex=="Female")
+            op <- par(mfrow=c(1,2))
+            boxplot(Male[ , depVariable]~Male$Genotype, 
+                    ylab=graphingName, xlab="Genotype")
+            legend("topright", "Male", cex=1.3, bty="n")
+            boxplot(Female[ , depVariable]~Female$Genotype, 
+                    ylab=graphingName, xlab="Genotype")
+            legend("topright", "Female", cex=1.3, bty="n")
+            par(op) 
+            op_normal <- par(mfrow=c(1,1))
+            par(op_normal) 
+        }else{
+            op <- par(mfrow=c(1,1))
+            boxplot(x[ ,depVariable]~x$Genotype, ylab=graphingName, xlab="Genotype")  
+            par(op)  
+        }
+
+    }
+}
+##------------------------------------------------------------------------------
 ## Raw data boxplot: split by sex,genotype and batch
 ## NB! Deprecated function  
 boxplotSexGenotypeBatch<-function(phenList, depVariable=NULL, 
@@ -106,8 +183,8 @@ boxplotSexGenotypeBatch<-function(phenList, depVariable=NULL,
     }
     
     if(is(phenList,"PhenList")) {
-        x <- phenList$dataset
-        refGenotype <- phenList$refGenotype   
+        x <- dataset(phenList)
+        refGenotype <- refGenotype(phenList)   
         
         if (nchar(stop_message)==0){
             if (!(depVariable %in% colnames(x)))
@@ -168,21 +245,21 @@ boxplotSexGenotypeBatch<-function(phenList, depVariable=NULL,
             op <- par(mfrow=c(1,2)) 
             
             boxplot(Male[ , depVariable]~Male$Genotype+Male$Batch, 
-                    subset=(Male$Genotype==phenList$refGenotype), 
+                    subset=(Male$Genotype==refGenotype), 
                     ylab=graphingName, ylim=y_range, xlab="Batch",  names=NULL)
             
             boxplot(Male[ , depVariable]~Male$Genotype + Male$Batch, add=TRUE, 
-                    subset=(Male$Genotype!=phenList$refGenotype), ylim=y_range, 
+                    subset=(Male$Genotype!=refGenotype), ylim=y_range, 
                     ylab=graphingName, xlab="Batch",  col="red", names=NULL)
             
             legend("topright", "Male", cex=1.3, bty="n")
             
             boxplot(Female[ , depVariable]~Female$Genotype + Female$Batch, 
-                    subset=(Female$Genotype==phenList$refGenotype),ylim=y_range,
+                    subset=(Female$Genotype==refGenotype),ylim=y_range,
                     ylab=graphingName, xlab="Batch",  names=NULL )
             
             boxplot(Female[ , depVariable]~Female$Genotype + Female$Batch, add=TRUE, 
-                    subset=(Female$Genotype!=phenList$refGenotype),ylim=y_range, 
+                    subset=(Female$Genotype!=refGenotype),ylim=y_range, 
                     ylab=graphingName, xlab="Batch",  col="red",names=NULL)
             
             legend("topright", "Female", cex=1.3, bty="n")
@@ -194,11 +271,11 @@ boxplotSexGenotypeBatch<-function(phenList, depVariable=NULL,
         }else{
             op <- par(mfrow=c(1,1))
             boxplot(x[ ,depVariable]~x$Genotype+x$Batch,
-                    subset=(x$Genotype==phenList$refGenotype), 
+                    subset=(x$Genotype==refGenotype), 
                     ylab=graphingName, xlab="Batch", names=NULL) 
             
             boxplot(x[ ,depVariable]~x$Genotype+x$Batch,
-                    subset=(x$Genotype!=phenList$refGenotype), add=TRUE, 
+                    subset=(x$Genotype!=refGenotype), add=TRUE, 
                     ylab=graphingName, xlab="Batch",  col="red", names=NULL)    
             
             par(op)
@@ -220,8 +297,8 @@ scatterplotSexGenotypeBatch<-function(phenList, depVariable=NULL,
         graphingName <- depVariable
     }
     if(is(phenList,"PhenList")) {
-        x <- phenList$dataset
-        refGenotype <- phenList$refGenotype  
+        x <- dataset(phenList)
+        refGenotype <- refGenotype(phenList)
         if (nchar(stop_message)==0){
             if (!(depVariable %in% colnames(x)))
                 stop_message <- paste(stop_message,
@@ -270,23 +347,23 @@ scatterplotSexGenotypeBatch<-function(phenList, depVariable=NULL,
             Female$Batch <- factor(Female$Batch)
             op <- par(mfrow=c(1,2))
             stripchart(Male[ , depVariable]~Male$Batch, ,pch=1,vertical=T, 
-                    subset=(Male$Genotype==phenList$refGenotype),
+                    subset=(Male$Genotype==refGenotype),
                     ylab=graphingName, ylim=y_range, xlab="Batch", xaxt='n')
-            points(Male[ , depVariable]~Male$Batch, subset=(Male$Genotype!=phenList$refGenotype), col="red")
+            points(Male[ , depVariable]~Male$Batch, subset=(Male$Genotype!=refGenotype), col="red")
             legend("topright", "Male", cex=1.3, bty="n")
             stripchart(Female[ , depVariable]~Female$Batch, ,pch=1,vertical=T, 
-                    subset=(Female$Genotype==phenList$refGenotype), 
+                    subset=(Female$Genotype==refGenotype), 
                     ylab=graphingName, ylim=y_range, xlab="Batch", xaxt='n')
-            points(Female[ , depVariable]~Female$Batch, subset=(Female$Genotype!=phenList$refGenotype), col="red")
+            points(Female[ , depVariable]~Female$Batch, subset=(Female$Genotype!=refGenotype), col="red")
             legend("topright", "Female", cex=1.3, bty="n")
             par(op)
             op_normal <- par(mfrow=c(1,1))
             par(op_normal)
         }else{
             op <- par(mfrow=c(1,1))
-            stripchart(x[ , depVariable]~x$Batch, ,pch=1,vertical=T, subset=(x$Genotype==phenList$refGenotype),
+            stripchart(x[ , depVariable]~x$Batch, ,pch=1,vertical=T, subset=(x$Genotype==refGenotype),
                     ylab=graphingName, ylim=y_range, xlab="Batch", xaxt='n')
-            points(x[ , depVariable]~x$Batch, subset=(x$Genotype!=phenList$refGenotype), col="red")
+            points(x[ , depVariable]~x$Batch, subset=(x$Genotype!=refGenotype), col="red")
             par(op)
         }
     }   
@@ -308,7 +385,7 @@ scatterplotGenotypeWeight<-function(phenList, depVariable=NULL,
     
     ## Checks
     if(is(phenList,"PhenList")) {
-        x <- phenList$dataset     
+        x <- dataset(phenList)     
         
         if (nchar(stop_message)==0){ 
             if (!(depVariable %in% colnames(x)))

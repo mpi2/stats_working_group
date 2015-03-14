@@ -17,12 +17,13 @@
 # Non-Gaussian distribution - percentiles are used to limit of the reference range. 
 # Sufficient numbers of control samples are required (minimum 60) - tests in testDataset function
 # Natural variation to default to 95% min 75% and max 99%
-
 RRTest <- function(phenList, depVariable, 
         outputMessages=TRUE, naturalVariation=95, controlPointsThreshold=60)
 {
     
-    x <- phenList$dataset
+    x <- dataset(phenList)
+    resultList <- list()
+    indexList <- 1
     
     RR_left_male <- NA
     RR_right_male <- NA
@@ -36,18 +37,19 @@ RRTest <- function(phenList, depVariable,
     percentageOut_female <- NA
     rangesVector <- NA
     
-    numberofsexes <- length(levels(x$Sex))
+    numberofsexes <- noSexes(phenList)
     
     # Define control subset
-    GenotypeControlSubset <- subset(x, x$Genotype==phenList$refGenotype)
+    GenotypeControlSubset <- subset(x, x$Genotype==refGenotype(phenList))
     
     
     # Define mutant subset
-    GenotypeMutantSubset <- subset(x, x$Genotype==phenList$testGenotype)
+    GenotypeMutantSubset <- subset(x, x$Genotype==testGenotype(phenList))
     
     # Calculate reference ranges
     rangeLeft <- (100-naturalVariation)/200 
     rangeRight <- (100-((100-naturalVariation)/2))/100
+    
     
     #allValues_male <- length(mutantSubset_male)
     if(numberofsexes==2){        
@@ -164,9 +166,9 @@ RRTest <- function(phenList, depVariable,
     ES_matrix_all[1,3] <- abs(ES_matrix_all[1,1]-ES_matrix_all[1,2])
     ES_matrix_all[2,3] <- abs(ES_matrix_all[2,1]-ES_matrix_all[2,2])
     ES_matrix_all[3,3] <- abs(ES_matrix_all[3,1]-ES_matrix_all[3,2])
-    colnames(count_matrix_all) <- c(phenList$refGenotype,phenList$testGenotype)
+    colnames(count_matrix_all) <- c(refGenotype(phenList),testGenotype(phenList))
     rownames(count_matrix_all) <- c("Low","Normal","High")
-    colnames(ES_matrix_all) <- c(phenList$refGenotype,phenList$testGenotype,"ES change")
+    colnames(ES_matrix_all) <- c(refGenotype(phenList),testGenotype(phenList),"ES change")
     rownames(ES_matrix_all) <- c("Low","Normal","High")
     ###### ALL three rows: Low, Normal, High ######
     
@@ -183,12 +185,19 @@ RRTest <- function(phenList, depVariable,
     ES_matrix_all_nh[2,2] <- round((count_matrix_all_nh[2,2]/colSums(count_matrix_all_nh)[2])*100,digits=0)
     ES_matrix_all_nh[1,3] <- abs(ES_matrix_all_nh[1,1]-ES_matrix_all_nh[1,2])
     ES_matrix_all_nh[2,3] <- abs(ES_matrix_all_nh[2,1]-ES_matrix_all_nh[2,2])
-    colnames(count_matrix_all_nh) <- c(phenList$refGenotype,phenList$testGenotype)
+    colnames(count_matrix_all_nh) <- c(refGenotype(phenList),testGenotype(phenList))
     rownames(count_matrix_all_nh) <- c("Low","Normal/High")
-    colnames(ES_matrix_all_nh) <- c(phenList$refGenotype,phenList$testGenotype,"ES change")
+    colnames(ES_matrix_all_nh) <- c(refGenotype(phenList),testGenotype(phenList),"ES change")
     rownames(ES_matrix_all_nh) <- c("Low","Normal/High")
     ES_all_nh <- round(ES_matrix_all_nh[1,3],digits=0)
     model_all_nh <- fisher.test(count_matrix_all_nh)
+    resultList[[indexList]] <- new("htestPhenStat",
+            modelOutput=model_all_nh,
+            analysedSubset="all",
+            comparison="Low vs Normal/High",
+            matrixCount=count_matrix_all_nh,
+            ES=ES_all_nh)
+    indexList <- indexList+1
     ###### ALL two rows: Low, Normal/High ######
     
     #3) ##### ALL two rows: High, Normal/Low #####
@@ -204,13 +213,20 @@ RRTest <- function(phenList, depVariable,
     ES_matrix_all_nl[2,2] <- round((count_matrix_all_nl[2,2]/colSums(count_matrix_all_nl)[2])*100,digits=0)
     ES_matrix_all_nl[1,3] <- abs(ES_matrix_all_nl[1,1]-ES_matrix_all_nl[1,2])
     ES_matrix_all_nl[2,3] <- abs(ES_matrix_all_nl[2,1]-ES_matrix_all_nl[2,2])
-    colnames(count_matrix_all_nl) <- c(phenList$refGenotype,phenList$testGenotype)
+    colnames(count_matrix_all_nl) <- c(refGenotype(phenList),testGenotype(phenList))
     rownames(count_matrix_all_nl) <- c("High","Normal/Low")
-    colnames(ES_matrix_all_nl) <- c(phenList$refGenotype,phenList$testGenotype,"ES change")
+    colnames(ES_matrix_all_nl) <- c(refGenotype(phenList),testGenotype(phenList),"ES change")
     rownames(ES_matrix_all_nl) <- c("High","Normal/Low")
     # Statistics
     ES_all_nl <- round(ES_matrix_all_nl[1,3],digits=0)
     model_all_nl <- fisher.test(count_matrix_all_nl)
+    resultList[[indexList]] <- new("htestPhenStat",
+            modelOutput=model_all_nl,
+            analysedSubset="all",
+            comparison="High vs Normal/Low",
+            matrixCount=count_matrix_all_nl,
+            ES=ES_all_nl)
+    indexList <- indexList+1
     ###### ALL two rows: High, Normal/Low ######    
     
     model <- NULL
@@ -266,13 +282,13 @@ RRTest <- function(phenList, depVariable,
         ES_matrix_female[1,3] <- abs(ES_matrix_female[1,1]-ES_matrix_female[1,2])
         ES_matrix_female[2,3] <- abs(ES_matrix_female[2,1]-ES_matrix_female[2,2])
         ES_matrix_female[3,3] <- abs(ES_matrix_female[3,1]-ES_matrix_female[3,2])
-        colnames(count_matrix_male) <- c(phenList$refGenotype,phenList$testGenotype)
+        colnames(count_matrix_male) <- c(refGenotype(phenList),testGenotype(phenList))
         rownames(count_matrix_male) <- c("Low","Normal","High")
-        colnames(count_matrix_female) <- c(phenList$refGenotype,phenList$testGenotype)
+        colnames(count_matrix_female) <- c(refGenotype(phenList),testGenotype(phenList))
         rownames(count_matrix_female) <- c("Low","Normal","High")
-        colnames(ES_matrix_male) <- c(phenList$refGenotype,phenList$testGenotype,"ES change")
+        colnames(ES_matrix_male) <- c(refGenotype(phenList),testGenotype(phenList),"ES change")
         rownames(ES_matrix_male) <- c("Low","Normal","High")
-        colnames(ES_matrix_female) <- c(phenList$refGenotype,phenList$testGenotype,"ES change")
+        colnames(ES_matrix_female) <- c(refGenotype(phenList),testGenotype(phenList),"ES change")
         rownames(ES_matrix_female) <- c("Low","Normal","High")
         ###### FEMALE/MALE ONLY three rows: Low, Normal, High ######
         
@@ -301,19 +317,33 @@ RRTest <- function(phenList, depVariable,
         ES_matrix_female_nh[2,2] <- round((count_matrix_female_nh[2,2]/colSums(count_matrix_female_nh)[2])*100,digits=0)
         ES_matrix_female_nh[1,3] <- abs(ES_matrix_female_nh[1,1]-ES_matrix_female_nh[1,2])
         ES_matrix_female_nh[2,3] <- abs(ES_matrix_female_nh[2,1]-ES_matrix_female_nh[2,2])
-        colnames(count_matrix_male_nh) <- c(phenList$refGenotype,phenList$testGenotype)
+        colnames(count_matrix_male_nh) <- c(refGenotype(phenList),testGenotype(phenList))
         rownames(count_matrix_male_nh) <- c("Low","Normal/High")
-        colnames(ES_matrix_male_nh) <- c(phenList$refGenotype,phenList$testGenotype,"ES change")
+        colnames(ES_matrix_male_nh) <- c(refGenotype(phenList),testGenotype(phenList),"ES change")
         rownames(ES_matrix_male_nh) <- c("Low","Normal/High")
-        colnames(count_matrix_female_nh) <- c(phenList$refGenotype,phenList$testGenotype)
+        colnames(count_matrix_female_nh) <- c(refGenotype(phenList),testGenotype(phenList))
         rownames(count_matrix_female_nh) <- c("Low","Normal/High")
-        colnames(ES_matrix_female_nh) <- c(phenList$refGenotype,phenList$testGenotype,"ES change")
+        colnames(ES_matrix_female_nh) <- c(refGenotype(phenList),testGenotype(phenList),"ES change")
         rownames(ES_matrix_female_nh) <- c("Low","Normal/High")
         # Statistics
         ES_male_nh <- round(ES_matrix_male_nh[1,3],digits=0)
         model_male_nh <- fisher.test(count_matrix_male_nh)
         ES_female_nh <- round(ES_matrix_female_nh[1,3],digits=0)
         model_female_nh <- fisher.test(count_matrix_female_nh)
+        resultList[[indexList]] <- new("htestPhenStat",
+                modelOutput=model_female_nh,
+                analysedSubset="females",
+                comparison="Low vs Normal/High",
+                matrixCount=count_matrix_female_nh,
+                ES=ES_female_nh)
+        indexList <- indexList+1
+        resultList[[indexList]] <- new("htestPhenStat",
+                modelOutput=model_male_nh,
+                analysedSubset="males",
+                comparison="Low vs Normal/High",
+                matrixCount=count_matrix_male_nh,
+                ES=ES_male_nh)
+        indexList <- indexList+1
         ###### FEMALE/MALE ONLY two rows: Low, Normal/High ######
         
         #3) ##### FEMALE/MALE ONLY two rows: High, Normal/Low #####
@@ -341,19 +371,33 @@ RRTest <- function(phenList, depVariable,
         ES_matrix_female_nl[2,2] <- round((count_matrix_female_nl[2,2]/colSums(count_matrix_female_nl)[2])*100,digits=0)
         ES_matrix_female_nl[1,3] <- abs(ES_matrix_female_nl[1,1]-ES_matrix_female_nl[1,2])
         ES_matrix_female_nl[2,3] <- abs(ES_matrix_female_nl[2,1]-ES_matrix_female_nl[2,2])
-        colnames(count_matrix_male_nl) <- c(phenList$refGenotype,phenList$testGenotype)
+        colnames(count_matrix_male_nl) <- c(refGenotype(phenList),testGenotype(phenList))
         rownames(count_matrix_male_nl) <- c("High","Normal/Low")
-        colnames(ES_matrix_male_nl) <- c(phenList$refGenotype,phenList$testGenotype,"ES change")
+        colnames(ES_matrix_male_nl) <- c(refGenotype(phenList),testGenotype(phenList),"ES change")
         rownames(ES_matrix_male_nl) <- c("High","Normal/Low")
-        colnames(count_matrix_female_nl) <- c(phenList$refGenotype,phenList$testGenotype)
+        colnames(count_matrix_female_nl) <- c(refGenotype(phenList),testGenotype(phenList))
         rownames(count_matrix_female_nl) <- c("High","Normal/Low")
-        colnames(ES_matrix_female_nl) <- c(phenList$refGenotype,phenList$testGenotype,"ES change")
+        colnames(ES_matrix_female_nl) <- c(refGenotype(phenList),testGenotype(phenList),"ES change")
         rownames(ES_matrix_female_nl) <- c("High","Normal/Low")
         # Statistics
         ES_male_nl <- round(ES_matrix_male_nl[1,3],digits=0)
         model_male_nl <- fisher.test(count_matrix_male_nl)
         ES_female_nl <- round(ES_matrix_female_nl[1,3],digits=0)
         model_female_nl <- fisher.test(count_matrix_female_nl)
+        resultList[[indexList]] <- new("htestPhenStat",
+                modelOutput=model_female_nl,
+                analysedSubset="females",
+                comparison="High vs Normal/Low",
+                matrixCount=count_matrix_female_nl,
+                ES=ES_female_nl)
+        indexList <- indexList+1
+        resultList[[indexList]] <- new("htestPhenStat",
+                modelOutput=model_male_nl,
+                analysedSubset="males",
+                comparison="High vs Normal/Low",
+                matrixCount=count_matrix_male_nl,
+                ES=ES_male_nl)
+        indexList <- indexList+1
         ###### FEMALE/MALE ONLY two rows: High, Normal/Low ######
         
         #stat_male <- assocstats(count_matrix_male)
@@ -436,11 +480,20 @@ RRTest <- function(phenList, depVariable,
     interactionTest <- NA
     
     
-    result <- new("PhenTestResult",list(model.dataset=x, model.output=model,
-                    depVariable=depVariable,refGenotype=phenList$refGenotype,method="RR",model.effect.batch=keep_batch,
-                    model.effect.variance=keep_equalvar,model.effect.interaction=keep_interaction,
-                    model.output.interaction=interactionTest,model.effect.sex=keep_sex,
-                    model.effect.weight=keep_weight,numberSexes=numberofsexes, model.output.quality = thresholds ))
+    # result <- new("PhenTestResult",list(model.dataset=x, model.output=model,
+    #                  depVariable=depVariable,refGenotype=phenList$refGenotype,method="RR",model.effect.batch=keep_batch,
+    #                  model.effect.variance=keep_equalvar,model.effect.interaction=keep_interaction,
+    #                  model.output.interaction=interactionTest,model.effect.sex=keep_sex,
+    #                  model.effect.weight=keep_weight,numberSexes=numberofsexes, model.output.quality = thresholds ))
+
+    result <- new("PhenTestResult", analysedDataset = x,
+            depVariable=depVariable,
+            refGenotype=refGenotype(phenList),
+            testGenotype=testGenotype(phenList),
+            method="RR",
+            parameters=thresholds,
+            analysisResults = resultList)
+    
     return(result)
 }
 

@@ -17,7 +17,7 @@
     testDataset(phenList=NULL, depVariable=NULL, 
             equation="withWeight", outputMessages=TRUE, 
             pThreshold=0.05, method="MM", callAll=TRUE, keepList=NULL, dataPointsThreshold=4,
-            RR_naturalVariation=95,RR_controlPointsThreshold=60)
+            RR_naturalVariation=95,RR_controlPointsThreshold=60,transformValues=TRUE)
 }
 \arguments{
     \item{phenList}{instance of the \code{\linkS4class{PhenList}} class; mandatory argument}       
@@ -40,6 +40,8 @@
         ; minimal value is 60}
     \item{RR_controlPointsThreshold}{threshold for the number of control data points in the RR framework
         ; default value is 60; minimal value is 40}
+    \item{transformValues}{flag: "FALSE" value to suppress transformation; "TRUE" value to perform transformation if needed; 
+        default value TRUE}  
 }
 \value{
     Returns results stored in instance of the \code{\linkS4class{PhenTestResult}} class
@@ -60,7 +62,7 @@
     result <- testDataset(test,
             depVariable="Lean.Mass")
     # print out formula that has been created
-    result$model.formula.genotype
+    analysisResults(result)$model.formula.genotype
     summaryOutput(result)
     
     # Mixed Model framework with user defined effects
@@ -73,7 +75,7 @@
             depVariable="Lean.Mass",
             keepList=user_defined_effects)
     # print out formula that has been created
-    result3$model.formula.genotype
+    analysisResults(result3)$model.formula.genotype
     summaryOutput(result3)
     
     # Fisher Exact Test framework

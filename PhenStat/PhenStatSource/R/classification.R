@@ -23,24 +23,28 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
     ## check PhenTestResult object
     if(is(phenTestResult,"PhenTestResult")) {
         result<-phenTestResult
-        depVariable <- result$depVariable
-        equation <- result$equation
-        keep_weight <- result$model.effect.weight
-        keep_sex <- result$model.effect.sex
-        keep_interaction <- result$model.effect.interaction
-        keep_batch <- result$model.effect.batch
-        keep_equalvar <- result$model.effect.variance
-        model.output <- result$model.output
+        
+        analysisResults <- analysisResults(phenTestResult)
+        depVariable <- getVariable(phenTestResult)
         
         ## stop function if there are no enough input parameters
-        if (phenTestResult$method=="MM"){
+        if (method(phenTestResult) %in% c("MM","TF","LR")){
+            equation <- analysisResults$equation
+            keep_weight <- analysisResults$model.effect.weight
+            keep_sex <- analysisResults$model.effect.sex
+            keep_interaction <- analysisResults$model.effect.interaction
+            keep_batch <- analysisResults$model.effect.batch
+            keep_equalvar <- analysisResults$model.effect.variance
+            model.output <- analysisResults$model.output
+            
             if (is.null(equation) || is.null(depVariable) 
                     || is.null(keep_batch) || is.null(keep_equalvar)
                     || is.null(keep_sex) || is.null(keep_interaction)) {
-                stop_message <- "Error:\nPlease run function 'testDataset' first.\n"}}
+                stop_message <- "Error:\nPlease run function 'testDataset' first.\n"}
+            }
         else
-        if (is.null(model.output))
-        stop_message <- "Error:\nPlease run function 'testDataset' first.\n"
+            if (is.null(length(analysisResults) == 0))
+                stop_message <- "Error:\nPlease run function 'testDataset' first.\n"
     }
     else{
         stop_message <- "Error:\nPlease create a PhenTestResult object first by using function 'testDataset'.\n"
@@ -65,17 +69,17 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
     }
     else {
         # MM AND TF 
-        if (phenTestResult$method %in% c("MM","TF")) {
+        if (method(phenTestResult) %in% c("MM","TF","LR")) {
             if (userMode=="summaryOutput") {
-                if(is.na(result$model.output.genotype.nulltest.pVal)==TRUE){
+                if(is.na(analysisResults$model.output.genotype.nulltest.pVal)==TRUE){
                     ChangeClassification <- NA
                 }else 
-                if(result$model.output.genotype.nulltest.pVal>phenotypeThreshold){
+                if(analysisResults$model.output.genotype.nulltest.pVal>phenotypeThreshold){
                     ChangeClassification <- paste("With phenotype threshold value",
                             phenotypeThreshold,"- no significant change")
                 }else{
-                    if(result$model.effect.interaction==FALSE) {
-                        if (result$numberSexes==1){
+                    if(analysisResults$model.effect.interaction==FALSE) {
+                        if (analysisResults$numberSexes==1){
                             ChangeClassification <- paste("With phenotype threshold value",phenotypeThreshold,
                                     "- a significant change for the one sex tested")
                         }
@@ -84,27 +88,27 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
                                     phenotypeThreshold,"- both sexes equally")
                         }
                     }else 
-                    if(result$model.output.summary["sex_FvKO_p_value"]>=0.05 
-                            && result$model.output.summary["sex_MvKO_p_value"]>=0.05){
+                    if(analysisResults$model.output.summary["sex_FvKO_p_value"]>=0.05 
+                            && analysisResults$model.output.summary["sex_MvKO_p_value"]>=0.05){
                         ChangeClassification <- paste("With phenotype threshold value",
                                 phenotypeThreshold,"- cannot classify effect")
                     }else 
-                    if(result$model.output.summary["sex_FvKO_p_value"]<0.05 
-                            && result$model.output.summary["sex_MvKO_p_value"]>=0.05){
+                    if(analysisResults$model.output.summary["sex_FvKO_p_value"]<0.05 
+                            && analysisResults$model.output.summary["sex_MvKO_p_value"]>=0.05){
                         ChangeClassification <- paste("With phenotype threshold value",
                                 phenotypeThreshold,"- females only")
                     }else 
-                    if(result$model.output.summary["sex_FvKO_p_value"]>=0.05 
-                            && result$model.output.summary["sex_MvKO_p_value"]<0.05){
+                    if(analysisResults$model.output.summary["sex_FvKO_p_value"]>=0.05 
+                            && analysisResults$model.output.summary["sex_MvKO_p_value"]<0.05){
                         ChangeClassification <- paste("With phenotype threshold value",
                                 phenotypeThreshold,"- males only")
                     }else 
-                    if(result$model.output.summary["sex_FvKO_estimate"]>0 && 
-                            result$model.output.summary["sex_MvKO_estimate"]>0 | 
-                            result$model.output.summary["sex_FvKO_estimate"]<0 && 
-                            result$model.output.summary["sex_MvKO_estimate"]<0){
-                        if(abs(result$model.output.summary["sex_FvKO_estimate"])
-                                >abs(result$model.output.summary["sex_MvKO_estimate"])){
+                    if(analysisResults$model.output.summary["sex_FvKO_estimate"]>0 && 
+                            analysisResults$model.output.summary["sex_MvKO_estimate"]>0 | 
+                            analysisResults$model.output.summary["sex_FvKO_estimate"]<0 && 
+                            analysisResults$model.output.summary["sex_MvKO_estimate"]<0){
+                        if(abs(analysisResults$model.output.summary["sex_FvKO_estimate"])
+                                >abs(analysisResults$model.output.summary["sex_MvKO_estimate"])){
                             ChangeClassification <- paste("With phenotype threshold value",phenotypeThreshold,
                                     "- different size as females greater")
                             ## change could be positive or negative but size change greater
@@ -121,31 +125,31 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
             #vectorOutput
             else {
                 
-                if(result$model.effect.interaction==FALSE) {
-                    if (result$numberSexes==1){
+                if(analysisResults$model.effect.interaction==FALSE) {
+                    if (analysisResults$numberSexes==1){
                         ChangeClassification <- paste("If phenotype is significant it is for the one sex tested")
                     }else{
                         ChangeClassification <- paste("If phenotype is significant - both sexes equally")
                     }
                 }else 
-                if(result$model.output.summary["sex_FvKO_p_value"]>=0.05 
-                        && result$model.output.summary["sex_MvKO_p_value"]>=0.05){
+                if(analysisResults$model.output.summary["sex_FvKO_p_value"]>=0.05 
+                        && analysisResults$model.output.summary["sex_MvKO_p_value"]>=0.05){
                     ChangeClassification <- paste("If phenotype is significant - can not classify effect")
                 }else 
-                if(result$model.output.summary["sex_FvKO_p_value"]<0.05 
-                        && result$model.output.summary["sex_MvKO_p_value"]>=0.05){
+                if(analysisResults$model.output.summary["sex_FvKO_p_value"]<0.05 
+                        && analysisResults$model.output.summary["sex_MvKO_p_value"]>=0.05){
                     ChangeClassification <- paste("If phenotype is significant - females only")
                 }else 
-                if(result$model.output.summary["sex_FvKO_p_value"]>=0.05 
-                        && result$model.output.summary["sex_MvKO_p_value"]<0.05){
+                if(analysisResults$model.output.summary["sex_FvKO_p_value"]>=0.05 
+                        && analysisResults$model.output.summary["sex_MvKO_p_value"]<0.05){
                     ChangeClassification <- paste("If phenotype is significant - males only")
                 }else 
-                if(result$model.output.summary["sex_FvKO_estimate"]>0 && 
-                        result$model.output.summary["sex_MvKO_estimate"]>0 |
-                        result$model.output.summary["sex_FvKO_estimate"]<0 && 
-                        result$model.output.summary["sex_MvKO_estimate"]<0){
-                    if(abs(result$model.output.summary["sex_FvKO_estimate"])
-                            >abs(result$model.output.summary["sex_MvKO_estimate"])){
+                if(analysisResults$model.output.summary["sex_FvKO_estimate"]>0 && 
+                        analysisResults$model.output.summary["sex_MvKO_estimate"]>0 |
+                        analysisResults$model.output.summary["sex_FvKO_estimate"]<0 && 
+                        analysisResults$model.output.summary["sex_MvKO_estimate"]<0){
+                    if(abs(analysisResults$model.output.summary["sex_FvKO_estimate"])
+                            >abs(analysisResults$model.output.summary["sex_MvKO_estimate"])){
                         ChangeClassification <- paste("If phenotype is significant - different size as females greater")
                         ## change could be positive or negative but size change greater
                     }else{
@@ -158,21 +162,25 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
             }
         }
         # FISHER EXACT TEST
-        else if (phenTestResult$method =="FE"){
+        else if (method(phenTestResult) =="FE"){
             if (userMode=="summaryOutput") { 
-                if (!is.null(phenTestResult$model.output$male)){
-                    male_p.value <- result$model.output$male$p.value
+                male_p.value <- 10
+                female_p.value <- 10
+                all_p.value <- 10
+                for (i in seq_along(analysisResults)) {
+                    val <- analysisResults[[i]]
+                    if (analysedSubset(val)=="all"){
+                        all_p.value<-as.numeric(as.vector(getColumnView(val))[2]) 
+                               
+                    }
+                    if (analysedSubset(val)=="males"){
+                        male_p.value<-as.numeric(as.vector(getColumnView(val))[2])             
+                    }
+                    if (analysedSubset(val)=="females"){
+                        female_p.value<-as.numeric(as.vector(getColumnView(val))[2])                
+                    }
                 }
-                else {
-                    male_p.value <- 10
-                }
-                if (!is.null(phenTestResult$model.output$female)){
-                    female_p.value <- result$model.output$female$p.value
-                }
-                else {
-                    female_p.value <- 10
-                }
-                all_p.value <- result$model.output$all$p.value
+                
                 
                 ChangeClassification <- paste("Not significant")
                 # Tag
@@ -229,7 +237,7 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
           }
         }
         # REFERENCE RANGE PLUS
-        else if (phenTestResult$method=="RR"){
+        else if (method(phenTestResult)=="RR"){
             if (userMode=="summaryOutput") { 
                 direction_all <- "NA"
                 all_p.value <- 10
@@ -237,75 +245,67 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
                 female_p.value <- 10
                 direction_males <- "NA"
                 male_p.value <- 10
+                noSexes <- length(levels(analysedDataset(phenTestResult)$Sex))
                 
-                RROutput <- phenTestResult$model.output$all
+                for (i in seq_along(analysisResults)) {
+                    val <- analysisResults[[i]]
+                    if (comparison(val)=="High vs Normal/Low") {
+                        if (analysedSubset(val)=="all"){
+                            high_all_p.value<-as.numeric(as.vector(getColumnView(val))[2])      
+                        }
+                        if (analysedSubset(val)=="males"){
+                            high_male_p.value<-as.numeric(as.vector(getColumnView(val))[2])                  
+                        }
+                        if (analysedSubset(val)=="females"){
+                            high_female_p.value<-as.numeric(as.vector(getColumnView(val))[2])                  
+                        }
+                    }
+                    else {
+                        if (analysedSubset(val)=="all"){
+                            low_all_p.value<-as.numeric(as.vector(getColumnView(val))[2])                  
+                        }
+                        if (analysedSubset(val)=="males"){
+                            low_male_p.value<-as.numeric(as.vector(getColumnView(val))[2])                  
+                        }
+                        if (analysedSubset(val)=="females"){
+                            low_female_p.value<-as.numeric(as.vector(getColumnView(val))[2])                  
+                        }
+                    }
+                }
+                
                 # High classification p-val is less than threshold and low classification p-val is more that threshold
-                if (RROutput[1] < phenotypeThreshold && RROutput[3] >= phenotypeThreshold){
-                    direction_all <- "Low"
-                    all_p.value <- RROutput[1]
+                if (high_all_p.value < phenotypeThreshold && low_all_p.value >= phenotypeThreshold){
+                    direction_all <- "High"
+                    all_p.value <- high_all_p.value
                 }
                 # Low classification p-val is less than threshold and high classification p-val is more that threshold
-                else if (RROutput[1] >= phenotypeThreshold && RROutput[3] < phenotypeThreshold){
-                    direction_all <- "High"
-                    all_p.value <- RROutput[3]
+                else if (high_all_p.value >= phenotypeThreshold && low_all_p.value < phenotypeThreshold){
+                    direction_all <- "Low"
+                    all_p.value <- low_all_p.value
                 }
                 
-                #direction_females <- names(which.max(result$model.output$percentage_matrix_female[c(1,3),3]))
-                #direction_males <- names(which.max(result$model.output$percentage_matrix_male[c(1,3),3]))
-                #direction_all <- names(which.max(result$model.output$percentage_matrix_all[c(1,3),3]))
-                
-                # Low and High have the same Effect sizes
-                #if (phenTestResult$numberSexes==2){
-                    #   low_es <- result$model.output$percentage_matrix_female[1,3]
-                    #   high_es <- result$model.output$percentage_matrix_female[3,3]
-                    #   if (low_es == high_es)
-                    #   direction_females <- "NA"
-                    #   low_es <- result$model.output$percentage_matrix_male[1,3]
-                    #   high_es <- result$model.output$percentage_matrix_male[3,3]
-                    #   if (low_es == high_es)
-                    #   direction_males <- "NA"
-                    #}
-                #else {
-                    #   low_es <- result$model.output$percentage_matrix_all[1,3]
-                    #   high_es <- result$model.output$percentage_matrix_all[3,3]
-                    #   if (low_es == high_es)
-                    #   direction_all <- "NA"
-                    #}
-                
-                if (!is.null(phenTestResult$model.output$male)){
-                    RROutput <- phenTestResult$model.output$male
-                    if (RROutput[1] < phenotypeThreshold && RROutput[3] >= phenotypeThreshold){
-                        direction_males <- "Low"
-                        male_p.value <- RROutput[1]
-                    }
-                    else if (RROutput[1] >= phenotypeThreshold && RROutput[3] < phenotypeThreshold){
+                    if (high_male_p.value < phenotypeThreshold && low_male_p.value >= phenotypeThreshold){
                         direction_males <- "High"
-                        male_p.value <- RROutput[3]
+                        male_p.value <- high_male_p.value
                     }
-                    #male_p.value <- result$model.output$male$p.value
-                }
-                #else {
-                    #    male_p.value <- 10
-                    #}
-                if (!is.null(phenTestResult$model.output$female)){
-                    RROutput <- phenTestResult$model.output$female
-                    if (RROutput[1] < phenotypeThreshold && RROutput[3] >= phenotypeThreshold){
-                        direction_females <- "Low"
-                        female_p.value <- RROutput[1]
+                    else if (high_male_p.value >= phenotypeThreshold && low_male_p.value < phenotypeThreshold){
+                        direction_males <- "Low"
+                        male_p.value <- low_male_p.value
                     }
-                    else if (RROutput[1] >= phenotypeThreshold && RROutput[3] < phenotypeThreshold){
+   
+                
+                    if (high_female_p.value < phenotypeThreshold && low_female_p.value >= phenotypeThreshold){
                         direction_females <- "High"
-                        female_p.value <- RROutput[3]
+                        female_p.value <- high_female_p.value
                     }
-                    #female_p.value <- result$model.output$female$p.value
-                }
-                #else {
-                    #    female_p.value <- 10
-                    #}
-                #all_p.value <- result$model.output$all$p.value
+                    else if (high_female_p.value >= phenotypeThreshold && low_female_p.value < phenotypeThreshold){
+                        direction_females <- "Low"
+                        female_p.value <- low_female_p.value
+                    }
+ 
                 
                 ChangeClassification <- paste("Not significant")
-                if (phenTestResult$numberSexes==2) {
+                if (noSexes==2) {
                     # Tag
                     # combined & males & females
                     if(all_p.value < phenotypeThreshold && male_p.value < phenotypeThreshold 

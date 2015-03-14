@@ -1,12 +1,6 @@
-#Imports: car, graphics, grDevices, methods, nlme, nortest, stats, vcd, limma
+#Imports: car, graphics, grDevices, methods, nlme, nortest, stats, vcd
 
 importClassesFrom(methods, list)
-
-importClassesFrom(limma, LargeDataObject)
-
-importMethodsFrom(limma, show)
-
-importFrom(limma, printHead)
 
 importFrom(car, scatterplot)
 
@@ -24,7 +18,10 @@ importFrom(stats, anova, as.formula, fisher.test, model.frame,
         model.matrix, na.omit, predict, qqline, qqnorm, relevel,
         resid, sd)
 
-importFrom(vcd, assocstats)
+#importFrom(vcd, assocstats)
+importFrom(logistf, logistf, logistftest)
+
+importFrom(MASS, boxcox)
 
 #  All functions exported other than those starting with "."
 exportPattern("^[^\\.]")

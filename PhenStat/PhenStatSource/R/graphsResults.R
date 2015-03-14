@@ -16,17 +16,26 @@
 ## qqplotGenotype, plotResidualPredicted, qqplotRandomEffects,
 ## boxplotResidualBatch, qqplotRotatedResiduals, categoricalBarplot
 ##------------------------------------------------------------------------------
+##------------------------------------------------------------------------------
 ## Q-Q plot of residuals for each genotype
 qqplotGenotype<-function(phenTestResult,outputMessages=TRUE){
     stop_message <- ""
     # Checks
     if(is(phenTestResult,"PhenTestResult")) {
-        x <- phenTestResult$model.dataset
-        modeloutput <- phenTestResult$model.output
+        if((method(phenTestResult) %in% c("MM","TF"))){            
+            x <- analysedDataset(phenTestResult)
+            modeloutput <- analysisResults(phenTestResult)$model.output
+        }
+        else {
+            stop_message <- paste("Error:\nThis plot can be created only within linear regression frameworks like Mixed Model",
+                    " (MM) and Time as Fixed Effect (TF).\n",sep="")
+        }
     }
     else{
         stop_message <- "Error:\nPlease create a PhenTestResult object first.\n"
     }
+    
+    
     
     if (nchar(stop_message)>0){
         if (outputMessages){
@@ -67,8 +76,14 @@ plotResidualPredicted<-function(phenTestResult,outputMessages=TRUE){
     stop_message <- ""
     # Checks
     if(is(phenTestResult,"PhenTestResult")) {
-        x <- phenTestResult$model.dataset
-        modeloutput <- phenTestResult$model.output
+        if((method(phenTestResult) %in% c("MM","TF"))){            
+            x <- analysedDataset(phenTestResult)
+            modeloutput <- analysisResults(phenTestResult)$model.output
+        }
+        else {
+            stop_message <- paste("Error:\nThis plot can be created only within linear regression frameworks like Mixed Model",
+                    " (MM) and Time as Fixed Effect (TF).\n",sep="")
+        }
     }
     else{
         stop_message <- "Error:\nPlease create a PhenTestResult object first.\n"
@@ -113,9 +128,14 @@ qqplotRandomEffects<-function(phenTestResult,outputMessages=TRUE){
     stop_message <- ""
     # Checks
     if(is(phenTestResult,"PhenTestResult")) {
-        x <- phenTestResult$model.dataset
-        modeloutput <- phenTestResult$model.output
-        keep_batch <- phenTestResult$model.effect.batch
+        if((method(phenTestResult) %in% c("MM","TF"))){            
+            x <- analysedDataset(phenTestResult)
+            modeloutput <- analysisResults(phenTestResult)$model.output
+            keep_batch <- analysisResults(phenTestResult)$model.effect.batch
+        }
+        else {
+            stop_message <- "Error:\nThis plot can be created only within Mixed Model framework.\n"
+        }        
     }
     else{
         stop_message <- "Error:\nPlease create a PhenTestResult object first.\n"
@@ -144,7 +164,7 @@ qqplotRandomEffects<-function(phenTestResult,outputMessages=TRUE){
         else {
             if (outputMessages){
                 message(paste("Warning:\nDiagnostics on random effects ",
-                    "not relevant as variation between batches was not significant.\n",sep=""))
+                                "not relevant as variation between batches was not significant.\n",sep=""))
             }
         }
     }
@@ -156,9 +176,15 @@ boxplotResidualBatch<-function(phenTestResult,outputMessages=TRUE){
     stop_message <- ""
     # Checks
     if(is(phenTestResult,"PhenTestResult")) {
-        x <- phenTestResult$model.dataset
-        modeloutput <- phenTestResult$model.output
-       
+        if((method(phenTestResult) %in% c("MM","TF"))){            
+            x <- analysedDataset(phenTestResult)
+            modeloutput <- analysisResults(phenTestResult)$model.output
+        }
+        else {
+            stop_message <- paste("Error:\nThis plot can be created only within linear regression frameworks like Mixed Model",
+                    " (MM) and Time as Fixed Effect (TF).\n",sep="")
+        }
+        
         if (!('Batch' %in% colnames(x))){
             stop_message <- paste(stop_message,
                     "Error:\nBatch column is missed in the dataset.\n",sep="")
@@ -204,9 +230,14 @@ qqplotRotatedResiduals<-function(phenTestResult,outputMessages=TRUE){
     stop_message <- ""
     # Checks
     if(is(phenTestResult,"PhenTestResult")) {
-        x <- phenTestResult$model.dataset
-        modeloutput <- phenTestResult$model.output
-        keep_batch <- phenTestResult$model.effect.batch
+        if((method(phenTestResult) %in% c("MM","TF"))){            
+            x <- analysedDataset(phenTestResult)
+            modeloutput <- analysisResults(phenTestResult)$model.output
+            keep_batch <- analysisResults(phenTestResult)$model.effect.batch
+        }
+        else {
+            stop_message <- "Error:\nThis plot can be created only within Mixed Model framework.\n"
+        }   
     }
     else{
         stop_message <- "Error:\nPlease create a PhenTestResult object first.\n"
@@ -256,8 +287,8 @@ qqplotRotatedResiduals<-function(phenTestResult,outputMessages=TRUE){
         }
         else{
             message(paste("Warning:\nQ-Q plot of rotated residuals was not created. ",
-                    "Diagnostics on rotated residues not relevant ", 
-                    "as variation between batches was not significant.\n",sep=""))
+                            "Diagnostics on rotated residues not relevant ", 
+                            "as variation between batches was not significant.\n",sep=""))
         }
     }
 }
@@ -267,12 +298,15 @@ qqplotRotatedResiduals<-function(phenTestResult,outputMessages=TRUE){
 categoricalBarplot<-function(phenTestResult,outputMessages=TRUE){
     stop_message <- ""
     if(is(phenTestResult,"PhenTestResult")) {
-        x <- phenTestResult$model.dataset
-        modeloutput <- phenTestResult$model.output
-        
-        if (!phenTestResult$method %in% c("FE","RR"))
+        if((method(phenTestResult) %in% c("FE","RR"))){            
+            x <- analysedDataset(phenTestResult)
+            modeloutput <- analysisResults(phenTestResult)
+        }
+        else {
             stop_message <- paste(stop_message,"Error:\nCategorical bar plot can be created only within ", 
-                "Fisher Exact Test or RR plus framework.\n",sep="")
+                    "Fisher Exact Test or RR plus framework.\n",sep="")
+        }
+        
     }
     else{
         stop_message <- "Error:\nPlease create a PhenTestResult object first.\n"
@@ -292,38 +326,48 @@ categoricalBarplot<-function(phenTestResult,outputMessages=TRUE){
     } 
     else {
         # Produces graphs 
-        numberofsexes <- phenTestResult$numberSexes
+        countMatrices <- getCountMatrices(phenTestResult)
+        percentageMatrices <- lapply(countMatrices, function(x) {round(prop.table(x,margin=2)*100,2)}) 
+        
+        noSexes <- length(levels(x$Sex))      
+        if (method(phenTestResult)=="RR"){
+            categoriesName <- c("Low","Normal","High")            
+        }
+        if (method(phenTestResult)=="FE"){
+            categoriesName <- rownames(modeloutput[[1]]@matrixCount)
+        }
+        
         # Colors for the plot and legends
-        plot_col <- c(1:dim(phenTestResult$model.output$count_matrix_all)[1])
-        if(numberofsexes==2){
-            
+        plot_col <- c(1:length(categoriesName))
+        
+        if(noSexes==2){
             op <- par(mfrow=c(1,4)) 
-            barplot(phenTestResult$model.output$percentage_matrix_all[ ,1:2], 
+            barplot(percentageMatrices[["all"]], 
                     main="All data", beside=FALSE, xlab="Genotype", 
                     ylab="Percentage", col=plot_col)
             
-            barplot(phenTestResult$model.output$percentage_matrix_male[ ,1:2], 
+            barplot(percentageMatrices[["male"]], 
                     main="Male animals only", beside=FALSE,  xlab="Genotype", 
                     ylab="Percentage", col=plot_col)
             
-            barplot(phenTestResult$model.output$percentage_matrix_female[ ,1:2], 
+            barplot(percentageMatrices[["female"]], 
                     main="Female animals only", beside=FALSE,  xlab="Genotype", 
                     ylab="Percentage", col=plot_col)
             
             plot(1, type = "n", axes=FALSE, xlab="", ylab="")
             legend("topleft", 
-                    legend = rownames(phenTestResult$model.output$count_matrix_all), 
+                    legend = categoriesName, 
                     fill=plot_col, title="Legend",bty="n")       
             par(op)
         }else{
             op <- par(mfrow=c(1,2))
-            barplot(phenTestResult$model.output$percentage_matrix_all[ ,1:2], 
+            barplot(percentageMatrices[["all"]], 
                     main="All data", beside=FALSE, xlab="Genotype", 
                     ylab="Percentage", col=plot_col)
             
             plot(1, type="n", axes=FALSE, xlab="", ylab="")
             legend("topright", 
-                    legend = rownames(phenTestResult$model.output$count_matrix_all), 
+                    legend = categoriesName, 
                     fill=plot_col,  title="Legend", bty="n")
             par(op)
         }

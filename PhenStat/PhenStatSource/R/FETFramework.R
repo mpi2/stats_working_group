@@ -19,8 +19,11 @@
 ## Perform Fisher Exact test(s)
 FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
 {    
-    x <- phenList$dataset
-    numberofsexes <- length(levels(x$Sex))
+    x <- dataset(phenList)
+    resultList <- list()
+    indexList <- 1
+    
+    numberofsexes <- noSexes(phenList)
     Genotype_levels <- levels(x$Genotype)         
     depVariable_levels <- levels(factor(x[,c(depVariable)])) 
     
@@ -68,6 +71,14 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
     ES_all <- round(max(ES_matrix_all[,3]),digits=0)
     
     model_all <- fisher.test(count_matrix_all)
+    
+    resultList[[indexList]] <- new("htestPhenStat",
+            modelOutput=model_all,
+            analysedSubset="all",
+            comparison=character(0),
+            matrixCount=count_matrix_all,
+            ES=ES_all)
+    indexList <- indexList+1
     
     model_male_results <- c(NA,NA,NA,NA,NA)
     model_female_results <- c(NA,NA,NA,NA) 
@@ -160,8 +171,24 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
                 paste(model_female$conf.int[1],model_female$conf.int[2],sep=" to "),
                 model_female$estimate)  
         
-        stat_male <- assocstats(count_matrix_male)
-        stat_female <- assocstats(count_matrix_female)
+        #stat_male <- assocstats(count_matrix_male)
+        #stat_female <- assocstats(count_matrix_female)
+        
+        resultList[[indexList]] <- new("htestPhenStat",
+                modelOutput=model_male,
+                analysedSubset="males",
+                comparison=character(0),
+                matrixCount=count_matrix_male,
+                ES=ES_male)
+        indexList <- indexList+1
+        
+        resultList[[indexList]] <- new("htestPhenStat",
+                modelOutput=model_female,
+                analysedSubset="females",
+                comparison=character(0),
+                matrixCount=count_matrix_female,
+                ES=ES_female)
+        indexList <- indexList+1
     }
     
     model_results <- c(model_all$p.value,model_all$alternative,
@@ -176,7 +203,7 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
     model$count_matrix_female <- count_matrix_female
     model$count_matrix_male <- count_matrix_male
     model$count_matrix_all <- count_matrix_all
-    model$stat_all <- assocstats(count_matrix_all)
+    #model$stat_all <- assocstats(count_matrix_all)
     model$ES <- ES_all
     model$ES_male <- ES_male
     model$ES_female <- ES_female
@@ -194,11 +221,20 @@ FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
     interactionTest <- NA
     
     
-    result <- new("PhenTestResult",list(model.dataset=x, model.output=model,
-                    depVariable=depVariable,refGenotype=phenList$refGenotype,method="FE",model.effect.batch=keep_batch,
-                    model.effect.variance=keep_equalvar,model.effect.interaction=keep_interaction,
-                    model.output.interaction=interactionTest,model.effect.sex=keep_sex,
-                    model.effect.weight=keep_weight,numberSexes=numberofsexes))
+    #result <- new("PhenTestResult",list(model.dataset=x, model.output=model,
+    #                depVariable=depVariable,refGenotype=phenList$refGenotype,method="FE",model.effect.batch=keep_batch,
+    #                model.effect.variance=keep_equalvar,model.effect.interaction=keep_interaction,
+    #                model.output.interaction=interactionTest,model.effect.sex=keep_sex,
+    #                model.effect.weight=keep_weight,numberSexes=numberofsexes))
+    
+
+    result <- new("PhenTestResult", analysedDataset = x,
+            depVariable=depVariable,
+            refGenotype=refGenotype(phenList),
+            testGenotype=testGenotype(phenList),
+            method="FE",
+            parameters=matrix(nrow=0, ncol=0),
+            analysisResults = resultList)
     return(result)
 } 
 ##------------------------------------------------------------------------------

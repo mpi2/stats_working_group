@@ -28,3 +28,4 @@
             numberofsexes=2, 
             depVariable="Lean.Mass")
 }
+\keyword{internal}

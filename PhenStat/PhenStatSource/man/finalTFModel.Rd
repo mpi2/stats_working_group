@@ -2,11 +2,12 @@
 \alias{finalTFModel}
 \title{Method "finalTFModel"}
 \description{
-    This is an internal function run within TF framework. It completes the final stage of the MM framework, which builds the final model and estimates effects.  
+    This is an internal function run within TF framework. 
+    It completes the final stage of the TF framework, which builds the final model and estimates effects.  
     As an internal function, it doesn't include extensive error testing of inputs. Please use cautiously if calling directly.  
     
-    Works with \code{\linkS4class{PhenTestResult}} object created by \code{\link{startModel}} function. 
-    The creation of MM final model is based on the significance of different fixed effects, depVariable and equation values 
+    Works with \code{\linkS4class{PhenTestResult}} object created by \code{\link{startTFModel}} function. 
+    The creation of TF final model is based on the significance of different fixed effects, depVariable and equation values 
     stored in \code{\linkS4class{PhenTestResult}} object.
 }
 \usage{
@@ -49,8 +50,8 @@
                            callAll=FALSE,
                            method="TF")
     # print out formula that has been created
-    result$model.formula.genotype
+    analysisResults(result)$model.formula.genotype
     # print out batch effect's significance 
-    result$model.effect.batch
+    analysisResults(result)$model.effect.batch
     result <- finalTFModel(result)
 }

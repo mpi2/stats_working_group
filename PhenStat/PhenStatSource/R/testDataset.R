@@ -28,11 +28,16 @@
 ##------------------------------------------------------------------------------
 testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight", 
         outputMessages=TRUE, pThreshold=0.05, method="MM", callAll=TRUE, 
-        keepList=NULL, dataPointsThreshold=4, RR_naturalVariation=95, RR_controlPointsThreshold=60)
+        keepList=NULL, dataPointsThreshold=4, RR_naturalVariation=95, 
+        RR_controlPointsThreshold=60, transformValues=TRUE)
 {
 
     stop_message <- ""
-    
+    transformationRequired <- FALSE
+    lambdaValue <- NA
+    columnOfBatch <- NULL
+    columnOfWeight <- NULL
+    columnOfInterestAdjusted <- NULL
     ## CHECK ARGUMENTS   
     
     # 1
@@ -47,11 +52,11 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
     }
     
     # 3
-    if (!(equation %in% c("withWeight","withoutWeight")) && method=="MM")
+    if (!(equation %in% c("withWeight","withoutWeight")) && method %in% c("MM","TF"))
         stop_message <- paste(stop_message,"Error:\nPlease define equation you ", 
             "would like to use from the following options: 'withWeight', 'withoutWeight'.\n",sep="")
     
-    # 4  Checks for rovided significance values
+    # 4  Checks for provided significance values
     if (!is.null(keepList)){
         ## Stop function if there are no enough needed input parameters
         if ((length(keepList[keepList==TRUE]) + length(keepList[keepList==FALSE])) !=5) 
@@ -65,7 +70,7 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
     }
     
     # 5
-    if (!(method %in% c("MM","FE","RR","TF"))){
+    if (!(method %in% c("MM","FE","RR","TF","LR"))){
         stop_message <- paste(stop_message,"Error:\nMethod define in the 'method' argument '",
                 method,"' is not supported.\nAt the moment we are supporting 'MM' ", 
                 "value for Mixed Model framework, 'FE' value for Fisher Exact Test framework",
@@ -93,54 +98,113 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
         if (outputMessages)
         message("Warning:\nControl points threshold is set to 40 (minimal value).\n")
     }
-    
+  
     # 7 
     if (nchar(stop_message)==0) {
-        phenList$dataset$Gender=levels(phenList$dataset$Gender)
-        x <- phenList$dataset 
-        
-        ## NUMERIC ISSUE ???????????????????????????
-        columnOfInterest <- x[,c(depVariable)]
-
-        if (class(columnOfInterest)=="factor"){
-            columnOfInterest <- as.character(columnOfInterest)
-            tryCatch({
-                        # try to convert into numbers
-                        columnOfInterest<-as.numeric(columnOfInterest)
-                    },
-                    warning = function(war){
-                        # convert into characters
-                        columnOfInterest <- as.character(columnOfInterest)
-                    },
-                    error = function(err){
-                        # convert into characters
-                        columnOfInterest <- as.character(columnOfInterest)        
-                    })
-            phenList$dataset[,c(depVariable)] <- columnOfInterest
-            x[,c(depVariable)] <- columnOfInterest
-        }
-        
-        checkDepV <- columnChecks(x,depVariable,dataPointsThreshold)
-        
+        # create small data frame with values to analyse
+        columnOfInterest <- getColumn(phenList,depVariable)
         # Presence
-        if (!checkDepV[1])
-        stop_message <- paste("Error:\nDependent variable column '",
+        if (is.null(columnOfInterest))
+            stop_message <- paste("Error:\nDependent variable column '",
                 depVariable,"' is missed in the dataset.\n",sep="")
-    }
+    }    
     
     ## STOP CHECK ARGUMENTS   
     
-   
-    
-    
-    ## DATASET'S CHECKS   
-    # Dataset checks depending on selected method
-    if (nchar(stop_message)==0){
+    # Creates a subset with analysable variable
+    if (nchar(stop_message)==0) {
+            checkDepV <- columnChecks(dataset(phenList),depVariable,dataPointsThreshold)
+            # TRANSFORMATION
+            # check if the method selected is not for categorical data - if so we don't want to transform values
+            if (!(method %in% c("FE","LR")) && checkDepV[2] && checkDepV[3]) {
+                # check for transformation
+                transformationVector <- determiningLambda(phenList,depVariable,equation)
+                transformationRequired <- as.logical(transformationVector[[5]])
+                lambdaValue <- as.numeric(transformationVector[[4]])
+                if (!is.na(transformationVector[[6]]))
+                    scaleShift <- as.numeric(transformationVector[[6]])
+                else scaleShift <- 0
+                if (transformValues && transformationRequired){
+                    columnOfInterestOriginal <- columnOfInterest
+                    columnOfInterest <- transformValues(columnOfInterest,lambdaValue,scaleShift)
+                }
+                if (batchIn(phenList)){
+                    # Adjusted for batch depVariable values WITHOUT transformation!
+                    columnOfInterestAdjusted=getColumnBatchAdjusted(phenList,depVariable)
+                }
+            }
+            else {
+                columnOfInterestOriginal <- columnOfInterest
+                # Transformation for LR -> 0/1    
+            }
+
+
+            columnOfSex <- getColumn(phenList,"Sex")
+            columnOfGenotype <- getColumn(phenList,"Genotype")
+            if (batchIn(phenList)){
+                columnOfBatch <- getColumn(phenList,"Batch")
+            }
+
+            if (weightIn(phenList)){
+                columnOfWeight <- getColumn(phenList,"Weight")
+            }
+            # Get rid of factors 
+            if (class(columnOfInterest)=="factor"){
+                columnOfInterest <- as.character(columnOfInterest)
+                tryCatch({
+                            # try to convert into numbers
+                            columnOfInterest<-as.numeric(columnOfInterest)
+                        },
+                        warning = function(war){
+                            # convert into characters
+                            columnOfInterest <- as.character(columnOfInterest)
+                        },
+                        error = function(err){
+                            # convert into characters
+                            columnOfInterest <- as.character(columnOfInterest)        
+                        }) 
+            }
+            
+            if (!is.null(columnOfBatch) && !is.null(columnOfWeight)){
+                datasetToAnalyse <- data.frame(columnOfInterest,columnOfSex,columnOfGenotype,columnOfBatch,columnOfWeight)
+                colnames(datasetToAnalyse)<-c(depVariable,"Sex","Genotype","Batch","Weight")       
+            }
+            else if (!is.null(columnOfBatch)){
+                datasetToAnalyse <- data.frame(columnOfInterest,columnOfSex,columnOfGenotype,columnOfBatch)
+                colnames(datasetToAnalyse)<-c(depVariable,"Sex","Genotype","Batch")    
+            } 
+            else if (!is.null(columnOfWeight)){
+                    datasetToAnalyse <- data.frame(columnOfInterest,columnOfSex,columnOfGenotype,columnOfWeight)
+                    colnames(datasetToAnalyse)<-c(depVariable,"Sex","Genotype","Weight")  
+                }
+            else {
+                datasetToAnalyse <- data.frame(columnOfInterest,columnOfSex,columnOfGenotype)
+                colnames(datasetToAnalyse)<-c(depVariable,"Sex","Genotype") 
+                }
+            if (transformValues && transformationRequired && (method!="FE")){
+                columnNameOriginal <- paste(depVariable,"_original",sep="")
+                datasetToAnalyse[,columnNameOriginal] <- columnOfInterestOriginal
+            }
+            if (!is.null(columnOfInterestAdjusted)) {
+                columnNameAdjusted <- paste(depVariable,"_adjusted",sep="")
+                datasetToAnalyse[,columnNameAdjusted] <- columnOfInterestAdjusted  
+            }
+
         
+            
+        phenListToAnalyse <- new("PhenList",dataset=datasetToAnalyse,
+                refGenotype = refGenotype(phenList),
+                testGenotype = testGenotype(phenList),
+                hemiGenotype = hemiGenotype(phenList))
         
+        x <- dataset(phenListToAnalyse)
+        
+        checkDepV <- columnChecks(x,depVariable,dataPointsThreshold)
+
         checkDepVLevels <- columnLevels(x,depVariable)   
 
         checkWeight <- columnChecks(x,"Weight",dataPointsThreshold)
+
         # MM checks
         # Go first since there are switches between MM to FE
         if (method %in% c("MM","TF")){
@@ -154,7 +218,9 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
                                 "analysis of this dependent variable.\n",sep=""))
             }
             else{
-            
+                
+               
+                
                 # Variability - the ratio of different values to all values in the column
                 if (checkDepVLevels[1]>0)
                     variability <- checkDepVLevels[2]/checkDepVLevels[1] 
@@ -189,13 +255,13 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
                         
                     }
                     else{
-                        
+                        #CHECKS FOR WEIGHT
                         # Equality to depVariable
-                        columnOfInterest <- na.omit(x[,c(depVariable)])
-                        columnOfWeight <- na.omit(x$Weight)
+                        columnOfInterest <- na.omit(columnOfInterest)
+                        columnOfWeight <- na.omit(columnOfWeight)
                         
                         if (length(columnOfInterest) == length(columnOfWeight))
-                        
+                            
                         if (sum(columnOfInterest-columnOfWeight) == 0){    
                             if (outputMessages)
                             message(paste("Warning:\nWeight and dependent variable values seemed to be equivalent. ",
@@ -220,7 +286,7 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
                                             "replaced to 'withoutWeight'.\n", sep="")) 
                             equation <- "withoutWeight"   
                         } 
-                                 
+                                
                     }     
                 }
             }            
@@ -265,6 +331,25 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
                     "in dependent variable in FE framework. ", 
                     "The variable '",depVariable,"' has more than 10 levels.\n",sep="") 
         } 
+
+        # LR checks
+        if (method=="LR"){
+            if (checkDepVLevels[2]==0)
+                stop_message <- paste("Error:\nInsufficient data in the dependent variable '",
+                    depVariable,
+                    "' to allow the application of Logistic Regression framework.\n",sep="") 
+            if (checkDepVLevels[2]!=2){
+                stop_message <- paste("Error:\nLogistic regression is applicable only if there are two levels ",
+                    "in dependent variable. ", 
+                    "The variable '",depVariable,"' has less or more than 2 levels.\n",sep="") 
+            }
+            else {
+                depVariableLevels <- levels(factor(na.omit(columnOfInterest)))
+                if (!(depVariableLevels[1]==0 && depVariableLevels[2]==1))
+                    stop_message <- paste("Error:\nLogistic regression is applicable only if there are two levels ",
+                    "in dependent variable: 0/1\n",sep="")                
+            }
+        } 
         
         # RR checks
         if (method=="RR"){
@@ -285,7 +370,7 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
                 # Number of control data
                 
                 
-                controlSubset <- subset(x, x$Genotype==phenList$refGenotype)
+                controlSubset <- subset(x, x$Genotype==refGenotype(phenList))
                 columnOfInterestSubset <- na.omit(controlSubset[,c(depVariable)])
                 
                 Sex_levels <- levels(factor(x$Sex))
@@ -354,7 +439,7 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
         if (outputMessages)
         message(paste("Information:\nMethod: Mixed Model framework.\n",sep="")) 
         
-        result <- startModel(phenList, depVariable, equation, 
+        result <- startModel(phenListToAnalyse, depVariable, equation, 
                 outputMessages, pThreshold, keepList)
         
         ## Perform all framework methods 
@@ -374,7 +459,7 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
         if (outputMessages)
         message(paste("Information:\nMethod: Time as Fixed Effect framework.\n",sep="")) 
         
-        result <- startTFModel(phenList, depVariable, equation, 
+        result <- startTFModel(phenListToAnalyse, depVariable, equation, 
                 outputMessages, pThreshold, keepList)
         
         ## Perform all framework methods 
@@ -386,15 +471,41 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
         ## Fisher Exact Test 
         if (outputMessages)
         message(paste("Information:\nMethod: Fisher Exact Test framework.\n",sep="")) 
-        result <- FisherExactTest(phenList,depVariable,outputMessages)
+        result <- FisherExactTest(phenListToAnalyse,depVariable,outputMessages)
     }
     
     else if (method=="RR"){
         ## RR Plus
         if (outputMessages)
         message(paste("Information:\nMethod: Reference Ranges Plus framework.\n",sep="")) 
-        result <- RRTest(phenList,depVariable,outputMessages,RR_naturalVariation,RR_controlPointsThreshold)
+        result <- RRTest(phenListToAnalyse,depVariable,outputMessages,RR_naturalVariation,RR_controlPointsThreshold)
     }
+    else if (method=="LR"){
+        ## Logistic Regression
+        if (callAll){
+            if (outputMessages)
+                message(paste("Information:\nPerform all LR framework stages: startLRModel and finalLRModel.\n",sep=""))
+        }    
+            
+        if (outputMessages)
+        message(paste("Information:\nMethod: Logistic Regression framework.\n",sep="")) 
+            
+        result <- startLRModel(phenListToAnalyse, depVariable, outputMessages=TRUE, pThreshold=0.05)
+        
+        ## Perform all framework methods 
+        if (callAll && is(result,"PhenTestResult")){
+                result <- finalLRModel(result, outputMessages)
+        }
+    }
+
+    if (transformValues && transformationRequired && (method!="FE") && (method!="LR")){
+        result@transformationRequired <- as.logical(transformationRequired)
+        result@lambdaValue <- lambdaValue
+        result@scaleShift <- scaleShift
+    }
+    else {
+        result@transformationRequired <- FALSE
+    } 
     
     return(result)   
 }
@@ -494,12 +605,12 @@ recommendMethod <- function(phenList=NULL, depVariable=NULL,
                 "for example: depVariable='Lean.Mass'.\n",sep="")
     } 
     else {
-        columnOfInterest <- phenList$dataset[,c(depVariable)]
+        columnOfInterest <- getColumn(phenList,depVariable)
     }
     
     # stop if there is something wrong with the arguments
     if (nchar(stop_message)==0) {
-        x <- phenList$dataset 
+        x <- dataset(phenList)
         checkDepV <- columnChecks(x,depVariable,dataPointsThreshold)
         
         # Presence
@@ -536,6 +647,12 @@ recommendMethod <- function(phenList=NULL, depVariable=NULL,
             suggestedFramework <- "FE"
         }
         
+        # check for LR        
+        if (checkDepVLevels[2]==2) {
+            suggestedFramework <- paste(suggestedFramework,", LR",sep="") 
+        }
+        
+        
         if (checkDepV[2]) { # NUMERIC
         
             # VARIABILITY
@@ -564,7 +681,7 @@ recommendMethod <- function(phenList=NULL, depVariable=NULL,
             # check for TF
             if ('Batch' %in% colnames(x) && variabilityPass){
                 phenListTF <- TFDataset(phenList,depVariable,outputMessages=FALSE,forDecisionTree=FALSE)
-                xTF <- phenListTF$dataset            
+                xTF <- dataset(phenListTF)            
                 
                 # check for batches - shoud be from 2 to 5 batches
                 if (length(levels(factor(xTF$Batch))) >= 2 && length(levels(factor(xTF$Batch))) <= 5) {   
@@ -607,7 +724,7 @@ recommendMethod <- function(phenList=NULL, depVariable=NULL,
             # checks for RR
             controlNotEnough <- FALSE
             if (checkDepVLevels[2]!=0) {               
-                controlSubset <- subset(x, x$Genotype==phenList$refGenotype)
+                controlSubset <- subset(x, x$Genotype==refGenotype(phenList))
                 columnOfInterestSubset <- na.omit(controlSubset[,c(depVariable)])                   
                 Sex_levels <- levels(factor(x$Sex))                                  
                 for (j in 1:length(Sex_levels)){           
@@ -637,4 +754,4 @@ recommendMethod <- function(phenList=NULL, depVariable=NULL,
         return(suggestedFramework)   
        
 }
-##------------------------------------------------------------------------------
+##------------------------------------------------------------------------------                 "

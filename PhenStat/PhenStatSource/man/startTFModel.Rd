@@ -69,7 +69,7 @@
             callAll=FALSE,
             method="TF")
     # print out formula that has been created
-    result$model.formula.genotype
+    analysisResults(result)$model.formula.genotype
     # print out batch effect's significance 
-    result$model.effect.batch
+    analysisResults(result)$model.effect.batch
 }

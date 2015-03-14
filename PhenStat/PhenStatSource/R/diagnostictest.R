@@ -20,29 +20,31 @@
 testFinalModel<-function(phenTestResult)
 {
     result <- phenTestResult
-    x <- result$model.dataset
-    depVariable <- result$depVariable
-    equation <- result$equation
-    keep_weight <- result$model.effect.weight
-    keep_sex <- result$model.effect.sex
-    keep_interaction <- result$model.effect.interaction
-    keep_batch <- result$model.effect.batch
-    keep_equalvar <- result$model.effect.variance
+    x <- analysedDataset(result)
+    depVariable <- getVariable(result)
+    analysisResults <- analysisResults(phenTestResult)
+    
+    equation <- analysisResults$equation
+    keep_weight <- analysisResults$model.effect.weight
+    keep_sex <- analysisResults$model.effect.sex
+    keep_interaction <- analysisResults$model.effect.interaction
+    keep_batch <- analysisResults$model.effect.batch
+    keep_equalvar <- analysisResults$model.effect.variance
     
     a <- levels(x$Genotype)
-    numberofsexes <- result$numberSexes
+    numberofsexes <- analysisResults$numberSexes
     
     if(!keep_weight && equation=="withWeight"){
         testresults <- c(a[1], NA, a[2], NA, NA, NA)
         
     }else if ('Batch' %in% colnames(x)){
-        res <- resid(result$model.output)
+        res <- resid(analysisResults$model.output)
         data_all <- data.frame(x, res)
         genotype_no <- length(a)
         data_all[, c("Sex", "Batch")] <- lapply(data_all[, c("Sex", 
                                 "Batch")], factor)
         No_batches <- nlevels(data_all$Batch)
-        outputnumeric <- is.numeric(result$model.output$apVar)
+        outputnumeric <- is.numeric(analysisResults$model.output$apVar)
         Gp1 <- subset(data_all, data_all$Genotype==a[1])
         Gp2 <- subset(data_all, data_all$Genotype==a[2])
         No_Gp1 <- sum(is.finite(Gp1[ , c("res")]))
@@ -50,20 +52,20 @@ testFinalModel<-function(phenTestResult)
         
         if(keep_batch && No_batches >7 && outputnumeric){
             
-            blups <- ranef(result$model.output)
+            blups <- ranef(analysisResults$model.output)
             blups_test <- suppressWarnings(cvm.test(blups [ ,1])$p.value)
-            sdests <- exp(attr(result$model.output$apVar, 
+            sdests <- exp(attr(analysisResults$model.output$apVar, 
                             "Pars"))           #extract variance estimates
             
             Zbat <- model.matrix(~ Batch, model.frame( ~ Batch, 
-                            result$model.output$groups))    #create random effects design matrix
+                            analysisResults$model.output$groups))    #create random effects design matrix
             
             ycov <- (Zbat %*% t(Zbat)) * sdests["reStruct.Batch"]^2 + diag(rep
-                    (1,nrow(result$model.output$groups))) * sdests["lSigma"]^2  #create estimated cov(y)  
+                    (1,nrow(analysisResults$model.output$groups))) * sdests["lSigma"]^2  #create estimated cov(y)  
             
             Lt <- chol(solve(ycov)) #Cholesky decomposition of inverse of cov
             # (y) (see Houseman '04 eq. (2))
-            rotres <- Lt %*%  result$model.output$residuals[,"fixed"] #rotated residuals
+            rotres <- Lt %*%  analysisResults$model.output$residuals[,"fixed"] #rotated residuals
             
             rotated_residual_test <- suppressWarnings(cvm.test(rotres)$p.value)
         }else{
@@ -91,5 +93,24 @@ testFinalModel<-function(phenTestResult)
     }
     
     return(testresults)
+}
+##------------------------------------------------------------------------------
+testFinalLRModel<-function(phenTestResult)
+{
+    result <- phenTestResult
+    x <- analysedDataset(result)
+    depVariable <- getVariable(result)
+    analysisResults <- analysisResults(phenTestResult)
+    keep_sex <- analysisResults$model.effect.sex
+    keep_interaction <- analysisResults$model.effect.interaction
+    keep_batch <- analysisResults$model.effect.batch
+    a <- levels(x$Genotype)
+    numberofsexes <- analysisResults$numberSexes
+    blups_test <- NA
+    rotated_residual_test <- NA
+    gp1_norm_res<-NA
+    gp2_norm_res<-NA
+    testResults <- c(a[1], gp1_norm_res, a[2], gp2_norm_res, blups_test,rotated_residual_test)
+    return(testResults)
 }
 ##------------------------------------------------------------------------------
