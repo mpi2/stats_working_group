@@ -338,7 +338,7 @@ transformationText = function(obj)
         ,"")
 transformation = function(obj) 
     ifelse(obj@transformationRequired,
-        paste("lamda=",obj@lambdaValue,", scaleShift=",obj@scaleShift,sep="")
+        paste("lambda=",obj@lambdaValue,", scaleShift=",obj@scaleShift,sep="")
         ,"")
 ##------------------------------------------------
 # Batch is in the dataset - TRUE or FALSE
