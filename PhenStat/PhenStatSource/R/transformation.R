@@ -59,7 +59,7 @@ reverseTransformValues <- function (values, lambda, scaleShift){
 determiningLambda <- function(phenList, depVariable, equation="withWeight"){
     df <- dataset(phenList)
     noSexes <- noSexes(phenList)
-    multipleBatches <- multipleBatches(phenList)
+    multipleBatches <-  ifelse(multipleBatches(phenList), "Yes", "No")
     if (!weightIn(phenList)){
         equation <- "withoutWeight"
     }

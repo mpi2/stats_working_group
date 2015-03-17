@@ -142,23 +142,25 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
 #        }
         
         ## Renew levels
-        if ('Sex' %in% colnames(dataset))
-        dataset$Sex<-factor(dataset$Sex)
+        if ('Sex' %in% colnames(dataset)){
+                dataset$Sex<-factor(dataset$Sex)
+                # # Replace values for sexes with 'Male','Female'
+                levels(dataset$Sex)[levels(dataset$Sex)=="female"] <- "Female"
+                levels(dataset$Sex)[levels(dataset$Sex)=="male"] <- "Male"
+                
+                if(!is.null(dataset.values.female))
+                levels(dataset$Sex)[levels(dataset$Sex)==dataset.values.female] <- "Female"
+                
+                if(!is.null(dataset.values.male)) 
+                levels(dataset$Sex)[levels(dataset$Sex)==dataset.values.male] <- "Male"
+        }
         if ('Genotype' %in% colnames(dataset))
         dataset$Genotype<-factor(dataset$Genotype)
         if ('Batch' %in% colnames(dataset))
         dataset$Batch<-factor(dataset$Batch)
 
             
-        # # Replace values for sexes with 'Male','Female'
-        levels(dataset$Sex)[levels(dataset$Sex)=="female"] <- "Female"
-        levels(dataset$Sex)[levels(dataset$Sex)=="male"] <- "Male"
-            
-        if(!is.null(dataset.values.female))
-        levels(dataset$Sex)[levels(dataset$Sex)==dataset.values.female] <- "Female"
-  
-        if(!is.null(dataset.values.male)) 
-        levels(dataset$Sex)[levels(dataset$Sex)==dataset.values.male] <- "Male"
+       
             
         ## Hemi to test genotype replacement
         if (!is.null(hemiGenotype)) {
