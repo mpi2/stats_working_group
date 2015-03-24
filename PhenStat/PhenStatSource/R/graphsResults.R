@@ -336,6 +336,10 @@ categoricalBarplot<-function(phenTestResult,outputMessages=TRUE){
         if (method(phenTestResult)=="FE"){
             categoriesName <- rownames(modeloutput[[1]]@matrixCount)
         }
+        if (method(phenTestResult)=="LR"){
+            categoriesName <- c("Normal","Abnormal")
+        }
+
         
         # Colors for the plot and legends
         plot_col <- c(1:length(categoriesName))

@@ -113,17 +113,18 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
     
     # Creates a subset with analysable variable
     if (nchar(stop_message)==0) {
-            checkDepV <- columnChecks(dataset(phenList),depVariable,dataPointsThreshold)
+            checkDepV <- columnChecks(getDataset(phenList),depVariable,dataPointsThreshold)
             # TRANSFORMATION
             # check if the method selected is not for categorical data - if so we don't want to transform values
-            if (!(method %in% c("FE","LR")) && checkDepV[2] && checkDepV[3]) {
+            if (!(method %in% c("FE","LR","RR")) && checkDepV[2] && checkDepV[3]) {
                 # check for transformation
                 transformationVector <- determiningLambda(phenList,depVariable,equation)
                 transformationRequired <- as.logical(transformationVector[[5]])
                 lambdaValue <- as.numeric(transformationVector[[4]])
-                if (!is.na(transformationVector[[6]]))
+                if (!is.na(transformationVector[[6]])){
                     scaleShift <- as.numeric(transformationVector[[6]])
-                else scaleShift <- 0
+                }
+                else {scaleShift <- 0 }
                 if (transformValues && transformationRequired){
                     columnOfInterestOriginal <- columnOfInterest
                     columnOfInterest <- transformValues(columnOfInterest,lambdaValue,scaleShift)
@@ -192,12 +193,12 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
 
         
             
-        phenListToAnalyse <- new("PhenList",dataset=datasetToAnalyse,
+        phenListToAnalyse <- new("PhenList",datasetPL=datasetToAnalyse,
                 refGenotype = refGenotype(phenList),
                 testGenotype = testGenotype(phenList),
                 hemiGenotype = hemiGenotype(phenList))
         
-        x <- dataset(phenListToAnalyse)
+        x <- getDataset(phenListToAnalyse)
         
         checkDepV <- columnChecks(x,depVariable,dataPointsThreshold)
 
@@ -610,7 +611,7 @@ recommendMethod <- function(phenList=NULL, depVariable=NULL,
     
     # stop if there is something wrong with the arguments
     if (nchar(stop_message)==0) {
-        x <- dataset(phenList)
+        x <- getDataset(phenList)
         checkDepV <- columnChecks(x,depVariable,dataPointsThreshold)
         
         # Presence
@@ -681,7 +682,7 @@ recommendMethod <- function(phenList=NULL, depVariable=NULL,
             # check for TF
             if ('Batch' %in% colnames(x) && variabilityPass){
                 phenListTF <- TFDataset(phenList,depVariable,outputMessages=FALSE,forDecisionTree=FALSE)
-                xTF <- dataset(phenListTF)            
+                xTF <- getDataset(phenListTF)            
                 
                 # check for batches - shoud be from 2 to 5 batches
                 if (length(levels(factor(xTF$Batch))) >= 2 && length(levels(factor(xTF$Batch))) <= 5) {   

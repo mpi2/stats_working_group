@@ -1,7 +1,7 @@
 \name{PhenList-class}
 \docType{class}
 \alias{PhenList-class}
-\alias{dataset,PhenList-method}
+\alias{getDataset,PhenList-method}
 \alias{refGenotype,PhenList-method}
 \alias{testGenotype,PhenList-method}
 \alias{hemiGenotype,PhenList-method}
@@ -23,7 +23,7 @@ The PhenList object can be created by using function \code{\link{PhenList}}.}
 \section{Explore PhenList object}{
     PhenList object instance contains the following slots:
     
-    1. "dataset" where cleaned and checked dataset is stored: \code{dataset(phenList)}
+    1. "datasetPL" where cleaned and checked dataset is stored: \code{getDataset(phenList)}
     
     2. "testGenotype" where the genotype level to test is stored:  \code{testGenotype(phenList)}
     
@@ -57,7 +57,7 @@ The PhenList object can be created by using function \code{\link{PhenList}}.}
 }
 \section{Slots}{
     \describe{
-        \item{\code{dataset}:}{Object of class \code{"data.frame"} ~~ dataset to work with}
+        \item{\code{datasetPL}:}{Object of class \code{"data.frame"} ~~ dataset to work with}
         \item{\code{refGenotype}:}{Object of class \code{"character"} ~~ reference genotype}
         \item{\code{testGenotype}:}{Object of class \code{"character"} ~~ test genotype}
         \item{\code{hemiGenotype}:}{Object of class \code{"character"} ~~ hemi genotype}
@@ -76,7 +76,7 @@ The PhenList object can be created by using function \code{\link{PhenList}}.}
 }
 \section{Methods}{
     \describe{
-        \item{dataset}{(accessor): Returns dataset}
+        \item{getDataset}{(accessor): Returns dataset}
         \item{refGenotype}{(accessor): Returns reference genotype }
         \item{testGenotype}{(accessor): Returns test genotype }
         \item{hemiGenotype}{(accessor): Returns hemi genotype if specified}

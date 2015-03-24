@@ -33,7 +33,7 @@ TFDataset <- function(phenList=NULL, depVariable=NULL, outputMessages=TRUE, forD
 
     if (nchar(stop_message)==0) {
         # extract data frame 
-        x <- dataset(phenList)
+        x <- getDataset(phenList)
         columnOfInterest <- getColumn(phenList,depVariable)
         # 3
         if (!batchIn(phenList)){
@@ -150,7 +150,7 @@ TFDataset <- function(phenList=NULL, depVariable=NULL, outputMessages=TRUE, forD
         
 
         if (length(levels(factor(x$Batch))) >= 2 && length(levels(factor(x$Batch))) <= 5) {
-            new_phenList <- new("PhenList",dataset=x,
+            new_phenList <- new("PhenList",datasetPL=x,
                     refGenotype = refGenotype(phenList),
                     testGenotype = testGenotype(phenList),
                     hemiGenotype = hemiGenotype(phenList))
@@ -197,7 +197,7 @@ printTabStyle <- function(textList,positions,tabSep="|"){
 startTFModel <- function(phenList, depVariable, equation="withWeight",
         outputMessages=TRUE, pThreshold=0.05, keepList=NULL)
 {
-    x <- dataset(phenList)
+    x <- getDataset(phenList)
     
     #if (!is.null(keepList)){
         ## User's values for effects

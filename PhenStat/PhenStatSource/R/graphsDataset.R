@@ -30,7 +30,7 @@ boxplotSexGenotype<-function(phenList, depVariable=NULL,
     }
     
     if(is(phenList,"PhenList")) {
-        x <- dataset(phenList)
+        x <- getDataset(phenList)
         
         if (nchar(stop_message)==0){
             if (!(depVariable %in% colnames(x)))
@@ -102,20 +102,26 @@ boxplotSexGenotypeBatchAdjusted<-function(phenList, depVariable=NULL,
     }
     
     if(is(phenList,"PhenList")) {
-        x <- dataset(phenList)
+        x <- getDataset(phenList)
         
         if (nchar(stop_message)==0){
             if (!(depVariable %in% colnames(x)))
-            stop_message <- paste(stop_message,
+                stop_message <- paste(stop_message,
                     "Error:\n",depVariable," column is missed in the dataset.",sep="")
             else {
-                columnOfInterest <- x[,c(depVariable)]
-                
-                ## Test: depVariable is numeric 
-                if(!is.numeric(columnOfInterest))
-                stop_message <- paste(stop_message,
-                        "Error:\n",depVariable," variable is not numeric. ",
-                        "Can't create a plot based on it.",sep="")
+                if (!multipleBatches(phenList)){ 
+                    stop_message <- paste(stop_message,
+                            "Error:\n Plot creation relies on having batch variation.",sep="")
+                }
+                else { 
+                    columnOfInterest <- x[,c(depVariable)]
+                    
+                    ## Test: depVariable is numeric 
+                    if(!is.numeric(columnOfInterest))
+                    stop_message <- paste(stop_message,
+                            "Error:\n",depVariable," variable is not numeric. ",
+                            "Can't create a plot based on it.",sep="")
+                }
             }       
             
         }
@@ -137,8 +143,10 @@ boxplotSexGenotypeBatchAdjusted<-function(phenList, depVariable=NULL,
         }
     } 
     else {
+        message(paste("Information:\n",depVariable," variable is adjusted ",
+                        "treating batch as a random effect.",sep=""))
         ## Plot creation             
-        # relies on having batch variation        
+        # relies on having batch variation   
         x[, depVariable] <- getColumnBatchAdjusted(phenList,depVariable)
         
         ## Plot creation
@@ -161,6 +169,7 @@ boxplotSexGenotypeBatchAdjusted<-function(phenList, depVariable=NULL,
             boxplot(x[ ,depVariable]~x$Genotype, ylab=graphingName, xlab="Genotype")  
             par(op)  
         }
+        
 
     }
 }
@@ -183,7 +192,7 @@ boxplotSexGenotypeBatch<-function(phenList, depVariable=NULL,
     }
     
     if(is(phenList,"PhenList")) {
-        x <- dataset(phenList)
+        x <- getDataset(phenList)
         refGenotype <- refGenotype(phenList)   
         
         if (nchar(stop_message)==0){
@@ -297,7 +306,7 @@ scatterplotSexGenotypeBatch<-function(phenList, depVariable=NULL,
         graphingName <- depVariable
     }
     if(is(phenList,"PhenList")) {
-        x <- dataset(phenList)
+        x <- getDataset(phenList)
         refGenotype <- refGenotype(phenList)
         if (nchar(stop_message)==0){
             if (!(depVariable %in% colnames(x)))
@@ -385,7 +394,7 @@ scatterplotGenotypeWeight<-function(phenList, depVariable=NULL,
     
     ## Checks
     if(is(phenList,"PhenList")) {
-        x <- dataset(phenList)     
+        x <- getDataset(phenList)     
         
         if (nchar(stop_message)==0){ 
             if (!(depVariable %in% colnames(x)))

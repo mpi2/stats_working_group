@@ -246,6 +246,12 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
                 direction_males <- "NA"
                 male_p.value <- 10
                 noSexes <- length(levels(analysedDataset(phenTestResult)$Sex))
+                high_male_p.value <- 10
+                high_female_p.value <- 10
+                high_all_p.value <- 10
+                low_male_p.value <- 10
+                low_female_p.value <- 10
+                low_all_p.value <- 10
                 
                 for (i in seq_along(analysisResults)) {
                     val <- analysisResults[[i]]

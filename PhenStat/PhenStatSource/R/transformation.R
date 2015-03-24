@@ -18,24 +18,30 @@
 # log transformation if the lambda is 0, power transformation otherwise
 transformValues <- function (values, lambda, scaleShift){
     if (lambda==0){
-        transformedValues <- log(values+scaleShift)
+        transformedValues <- lapply(values, 
+                function (x) {log(x+scaleShift)})
     }
     else {
-        transformedValues <- (((values+scaleShift)^lambda)-1)/lambda       
+        transformedValues <- lapply(values, 
+                function (x) {y<-x+scaleShift;((sign(y)*abs(y)^lambda)-1)/lambda})
+        #(((values+scaleShift)^lambda)-1)/lambda   
+       
     }
-    return(transformedValues)
+    return(unlist(transformedValues))
 }
 ##------------------------------------------------------------------------------
 ##Function reverse back the transformed values according to the lambda value:
 # exponential transformation if the lambda is 0, fractional power transformation otherwise
 reverseTransformValues <- function (values, lambda, scaleShift){
     if (lambda==0){
-        reverseValues <- exp(values) - scaleShift
+        reverseValues <- lapply(values, function (x) {exp(x) - scaleShift})
     }
     else {       
-        reverseValues <- (((values * lambda)+1)^(1/lambda))-scaleShift  
+        reverseValues <- lapply(values, 
+                function (x) {y<-((x * lambda)+1);(sign(y)*abs(y)^(1/lambda))-scaleShift})
+        
     }
-    return(reverseValues)
+    return(unlist(reverseValues))
 }
 ##------------------------------------------------------------------------------
 ##Function role
@@ -57,7 +63,7 @@ reverseTransformValues <- function (values, lambda, scaleShift){
 #Vector 5 elements - all numeric
 #TransfomrationRequired TRUE,  FALSE
 determiningLambda <- function(phenList, depVariable, equation="withWeight"){
-    df <- dataset(phenList)
+    df <- getDataset(phenList)
     noSexes <- noSexes(phenList)
     multipleBatches <-  ifelse(multipleBatches(phenList), "Yes", "No")
     if (!weightIn(phenList)){
@@ -85,7 +91,7 @@ determiningLambda <- function(phenList, depVariable, equation="withWeight"){
     }
     
     #determine lambda using the formula returned
-    boxcox_out=boxcox(formulatoTest, data = df, plotit = FALSE, lambda = seq(-8, 8, 1/10))
+    boxcox_out=boxcox(formulatoTest, data = df, plotit = FALSE, lambda = seq(-100, 100, 1/10))
     #determine the 95% confidence interval for lambda
     lambda_CI=range(boxcox_out$x[boxcox_out$y > max(boxcox_out$y)-qchisq(0.95,1)/2])
     #determine the midepoint of the 95% confidence interval

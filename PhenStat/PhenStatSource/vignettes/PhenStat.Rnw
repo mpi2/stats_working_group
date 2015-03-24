@@ -142,7 +142,7 @@ The output of the \textit{PhenList} function is the \textit{PhenList} object tha
                 dataset.values.male=2, 
                 testGenotype="Mysm1/+")
         
-        dataset(test)
+        getDataset(test)
         
         test
         @

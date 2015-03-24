@@ -21,7 +21,7 @@ RRTest <- function(phenList, depVariable,
         outputMessages=TRUE, naturalVariation=95, controlPointsThreshold=60)
 {
     
-    x <- dataset(phenList)
+    x <- getDataset(phenList)
     resultList <- list()
     indexList <- 1
     

@@ -244,7 +244,7 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
     Genotype_levels <- levels(dataset$Genotype)
     Sex_levels <- levels(dataset$Sex)
     
-    new("PhenList",dataset=as.data.frame(dataset),
+    new("PhenList",datasetPL=as.data.frame(dataset),
     refGenotype = refGenotype,
     testGenotype = testGenotype,
     hemiGenotype = ifelse(is.null(hemiGenotype),character(0),hemiGenotype),

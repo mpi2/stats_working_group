@@ -280,7 +280,7 @@ vectorOutput <- function(phenTestResult, phenotypeThreshold=0.01)
                 "NA",  
                 as.character(male_pval), #30
                 as.character(classificationValue),
-                transformationText(phenTestResult),
+                "lambda=NA, scaleShift=NA",
                 addInfo)
         
         names(vectorOutput) <- c("Method",
@@ -350,6 +350,7 @@ vectorOutput <- function(phenTestResult, phenotypeThreshold=0.01)
                 as.character(analysisResults$model.output.summary["sex_MvKO_SE"]), 
                 as.character(analysisResults$model.output.summary["sex_MvKO_p_value"]),
                 as.character(classificationValue),
+                "lambda=NA, scaleShift=NA",
                 "NA" )  
         
         names(vectorOutput) <- c("Method",
@@ -384,6 +385,7 @@ vectorOutput <- function(phenTestResult, phenotypeThreshold=0.01)
                 "Sex MvKO standard error",
                 "Sex MvKO p-val",
                 "Classification tag",
+                "Transformation",
                 "Additional information")
     }
     
@@ -500,8 +502,8 @@ vectorOutputMatrices <- function(phenTestResult,outputMessages=TRUE){
         
     } 
     else {
-        stop_message <- paste("Error:\nThere are no matrices to output for MM framework.", 
-    "Function returns result only for FE framework.\n",sep="")
+        stop_message <- paste("Error:\nThere are no matrices to output for MM, TF or LR frameworks.", 
+    "Function returns result only for FE and RR frameworks.\n",sep="")
     }   
     
     if (nchar(stop_message)>0){

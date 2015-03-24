@@ -44,7 +44,7 @@
 startModel <- function(phenList, depVariable, equation="withWeight",
         outputMessages=TRUE, pThreshold=0.05, keepList=NULL)
 {
-    x <- dataset(phenList)
+    x <- getDataset(phenList)
     numberofsexes <- length(levels(x$Sex))
     if (!is.null(keepList)){
         ## User's values for effects

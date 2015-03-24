@@ -118,8 +118,11 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
     }    
     
     else if (method(phenTestResult) %in% c("RR")){
+        x <- analysedDataset(phenTestResult)
+        noSexes <- length(levels(x$Sex))
+        
         colnum <- 1
-        cat("\n1) High vs Normal/Low\n")
+        #cat("\n1) High vs Normal/Low\n")
         nl <- data.frame(nr=c(1,2,3))
         for (i in seq_along(analysisResults(phenTestResult))) {
             val <- analysisResults(phenTestResult)[[i]]
@@ -128,12 +131,6 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
             }
         }
         nl<-nl[ , -which(names(nl) %in% c("nr"))]
-        colnames(nl) <- head(nl,1)
-        nl <- nl[-1,]
-        rownames(nl) <- c("p-value","ES")
-        print(nl)
-        
-        cat("\n2) Low vs Normal/High\n")
         nh <- data.frame(nr=c(1,2,3))
         for (i in seq_along(analysisResults(phenTestResult))) {
             val <- analysisResults(phenTestResult)[[i]]
@@ -142,10 +139,27 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
             }
         }
         nh<-nh[ , -which(names(nh) %in% c("nr"))]
-        colnames(nh) <- head(nh,1)
-        nh <- nh[-1,]
-        rownames(nh) <- c("p-value","ES")
-        print(nh)
+        
+        if (noSexes==2){
+            colnames(nl) <- head(nl,1)
+            nl <- nl[-1,]
+            rownames(nl) <- c("p-value","ES")
+            cat("\n1) High vs Normal/Low\n")
+            print(nl,quote=FALSE)
+            colnames(nh) <- head(nh,1)
+            nh <- nh[-1,]
+            rownames(nh) <- c("p-value","ES")
+            cat("\n2) Low vs Normal/High\n")
+            print(nh,quote=FALSE)
+        }
+        else {
+            all <- cbind(nl,nh)
+            all <- all[-1,]
+            rownames(all) <- c("p-value","ES")
+            colnames(all) <- c("High vs Normal/Low","Low vs Normal/High")
+            print(all,quote=FALSE)
+        }
+        
         
         
         message(paste("\n",line,sep=""))
@@ -254,7 +268,7 @@ generateGraphs <- function(phenTestResult, dir, graphingName=NULL, type="Xlib")
         dev.off()
         
         #PhenList object
-        phenList <- new("PhenList",dataset=analysedDataset(phenTestResult),
+        phenList <- new("PhenList",datasetPL=analysedDataset(phenTestResult),
                 refGenotype = refGenotype(phenTestResult),
                 testGenotype = testGenotype(phenTestResult))
         

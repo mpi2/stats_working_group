@@ -63,7 +63,7 @@ LRDataset <- function(phenList=NULL, depVariable=NULL, abnormalValues=c("abnorma
         mappedvalues <- sapply(columnOfInterest, function(x) map[as.character(x)])
         names(mappedvalues)<-NULL
         columnOfInterest <- as.integer(mappedvalues)
-        phenList@dataset[,c(depVariable)] <- columnOfInterest
+        phenList@datasetPL[,c(depVariable)] <- columnOfInterest
         return(phenList)
     }  
 }
@@ -84,7 +84,7 @@ LRDataset <- function(phenList=NULL, depVariable=NULL, abnormalValues=c("abnorma
 startLRModel <- function(phenList, depVariable, outputMessages=TRUE, pThreshold=0.05)
 ##------------------------------------------------------------------------------
 {
-    x <- dataset(phenList)
+    x <- getDataset(phenList)
     numberofsexes <- length(levels(x$Sex))
     keep_batch <- FALSE
     keep_interaction <- FALSE

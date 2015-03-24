@@ -17,7 +17,7 @@
 ##------------------------------------------------------------------------------
 setClass("PhenList",
         ##  Linear model fit
-        representation(dataset = "data.frame",
+        representation(datasetPL = "data.frame",
                 refGenotype = "character",
                 testGenotype = "character",
                 hemiGenotype = "character",
@@ -33,14 +33,14 @@ setClass("PhenList",
 ##------------------------------------------------
 # Dimension functions
 dim.PhenList <- function(x){ 
-    if(is.null(x@dataset)) c(0, 0) 
+    if(is.null(x@datasetPL)) c(0, 0) 
     else 
-    c(nrow(x@dataset),ncol(x@dataset))
+    c(nrow(x@datasetPL),ncol(x@datasetPL))
 }
 #dimnames.PhenList <- function(x) dimnames(x@dataset)
 ##------------------------------------------------
 # Accessor functions
-dataset = function(obj) obj@dataset
+getDataset = function(obj) obj@datasetPL
 refGenotype = function(obj) obj@refGenotype
 testGenotype = function(obj) obj@testGenotype
 hemiGenotype = function(obj) obj@hemiGenotype
@@ -66,7 +66,7 @@ setGeneric("noSexes",
         standardGeneric("noSexes"))
 setMethod("noSexes", signature(obj = "PhenList"),
         function(obj){
-            length(levels(dataset(obj)$Sex))
+            length(levels(getDataset(obj)$Sex))
         }
 )
 ##------------------------------------------------
@@ -76,7 +76,7 @@ setGeneric("multipleBatches",
         standardGeneric("multipleBatches"))
 setMethod("multipleBatches", signature(obj = "PhenList"),
         function(obj){
-            if ('Batch' %in% colnames(dataset(obj))){
+            if ('Batch' %in% colnames(getDataset(obj))){
                 batchColumn <- na.omit(getColumn(obj,"Batch"))
                 if (length(levels(batchColumn)) > 1)
                     TRUE
@@ -94,7 +94,7 @@ setGeneric("weightIn",
         standardGeneric("weightIn"))
 setMethod("weightIn", signature(obj = "PhenList"),
         function(obj){
-            if ('Weight' %in% colnames(dataset(obj)))
+            if ('Weight' %in% colnames(getDataset(obj)))
                 TRUE
             else 
                 FALSE
@@ -107,7 +107,7 @@ setGeneric("batchIn",
         standardGeneric("batchIn"))
 setMethod("batchIn", signature(obj = "PhenList"),
         function(obj){
-            if ('Batch' %in% colnames(dataset(obj)))
+            if ('Batch' %in% colnames(getDataset(obj)))
                 TRUE
             else 
                 FALSE
@@ -123,19 +123,19 @@ setMethod("getStat", signature(obj = "PhenList"),
         function(obj){
             ## Calculate statistics  
             dataset.stat <- data.frame(
-                    Variables = colnames(dataset(obj)),
-                    Numeric = sapply(dataset(obj), is.numeric),    
-                    Continuous = sapply(dataset(obj), function(x) if(is.numeric(x)) {
+                    Variables = colnames(getDataset(obj)),
+                    Numeric = sapply(getDataset(obj), is.numeric),    
+                    Continuous = sapply(getDataset(obj), function(x) if(is.numeric(x)) {
                                 if (length(unique(x))/length(x)>0.05) TRUE else FALSE} else FALSE),
-                    Levels = sapply(dataset(obj), function(x) length(unique(x)) ),
-                    NObs = sapply(dataset(obj), function(x) length(na.omit(x))),
-                    Mean = sapply(dataset(obj), function(x) 
+                    Levels = sapply(getDataset(obj), function(x) length(unique(x)) ),
+                    NObs = sapply(getDataset(obj), function(x) length(na.omit(x))),
+                    Mean = sapply(getDataset(obj), function(x) 
                             if(is.numeric(x) && (length(unique(x))/length(x)>0.05)) round(mean(na.omit(x)),digits=2) else NA),
-                    StdDev = sapply(dataset(obj), function(x) 
+                    StdDev = sapply(getDataset(obj), function(x) 
                             if(is.numeric(x) && (length(unique(x))/length(x)>0.05)) round(sd(na.omit(x)),digits=2) else NA),
-                    Minimum = sapply(dataset(obj), function(x) 
+                    Minimum = sapply(getDataset(obj), function(x) 
                             if(is.numeric(x) && (length(unique(x))/length(x)>0.05)) round(min(na.omit(x)),digits=2) else NA),
-                    Maximum = sapply(dataset(obj), function(x) 
+                    Maximum = sapply(getDataset(obj), function(x) 
                             if(is.numeric(x) && (length(unique(x))/length(x)>0.05)) round(max(na.omit(x)),digits=2) else NA)
                     )
             rownames(dataset.stat) <- NULL
@@ -149,8 +149,8 @@ setGeneric("getColumn",
         standardGeneric("getColumn"))
 setMethod("getColumn", signature(obj = "PhenList",columnName="character"),
         function(obj, columnName){
-            if (c(columnName) %in% colnames(dataset(obj))){
-                columnOfInterest <- dataset(obj)[,c(columnName)]               
+            if (c(columnName) %in% colnames(getDataset(obj))){
+                columnOfInterest <- getDataset(obj)[,c(columnName)]               
             }
             else {
                 columnOfInterest <- NULL
@@ -165,12 +165,12 @@ setGeneric("getColumnBatchAdjusted",
         standardGeneric("getColumnBatchAdjusted"))
 setMethod("getColumnBatchAdjusted", signature(obj = "PhenList",columnName="character"),
         function(obj, columnName){
-            if (c(columnName) %in% colnames(dataset(obj))){
-                columnOfInterest <- dataset(obj)[,c(columnName)] 
-                if (batchIn(obj)){
+            if (c(columnName) %in% colnames(getDataset(obj))){
+                columnOfInterest <- getDataset(obj)[,c(columnName)] 
+                if (multipleBatches(obj)){
                     # Adjusted for batch depVariable values WITHOUT transformation!
                     nullFormula=as.formula(paste(columnName, "~", paste("1", sep="+")))        
-                    model.null=do.call("lme", args = list(nullFormula, random=~1|Batch, dataset(obj), 
+                    model.null=do.call("lme", args = list(nullFormula, random=~1|Batch, getDataset(obj), 
                                     na.action="na.exclude", method="ML"))
                     # Find the depVariable column adjusted for the batch effect
                     columnOfInterest=resid(model.null)     
@@ -189,7 +189,7 @@ setGeneric("getVariables",
         standardGeneric("getVariables"))
 setMethod("getVariables", signature(obj = "PhenList"),
         function(obj){
-            colnames(dataset(obj))
+            colnames(getDataset(obj))
         }
         )
 ##------------------------------------------------
@@ -200,7 +200,7 @@ setGeneric("setBatch",
 
 setMethod("setBatch", signature(obj = "PhenList",dataset.colname.batch="character"),
         function(obj, dataset.colname.batch){
-            datasetCopy <- dataset(obj)
+            datasetCopy <- getDataset(obj)
             if(dataset.colname.batch!='Batch'){
                 # check here for the existing column named 'Batch'
                 if ('Batch' %in% colnames(datasetCopy)){
@@ -208,7 +208,7 @@ setMethod("setBatch", signature(obj = "PhenList",dataset.colname.batch="characte
                 }
                 colnames(datasetCopy)[colnames(datasetCopy) == dataset.colname.batch] <-'Batch'
             }
-            obj@dataset <- datasetCopy
+            obj@datasetPL <- datasetCopy
             obj@dataset.colname.batch <- dataset.colname.batch
             obj
         }
@@ -220,7 +220,7 @@ setGeneric("setGenotype",
 
 setMethod("setGenotype", signature(obj = "PhenList",dataset.colname.genotype="character"),
         function(obj, dataset.colname.genotype){
-            datasetCopy <- dataset(obj)
+            datasetCopy <- getDataset(obj)
             if(dataset.colname.genotype!='Genotype'){
                 # check here for the existing column named 'Genotype'
                 if ('Genotype' %in% colnames(datasetCopy)){
@@ -228,7 +228,7 @@ setMethod("setGenotype", signature(obj = "PhenList",dataset.colname.genotype="ch
                 }
                 colnames(datasetCopy)[colnames(datasetCopy) == dataset.colname.genotype] <-'Genotype'
             }
-            obj@dataset <- datasetCopy
+            obj@datasetPL <- datasetCopy
             obj@dataset.colname.genotype <- dataset.colname.genotype
             obj
         }
@@ -240,7 +240,7 @@ setGeneric("setSex",
 
 setMethod("setSex", signature(obj = "PhenList",dataset.colname.sex="character"),
         function(obj, dataset.colname.sex){
-            datasetCopy <- dataset(obj)
+            datasetCopy <- getDataset(obj)
             if(dataset.colname.sex!='Sex'){
                 # check here for the existing column named 'Sex'
                 if ('Sex' %in% colnames(datasetCopy)){
@@ -248,7 +248,7 @@ setMethod("setSex", signature(obj = "PhenList",dataset.colname.sex="character"),
                 }
                 colnames(datasetCopy)[colnames(datasetCopy) == dataset.colname.sex] <-'Sex'
             }
-            obj@dataset <- datasetCopy
+            obj@datasetPL <- datasetCopy
             obj@dataset.colname.sex <- dataset.colname.sex
             obj
         }
@@ -260,7 +260,7 @@ setGeneric("setWeight",
 
 setMethod("setWeight", signature(obj = "PhenList",dataset.colname.weight="character"),
         function(obj, dataset.colname.weight){
-            datasetCopy <- dataset(obj)
+            datasetCopy <- getDataset(obj)
             if(dataset.colname.weight!='Weight'){
                 # check here for the existing column named 'Weight'
                 if ('Sex' %in% colnames(datasetCopy)){
@@ -268,7 +268,7 @@ setMethod("setWeight", signature(obj = "PhenList",dataset.colname.weight="charac
                 }
                 colnames(datasetCopy)[colnames(datasetCopy) == dataset.colname.weight] <-'Weight'
             }
-            obj@dataset <- datasetCopy
+            obj@datasetPL <- datasetCopy
             obj@dataset.colname.weight <- dataset.colname.weight
             obj
         }
@@ -280,7 +280,7 @@ setGeneric("setMissingValue",
 
 setMethod("setMissingValue", signature(obj = "PhenList",dataset.values.missingValue="character"),
         function(obj, dataset.values.missingValue){
-            datasetCopy <- dataset(obj)
+            datasetCopy <- getDataset(obj)
             ## Replace missing values specified in the user format with NA 
             datasetCopy[datasetCopy == dataset.values.missingValue] <- NA        
             obj@dataset <- datasetCopy
@@ -339,7 +339,7 @@ transformationText = function(obj)
 transformation = function(obj) 
     ifelse(obj@transformationRequired,
         paste("lambda=",obj@lambdaValue,", scaleShift=",obj@scaleShift,sep="")
-        ,"")
+        ,"lambda=NA, scaleShift=NA")
 ##------------------------------------------------
 # Batch is in the dataset - TRUE or FALSE
 setMethod("batchIn", signature(obj = "PhenTestResult"),

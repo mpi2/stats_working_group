@@ -19,7 +19,7 @@
 ## Perform Fisher Exact test(s)
 FisherExactTest <- function(phenList, depVariable, outputMessages=TRUE)
 {    
-    x <- dataset(phenList)
+    x <- getDataset(phenList)
     resultList <- list()
     indexList <- 1
     
