@@ -5,10 +5,10 @@
     Prints out for linear regression output
 }
 \usage{    
-    printLROutput(linearRegressionOutput,effectValues,phenotypeThreshold=0.01)
+    printLROutput(phenTestResult,phenotypeThreshold=0.01)
 }
 \arguments{
-    \item{linearRegressionOutput}{linear regression output that comes from the MM,TF and RR methods; mandatory argument}
+      \item{phenTestResult}{instance of the \code{\linkS4class{PhenTestResult}} class that comes from the function \code{testDataset}; mandatory argument}
     \item{effectValues}{a vector with genotype effect and standard error for the linear regression; mandatory argument}
     \item{phenotypeThreshold}{a numerical value defining the threshold to use in classificationTag; default value 0.01}
 }
@@ -31,6 +31,6 @@
     resultLR <- testDataset(testLR2,
             depVariable="V2",
             method="LR")
-    printLROutput(resultLR@analysisResults,getGenotypeEffect(resultLR))
+    printLROutput(resultLR)
 }
 \keyword{internal}

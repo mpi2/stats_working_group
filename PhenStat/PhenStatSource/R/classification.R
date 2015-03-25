@@ -75,8 +75,14 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
                     ChangeClassification <- NA
                 }else 
                 if(analysisResults$model.output.genotype.nulltest.pVal>phenotypeThreshold){
-                    ChangeClassification <- paste("With phenotype threshold value",
-                            phenotypeThreshold,"- no significant change")
+                    if (analysisResults$numberSexes==1){
+                        ChangeClassification <- paste("With phenotype threshold value",
+                                phenotypeThreshold,"- no significant change for the one sex tested")
+                    }
+                    else {
+                        ChangeClassification <- paste("With phenotype threshold value",
+                                phenotypeThreshold,"- no significant change")
+                    }
                 }else{
                     if(analysisResults$model.effect.interaction==FALSE) {
                         if (analysisResults$numberSexes==1){
@@ -181,8 +187,14 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
                     }
                 }
                 
+                if (noSexes(phenTestResult)==1){
+                    ChangeClassification <- paste("Not significant for the one sex tested")
+                }
+                else {
+                    ChangeClassification <- paste("Not significant")
+                }
                 
-                ChangeClassification <- paste("Not significant")
+                
                 # Tag
                 # combined & males & females
                 if(all_p.value < phenotypeThreshold && 
@@ -245,7 +257,6 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
                 female_p.value <- 10
                 direction_males <- "NA"
                 male_p.value <- 10
-                noSexes <- length(levels(analysedDataset(phenTestResult)$Sex))
                 high_male_p.value <- 10
                 high_female_p.value <- 10
                 high_all_p.value <- 10
@@ -310,8 +321,14 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
                     }
  
                 
-                ChangeClassification <- paste("Not significant")
-                if (noSexes==2) {
+                if (noSexes(phenTestResult)==1){
+                    ChangeClassification <- paste("Not significant for the one sex tested")
+                }
+                else {
+                    ChangeClassification <- paste("Not significant")
+                }
+                    
+                if (noSexes(phenTestResult)==2) {
                     # Tag
                     # combined & males & females
                     if(all_p.value < phenotypeThreshold && male_p.value < phenotypeThreshold 

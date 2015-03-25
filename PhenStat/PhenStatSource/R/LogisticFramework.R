@@ -181,6 +181,7 @@ startLRModel <- function(phenList, depVariable, outputMessages=TRUE, pThreshold=
                         numberSexes=numberofsexes,
                         pThreshold=pThreshold,
                         model.formula.genotype=finalFormula)
+                linearRegressionOutput$FET <- FisherExactTest(phenList,depVariable) 
                 
                  finalResult <- new("PhenTestResult",
                     analysedDataset=x,
@@ -343,7 +344,7 @@ finalLRModel <- function(phenTestResult, outputMessages=TRUE)
                 linearRegressionOutput$model.formula.genotype <- model_genotype.formula
                 linearRegressionOutput$model.output.genotype.nulltest.pVal <- genotypeTest_p.value                
                 ## Create modeloutput and choose output depending on model
-                linearRegressionOutput$model.output.summary  <- parserOutputSummaryLR(linearRegressionOutput)           
+                linearRegressionOutput$model.output.summary  <- parserOutputSummaryLR(linearRegressionOutput)  
                 result@analysisResults <- linearRegressionOutput 
                 ## Assign LR quality of fit
                 result@analysisResults$model.output.quality <- testFinalLRModel(result)

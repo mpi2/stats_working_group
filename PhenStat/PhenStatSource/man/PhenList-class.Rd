@@ -1,7 +1,7 @@
 \name{PhenList-class}
 \docType{class}
 \alias{PhenList-class}
-\alias{getDataset,PhenList-method}
+\alias{dataset,PhenList-method}
 \alias{refGenotype,PhenList-method}
 \alias{testGenotype,PhenList-method}
 \alias{hemiGenotype,PhenList-method}
@@ -10,7 +10,6 @@
 \alias{getStat,PhenList-method}
 \alias{getVariables,PhenList-method}
 \alias{multipleBatches,PhenList-method}
-\alias{noSexes,PhenList-method}
 \alias{setBatch,PhenList,character-method}
 \alias{setGenotype,PhenList,character-method}
 \alias{setMissingValue,PhenList,character-method}

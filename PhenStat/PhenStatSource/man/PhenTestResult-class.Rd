@@ -125,6 +125,7 @@
         \item{transformationText}{(accessor): Returns the info about transformation }
         \item{batchIn}{Returns TRUE if the batch is in the dataset, FALSE otherwise}
         \item{weightIn}{Returns TRUE if the weight is in the dataset, FALSE otherwise}
+        \item{noSexes}{Returns number of sexes in the dataset}
         \item{show}{Prints out the PhenTestResult object}
         \item{getCountMatrices}{Returns count matrices if they are present (for methods "FE" and "RR"), NULL otherwise.}
     }

@@ -341,6 +341,14 @@ transformation = function(obj)
         paste("lambda=",obj@lambdaValue,", scaleShift=",obj@scaleShift,sep="")
         ,"lambda=NA, scaleShift=NA")
 ##------------------------------------------------
+# Number of sexes
+setMethod("noSexes", signature(obj = "PhenTestResult"),
+        function(obj){
+            x <- analysedDataset(obj)
+            length(levels(x$Sex))
+        }
+)
+##------------------------------------------------
 # Batch is in the dataset - TRUE or FALSE
 setMethod("batchIn", signature(obj = "PhenTestResult"),
         function(obj){
@@ -543,11 +551,11 @@ setMethod(show, signature(object = "PhenTestResult"),
                     cat(paste("Effect Size: ",nl[3],"\n",sep=""))
                 }
             }  
-            if (method(object) %in% c("MM","TF")) {       
+            if (method(object) %in% c("MM","TF","LR")) {       
                 cat(paste("Equation: ",object@analysisResults$equation ,"\n",sep=""))
                         
                 cat("\n*****Result*****\n")
-                printLROutput(object@analysisResults,getGenotypeEffect(object))
+                printLROutput(object)
             }
             #else 
             #  cat(paste("Method: ", method(object),

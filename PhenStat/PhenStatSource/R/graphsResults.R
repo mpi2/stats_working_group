@@ -297,10 +297,22 @@ qqplotRotatedResiduals<-function(phenTestResult,outputMessages=TRUE){
 ##Stacked bar plot of count data for a variable
 categoricalBarplot<-function(phenTestResult,outputMessages=TRUE){
     stop_message <- ""
+    result <- phenTestResult
     if(is(phenTestResult,"PhenTestResult")) {
-        if((method(phenTestResult) %in% c("FE","RR"))){            
-            x <- analysedDataset(phenTestResult)
-            modeloutput <- analysisResults(phenTestResult)
+        if((method(phenTestResult) %in% c("FE","RR","LR"))){ 
+            x <- analysedDataset(result)
+            modeloutput <- analysisResults(result)
+            if (method(result)=="RR"){
+                categoriesName <- c("Low","Normal","High")            
+            }
+            if (method(result)=="FE"){
+                categoriesName <- rownames(modeloutput[[1]]@matrixCount)
+            }           
+            if (method(result)=="LR"){
+                result <- analysisResults(phenTestResult)$FET
+                modeloutput <- analysisResults(result)
+                categoriesName <- c("Normal (0)","Abnormal (1)")        
+            }
         }
         else {
             stop_message <- paste(stop_message,"Error:\nCategorical bar plot can be created only within ", 
@@ -326,19 +338,10 @@ categoricalBarplot<-function(phenTestResult,outputMessages=TRUE){
     } 
     else {
         # Produces graphs 
-        countMatrices <- getCountMatrices(phenTestResult)
+        countMatrices <- getCountMatrices(result)
         percentageMatrices <- lapply(countMatrices, function(x) {round(prop.table(x,margin=2)*100,2)}) 
         
         noSexes <- length(levels(x$Sex))      
-        if (method(phenTestResult)=="RR"){
-            categoriesName <- c("Low","Normal","High")            
-        }
-        if (method(phenTestResult)=="FE"){
-            categoriesName <- rownames(modeloutput[[1]]@matrixCount)
-        }
-        if (method(phenTestResult)=="LR"){
-            categoriesName <- c("Normal","Abnormal")
-        }
 
         
         # Colors for the plot and legends

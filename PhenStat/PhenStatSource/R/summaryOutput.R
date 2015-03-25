@@ -43,26 +43,8 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
         message(paste("Was batch significant?",linearRegressionOutput$model.effect.batch))
         if (method(phenTestResult)!="LR")
             message(paste("Was variance equal?",linearRegressionOutput$model.effect.variance))
-
-        if (linearRegressionOutput$model.effect.interaction==TRUE){
-            effectValuesMales <- c(linearRegressionOutput$model.output.summary["sex_MvKO_estimate"],
-                    linearRegressionOutput$model.output.summary["sex_MvKO_SE"])
-            effectValuesFemales <- c(linearRegressionOutput$model.output.summary["sex_FvKO_estimate"],
-                    linearRegressionOutput$model.output.summary["sex_FvKO_SE"])
-            
-            if (phenTestResult@transformationRequired) {
-                effectValuesMales <- as.numeric(reverseTransformValues(effectValuesMales,phenTestResult@lambdaValue,
-                        phenTestResult@scaleShift))
-                effectValuesFemales <- as.numeric(reverseTransformValues(effectValuesFemales,phenTestResult@lambdaValue,
-                        phenTestResult@scaleShift))
-            }
-            effectValues <- c(effectValuesMales,effectValuesFemales)
-        }
-        else 
-            effectValues <- getGenotypeEffect(phenTestResult)  
-
    
-        printLROutput(linearRegressionOutput, effectValues)
+        printLROutput(phenTestResult,phenotypeThreshold)
         
         message(paste("\n",line,sep=""))
         message("Classification Tag")
@@ -188,24 +170,49 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
 
 ##------------------------------------------------------------------------------
 ## Function for linear regression output
-printLROutput <- function(linearRegressionOutput,effectValues,phenotypeThreshold=0.01)
+printLROutput <- function(phenTestResult,phenotypeThreshold=0.01)
 {
+    
+    linearRegressionOutput <- analysisResults(phenTestResult)
+    
+    if (linearRegressionOutput$model.effect.interaction==TRUE){
+        effectValuesMales <- c(linearRegressionOutput$model.output.summary["sex_MvKO_estimate"],
+                linearRegressionOutput$model.output.summary["sex_MvKO_SE"])
+        effectValuesFemales <- c(linearRegressionOutput$model.output.summary["sex_FvKO_estimate"],
+                linearRegressionOutput$model.output.summary["sex_FvKO_SE"])
+        
+        if (phenTestResult@transformationRequired) {
+            effectValuesMales <- as.numeric(reverseTransformValues(effectValuesMales,phenTestResult@lambdaValue,
+                            phenTestResult@scaleShift))
+            effectValuesFemales <- as.numeric(reverseTransformValues(effectValuesFemales,phenTestResult@lambdaValue,
+                            phenTestResult@scaleShift))
+        }
+        effectValues <- c(effectValuesMales,effectValuesFemales)
+    }
+    else { 
+        effectValues <- getGenotypeEffect(phenTestResult)  
+    }
     
     message(paste("Genotype p-value:",
                     sprintf("%0.6e",linearRegressionOutput$model.output.genotype.nulltest.pVal)))
     
+    original_scale <- ""
+    if (phenTestResult@transformationRequired){    
+        original_scale <- " (original scale)"
+    }
+    
     if (linearRegressionOutput$model.effect.interaction==FALSE){
-        message(paste("Genotype effect (original scale):",
-                        sprintf("%.4f",round(effectValues[1],digits=4)),"+/-",
-                        sprintf("%.4f",round(effectValues[2],digits=4))))
+        message(paste("Genotype effect",original_scale,": ",
+                        sprintf("%.4f",round(effectValues[1],digits=4))," +/- ",
+                        sprintf("%.4f",abs(round(effectValues[2],digits=4))),sep=""))
     }
     else {      
-        message(paste("Genotype by male effect (original scale):",
-                        sprintf("%.4f",round(as.numeric(effectValues[1]),digits=4)),"+/-",
-                        sprintf("%.4f",round(as.numeric(effectValues[2]),digits=4))))
-        message(paste("Genotype by female effect (original scale):",
-                        sprintf("%.4f",round(as.numeric(effectValues[3]),digits=4)),"+/-",
-                        sprintf("%.4f",round(as.numeric(effectValues[4]),digits=4))))
+        message(paste("Genotype by male effect",original_scale,": ",
+                        sprintf("%.4f",round(as.numeric(effectValues[1]),digits=4))," +/- ",
+                        sprintf("%.4f",abs(round(as.numeric(effectValues[2]),digits=4))),sep=""))
+        message(paste("Genotype by female effect",original_scale,": ",
+                        sprintf("%.4f",round(as.numeric(effectValues[3]),digits=4))," +/- ",
+                        sprintf("%.4f",abs(round(as.numeric(effectValues[4]),digits=4))),sep=""))
 
     }
     
