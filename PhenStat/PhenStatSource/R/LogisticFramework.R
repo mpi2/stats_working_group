@@ -122,7 +122,6 @@ startLRModel <- function(phenList, depVariable, outputMessages=TRUE, pThreshold=
                             ## http://www.simonqueenborough.com/R/specialist/mixed-models.html
                             p.value.batch <- pchisq(-2*(logLik(L_model_withBatch)-logLik(L_model_withoutbatch)), 
                                     1, lower.tail=FALSE)[1] 
-                            p.value.batch <- pchisq(-2*(logLik(L_model_withBatch)-logLik(L_model_withoutbatch)), 1, lower=FALSE)[1] 
                             keep_batch <- p.value.batch<pThreshold
         
                         }                                             

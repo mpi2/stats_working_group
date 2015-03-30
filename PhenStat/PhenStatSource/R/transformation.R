@@ -105,11 +105,13 @@ determiningLambda <- function(phenList, depVariable, equation="withWeight"){
     }else{
         lambda_value=midpoint
     }
-    
     #determine if the confidence interval includes 1 where the transformation has no impact  
     #if includes one - TransformationRequired=FALSE if excludes one then TransformationRequired=TRUE
     RangeExcludes1= !(1 > lambda_CI[1] & 1 < lambda_CI[2])
     
+    if ((lambda_value > 5) || (lambda_value < -5)){
+      RangeExcludes1 <- FALSE
+    }
     #collate results for export
     output=c(lambda_CI, midpoint, lambda_value, as.character(RangeExcludes1), scaleShift)
     names(output)=c("CI_min", "CI_max", "midpointCI", "lambda_value", "TransformationRequired", "scalingConstant")

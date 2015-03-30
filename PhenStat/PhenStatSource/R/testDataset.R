@@ -231,7 +231,7 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
                 if (checkDepVLevels[2]==1 || checkDepVLevels[2]==0){ 
                     if (transformValues && transformationRequired && (!(method %in% c("FE","LR","RR")))){
                          stop_message <- paste(stop_message,"Error:\nNo variability in dependent variable '",
-                                        depVariable,". Try with argument transformValues set to FALSE.'.\n",sep="") 
+                                        depVariable,"'. Try with argument transformValues set to FALSE.\n",sep="") 
                     }
                     else {    
                          stop_message <- paste(stop_message,"Error:\nNo variability in dependent variable '",
