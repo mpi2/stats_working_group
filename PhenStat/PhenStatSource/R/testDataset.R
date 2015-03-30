@@ -127,7 +127,7 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
                 else {scaleShift <- 0 }
                 if (transformValues && transformationRequired){
                     columnOfInterestOriginal <- columnOfInterest
-                    columnOfInterest <- transformValues(columnOfInterest,lambdaValue,scaleShift)
+                    columnOfInterest <- round(transformValues(columnOfInterest,lambdaValue,scaleShift),digits=6)
                 }
                 if (batchIn(phenList)){
                     # Adjusted for batch depVariable values WITHOUT transformation!
@@ -182,7 +182,7 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
                 datasetToAnalyse <- data.frame(columnOfInterest,columnOfSex,columnOfGenotype)
                 colnames(datasetToAnalyse)<-c(depVariable,"Sex","Genotype") 
                 }
-            if (transformValues && transformationRequired && (method!="FE")){
+            if (transformValues && transformationRequired && (!(method %in% c("FE","LR","RR")))){
                 columnNameOriginal <- paste(depVariable,"_original",sep="")
                 datasetToAnalyse[,columnNameOriginal] <- columnOfInterestOriginal
             }
@@ -191,17 +191,16 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
                 datasetToAnalyse[,columnNameAdjusted] <- columnOfInterestAdjusted  
             }
 
-        
-            
+
         phenListToAnalyse <- new("PhenList",datasetPL=datasetToAnalyse,
                 refGenotype = refGenotype(phenList),
                 testGenotype = testGenotype(phenList),
                 hemiGenotype = hemiGenotype(phenList))
         
-        x <- getDataset(phenListToAnalyse)
+        x <- datasetToAnalyse
         
         checkDepV <- columnChecks(x,depVariable,dataPointsThreshold)
-
+    
         checkDepVLevels <- columnLevels(x,depVariable)   
 
         checkWeight <- columnChecks(x,"Weight",dataPointsThreshold)
@@ -230,8 +229,14 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
                 # where checkDepVLevels[2] contains number of levels and checkDepVLevels[1] contains number of data points
                 # One level only
                 if (checkDepVLevels[2]==1 || checkDepVLevels[2]==0){ 
-                    stop_message <- paste(stop_message,"Error:\nNo variability in dependent variable '",
-                            depVariable,"'.\n",sep="") 
+                    if (transformValues && transformationRequired && (!(method %in% c("FE","LR","RR")))){
+                         stop_message <- paste(stop_message,"Error:\nNo variability in dependent variable '",
+                                        depVariable,". Try with argument transformValues set to FALSE.'.\n",sep="") 
+                    }
+                    else {    
+                         stop_message <- paste(stop_message,"Error:\nNo variability in dependent variable '",
+                                        depVariable,"'.\n",sep="") 
+                    }
                 } 
                 else  if (variability<0.005){ 
                     stop_message <- paste(stop_message,"Error:\nInsufficient variability in dependent variable '",
@@ -517,12 +522,12 @@ columnLevels <- function(dataset, columnName){
     
     columnOfInterest <- na.omit(dataset[,c(columnName)])
 
+        
     values<- c(length(columnOfInterest))
     
     #Test for the data points quantity for Genotype/sex combinations
     Genotype_levels <- levels(factor(dataset$Genotype))
     Sex_levels <- levels(factor(dataset$Sex))
-    
     values<-append(values,length(levels(factor(columnOfInterest))))
     
     values<-append(values,length(Genotype_levels)*length(Sex_levels))
