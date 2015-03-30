@@ -99,7 +99,7 @@ startLRModel <- function(phenList, depVariable, outputMessages=TRUE, pThreshold=
             IncludeBatch="No")        
     suppressWarnings(
         try(## Goal of this section is to assess whether batch is significant or not in explaining variation
-                    {
+                    {                   
         if (batchIn(phenList)){
                             ## LR fit of model formula with no random effects
                             ## Model 1A (model_withoutBatch)
@@ -122,13 +122,14 @@ startLRModel <- function(phenList, depVariable, outputMessages=TRUE, pThreshold=
                             ## http://www.simonqueenborough.com/R/specialist/mixed-models.html
                             p.value.batch <- pchisq(-2*(logLik(L_model_withBatch)-logLik(L_model_withoutbatch)), 
                                     1, lower.tail=FALSE)[1] 
+                            p.value.batch <- pchisq(-2*(logLik(L_model_withBatch)-logLik(L_model_withoutbatch)), 1, lower=FALSE)[1] 
                             keep_batch <- p.value.batch<pThreshold
-                            
+        
                         }                                             
                     },
                    silent=TRUE)
     )
-    
+
     #START OF tryCatch    
     finalResult <- tryCatch({                
                 ## Goal of this section is to tests for significance of fixed effects by comparing models 
@@ -426,16 +427,16 @@ parserOutputSummaryLR<-function(linearRegressionOutput)
         genotype_estimate <- coefficients[2]
         genotype_estimate_SE <- error_estimates[2]
         genotype_p_value <- probs[2]
+        #sex_estimate <- coefficients[3]
+        #sex_estimate_SE <- error_estimates[3]
+        #sex_p_value <- probs[3]        
+    }else{
         sex_estimate <- coefficients[3]
         sex_estimate_SE <- error_estimates[3]
-        sex_p_value <- probs[3]        
-    }else{
-        sex_estimate <- coefficients[2]
-        sex_estimate_SE <- error_estimates[2]
-        sex_p_value <- probs[2]
-        genotype_estimate <- coefficients[3]
-        genotype_estimate_SE <- error_estimates[3]
-        genotype_p_value <- probs[3]    
+        sex_p_value <- probs[3]
+        genotype_estimate <- coefficients[2]
+        genotype_estimate_SE <- error_estimates[2]
+        genotype_p_value <- probs[2]    
     }    
     output <- c(genotype_estimate, genotype_estimate_SE, genotype_p_value, sex_estimate, sex_estimate_SE,  sex_p_value, 
             "NA", "NA", "NA", 
