@@ -917,10 +917,13 @@ parserOutputTFSummary<-function(linearRegressionOutput)
     }
     
     if (result$model.effect.batch){
-        lengthofbatch <- length(levels(result$model.dataset$Batch)) - 1
+        lengthofbatch <- length(grep("Batch",row.names(modeloutput_summary[["tTable"]])))
+        #lengthofbatch <- length(levels(result$model.dataset$Batch)) - 1
+        #if (lengthofbatch == -1){
+         #   lengthofbatch <- 1
+        #}
         lengthoftable <- lengthoftable + lengthofbatch
     }
-
     # 1) intercept
     intercept_estimate = modeloutput_summary[["tTable"]][[1]]
     intercept_estimate_SE = modeloutput_summary[["tTable"]][[(1+lengthoftable)]]
@@ -928,12 +931,14 @@ parserOutputTFSummary<-function(linearRegressionOutput)
     if((result$model.effect.sex && result$model.effect.interaction)
     |( !result$model.effect.sex && result$model.effect.interaction)){
         sex_index <- match(c("SexMale"),row.names(modeloutput_summary[["tTable"]]))
-        sex_FvKO_index <- lengthoftable-1
-        sex_MvKO_index <- lengthoftable
+        #sex_FvKO_index <- lengthoftable-1
+        #sex_MvKO_index <- lengthoftable
+        sex_FvKO_index <- grep("SexFemale:Genotype",row.names(modeloutput_summary[["tTable"]]))[1]
+        sex_MvKO_index <- grep("SexMale:Genotype",row.names(modeloutput_summary[["tTable"]]))[1]
         if (is.na(sex_index)){
             sex_index <- match(c("SexFemale"),row.names(modeloutput_summary[["tTable"]]))
-            sex_FvKO_index <- lengthoftable
-            sex_MvKO_index <- lengthoftable-1
+            #sex_FvKO_index <- lengthoftable
+            #sex_MvKO_index <- lengthoftable-1
         }
 
         sex_estimate <- modeloutput_summary[["tTable"]][[sex_index]]
