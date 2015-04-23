@@ -72,7 +72,7 @@ This framework requires sufficient number of controls (more than 60 records) in 
 \centerline{\includegraphics[scale=0.4]{FE_simple.png}}
 \end{figure}
 
-\item Logistic Regression is a framework for categorical data recoded to two levels 0 (e.g. as expected or reference phenotype) and 1 (abnormal). This method models the relationship between the variable of interest and a number of independent variables assessing the impact of sex, genotype and whether the genotype effect depends on the sex.
+\item Logistic Regression is a framework for categorical data recoded to two levels: 0 (e.g. as expected or reference phenotype) and 1 (abnormal). This method models the relationship between the variable of interest and a number of independent variables assessing the impact of sex, genotype and whether the genotype effect depends on the sex.
 \begin{figure}[H]%figure01a
 \centerline{\includegraphics[scale=0.5]{LR_simple.png}}
 \end{figure}
@@ -549,7 +549,7 @@ An example is given below.
 \end{verbatim}
 \endgroup
 \section{Statistical Analysis}
-The PhenStat package provides four methods (frameworks) for statistical analysis: Linear Mixed Models (MM), Time as Fixed Effect (TF) and Reference Range method (RR) for continuous data, Fisher Exact Test (FE) and Logistic Regression method (LR) for categorical data. In all frameworks, 
+The PhenStat package provides five methods (frameworks) for statistical analysis: Linear Mixed Models (MM), Time as Fixed Effect (TF) and Reference Range method (RR) for continuous data, Fisher Exact Test (FE) and Logistic Regression method (LR) for categorical data. In all frameworks, 
 the statistical significance is assessed, the biological significance measured through an effect size estimate and finally the genotype effect is classified e.g. "If phenotype is significant - both sexes equally".  
 
 
@@ -1656,7 +1656,7 @@ depVariable \backsim Genotype + Sex +
 Genotype*Sex \tag{Eq5}\label{EqLR}
 \]
 
-The same top-down approach is used here as in Mixed Models framework for the model optimization process, though the model optimisation steps are fewer compared to the mixed model method.  The optimisation considers two aspects assessing whether they statistically significantly (p-value less than 0.05) explain variation in the model before selecting the final model: 
+The same top-down approach is used here as in Mixed Models framework for the model optimization process, though the model optimisation steps are fewer compared to the mixed model method.  The optimisation considers two aspects assessing whether they statistically significant (p-value less than 0.05) in explaining variation in the model before selecting the final model: 
 
 \begin{itemize}
 \item Sex effect. Considered only when there are more than one sex in the dataset.
@@ -1664,9 +1664,9 @@ The same top-down approach is used here as in Mixed Models framework for the mod
 \end{itemize}
 As an exploration validation test, we have built a routine in to assess whether batch was significant however it cannot influence the final fitted model as the biased reduction methodology used here cannot work with random effects.
 
-When the final model is selected and reduced, the genotype effect is assessed by comparing a genotype and null model. Finally, the final genotype model is fitted to estimate the effects associated with each term included in the model.
+When the final model is selected and reduced, the genotype effect is assessed by comparing a genotype and null models. Finally, the final genotype model is fitted to estimate the effects associated with each term included in the model.
 
-Unlike standard regression which returns estimates (coefficients) that predict the change in the dependent variable for one unit change in the independent variable, Logistic Regression is looking at probabilities and whilst the model estimates are still measures of the contribution to variations in the dependent variable it is as a log odd estimate. To increase interpretability you can relate this back to the experiment by converting the estimate into an odds ratio by calculating the exponential of the value (i.e. E\textsuperscript{$\beta$} or exp(\textsuperscript{$\beta$})). Where an odds ratio is an indicator of the change in odds resulting from a unit change in the predictor. For example, with an odds ratio of 2 which tells us that being a testGenotype animal leads to a 7.4 higher odds of being abnormal.
+Unlike standard regression which returns estimates (coefficients) that predict the change in the dependent variable for one unit change in the independent variable, Logistic Regression is looking at probabilities. The Logistic Regression model estimates are still measures of the contribution to variations in the dependent variable but as a log odd estimate. To increase interpretability you can relate this back to the experiment by converting the estimate into an odds ratio by calculating the exponential of the value (i.e. E\textsuperscript{$\beta$} or exp(\textsuperscript{$\beta$})). Where an odds ratio is an indicator of the change in odds resulting from a unit change in the predictor. For example, with an odds ratio of 2 which tells us that being a testGenotype animal leads to a 7.4 higher odds of being abnormal.
 
 \subsubsection{Implementation}
 The analysis requires the recoding of the data to 0 and 1 where 0 is the reference phenotype and 1 is the abnormality. This is achieved by the \textit{LRDataset} function that recodes all abnormal phenotypes as 1 and the remainder as 0. 
@@ -1783,8 +1783,8 @@ The Box-Cox power transformation only works if all the data is positive and grea
 The Box-Cox procedure is applied to the data taking into account structure in the data by specifying them as fixed effects and use profile-likelihood techniques to derive the optimal $\lambda$ and the 95\% confidence interval for $\lambda$.
 \item  \textbf{Convert output to transformation requirement}
 \begin{itemize}
-\item If the 95\% confidence interval for $\lambda$ includes 1 then the implementation returns "lambda=NA" for transformation value as no transformation needed.
-\item If the $\lambda$ value is between -0.1 or 0.1 then the value is classed as 0 and the implementation returns "lambda=0" to perform log transformation. 
+\item If the 95\% confidence interval for $\lambda$ includes 1 then the implementation returns "lambda=NA" for the transformation value as no transformation is needed.
+\item If the $\lambda$ value is between -0.1 or 0.1 then the value is classed as 0 and the implementation returns "lambda=0" which indicate that a log transformation is required. 
 \item If the $\lambda$ value exceeds 5 or -5 then the implementation returns "lambda=NA" for transformation value as transformation is not appropriate. This has been implemented as with these large $\lambda$ values the resulting transformed variable would have values that were too large/small for meaningful regression analysis. This can happen with small datasets or datasets that are poorly suited to regression analysis (e.g. datasets with little variation). 
 \item For all other lambda values the implementation returns the optimal $\lambda$ value.  
 \end{itemize}
@@ -2262,7 +2262,7 @@ In the Table \ref{table:07} vector output values are described.
 30&Sex MvKO standard error&Numeric&MM, TF, LR&Standard error of the "Sex MvKO estimate".\\
 31&Sex MvKO p-val&Numeric&MM, TF, RR, FE, LR&p-value that represents the probability that males group from test genotype subset contribution into model is NOT relevant. In case of RR framework there are two values reported: low, high classification p-value.\\
 32&Classification tag&String&MM, TF, RR, FE, LR&A sexual dimorphism assessment of the phenotypic change from the results of MM, TF, LR or the overall estimation of the signals significance in FE and RR.\\
-33&Transformation&String&MM, TF&Transformation parameters in format: lambda=<value>, scaleShift=<value>. If transformation was not performed or needed values are NA.\\
+33&Transformation&String&MM, TF&Transformation parameters in format: lambda=\textit{value}, scaleShift=\textit{value}. If transformation was not performed or needed values are NA.\\
 34&Additional information&String&MM, TF, RR&Additional info concerning dataset, for instance, subsets sizes. String in JSON format. See table \ref{table:071} for "RR".\\
 \hline  
 \end{tabular}
@@ -2540,7 +2540,7 @@ The example of scatter plot of body weight versus dependent variable is shown in
 \end{figure}
 
 \subsubsection{Adjustment for batch}
-In order to demonstrate the power of \textit{boxplotSexGenotypeBatchAdjusted} function the following dataset has been used: provided by the Toronto Centre for Phenogenomics of blood plasma calcium data obtained from a study on gene knockout mice carrying the \textit{Tox3 \textsuperscript{tm1b(KOMP)Mbp}} targeted allele which were created by blastocyst injection of targeted ES cells, and bred on the C57BL/6NCrl  genetic background. Data was collected on a standardized high throughput phenotyping pipeline, where regular control animals were collected. 
+In order to demonstrate the power of \textit{boxplotSexGenotypeBatchAdjusted} function the following dataset has been used: provided by the Toronto Centre for Phenogenomics of blood plasma calcium data obtained from a study on gene knockout mice carrying the \textit{Tox3 \textsuperscript{tm1b(KOMP)Mbp}} targeted allele which were created by blastocyst injection of targeted ES cells, and bred on the C57BL/6NCrl  genetic background. Data was collected on a standardized high throughput phenotyping pipeline with regular control animals. 
 
 A statistically significant genotype effect was reported from a mixed model analysis of the data (p-value = 6.836e-7) with an estimated effect size of $-0.3535 \pm 007$ mg/dl affecting both sexes equally. However, visually inspection of the raw data suggests that no genotype effect is present (Figure \ref{fig:09a}:A). The conflict arises as the batch differences are masking the genotype effect in the raw data resulting in a boxplot of the raw data where no genotype effect can be observed. It is a strong example of why an analysis that removes batch effects (as the mixed model method does) is needed. The \textit{boxplotSexGenotypeBatchAdjusted} function provides a graphing of the data after modelling has accounted for batch as a random effect and with this approach the genotype effect is then revealed (Figure \ref{fig:09a}:B). It is worth noting that when the graph is plotted with \textit{scatterplotSexGenotypeBatch} function (Figure \ref{fig:09b}) where data is plotted by batch with close inspection the genotype effect can be seen without adjustment.
 
