@@ -71,6 +71,12 @@ This framework requires sufficient number of controls (more than 60 records) in 
 \begin{figure}[H]%figure01a
 \centerline{\includegraphics[scale=0.4]{FE_simple.png}}
 \end{figure}
+
+\item Logistic Regression is a framework for categorical data recoded to two levels 0 (e.g. as expected or reference phenotype) and 1 (abnormal). This method models the relationship between the variable of interest and a number of independent variables assessing the impact of sex, genotype and whether the genotype effect depends on the sex.
+\begin{figure}[H]%figure01a
+\centerline{\includegraphics[scale=0.5]{LR_simple.png}}
+\end{figure}
+
 \end{enumerate}
 
 All analysis frameworks output a statistical significance measure, an effect size measure, model diagnostics (when appropriate), and graphical visualisation of the genotype effect. 
@@ -88,7 +94,7 @@ This package has been tested and demonstrated with an application of 420 lines o
 The package consists of three stages as shown in Figure \ref{fig:01}:
 \begin{enumerate}
 \item Dataset processing: includes checking, cleaning and terminology unification procedures and is completed by function \textit{PhenList} which creates a \textit{PhenList} object. 
-\item Statistical analysis: is managed by function \textit{testDataset} and consists of Mixed Model, Time Fixed Effect, Reference Range Plus or Fisher Exact framework implementations. The results are stored in \textit{PhenTestResult} object. 
+\item Statistical analysis: is managed by function \textit{testDataset} and consists of Mixed Model, Time Fixed Effect, Reference Range Plus, Fisher Exact framework and Logistic Regression framework implementations. The results are stored in \textit{PhenTestResult} object. 
 Potentially this layer can be extended adding new statistical methods. 
 \item Results Output: depending on user needs there are two functions for the test results output: \textit{summaryOutput} 
 and \textit{vectorOutput} that present data from \textit{PhenTestResult} object in a particular format. The output layer is also easily extendible.
@@ -452,8 +458,8 @@ At the moment there are no enough data points for the following combination(s):
 
 Many checking failures will be avoided when \textit{dataset.clean} argument of the \textit{PhenList} function is set to TRUE (default value). See examples in this and in the previous section \ref{section:Filtering}.
 
-\subsection{PhenList Object}
-The output of the \textit{PhenList} function is the \textit{PhenList} object that contains a cleaned dataset (\textit{PhenList} object's section \textit{dataset}), simple statistics about dataset columns and additional information. 
+\section{PhenList Object}
+The output of the \textit{PhenList} function is the \textit{PhenList} object that contains a cleaned dataset (\textit{PhenList} object's slot \textit{datasetPL}), reference genotype and test genotypes, terminology unification values. There is a number of useful methods available for the object, like \textit{getStat} to obtain a simple statistics about dataset columns, \textit{noSexes} to get a number of sex values available in the dataset, etc.
 
 The example below shows how to print out the whole cleaned dataset and how to view the statistics about it (output is shown in Table \ref{table:05}). 
 
@@ -467,13 +473,13 @@ The example below shows how to print out the whole cleaned dataset and how to vi
 > test <- PhenList(dataset=dataset1,
   testGenotype="Sparc/Sparc", outputMessages=FALSE)
 
-> test$dataset
+> test@datasetPL
 ...
-> test$dataset.stat
+> getStat(test)
 ...
 \end{verbatim}
 \endgroup
-Table \ref{table:05} shows the content of the \textit{PhenList} object's section \textit{dataset.stat}  and describes the data focusing on the columns of the dataset. Each column is a variable with summary description. 
+Table \ref{table:05} shows the content of the \textit{PhenList} method \textit{getStat} output and describes the data focusing on the columns of the dataset. Each column is a variable with summary description. 
 The description includes: whether variable is numerical or not, whether variable's classed continuous (variability is more than 0.5\%), number of levels, number of data points and for the numerical variables various summary measures (mean, standard deviation, minimal and maximal values).
 
 \begin{table}[!h]
@@ -525,22 +531,25 @@ An example is given below.
    testGenotype="Arid4a/Arid4a",
    dataset.colname.weight="Weight.Value")
 
-> test2$testGenotype
-
+> testGenotype(test2)
 [1] "Arid4a/Arid4a"
 
-> test2$refGenotype
-
+> refGenotype(test2)
 [1] "+/+"
 
-> test2$dataset.colname.weight
+> getVariables(test2)
+[1] "Age.In.Weeks"  "Alb"           "Alp"           "Alt"           "Amy" ...
 
-[1] "Weight.Value"
+> getColumn(test2,"Gluc")
+[1] 18.96 16.73 26.61 ...
+
+> getColumnBatchAdjusted(test2,"Gluc")
+[1]-5.610609973  -7.840609973   2.039390027...
+
 \end{verbatim}
 \endgroup
-
 \section{Statistical Analysis}
-The PhenStat package provides four methods (frameworks) for statistical analysis: Linear Mixed Models (MM), Time as Fixed Effect (TF) and Reference Range method (RR) for continuous data, Fisher Exact Test (FE) for categorical data. In all frameworks, 
+The PhenStat package provides four methods (frameworks) for statistical analysis: Linear Mixed Models (MM), Time as Fixed Effect (TF) and Reference Range method (RR) for continuous data, Fisher Exact Test (FE) and Logistic Regression method (LR) for categorical data. In all frameworks, 
 the statistical significance is assessed, the biological significance measured through an effect size estimate and finally the genotype effect is classified e.g. "If phenotype is significant - both sexes equally".  
 
 
@@ -548,14 +557,16 @@ PhenStat's function \textit{testDataset} works as a manager for the different st
  returns modelling\slash testing results in the \textit{PhenTestResult} object (see Figure \ref{fig:01}). 
 
 \subsection{Manager for Analysis Methods -- \textit{testDataset} function}
-The \textit{testDataset} function's argument \textit{phenList} defines the dataset stored in \textit{PhenList} object.
+The \textit{testDataset} function's argument \textit{phenList} defines the \textit{PhenList} object prepared for the analysis.
 
 Function's argument \textit{depVariable} defines the dependent variable.
 
 Function's argument \textit{method} defines which statistical analysis framework to use. 
-The default value is "MM" which stands for mixed model framework. To perform Time as Fixed Effect method the argument \textit{method} is set to "TF". To perform Fisher Exact Test, the argument \textit{method} is set to "FE". For the Reference Range Plus framework \textit{method} is set to "RR".
+The default value is "MM" which stands for mixed model framework. To perform Time as Fixed Effect method the argument \textit{method} is set to "TF". To perform Fisher Exact Test, the argument \textit{method} is set to "FE". For the Reference Range Plus framework \textit{method} is set to "RR" and finally, for the Logistic Regression framework \textit{method} is set to "LR".
 
 Function's argument \textit{dataPointsThreshold} defines the required number of data points in a group (subsets per genotype and sex combinations) for a successful analysis. The default value is 4. The minimal value is 2.
+
+Function's argument \textit{transformValues} defines to perform or not data transformation if needed. The default value is TRUE.
 
 There are two more arguments specific for the "RR" framework: 
 \begin{itemize}
@@ -574,21 +585,26 @@ After the basic checks the \textit{testDataset} function performs framework spec
 \item Variability check 2 (variability within a group): there are enough data points in subsets per genotype/sex combinations. The number of values from \textit{depVariable} column should exceed \textit{dataPointsThreshold} in all subsets.
 \item Variability check 3 (variability for "Weight" column) applied only when \textit{equation} argument value is set to "withWeight": there are enough weight records in subsets per genotype/sex combinations. The number of values from "Weight" column should exceed \textit{dataPointsThreshold} in all subsets, otherwise \textit{equation} "withoutWeight" is used;
 \end{enumerate}
-\item Additional Time as Fixed Effect (TF) framework's checks:
+\item Additional Time as Fixed Effect (TF) framework checks:
 \begin{enumerate}
 \item Number of batches: there are from 2 to 5 batches (assay dates) in the dataset which contain test genotype.
 \item Control points: there are concurrent controls data in the dataset, meaning the presence of data points for at least one sex in all genotype/batch level combinations.
 \end{enumerate}
-\item Reference Range Plus (RR) framework's checks:
+\item Reference Range Plus (RR) framework checks:
 \begin{enumerate}
 \item \textit{depVariable} column values are numeric.
 \item There are data: the number of levels in \textit{depVariable} column after filtering out of null values exceeds zero. 
 \item Control points: there are enough data points in subsets per reference genotype/sex combinations. The number of values from \textit{depVariable} column should exceed \textit{RR\_controlPointsThreshold} in all subsets. 
 \end{enumerate}
-\item Fisher Exact Test (FE) framework's checks: 
+\item Fisher Exact Test (FE) framework checks: 
 \begin{enumerate}
 \item There are data: the number of levels in \textit{depVariable} column after filtering out of null values exceeds zero.
 \item Number of levels: number of \textit{depVariable} levels is less than 10.
+\end{enumerate}
+\item Logistic Regression (LR) framework checks: 
+\begin{enumerate}
+\item There are data: the number of levels in \textit{depVariable} column after filtering out of null values exceeds zero.
+\item Number of levels is two and values of the levels are 0 and 1.
 \end{enumerate}
 \end{itemize}
 
@@ -624,7 +640,7 @@ The example how to call MM and FE framework is given below.
 \end{verbatim}
 \endgroup
 
-Further details about the MM, TF, FE and RR framework are in the next subsections.
+Further details about the MM, TF, RR, FE and LR framework are in the next subsections.
 
 \subsection{Mixed Model Framework}
 First, we will describe the mixed model top-down methodology which starts with a fully loaded model and ends with final reduced model and genotype effect evaluation procedures as described in \cite{MM07}. 
@@ -929,8 +945,8 @@ Code to add jitter and process the new variable:
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
-> test_jitter$dataset$MCVWITHjitter <- jitter(test_jitter$dataset$MCV, 
-        factor =((max(test_jitter$dataset$MCV) - min(test_jitter$dataset$MCV)) / 1000))
+> test_jitter@datasetPL$MCVWITHjitter <- jitter(test_jitter@datasetPL$MCV, 
+         factor =((max(test_jitter@datasetPL$MCV) - min(test_jitter@datasetPL$MCV)) / 1000))
 
 > result_jitter <- testDataset(test_jitter, depVariable="MCVWITHjitter",
         equation="withWeight")
@@ -949,14 +965,13 @@ Method:
 ----------------------------------------------------------------------------
 Model Output
 ----------------------------------------------------------------------------
-Genotype effect: 0.0079
-
 Final fitted model: MCVWITHjitter ~ Genotype
 Was batch significant? TRUE
 Was variance equal? FALSE
-
+Genotype p-value: 7.872660e-03
+Genotype effect: 1.3082 +/- 0.4792
 Was there evidence of sexual dimorphism? no (p-value NA)
-Genotype percentage change Female: 2.83%
+Genotype percentage change Male: 2.83%
 
 ----------------------------------------------------------------------------
 Classification Tag
@@ -967,9 +982,8 @@ With phenotype threshold value 0.01 - a significant change for the one sex teste
 Model Output Summary
 ----------------------------------------------------------------------------
                 Value Std.Error  DF   t-value       p-value
-(Intercept) 46.293360 0.4869252 238 95.072844 2.575195e-191
-Genotype3    1.308597 0.4792220 238  2.730669  6.793528e-03
-
+(Intercept) 46.293656 0.4869087 238 95.076670 2.551272e-191
+Genotype3    1.308178 0.4792010 238  2.729914  6.808624e-03
 \end{verbatim}
 \endgroup
 
@@ -1005,7 +1019,7 @@ Example calculation:
 > test=PhenList(dataset=read.csv(file), testGenotype="Sparc/Sparc")
 ...
 > result <- testDataset(test,depVariable="Lean.Mass", 
-			method="MM", equation="withoutWeight")
+			method="MM", equation="withoutWeight", transformValues=FALSE)
 ...			
 > summaryOutput(result)
 Test for dependent variable:
@@ -1017,13 +1031,12 @@ Method:
 ----------------------------------------------------------------------------
 Model Output
 ----------------------------------------------------------------------------
-Genotype effect: 0.0007
-
 Final fitted model: Lean.Mass ~ Genotype + Sex
 Was batch significant? TRUE
 Was variance equal? TRUE
-
-Was there evidence of sexual dimorphism? no (p-value 0.6331)
+Genotype p-value: 6.751997e-04
+Genotype effect: -1.8618 +/- 0.5418
+Was there evidence of sexual dimorphism? no (p-value 6.330802e-01)
 Genotype percentage change Female: -10.1%
 Genotype percentage change Male: -8.22%
 
@@ -1054,19 +1067,23 @@ If the weight is included in the fitted model the results are different:
 \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
 > result <- testDataset(test,depVariable="Lean.Mass", 
-				method="MM", equation="withWeight")
+				method="MM", equation="withWeight", transformValues=FALSE)
 > summaryOutput(result)
-...
+Test for dependent variable:
+*** Lean.Mass ***
+
+Method:
+*** Mixed Model framework ***
+
 ----------------------------------------------------------------------------
 Model Output
 ----------------------------------------------------------------------------
-Genotype effect: 0.3715
-
 Final fitted model: Lean.Mass ~ Genotype + Sex + Weight
 Was batch significant? TRUE
 Was variance equal? FALSE
-
-Was there evidence of sexual dimorphism? no (p-value 0.1022)
+Genotype p-value: 3.715089e-01
+Genotype effect: -0.2914 +/- 0.3305
+Was there evidence of sexual dimorphism? no (p-value 1.022353e-01)
 Genotype percentage change Female: -1.59%
 Genotype percentage change Male: -1.3%
 
@@ -1084,7 +1101,7 @@ GenotypeSparc/Sparc -0.2914357 0.33047985 411 -0.8818562 3.783700e-01
 SexMale              1.6407343 0.18080930 411  9.0743913 4.791912e-18
 Weight               0.3430502 0.01808121 411 18.9727422 4.147891e-58
 
-> wt_subset <- subset(test$dataset, Genotype=="+/+")
+> wt_subset <- subset(test@datasetPL, Genotype=="+/+")
 > wt_subset_females <- subset(wt_subset, Sex=="Female")
 > wt_subset_males <- subset(wt_subset, Sex=="Male")
 > mean(wt_subset_females$Lean.Mass,na.rm=TRUE)
@@ -1338,26 +1355,28 @@ Dependent variable: 'Thoracic.Processes'.
 Information:
 Method: Fisher Exact Test framework.
 
-> result_cat$depVariable
+> result_cat@depVariable
 [1] "Thoracic.Processes"
-> result_cat$method
+> getVariable(result_cat)
+[1] "Thoracic.Processes"
+> result_cat@method
 [1] "FE"
-> result_cat$numberSexes
+> method(result_cat)
+[1] "FE"
+> noSexes(result_cat)
 [1] 2
 
 # Chi squared table for all data
-> result_cat$model.output$count_matrix_all
-
+> getCountMatrices(result_cat)$all
          +/+ Aff3/Aff3
-Abnormal 144        12
-Normal   755         1
+Abnormal 142        12
+Normal   753         1
 
 # Chi squared table for males only records
-> result_cat$model.output$count_matrix_male
-
+> getCountMatrices(result_cat)$male
          +/+ Aff3/Aff3
-Abnormal  61         5
-Normal   392         1
+Abnormal  59         5
+Normal   390         1
 
 # Percentage matrix for all data
 > result_cat$model.output$percentage_matrix_all
@@ -1367,24 +1386,22 @@ Abnormal  16        92        76
 Normal    84         8        76
 
 # Percentage matrix for females only records
-> result_cat$model.output$percentage_matrix_female
+> getPercentageMatrix(analysisResults(result_cat)[[3]])
 
-         +/+ Aff3/Aff3 ES change
-Abnormal  19       100        81
-Normal    81         0        81
+              +/+ Aff3/Aff3
+Abnormal 15.86592 92.307692
+Normal   84.13408  7.692308
 
 # Effect size for all data
-> result_cat$model.output$ES
-
+> analysisResults(result_cat)[[1]]@ES
 [1] 76
 
 # Effect size for females only records
-> result_cat$model.output$ES_female
-
+> analysisResults(result_cat)[[3]]@ES
 [1] 81
 
 # Fisher Exact Test results for all data
-> result_cat$model.output$all
+> analysisResults(result_cat)[[1]]@modelOutput
 
 	Fisher's Exact Test for Count Data
 
@@ -1398,8 +1415,7 @@ odds ratio
  0.0159923
  
 # p-value for all data
-> result_cat$model.output$all$p.value
-
+> pvalue(analysisResults(result_cat)[[1]])
 [1] 4.844291e-09
 \end{verbatim}
 \endgroup
@@ -1417,7 +1433,7 @@ The following is an example of such case:
 > dataset_cat_normal <- read.csv(file)
 > test2 <- PhenList(dataset=dataset_cat_normal, testGenotype="Aff3/Aff3")
 > result2 <- testDataset(test2,depVariable="Thoracic.Processes", method="FE")
-> levels(factor(result2$model.dataset$Thoracic.Processes))
+> levels(factor(result2@analysedDataset$Thoracic.Processes))
 [1] "Normal"
 > summaryOutput(result2)
 
@@ -1430,9 +1446,17 @@ Method:
 ----------------------------------------------------------------------------
 Model Output ('*' highlights results with p-values less than threshold 0.01)
 ----------------------------------------------------------------------------
-               All    Males only Females only
-  p-value:     1.0000 1.0000     1.0000      
-  Effect size: 0%     0%         0%          
+All                
+  p-value:     1.0000
+  Effect size: 0%    
+
+Males only         
+  p-value:     1.0000
+  Effect size: 0%    
+
+Females only    
+  p-value:     1.0000
+  Effect size: 0%    
 
 ----------------------------------------------------------------------------
 Classification Tag
@@ -1442,18 +1466,17 @@ Not significant
 ----------------------------------------------------------------------------
 Count Matrices
 ----------------------------------------------------------------------------
-
-'All' matrix:
+All
        +/+ Aff3/Aff3
 Normal 895        13
 Other    0         0
 
-'Males only' matrix:
+Males only
        +/+ Aff3/Aff3
 Normal 449         6
 Other    0         0
 
-'Females only' matrix:
+Females only
        +/+ Aff3/Aff3
 Normal 446         7
 Other    0         0
@@ -1549,26 +1572,24 @@ Test for dependent variable:
 Method:
 *** Reference Ranges Plus framework ***
 
-----------------------------------------------------------------------------
-Model Output ('*' highlights results with p-values less than threshold 0.01)
-----------------------------------------------------------------------------
-                                   All    Males only Females only
-* Low classification p-value:      0.0000 0.0000     0.0000      
-* Low classification effect size:  59%    47%        72%         
-  High classification p-value:     1.0000 1.0000     1.0000      
-  High classification effect size: 3%     3%         3%          
+1) High vs Normal/Low
+           All Females only Males only
+p-value 1.0000       1.0000     1.0000
+ES          3%           3%         3%
+
+2) Low vs Normal/High
+           All Females only Males only
+p-value 0.0000       0.0000     0.0000
+ES         59%          72%        47%
 
 ----------------------------------------------------------------------------
 Classification Tag
 ----------------------------------------------------------------------------
-With phenotype threshold value 0.01 - significant in males (Low), females (Low) 
-and in combined dataset (Low)
+With phenotype threshold value 0.01 - significant in males (Low), females (Low) and in combined dataset (Low)
 
 ----------------------------------------------------------------------------
 Thresholds
 ----------------------------------------------------------------------------
-                                                  
-p-value threshold:            0.01                
 Natural variation:            95                  
 Min control points:           60                  
 Normal values 'males only':   18.10925 to 30.0315 
@@ -1577,23 +1598,35 @@ Normal values 'females only': 14.38975 to 23.52675
 ----------------------------------------------------------------------------
 Count Matrices
 ----------------------------------------------------------------------------
-'All' matrix:
-         WT Akt2/Akt2
-Low      30        16
-Normal 1086        10
-High     30         0
+All
+              WT Akt2/Akt2
+Low           30        16
+Normal/High 1116        10
 
-'Males only' matrix:
-        WT Akt2/Akt2
-Low     15         7
-Normal 542         7
-High    15         0
+All
+             WT Akt2/Akt2
+High         30         0
+Normal/Low 1116        26
 
-'Females only' matrix:
-        WT Akt2/Akt2
-Low     15         9
-Normal 544         3
-High    15         0
+Females only
+             WT Akt2/Akt2
+Low          15         9
+Normal/High 559         3
+
+Males only
+             WT Akt2/Akt2
+Low          15         7
+Normal/High 557         7
+
+Females only
+            WT Akt2/Akt2
+High        15         0
+Normal/Low 559        12
+
+Males only
+            WT Akt2/Akt2
+High        15         0
+Normal/Low 557        14
 \end{verbatim}
 \endgroup 
 
@@ -1604,6 +1637,256 @@ The table of possible classification tags is very similar to the Fisher Exact Te
 
 For example, if in all three subsets the genotype is significant and movement is classified as "high" the classification tag is "Significant in males (High), females (High) and in combined dataset (High)".
 
+\subsection{Logistic Regression Framework}
+Logistic Regression Framework is a framework suitable for categorical data when the variable of interest has been recoded to 0 and 1. This method models the relationship between the variable of interest and a number of independent variables assessing the impact of sex, genotype and whether the genotype effect depends on the sex.   
+
+\subsubsection{Motivation}
+The logistic regression allows the assessment of the genotype impact on phenotype for both sexes simultaneously and allows a statistical assessment of whether the genotype effect has a sexual dimorphic element. The inclusion of both sexes simultaneously increases statistical power and by the inclusion of a sexual dimorphic assessment allows a more refined assessment of the genotype effect.  
+
+The approach implemented uses the "logistf" package of R, which is a biased reduction logistic regression which provides a refinement to the logistic regression method to allow studies with rare event categorical data \cite{Heinze}.   
+
+The "logistf" package does not support the inclusion of random effects which was used in the MM framework to model batch in high throughput studies. This is not an issue for the majority of genotype-phenotype studies on categorical data as the phenotype traits are typically rare events studies looking for rare abnormal phenotypes and day to day variation would not influence this phenotype. 
+
+\subsubsection{Theory}
+The method starts with equation X
+
+depVariable =  Genotype + Sex + Genotype * Sex 	(EqLR)
+\[
+depVariable \backsim Genotype + Sex +
+Genotype*Sex \tag{Eq5}\label{EqLR}
+\]
+
+The same top-down approach is used here as in Mixed Models framework for the model optimization process, though the model optimisation steps are fewer compared to the mixed model method.  The optimisation considers two aspects assessing whether they statistically significantly (p-value less than 0.05) explain variation in the model before selecting the final model: 
+
+\begin{itemize}
+\item Sex effect. Considered only when there are more than one sex in the dataset.
+\item Genotype by sex interaction effect. Considered only when there are more than one sex in the dataset.
+\end{itemize}
+As an exploration validation test, we have built a routine in to assess whether batch was significant however it cannot influence the final fitted model as the biased reduction methodology used here cannot work with random effects.
+
+When the final model is selected and reduced, the genotype effect is assessed by comparing a genotype and null model. Finally, the final genotype model is fitted to estimate the effects associated with each term included in the model.
+
+Unlike standard regression which returns estimates (coefficients) that predict the change in the dependent variable for one unit change in the independent variable, Logistic Regression is looking at probabilities and whilst the model estimates are still measures of the contribution to variations in the dependent variable it is as a log odd estimate. To increase interpretability you can relate this back to the experiment by converting the estimate into an odds ratio by calculating the exponential of the value (i.e. E\textsuperscript{$\beta$} or exp(\textsuperscript{$\beta$})). Where an odds ratio is an indicator of the change in odds resulting from a unit change in the predictor. For example, with an odds ratio of 2 which tells us that being a testGenotype animal leads to a 7.4 higher odds of being abnormal.
+
+\subsubsection{Implementation}
+The analysis requires the recoding of the data to 0 and 1 where 0 is the reference phenotype and 1 is the abnormality. This is achieved by the \textit{LRDataset} function that recodes all abnormal phenotypes as 1 and the remainder as 0. 
+
+Similarly to the MM framework there are two functions in the PhenStat package that implements the Logistic Regression Effect framework:
+\begin{itemize}
+\item \textit{startLFModel} function evaluates model's criteria and stores the result in the PhenTestResult object;
+\item \textit{finalLFModel} function builds the final model using the model's criteria from PhenTestResult object and assesses the genotype effect and fits the final model.
+\end{itemize}
+By default, both functions will be called from \textit{testDataset} manager sequentially.
+
+See the example below:
+\begingroup
+\fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> file <- system.file("extdata", "test_categorical.csv", package="PhenStat")
+> test <- PhenList(dataset=read.csv(file),
+                  testGenotype="Aff3/Aff3")
+> test2 <- LRDataset(test, depVariable="Thoracic.Processes",
+				  abnormalValues="Abnormal")
+> result2 <-testDataset(test2,depVariable="Thoracic.Processes",method="LR")
+> summaryOutput(result2)
+
+Test for dependent variable:
+*** Thoracic.Processes ***
+
+Method:
+*** Logistic Regression ***
+
+----------------------------------------------------------------------------
+Model Output
+----------------------------------------------------------------------------
+Final fitted model: Thoracic.Processes ~ Genotype + Sex
+Was batch significant? FALSE
+Genotype p-value: 1.943939e-09
+Genotype effect: 3.7983 +/- 0.9034
+Was there evidence of sexual dimorphism? no (p-value 5.441219e-01)
+
+----------------------------------------------------------------------------
+Classification Tag
+----------------------------------------------------------------------------
+With phenotype threshold value 0.01 - both sexes equally
+
+----------------------------------------------------------------------------
+Model Output Summary
+----------------------------------------------------------------------------
+                       Value Std.Error   ci.lower    ci.upper      p-value
+(Intercept)       -1.4646494 0.1209814 -1.7077333 -1.23321580 0.000000e+00
+GenotypeAff3/Aff3  3.7983232 0.9033813  2.3619588  6.02332990 1.943939e-09
+SexMale           -0.4251768 0.1840563 -0.7891747 -0.06661705 2.002838e-02
+\end{verbatim}
+\endgroup
+
+\subsubsection{Classification Tag}
+The \textit{classificationTag} function returns a classification tag to assign a sexual dimorphism assessment of the phenotypic change from the results of the LR framework. Figure \ref{fig:05} shows the decision tree that is used to determine the tag assigned.
+
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> classificationTag(result)
+[1] "With phenotype threshold value 0.01 - both sexes equally"
+\end{verbatim}
+\endgroup
+
+When the function is called through \textit{vectorOutput} function, the tag will be proceeded by the phrase “If phenotype is significant", meaning that globally the test has not assessed whether there was a statistical significant difference just that if there was this would be the classification if it was statistically significant. When the function is called through \textit{summaryOutput} function or directly there is an argument phenotypeThreshold (default value is 0.01), which sets the significance threshold of whether there is a phenotype of interest. If globally, the analysis indicates there is a statistically significant phenotype then the classification tag is appended to the phrase “With phenotype threshold value XXX".
+
+\subsubsection{Understanding the estimates}
+The model estimates represent change in the probability of being a member of the modeled categories (e.g. female versus male or refGenotype versus testGenotype).  The estimated coefficients are expressed in log units and are not directly interpretable. They can be converted to an odds ratio by taking the coefficient and using it as the power to which the base of the natural logarithm (2.71828) is raised, the result represents the change in the odds of the modeled event associated with a one-unit change in the independent variable (i.e. for sex going from female to male or for genotype going from refGenotype to the testGenotype). 
+If a coefficient is positive, its transformed log value will be greater than one, meaning that the modeled event is more likely to occur. If a coefficient is negative, its transformed log value will be less than one, and the odds of the event occurring decrease. A coefficient of zero (0) has a transformed log value of 1.0, meaning that this coefficient does not change the odds of the event one way or the other.
+
+\section{Data Transformation}
+\label{section:transformation}
+The "MM" and "TF" regression methods make an assumption of normally distributed data. Unfortunately at times, a non-linear transformation is needed to improve the distribution of the data to improve the model fitting reliability. 
+The Box-Cox transformation (\cite{BoxCox}) represents a family of power transformations with a procedure to find the normalizing transformation for each variable. The procedure returns the optimal lambda value that specifies the transformation necessary and the procedure identifies the value by testing a variety of lambda values. The Box-Cox power transformation is not a guarantee for normality as the procedure looks to minimise standard deviation based on the assumption that the transformed data has the highest likelihood to be normally distributed when the standard deviation is the smallest. 
+The Box-Cox transformation of the variable is defined as:
+
+\begin{equation}
+  y_i'=\begin{cases}
+    \frac{(y_i + scaleShift)^\lambda - 1}{\lambda}, & \text{if $\lambda \neq 0$}\\
+    \ln(y_i + scaleShift), & \text{otherwise}
+  \end{cases}
+\end{equation}
+
+The parameter $\lambda$ is estimated using the profile-likelihood function. The parameter \textit{scaleShift} is a scaling correction for negative data.
+The Box-Box transformation incorporates many tradition transformations (table \ref{table:tr1}). 
+\begin{table}[!h]
+\begin{center}
+\begin{tabular}{| l | l | c | c |}
+  \hline
+$\lambda$&\multicolumn{2}{|c|}{Transformation equivalent}\\\hline
+&Name&Specification\\\hline
+1&No transformation needed&Y\\
+0.5&Square root transformation&$\sqrt{Y}$\\
+0.33&Cube root transformation&$\sqrt[3]{Y}$\\
+0.25&Fourth root transformation&$\sqrt[4]{Y}$\\
+0&Log transformation&$\ln(Y)$\\
+-0.5&Reciprocal square root transformation&$\frac{1}{\sqrt{Y}}$\\
+-1&Reciprocal transformation&$\frac{1}{Y}$\\
+-2&Reciprocal power 2 transformation&$\frac{1}{Y^2}$\\
+\hline  
+\end{tabular}
+\caption{Relationship between lambda and common transformations.}\label{table:tr1}
+\end{center}
+\end{table}
+
+PhenStat has an implementation of the Box-Cox transformation to determine if a transformation is needed and if so how the data should be transformed. 
+Implementation steps:
+\begin{enumerate}
+\item  \textbf{Scaling assessment}
+
+The Box-Cox power transformation only works if all the data is positive and greater than 0. This can be achieved by adding a scaling correction (\textit{scaleShift}) to all data before it is transformed. This value if required is returned in both the \textit{summaryOutput} and the \textit{vectorOutput} functions. 
+\item \textbf{Determine Lambda}
+
+The Box-Cox procedure is applied to the data taking into account structure in the data by specifying them as fixed effects and use profile-likelihood techniques to derive the optimal $\lambda$ and the 95\% confidence interval for $\lambda$.
+\item  \textbf{Convert output to transformation requirement}
+\begin{itemize}
+\item If the 95\% confidence interval for $\lambda$ includes 1 then the implementation returns "lambda=NA" for transformation value as no transformation needed.
+\item If the $\lambda$ value is between -0.1 or 0.1 then the value is classed as 0 and the implementation returns "lambda=0" to perform log transformation. 
+\item If the $\lambda$ value exceeds 5 or -5 then the implementation returns "lambda=NA" for transformation value as transformation is not appropriate. This has been implemented as with these large $\lambda$ values the resulting transformed variable would have values that were too large/small for meaningful regression analysis. This can happen with small datasets or datasets that are poorly suited to regression analysis (e.g. datasets with little variation). 
+\item For all other lambda values the implementation returns the optimal $\lambda$ value.  
+\end{itemize}
+\end{enumerate}
+
+The \textit{testDataset} function has an argument “transformValues" which can be set to TRUE or FALSE. By default the value is set to TRUE meaning to perform transformation if needed.
+
+As shown in figure \ref{fig:tr1}, the transformation recommended by PhenStat package lead to an improvement in the residual distribution improving the model fit.  
+
+\begin{figure}[!htpb]%figure01
+\centerline{\includegraphics[scale=0.5]{transformation_example.png}}
+\caption{Impact of transformation on model residuals. Mixed model analysis of the \textit{Kcne2} knockout of blood plasma triglyceride data obtained at the Wellcome Trust Sanger Institute. PhenStat transformation assessment recommended a log transformation. \textbf{A:}  Residuals obtained on fitting a model to the raw data.  \textbf{B:}  Residuals obtained on fitting a model to the PhenStat transformed data. }\label{fig:tr1}
+\end{figure}
+
+After transformation the model estimates are on a new scale and hence for interpretability it can be useful to convert these values back to the original scale.  In the \textit{summaryOutput} function, the genotype estimate and standard error is converted and this is reported as “Genotype effect (original scale)”. 
+For a database users, or if you are interested in other model variables, below are the conversion functions:
+
+\begin{equation}
+  y_i=\begin{cases}
+    sign(y_i' * \lambda+1) * |y_i' * \lambda+1| ^\frac{1}{\lambda} - scaleShift, & \text{if $\lambda \neq 0$}\\
+    e^{y_i'} - scaleShift, & \text{otherwise}
+  \end{cases}
+\end{equation}
+\[
+    sign(x)=\begin{cases}
+    1, & \text{if $x > 0$}\\
+    0, & \text{if $x = 0$}\\
+    -1, & \text{if $x < 0$} 
+  \end{cases}
+\]
+
+\section{PhenTestResult Object}
+The output of the \textit{testDataset} function is the \textit{PhenTestResult} object regardless the statistical method used. The following data are stored in this object:
+\begin{itemize}
+\item a subset that actually was analysed (slot \textit{analysedDataset}) with the following columns: original values of dependent variable, sex values and genotype values, transformed values of dependent variable if transformation was applied, batch values and batch adjusted values of dependent variable if batches are present in the dataset, weight values if weight is in the dataset;
+\item a name of the variable that was analysed (slot \textit{depVariable});
+\item reference and test genotypes (slots \textit{refGenotype} and \textit{testGenotype}), 
+\item information about transformation if it was applied (slots \textit{transformationRequired}, \textit{lambdaValue} and \textit{scaleShift});
+\item statistical method used and method's parameters (slots \textit{method} and \textit{parameters});
+\item analysis results (slot \textit{analysisResults}).
+\end{itemize} 
+
+There is a number of useful methods available for the \textit{PhenTestResult} object, like \textit{batchIn} and \textit{weightIn} to figure out the batch/weight presence, \textit{noSexes} to get a number of sex values available in the dataset, etc.
+
+There is also a method specific for regression analysis methods (MM, TF, LR): \textit{getGenotypeEffect} to get report of biological effect and a method specific for the Fisher Exact Test based frameworks (FE, RR): \textit{getCountMatrices} to obtain all count matrices.
+
+The content of the \textit{analysisResults} slot depends on the statistical method that has been used. It contains output of regression analysis for MM, TF and LR frameworks and number of "htest" objects with additional meta data (like subset, classification, effect size, count matrix) for  
+Fisher Exact Test based frameworks (FE, RR). "htest" class  is used by \textit{fisher.test} function to return Fisher Exact Test results.
+
+"FE" framework returns \textit{analysisResults} slot with  a list of 3 (1 in case of one sex only) extended "htest" objects since there are three subsets: "all", "males only", "females only".
+"RR" framework returns \textit{analysisResults} slot that contains a list of 6 (2 in case of one sex only) extended "htest" object since there are three subsets ("all", "males only", "females only") and two classifications (low and high).
+
+There are special methods available for the extended "htest" objects. For example: \textit{matrixCount} to get count matrix, \textit{getPercentageMatrix} to obtain percentage matrix, \textit{getColumnView} to obtain p-value and ES value together with meta data.
+
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> file <- system.file("extdata", "test_Akt2.csv", package="PhenStat") 
+> DEXAdata <- read.csv(file)
+> test <- PhenList(dataset=DEXAdata,
+		  testGenotype="Akt2/Akt2",
+		  refGenotype="WT",
+		  dataset.colname.batch="dateOfExperiment",
+		  dataset.values.female="female",
+		  dataset.values.male="male", 
+		  dataset.colname.genotype="Genotype", 
+		  dataset.colname.sex="Gender")
+> result <- testDataset(test, 
+			depVariable="Lean.Mass", 
+			method="RR")
+			
+# print out count matrices and percentage matrices for male only subset			
+> for (i in seq_along(analysisResults(result))) {
+     val <- analysisResults(result)[[i]]
+     if (analysedSubset(val)=="males"){
+     	 print(comparison(val))
+     	 print("Count matrix")
+         print(matrixCount(val))   
+         print("Percentage matrix")
+         print(getPercentageMatrix(val))     
+     }
+ }
+[1] "Low vs Normal/High"
+[1] "Count matrix"
+             WT Akt2/Akt2
+Low          15         7
+Normal/High 557         7
+[1] "Percentage matrix"
+                   WT Akt2/Akt2
+Low          2.622378        50
+Normal/High 97.377622        50
+[1] "High vs Normal/Low"
+[1] "Count matrix"
+            WT Akt2/Akt2
+High        15         0
+Normal/Low 557        14
+[1] "Percentage matrix"
+                  WT Akt2/Akt2
+High        2.622378         0
+Normal/Low 97.377622       100
+\end{verbatim}
+\endgroup 
 \section{Method Recommendation for Dataset}
 \label{section:Recommendation}
 
@@ -1639,8 +1922,6 @@ These output forms were generated for differing users needs.
 The \textit{summaryOutput} function supports interactive analysis of the data and prints results on the screen.
 
 The following is an example of summary output of MM framework:
-
-
 \begingroup
 \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -1653,12 +1934,12 @@ The following is an example of summary output of MM framework:
     testGenotype="Sparc/Sparc",outputMessages=FALSE)
     
 > result <- testDataset(test,
-    depVariable="Lean.Mass",outputMessages=FALSE)
+    depVariable="Lean.Mass",outputMessages=FALSE, transformValues=FALSE)
 
 > summaryOutput(result)
 
 Test for dependent variable:
-*** Lean.Mass ***
+*** Lean.Mass, power transformed with lambda value = -0.7  ***
 
 Method:
 *** Mixed Model framework ***
@@ -1666,15 +1947,14 @@ Method:
 ----------------------------------------------------------------------------
 Model Output
 ----------------------------------------------------------------------------
-Genotype effect: 0.3715
-
 Final fitted model: Lean.Mass ~ Genotype + Sex + Weight
 Was batch significant? TRUE
-Was variance equal? FALSE
-
-Was there evidence of sexual dimorphism? no (p-value 0.1022)
-Genotype percentage change Female: -1.59%
-Genotype percentage change Male: -1.3%
+Was variance equal? TRUE
+Genotype p-value: 1.141215e-01
+Genotype effect (original scale): 0.9962 +/- 1.0025
+Was there evidence of sexual dimorphism? no (p-value 8.917040e-01)
+Genotype percentage change Female: -0.31%
+Genotype percentage change Male: -0.3%
 
 ----------------------------------------------------------------------------
 Classification Tag
@@ -1684,11 +1964,11 @@ With phenotype threshold value 0.01 - no significant change
 ----------------------------------------------------------------------------
 Model Output Summary
 ----------------------------------------------------------------------------
-                         Value  Std.Error  DF    t-value      p-value
-(Intercept)          7.6111388 0.58862654 411 12.9303357 2.512303e-32
-GenotypeSparc/Sparc -0.2914357 0.33047985 411 -0.8818562 3.783700e-01
-SexMale              1.6407343 0.18080930 411  9.0743913 4.791912e-18
-Weight               0.3430502 0.01808121 411 18.9727422 4.147891e-58
+                           Value    Std.Error  DF    t-value      p-value
+(Intercept)          1.178594383 0.0033490036 411 351.923894 0.000000e+00
+GenotypeSparc/Sparc -0.003843757 0.0024479122 411  -1.570219 1.171337e-01
+SexMale              0.010122217 0.0010264122 411   9.861747 9.871536e-21
+Weight               0.002009066 0.0001029706 411  19.511070 1.757719e-60
 \end{verbatim}
 \endgroup
 
@@ -1734,9 +2014,17 @@ Method:
 ----------------------------------------------------------------------------
 Model Output ('*' highlights results with p-values less than threshold 0.01)
 ----------------------------------------------------------------------------
-               All    Males only Females only
-* p-value:     0.0000 0.0003     0.0003      
-* Effect size: 76%    70%        70%         
+All            
+* p-value:     0.0000
+* Effect size: 76%   
+
+Males only       
+* p-value:     0.0003
+* Effect size: 70%   
+
+Females only        
+* p-value:     0.0000
+* Effect size: 81%   
 
 ----------------------------------------------------------------------------
 Classification Tag
@@ -1746,25 +2034,24 @@ With phenotype threshold value 0.01 - significant in males, females and in combi
 ----------------------------------------------------------------------------
 Count Matrices
 ----------------------------------------------------------------------------
-
-'All' matrix:
+All
          +/+ Aff3/Aff3
 Abnormal 142        12
 Normal   753         1
 
-'Males only' matrix:
+Males only
          +/+ Aff3/Aff3
 Abnormal  59         5
 Normal   390         1
 
-'Females only' matrix:
+Females only
          +/+ Aff3/Aff3
 Abnormal  83         7
 Normal   363         0
 \end{verbatim}
 \endgroup
 
-The output of the “RR” framework \textit{summaryOutput} function includes count matrices, p-values and effect size measures separately for low and high classifications and thresholds used for the calculations.
+The output of the “RR” framework \textit{summaryOutput} function includes count matrices, p-values and effect size measures separately for High vs Normal/Low and Low vs Normal/High classifications and thresholds used for the calculations.
 
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
@@ -1784,14 +2071,15 @@ Test for dependent variable:
 Method:
 *** Reference Ranges Plus framework ***
 
-----------------------------------------------------------------------------
-Model Output ('*' highlights results with p-values less than threshold 0.01)
-----------------------------------------------------------------------------
-                                   All    Males only Females only
-  Low classification p-value:      0.0240 0.5020     0.0395      
-  Low classification effect size:  17%    9%         26%         
-  High classification p-value:     1.0000 1.0000     1.0000      
-  High classification effect size: 3%     3%         3%          
+1) High vs Normal/Low
+           All Females only Males only
+p-value 1.0000       1.0000     1.0000
+ES          3%           3%         3%
+
+2) Low vs Normal/High
+           All Females only Males only
+p-value 0.0120       0.0198     0.2510
+ES         17%          26%         9%
 
 ----------------------------------------------------------------------------
 Classification Tag
@@ -1801,8 +2089,6 @@ Not significant
 ----------------------------------------------------------------------------
 Thresholds
 ----------------------------------------------------------------------------
-                                               
-p-value threshold:            0.01             
 Natural variation:            95               
 Min control points:           60               
 Normal values 'males only':   18.830 to 26.630 
@@ -1811,23 +2097,77 @@ Normal values 'females only': 15.586 to 20.6035
 ----------------------------------------------------------------------------
 Count Matrices
 ----------------------------------------------------------------------------
-'All' matrix:
-       +/+ Sparc/Sparc
-Low     13           3
-Normal 423          12
-High    12           0
+All
+            +/+ Sparc/Sparc
+Low          13           3
+Normal/High 435          12
 
-'Males only' matrix:
-       +/+ Sparc/Sparc
-Low      7           1
-Normal 208           7
-High     6           0
+All
+           +/+ Sparc/Sparc
+High        12           0
+Normal/Low 436          15
 
-'Females only' matrix:
-       +/+ Sparc/Sparc
-Low      6           2
-Normal 215           5
-High     6           0
+Females only
+            +/+ Sparc/Sparc
+Low           6           2
+Normal/High 221           5
+
+Males only
+            +/+ Sparc/Sparc
+Low           7           1
+Normal/High 214           7
+
+Females only
+           +/+ Sparc/Sparc
+High         6           0
+Normal/Low 221           7
+
+Males only
+           +/+ Sparc/Sparc
+High         6           0
+Normal/Low 215           8
+\end{verbatim}
+\endgroup
+
+The output of the “LR” framework \textit{summaryOutput} function includes summary model information and the model output: 
+\begingroup
+\fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> file <- system.file("extdata", "test_categorical.csv", package="PhenStat")
+> test <- PhenList(dataset=read.csv(file),
+                  testGenotype="Aff3/Aff3")
+> test2 <- LRDataset(test, depVariable="Thoracic.Processes",
+				  abnormalValues="Abnormal")
+> result2 <-testDataset(test2,depVariable="Thoracic.Processes",method="LR")
+> summaryOutput(result2)
+
+Test for dependent variable:
+*** Thoracic.Processes ***
+
+Method:
+*** Logistic Regression ***
+
+----------------------------------------------------------------------------
+Model Output
+----------------------------------------------------------------------------
+Final fitted model: Thoracic.Processes ~ Genotype + Sex
+Was batch significant? FALSE
+Genotype p-value: 1.943939e-09
+Genotype effect: 3.7983 +/- 0.9034
+Was there evidence of sexual dimorphism? no (p-value 5.441219e-01)
+
+----------------------------------------------------------------------------
+Classification Tag
+----------------------------------------------------------------------------
+With phenotype threshold value 0.01 - both sexes equally
+
+----------------------------------------------------------------------------
+Model Output Summary
+----------------------------------------------------------------------------
+                       Value Std.Error   ci.lower    ci.upper      p-value
+(Intercept)       -1.4646494 0.1209814 -1.7077333 -1.23321580 0.000000e+00
+GenotypeAff3/Aff3  3.7983232 0.9033813  2.3619588  6.02332990 1.943939e-09
+SexMale           -0.4251768 0.1840563 -0.7891747 -0.06661705 2.002838e-02
 \end{verbatim}
 \endgroup
 \subsection{Vector Format}
@@ -1876,59 +2216,60 @@ Weight p-val
 Results of \textit{vectorOutput} function for TF framework looks very similar to the MM output.
 
 In the Table \ref{table:07} vector output values are described.
+
 \begin{sidewaystable}
- 
+ \small
 \begin{tabular}{| l | l | l | l | p{10cm} |}
   \hline
 \#&Name&Value&Framework&Description\\\hline
-1&Method&String&MM, TF, FE, RR&Possible values: "Mixed Model/Time as Fixed Effect framework, linear mixed-effects model/generalized least squares, equation with weight/equation without weight", "Reference Range Plus framework" and "Fisher Exact Test framework".\\
-2&Dependent variable&String&MM, TF, RR, FE&Name of the dependent variable.\\
-3&Batch included&TRUE/FALSE&MM, TF&Was batch significant in the model?\\
+1&Method&String&MM, TF, RR, FE, LR&Possible values: "Mixed Model/Time as Fixed Effect framework, linear mixed-effects model/generalized least squares, equation with weight/equation without weight", "Reference Range Plus framework", "Fisher Exact Test framework", "Logistic Regression".\\
+2&Dependent variable&String&MM, TF, RR, FE, LR&Name of the dependent variable.\\
+3&Batch included&TRUE/FALSE&MM, TF, LR &Was batch significant in the model?\\
 4&Residual variances homogeneity&TRUE/FALSE&MM, TF&Was variance equal in the model?\\
-5&Genotype contribution&Numeric&MM, TF, RR, FE&For the MM and TF it is the p-value from the test of genotype contribution.  Whilst for the FE and RR it is the p-value from either a test of one sex (if only one sex exists) or it is the output of the combined datasets.\\
-6&Genotype estimate&Numeric&MM, TF, RR, FE&Estimated coefficient that describes genotype value calculated by MM and TF or effect size estimates in FE and RR.\\
-7&Genotype standard error&Numeric&MM, TF&Standard error of the coefficient estimate for genotype.\\
-8&Genotype p-val&Numeric&MM, TF, RR, FE&Genotype p-value that represents the probability the genotype is NOT relevant. p-value for combined set in FE and RR. In case of RR framework there are two values reported: low classification p-value, high classification p-value.\\
+5&Genotype contribution&Numeric&MM, TF, RR, FE, LR&For the MM and TF it is the p-value from the test of genotype contribution.  Whilst for the FE and RR it is the p-value from either a test of one sex (if only one sex exists) or it is the output of the combined datasets.\\
+6&Genotype estimate&Numeric&MM, TF, RR, FE, LR&Estimated coefficient that describes genotype value calculated by MM, TF, LR or effect size estimates in FE and RR.\\
+7&Genotype standard error&Numeric&MM, TF, LR&Standard error of the coefficient estimate for genotype.\\
+8&Genotype p-val&Numeric&MM, TF, RR, FE, LR&Genotype p-value that represents the probability the genotype is NOT relevant. p-value for combined set in FE and RR. In case of RR framework there are two values reported: low classification p-value, high classification p-value.\\
 9&Genotype percentage change&Numeric&MM, TF&The ratio of the genotype effect for a sex relative to the wildtype signal for that variable for that sex. Format: "Female: \textit{value}, Male: \textit{value}". If sex is not present in the dataset value is set to "NA".\\
-10&Sex estimate&Numeric&MM, TF&Estimated coefficient that describes sex value calculated.\\
-11&Sex standard error&Numeric&MM, TF&Standard error of the coefficient estimate for sex.\\
-12&Sex p-val&Numeric&MM, TF&Sex p-value that represents the probability the sex is NOT relevant.\\
+10&Sex estimate&Numeric&MM, TF, LR&Estimated coefficient that describes sex value calculated.\\
+11&Sex standard error&Numeric&MM, TF, LR&Standard error of the coefficient estimate for sex.\\
+12&Sex p-val&Numeric&MM, TF, LR&Sex p-value that represents the probability the sex is NOT relevant.\\
 13&Weight estimate&Numeric&MM, TF&Estimated coefficient that describes weight value calculated.\\
 14&Weight standard error&Numeric&MM, TF&Standard error of the coefficient estimate for weight.\\
 15&Weight p-val&Numeric&MM, TF&Weight p-value that represents the probability the weight is NOT relevant.\\
-16&Gp1 genotype&String&MM, TF, RR, FE&Value of reference genotype.\\
+16&Gp1 genotype&String&MM, TF, RR, FE, LR&Value of reference genotype.\\
 17&Gp1 Residuals normality test&Numeric&MM, TF&p-value that represents the probability the residuals in reference genotype subset are normally distributed.\\
-18&Gp2 genotype&String&MM, TF, RR, FE&Value of test genotype.\\
+18&Gp2 genotype&String&MM, TF, RR, FE, LR&Value of test genotype.\\
 19&Gp2 Residuals normality test&Numeric&MM, TF&p-value that represents the probability the residuals in test genotype subset are normally distributed.\\
+20&Blups test&Numeric&MM, TF&p-value that represents the probability the blups are normally distributed.\\
 \hline  
 \end{tabular}
 \end{sidewaystable}
-
 \begin{sidewaystable}
- 
+ \small
 \begin{tabular}{| l | l | l | l | p{10cm} |}
   \hline
 \#&Name&Value&Framework&Description\\\hline
-20&Blups test&Numeric&MM, TF&p-value that represents the probability the blups are normally distributed.\\
 21&Rotated residuals normality test&Numeric&MM, TF&p-value that represents the probability the rotated residuals are normally distributed.\\
-22&Intercept estimate&Numeric&MM, TF&Estimated coefficient that describes intercept value.\\
-23&Intercept standard error&Numeric&MM, TF&Standard error of the coefficient estimate for intercept.\\
-24&Interaction included&TRUE/FALSE&MM, TF&Indicates the inclusion of genotype by sex interaction effect into model.\\
-25&Interaction p-val&Numeric&MM, TF&Interaction p-value that represents the probability the interaction is NOT relevant in model.\\
-26&Sex FvKO estimate&Numeric&MM, TF, RR, FE&Estimated coefficient that describes value calculated by the MM and TF for females in test genotype subset or effect size estimate calculated from chi table for females only subset in FE and RR. In case of RR framework there are two values reported: low, high classification estimate.\\
-27&Sex FvKO standard error&Numeric&MM, TF&Standard error of the "Sex FvKO estimate".\\
-28&Sex FvKO p-val&Numeric&MM, TF, RR, FE&p-value that represents the probability that females group from test genotype subset contribution into model is NOT relevant. In case of RR framework there are two values reported: low. high classification p-value.\\
-29&Sex MvKO estimate&Numeric&MM, TF, RR, FE&Estimated coefficient that describes value calculated by the MM and TF for males in test genotype subset or effect size estimate calculated from chi table for males only subset in FE and RR. In case of RR framework there are two values reported: low, high classification estimate.\\
-30&Sex MvKO standard error&Numeric&MM, TF&Standard error of the "Sex MvKO estimate".\\
-31&Sex MvKO p-val&Numeric&MM, TF, RR, FE&p-value that represents the probability that males group from test genotype subset contribution into model is NOT relevant. In case of RR framework there are two values reported: low, high classification p-value.\\
-32&Classification tag&String&MM, TF, RR, FE&A sexual dimorphism assessment of the phenotypic change from the results of MM and TF or the overall estimation of the signals significance in FE and RR.\\
-33&Additional information&String&MM, TF, RR, FE&Additional info concerning dataset, for instance, subsets sizes. String in JSON format. See table \ref{table:071} for "RR".\\
+22&Intercept estimate&Numeric&MM, TF, LR&Estimated coefficient that describes intercept value.\\
+23&Intercept standard error&Numeric&MM, TF, LR&Standard error of the coefficient estimate for intercept.\\
+24&Interaction included&TRUE/FALSE&MM, TF, LR&Indicates the inclusion of genotype by sex interaction effect into model.\\
+25&Interaction p-val&Numeric&MM, TF, LR&Interaction p-value that represents the probability the interaction is NOT relevant in model.\\
+26&Sex FvKO estimate&Numeric&MM, TF, RR, FE, LR&Estimated coefficient that describes value calculated by the MM, TF and LR for females in test genotype subset or effect size estimate calculated from chi table for females only subset in FE and RR. In case of RR framework there are two values reported: low, high classification estimate.\\
+27&Sex FvKO standard error&Numeric&MM, TF, LR&Standard error of the "Sex FvKO estimate".\\
+28&Sex FvKO p-val&Numeric&MM, TF, RR, FE, LR&p-value that represents the probability that females group from test genotype subset contribution into model is NOT relevant. In case of RR framework there are two values reported: low, high classification p-value.\\
+29&Sex MvKO estimate&Numeric&MM, TF, RR, FE, LR&Estimated coefficient that describes value calculated by the MM, TF and LR for males in test genotype subset or effect size estimate calculated from chi table for males only subset in FE and RR. In case of RR framework there are two values reported: low, high classification estimate.\\
+30&Sex MvKO standard error&Numeric&MM, TF, LR&Standard error of the "Sex MvKO estimate".\\
+31&Sex MvKO p-val&Numeric&MM, TF, RR, FE, LR&p-value that represents the probability that males group from test genotype subset contribution into model is NOT relevant. In case of RR framework there are two values reported: low, high classification p-value.\\
+32&Classification tag&String&MM, TF, RR, FE, LR&A sexual dimorphism assessment of the phenotypic change from the results of MM, TF, LR or the overall estimation of the signals significance in FE and RR.\\
+33&Transformation&String&MM, TF&Transformation parameters in format: lambda=<value>, scaleShift=<value>. If transformation was not performed or needed values are NA.\\
+34&Additional information&String&MM, TF, RR&Additional info concerning dataset, for instance, subsets sizes. String in JSON format. See table \ref{table:071} for "RR".\\
 \hline  
 \end{tabular}
 \caption{Vector output description.}\label{table:07}
 \end{sidewaystable}
 
-As was mentioned above \textit{vectorOutput} format is the same for all frameworks. However, in case of "FE" and "RR" many values are not defined. For example, \textit{vectorOutput} results for "FE" framework:
+As was mentioned above \textit{vectorOutput} format is the same for all frameworks. However, in case of "FE", "RR" and "LR" many values are not defined. For example, \textit{vectorOutput} results for "FE" framework:
 
 \begingroup
 \fontsize{8pt}{12pt}\selectfont
@@ -2141,8 +2482,8 @@ For graphical output of the analysis, multiple graphical functions have been gen
 \end{verbatim}
 \endgroup 
 
-\subsection{Graphics for FE and RR frameworks}
-There is only one graphical output for "FE" and "RR" frameworks: categorical bar plots. This graph allows a visual representation of the count data, comparing observed proportions between reference and test genotypes.  
+\subsection{Graphics for FE, RR and LR frameworks}
+There is only one graphical output for "FE", "RR" and "LR" frameworks: categorical bar plot. This graph allows a visual representation of the count data, comparing observed proportions between reference and test genotypes.  
 
 
 \begingroup
@@ -2160,9 +2501,11 @@ The example of bar plot is shown in Fig. \ref{fig:06}. This graph allows a visua
 
 \subsection{Graphics for MM and TF frameworks}
 There are many graphic functions for the MM framework results. They can be divided into two types: dataset based graphs and results based graphs.
-There are three functions in the dataset based graphs category:
+\subsubsection{Dataset based graphs}
+There are four functions in the dataset based graphs category:
 \begin{itemize}
 \item \textit{boxplotSexGenotype} creates a box plot split by sex and genotype.
+\item \textit{boxplotSexGenotypeBatchAdjusted} creates a box plot split by sex and genotype after the variation arising from batch has been accounted for as a random effect.
 \item \textit{scatterplotSexGenotypeBatch} creates a scatter plot split by sex, genotype and batch if batch data present in the dataset. Please note the batches are not ordered with time but allow assessment of how the treatment groups lie relative to the normal control variation.
 \item \textit{scatterplotGenotypeWeight} creates a scatter plot body weight versus dependent variable. Both a regression line and a loess line (locally weighted line) is fitted for each genotype. 
 \end{itemize}
@@ -2171,6 +2514,7 @@ There are three functions in the dataset based graphs category:
 \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
 > boxplotSexGenotype(test,depVariable="Lean.Mass",graphingName="Lean Mass")
+> boxplotSexGenotypeBatchAdjusted(test,depVariable="Lean.Mass",graphingName="Lean Mass Adjusted for Batch")
 > scatterplotSexGenotypeBatch(test,depVariable="Lean.Mass",graphingName="Lean Mass")
 > scatterplotGenotypeWeight(test,depVariable="Bone.Mineral.Content",graphingName="BMC")
 \end{verbatim}
@@ -2195,6 +2539,39 @@ The example of scatter plot of body weight versus dependent variable is shown in
 \caption{The PhenStat package's graphical output: scatter plot of body weight versus dependent variable.}\label{fig:09}
 \end{figure}
 
+\subsubsection{Adjustment for batch}
+In order to demonstrate the power of \textit{boxplotSexGenotypeBatchAdjusted} function the following dataset has been used: provided by the Toronto Centre for Phenogenomics of blood plasma calcium data obtained from a study on gene knockout mice carrying the \textit{Tox3 \textsuperscript{tm1b(KOMP)Mbp}} targeted allele which were created by blastocyst injection of targeted ES cells, and bred on the C57BL/6NCrl  genetic background. Data was collected on a standardized high throughput phenotyping pipeline, where regular control animals were collected. 
+
+A statistically significant genotype effect was reported from a mixed model analysis of the data (p-value = 6.836e-7) with an estimated effect size of $-0.3535 \pm 007$ mg/dl affecting both sexes equally. However, visually inspection of the raw data suggests that no genotype effect is present (Figure \ref{fig:09a}:A). The conflict arises as the batch differences are masking the genotype effect in the raw data resulting in a boxplot of the raw data where no genotype effect can be observed. It is a strong example of why an analysis that removes batch effects (as the mixed model method does) is needed. The \textit{boxplotSexGenotypeBatchAdjusted} function provides a graphing of the data after modelling has accounted for batch as a random effect and with this approach the genotype effect is then revealed (Figure \ref{fig:09a}:B). It is worth noting that when the graph is plotted with \textit{scatterplotSexGenotypeBatch} function (Figure \ref{fig:09b}) where data is plotted by batch with close inspection the genotype effect can be seen without adjustment.
+
+\begingroup
+\fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> data <- system.file("extdata", "Tox3CaDataset.csv", package="PhenStat")  
+> test <- PhenList(dataset=data, testGenotype="heterozygote",	
+	 refGenotype="null",dataset.colname.batch="dateOfExperiment",
+	 dataset.colname.genotype="zygosity", dataset.colname.sex="sex")
+> result <- testDataset(phenList=test, depVariable="dataPoint", equation="withoutWeight", method="MM")
+> summaryOutput(result)
+> boxplotSexGenotype(test, "dataPoint", "Calcium (mg/dl)")
+> boxplotSexGenotypeBatchAdjusted(test, "dataPoint", "Calcium (mg/dl) adjusted for batch")
+> scatterplotSexGenotypeBatch(test, "dataPoint", "Calcium (mg/dl)")
+\end{verbatim}
+\endgroup 
+
+\begin{figure}[!htpb]%figure01
+\centerline{\includegraphics[scale=0.4]{boxplotsBatchEffect.png}}
+\caption{Exploration of the variation in calcium with genotype. Data shown is the calcium data for the \textit{Tox3} knockout provided by Toronto Centre for Phenogenomics.
+\textbf{A:} \textit{boxplotSexGenotype} function is showing the variation in calcium by sex and genotype. 
+\textbf{B:} \textit{boxplotSexGenotypeBatchAdjusted} function is showing the variation in calcium by sex and genotype after removing the effect of batch by modelling batch as a random effect.}\label{fig:09a}
+\end{figure}
+
+\begin{figure}[!htpb]%figure01
+\centerline{\includegraphics[scale=0.4]{scatterplotBatchEffect.png}}
+\caption{Exploration of the variation in calcium with genotype by batch using the function \textit{scatterplotSexGenotypeBatch}. Data shown is the calcium data for the \textit{Tox3} knockout provided by Toronto Centre for Phenogenomics.}\label{fig:09b}
+\end{figure}
+
+\subsubsection{Results based graphs}
 There are five functions in the results based graphs category:
 \begin{itemize}
 \item \textit{qqplotGenotype} creates a Q-Q plot of residuals for each genotype.
@@ -2300,7 +2677,7 @@ We can then explore the data and fitted results using the visualisation and outp
    dataset.values.female="female", 
    dataset.values.male="male" )
 > result <- testDataset(test,depVariable="Lean.Mass",
-   method="MM",equation="withoutWeight")
+   method="MM",equation="withoutWeight",transformValues=FALSE)
 \end{verbatim}
 \endgroup 
 
@@ -2308,25 +2685,112 @@ We can then explore the data and fitted results using the visualisation and outp
 
 \subsubsection{Exploring and understanding the summary output}
 \label{cs1_output}
-The first two lines of the \textit{summaryOutput} confirm the statistical framework used and the dependent variable studied.   
-The next section of the output clarifies the final fitted model details. As the MM framework is an optimisation process exploring the data to fit the best model to the data, 
+The first two lines of the \textit{summaryOutput} confirm the statistical framework used and the dependent variable studied. If the values of dependent variable have been transformed (see section \ref{section:transformation}) then information about transformation parameters appears together with dependent variable name. For example:
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> resultTransformed <- testDataset(test,depVariable="Lean.Mass",
+   method="MM",equation="withoutWeight",transformValues=TRUE)
+> summaryOutput(resultTransformed)
+
+Test for dependent variable:
+*** Lean.Mass, power transformed with lambda value = 1.7  and scale shift = 1 ***
+
+Method:
+*** Mixed Model framework ***
+
+----------------------------------------------------------------------------
+Model Output
+----------------------------------------------------------------------------
+Final fitted model: Lean.Mass ~ Genotype + Sex
+Was batch significant? TRUE
+Was variance equal? FALSE
+Genotype p-value: 2.661943e-10
+Genotype effect (original scale): -10.5581 +/- 2.2910
+Was there evidence of sexual dimorphism? no (p-value 1.467981e-01)
+Genotype percentage change Female: -30%
+Genotype percentage change Male: -21.01%
+
+----------------------------------------------------------------------------
+Classification Tag
+----------------------------------------------------------------------------
+With phenotype threshold value 0.01 - both sexes equally
+
+----------------------------------------------------------------------------
+Model Output Summary
+----------------------------------------------------------------------------
+                      Value Std.Error   DF  t-value       p-value
+(Intercept)        92.95823  1.656484 1048 56.11778 4.921042e-318
+GenotypeAkt2/Akt2 -27.88930  3.868329 1048 -7.20965  1.072359e-12
+SexMale            39.79585  1.243963 1048 31.99118 3.071828e-157
+\end{verbatim}
+\endgroup 
+ 
+Lean Mass values have been transformed with parameter $\lambda = 1.7$ and parameter $scaleShift = 1$. In the form of equation:
+\[
+  \text{Lean.Mass}_i = \frac{(\text{Lean.Mass\_original}_i + 1)^{1.7} - 1}{1.7}, \text{for $i = 1, .., 1172$}
+\]
+
+The function's \textit{testDataset} output is \textit{PhenTestResult} object that contains slot called \textit{analysedDataset} from which original values (here "Lean.Mass\_original"), transformed values (here "Lean.Mass") and batch adjusted (here "Lean.Mass\_adjusted") values can be obtained:
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> head(resultTransformed@analysedDataset)
+  Lean.Mass    Sex  Genotype                Batch Weight Lean.Mass_original Lean.Mass_adjusted
+1  45.34405 Female Akt2/Akt2 2008-10-22T23:00:00Z   14.8              11.98          -5.085269
+2  49.13590 Female Akt2/Akt2 2008-03-18T00:00:00Z   17.1              12.60          -6.152621
+3  51.26762 Female Akt2/Akt2 2008-03-18T00:00:00Z   17.2              12.94          -5.812621
+4  65.58713 Female Akt2/Akt2 2008-03-20T00:00:00Z   18.4              15.09          -4.509509
+5  60.56454 Female Akt2/Akt2 2008-03-20T00:00:00Z   18.5              14.36          -5.239509
+6  55.24919 Female Akt2/Akt2 2008-10-22T23:00:00Z   18.7              13.56          -3.505269
+
+\end{verbatim}
+\endgroup 
+Coming back to the output of \textit{summaryOutput} function, the next section of it shows the final fitted model and clarifies model's details. As the MM framework is an optimisation process exploring the data to fit the best model to the data, 
 the final fitted model details will vary. We can see that batch variation, the variation in readings between different assay dates, 
-were found to be statistical significant and hence a mixed model will have been fitted where batch is treated as a random effect.  
+were found to be statistical significant ("Was batch significant? TRUE") and hence a mixed model will have been fitted where batch is treated as a random effect.  
 If it was not significant, then the model would have reverted to a simpler linear model.  
-The next line of output, “was variance equal?”, indicating whether the model assumes equal variance between genotype groups or unequal.  
+The next line of output, “Was variance equal?”, indicating whether the model assumes equal variance between genotype groups or unequal.  
 In this case, the variance was not found to be equal and therefore the final model estimated the variance for each group separately. 
 
-The next stage of the output, indicates whether there was evidence of sexual dimorphism (i.e. the genotype effect was found to be dependent on sexes).  
-In this case, the statistical test of sexual dimorphism was non-significant (p-value = 0.899) hence the final model assessed a genotype effect rather than the genotypes for each sex separately.  
-The following line indicate which main effects were included in the final model; 
-for this variable and dataset we can see that sex was significant in explaining variation in the data and hence is included in the final model. 
-
-The final stage of the output gives information on the final model details.  
-The “Genotype effect” reports the statistical significance for the genotype effect and is assessed by comparing a treatment model (final fitted model) with a null model where a null model 
+The “Genotype p-value” reports the statistical significance for the genotype effect and is assessed by comparing a treatment model (final fitted model) with a null model where a null model 
 has no genotype effects in the model but all other significant main effects.  
-In this example the null model would thus be Lean.Mass $\sim$ Sex. Looking at the output the “Genotype effect” is highly statistical significant as a 0 value is reported.  
+In this example the null model would thus be Lean.Mass $\sim$ Sex.
+Looking at the output the "Genotype p-value" is highly statistical significant as a $2.661943e-10$ value is reported. 
+
+After transformation the model estimates are on a new scale and hence for interpretability it is useful to convert these values back to the original scale.  In the \textit{summaryOutput} function, the genotype estimate and standard error is converted and this is reported as “Genotype effect (original scale)”. In our example the genotype effect is estimated at $-10.5581 \pm 2.2910$. 
+
+The next stage of the output, indicates whether there was evidence of sexual dimorphism (i.e. the genotype effect was found to be dependent on sexes).  
+In this case, the statistical test of sexual dimorphism was non-significant (p-value = 0.147) hence the final model assessed a genotype effect rather than the genotypes for each sex separately.  
+
+The next two lines of the output show percentage changes --  the ratio of the genotype effect for a sex relative to the wildtype signal for that variable for that sex (see section \ref{section:BiologicalEffect} for more details).
+\[
+\text{Genotype percentage change Female} = (-27.89/92.96)*100=-30\%
+\] 
+\[
+\text{Genotype percentage change Male} = (-27.89/(92.96+39.8))*100=-21.01\%
+\]
+
+As there was no evidence for sexual dimorphism, and thus the genotype effect was estimated independently of sex, then a classification tag “both sexes equally” has been assigned. 
+
 We can then look at the model fitting details in the final output of the function by examining the table to see how the main effects contributed to the variation in the dependent variables. 
 
+A regression model estimates each component of the model, by isolating how that effect influences the dependent variable (i.e. lean mass) as though all other parts of the model had been fixed and isolated.   
+From the table of output, we can see that the intercept (the expected reading for lean mass for female reference genotype (aka female wildtype animals) is 92.96.  
+Then we can see the effect of the genotype is -27.89 (-10.56 in original scale) in that knockout animals are predicted to have 27.89 grams (10.56 in original scale) less lean mass relative to the control animals.  
+Finally we can see that being a male animals leads to an increase of 39.8 grams (11.03 grams in original scale).  
+These estimates are in agreement with the visualisation of the data (see section \ref{AssesingModelFit}). 
+ 
+Here is the function example for reverse transformation in order to obtain original scale values: 
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> reverseTransformValues(c(-27.89,39.8),lambda = 1.7,scaleShift = 1)
+[1] -10.55820  11.03411
+\end{verbatim}
+\endgroup  
+
+Function's \textit{summaryOutput} results for the not transformed lean mass values:
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
@@ -2341,13 +2805,12 @@ Method:
 ----------------------------------------------------------------------------
 Model Output
 ----------------------------------------------------------------------------
-Genotype effect: 0.0000
-
 Final fitted model: Lean.Mass ~ Genotype + Sex
 Was batch significant? TRUE
 Was variance equal? FALSE
-
-Was there evidence of sexual dimorphism? no (p-value 0.9056)
+Genotype p-value: 1.901362e-10
+Genotype effect: -3.5271 +/- 0.4866
+Was there evidence of sexual dimorphism? no (p-value 9.055876e-01)
 Genotype percentage change Female: -19.04%
 Genotype percentage change Male: -15.24%
 
@@ -2365,14 +2828,6 @@ GenotypeAkt2/Akt2 -3.527111 0.4866433 1048 -7.247836  8.204401e-13
 SexMale            4.620361 0.1581236 1048 29.219943 8.940893e-138
 \end{verbatim}
 \endgroup 
-
-A regression model estimates each component of the model, by isolating how that effect influences the dependent variable (i.e. lean mass) as though all other parts of the model had been fixed and isolated.   
-From the table of output, we can see that the intercept (the expected reading for lean mass for female reference genotype (aka female wildtype animals) is 18.5.  
-Then we can see the effect of the genotype is -3.5 in that knockout animals are predicted to have 3.5 grams less lean mass relative to the control animals.  
-Finally we can see that being a male animals leads to an increase of 4.6 grams.  
-As there was no evidence for sexual dimorphism, and thus the genotype effect was estimated independently of sex, then a classification tag “both sexes equally” has been assigned.  
-These estimates are in agreement with the visualisation of the data (see section \ref{AssesingModelFit}). 
-
 \subsubsection{Assessment of raw data and distribution characteristics}
 To assess model fit, graphical tools are ideal.  They focus on two areas:
 \begin{enumerate}
@@ -2574,6 +3029,8 @@ So whilst there is a fundamental differences in lean mass between the knockout a
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
+> result <- testDataset(test,depVariable="Lean.Mass",
+   method="MM",equation="withWeight",transformValues=FALSE)
 > summaryOutput(result)
 
 Test for dependent variable:
@@ -2585,13 +3042,12 @@ Method:
 ----------------------------------------------------------------------------
 Model Output
 ----------------------------------------------------------------------------
-Genotype effect: 0.6400
-
 Final fitted model: Lean.Mass ~ Genotype + Sex + Weight
 Was batch significant? TRUE
 Was variance equal? FALSE
-
-Was there evidence of sexual dimorphism? no (p-value 0.1054)
+Genotype p-value: 6.399898e-01
+Genotype effect: -0.1925 +/- 0.4120
+Was there evidence of sexual dimorphism? no (p-value 1.053833e-01)
 Genotype percentage change Female: -1.04%
 Genotype percentage change Male: -0.83%
 
@@ -2715,7 +3171,8 @@ Number of batch levels left: 3
 Records removed (reference genotype): 92%
 Records removed (test genotype): 0%
 
->result <- testDataset(testTF_new, depVariable="HDL", dataPointsThreshold=2, method="TF") 
+>result <- testDataset(testTF_new, depVariable="HDL", dataPointsThreshold=2, method="TF",
+transformValues=FALSE) 
 ...
 \end{verbatim}
 \endgroup 
@@ -2723,7 +3180,7 @@ Records removed (test genotype): 0%
 The cleaning of the data is reported in the output of the \textit{TFDataset} function.  First the output shows the number of data points by batch for each sex and genotype combination.  For data to be retained for a date, there needs to be both test and ref genotype data for a sex. Summary statistics on the cleaning impact are then provided following the table of data.  
 
 \subsubsection{Exploring and understanding the summary output}
-The first two lines of the \textit{summaryOutput} confirm the statistical framework used and the dependent variable studied. The next section of the output clarifies the final fitted model details. As the TF framework is an optimisation process exploring the data to fit the best model to the data, the final fitted model details will vary. We can see that batch variation, the variation in readings between different assay dates, were found to be statistical significant and hence a model including batch as a fixed effect was fitted.  The next line of output, “was variance equal?", indicating whether the model assumes equal variance between genotype groups or unequal. In this case, the variance was not found to be equal and therefore the final model estimated the variance for each group separately.
+The first two lines of the \textit{summaryOutput} confirm the statistical framework used and the dependent variable studied. The next section of the output clarifies the final fitted model details. As the TF framework is an optimisation process exploring the data to fit the best model to the data, the final fitted model details will vary. We can see that batch variation, the variation in readings between different assay dates, were found to be statistical significant and hence a model including batch as a fixed effect was fitted.  The next line of output, “Was variance equal?", indicating whether the model assumes equal variance between genotype groups or unequal. In this case, the variance was not found to be equal and therefore the final model estimated the variance for each group separately.
 
 Furthermore, we can see that there was statistical evidence of sexual dimorphism and therefore the final model would estimate the genotype effect for each sex separately. The next stage of the output, classification tag, details the classification of the effect seen as discussed in section \ref{TF_classificationTag} and in this case the genotype effect was specific to the males at the default (0.01) threshold. 
 
@@ -2741,13 +3198,13 @@ Method:
 ----------------------------------------------------------------------------
 Model Output
 ----------------------------------------------------------------------------
-Genotype effect: 0.0001
-
 Final fitted model: HDL ~ Sex + Genotype:Sex + Weight + Batch
 Was batch significant? TRUE
 Was variance equal? FALSE
-
-Was there evidence of sexual dimorphism? yes (p-value 0.0304)
+Genotype p-value: 1.072892e-04
+Genotype by male effect: -0.3063 +/- 0.0781
+Genotype by female effect: -0.0170 +/- 0.0856
+Was there evidence of sexual dimorphism? yes (p-value 3.044927e-02)
 Genotype percentage change Female: -1.44%
 Genotype percentage change Male: -19.15%
 
@@ -2770,11 +3227,15 @@ SexMale:Genotypehet   -0.30625701 0.07813579 -3.9195486 4.975257e-04
 \end{verbatim}
 \endgroup 
 
-We can also see in this section the assessment of the “Genotype effect" reports the statistical significance for the genotype effect and is assessed by comparing a treatment model (final fitted model) with a null model where a null model has no genotype effects in the model but all other significant main effects. 
+We can also see in this section the assessment of the “Genotype p-value" reports the statistical significance for the genotype effect and is assessed by comparing a treatment model (final fitted model) with a null model where a null model has no genotype effects in the model but all other significant main effects. 
 
-In this example the null model would thus be $HDL \backsim Sex + Weight + Batch$. Looking at the output the “Genotype effect" is statistical significant as a 0.0001 value is reported. 
+In this example the null model would thus be $HDL \backsim Sex + Weight + Batch$. Looking at the output the “Genotype p-value" is statistical significant as a 0.0001 value is reported. 
 
-The final section of the output "Model Output Summary" provides a summary table showing the estimates for each component of the final model fitted. As a regression model estimates each component of the model, by isolating how that effect influences the dependent variable (i.e. HDL) as though all other parts of the model had been fixed and isolated. From the summary output, we can see that the intercept (the expected reading for HDL) for female reference genotype (aka female wildtype animals of 0 body weight for the first batch) is 0.185. Then we can see that being male is statistical significant and leads to an increase in HDL of 0.152.  We can also see the impact of weight 0.0528\//g.  As batch was significant source of variation, and it is treated as a fixed effect we can see the estimated impact of each batch on the readings.  Finally, we can see the impact of being het male mouse where the values were lower by -0.3 units with standard error of 0.078.  The lack of significance of the female het mice can be seen in that the estimated effect is -0.01 with an error term 0.09 which is larger than the estimated effect and therefore this effect cannot be classed as significant.
+The percentage changes --  the ratio of the genotype effect for a sex relative to the wildtype signal for that variable for that sex (see section \ref{section:BiologicalEffect} for more details) are estimated as -1.44\% for females and -19.15\% for males.
+
+There was an evidence for sexual dimorphism, so according to the decision tree from Figure \ref{fig:05} the classification tag "males only" has been assigned.
+
+The final section of the output "Model Output Summary" provides a summary table showing the estimates for each component of the final model fitted. As a regression model estimates each component of the model, by isolating how that effect influences the dependent variable (i.e. HDL) as though all other parts of the model had been fixed and isolated. From the summary output, we can see that the intercept (the expected reading for HDL) for female reference genotype (aka female wildtype animals of 0 body weight for the first batch) is 0.185. Then we can see that being male is statistical significant and leads to an increase in HDL of 0.152.  We can also see the impact of weight 0.0528\//g.  As batch was significant source of variation, and it is treated as a fixed effect we can see the estimated impact of each batch on the readings.  Finally, we can see the impact of being het male mouse where the values were lower by -0.3 units with standard error of 0.078.  The lack of significance of the female het mice can be seen in that the estimated effect is -0.02 with an error term 0.09 which is larger than the estimated effect and therefore this effect cannot be classed as significant.
 
 \subsubsection{Assessment of raw data and distribution characteristics}
 Graph of the knockout data against the baseline controls:
@@ -2945,14 +3406,15 @@ Test for dependent variable:
 Method:
 *** Reference Ranges Plus framework ***
 
-----------------------------------------------------------------------------
-Model Output ('*' highlights results with p-values less than threshold 0.01)
-----------------------------------------------------------------------------
-                                   All    Males only Females only
-* Low classification p-value:      0.0000 0.0000     0.0000      
-* Low classification effect size:  59%    47%        72%         
-  High classification p-value:     1.0000 1.0000     1.0000      
-  High classification effect size: 3%     3%         3%          
+1) High vs Normal/Low
+           All Females only Males only
+p-value 1.0000       1.0000     1.0000
+ES          3%           3%         3%
+
+2) Low vs Normal/High
+           All Females only Males only
+p-value 0.0000       0.0000     0.0000
+ES         59%          72%        47%
 
 ----------------------------------------------------------------------------
 Classification Tag
@@ -2963,8 +3425,6 @@ and in combined dataset (Low)
 ----------------------------------------------------------------------------
 Thresholds
 ----------------------------------------------------------------------------
-                                                  
-p-value threshold:            0.01                
 Natural variation:            95                  
 Min control points:           60                  
 Normal values 'males only':   18.10925 to 30.0315 
@@ -2973,34 +3433,49 @@ Normal values 'females only': 14.38975 to 23.52675
 ----------------------------------------------------------------------------
 Count Matrices
 ----------------------------------------------------------------------------
-'All' matrix:
-         WT Akt2/Akt2
-Low      30        16
-Normal 1086        10
-High     30         0
+All
+              WT Akt2/Akt2
+Low           30        16
+Normal/High 1116        10
 
-'Males only' matrix:
-        WT Akt2/Akt2
-Low     15         7
-Normal 542         7
-High    15         0
+All
+             WT Akt2/Akt2
+High         30         0
+Normal/Low 1116        26
 
-'Females only' matrix:
-        WT Akt2/Akt2
-Low     15         9
-Normal 544         3
-High    15         0
+Females only
+             WT Akt2/Akt2
+Low          15         9
+Normal/High 559         3
+
+Males only
+             WT Akt2/Akt2
+Low          15         7
+Normal/High 557         7
+
+Females only
+            WT Akt2/Akt2
+High        15         0
+Normal/Low 559        12
+
+Males only
+            WT Akt2/Akt2
+High        15         0
+Normal/Low 557        14
 \end{verbatim}
 \endgroup 
 
 The first two lines of \textit{summaryOutput} indicate the statistical framework used and the dependent variable studied.  
 
-The next section, titled "Model output", reports the summary of statistical assessment. Two measures are provided for each dataset considered:
+The next section "Model Output" reports the summary table of statistical assessment for two classifications: high and low. Three datasets are assessed: All, Females only and Males only. Two measures are provided for each dataset considered:
 \begin{enumerate}
-\item A test of statistical significance assessed using a Fisher Exact Test. 
-\item A measure of biological significance, the maximum effect size change in high or low classification
+\item A test of statistical significance (p-value) assessed using a Fisher Exact Test. 
+\item A measure of biological significance, the maximum effect size change (ES)
 \end{enumerate}
-The final section provides tables showing the counts and percentage calculated for each group and possible level. 
+
+In the case of Reference Range framework classification tag means not sexual dimorphism classification, but rather the overall estimation of the signals significance across the different datasets.
+
+The signal is significant in all three tested datasets and the direction of the signal is the same -- Low, so classification tag "significant in males (Low), females (Low) and in combined dataset (Low)" is assigned (see Table \ref{table:06}).
 
 The section titled ‘Thresholds’ indicates how the reference range methodology has been configured.  
 \begin{itemize}
@@ -3009,28 +3484,31 @@ The section titled ‘Thresholds’ indicates how the reference range methodolog
 \item The thresholds for defining normal are reported for the male and female for this variable.  Data is analysed as a male only, a female only and all.  In the all classification, the male and female classifications are combined but please note the classification of normal, low or high are run on a sex specific basis.  In the situation where only one sex is present the output is returned in the all category. 
 \end{itemize}
 
-The final section of the output provides tables showing the counts and percentage calculated for each group and possible level. The following is reported for dependent variable lean mass for the \textit{Akt2} dataset and we can see that for all datasets, there is a statistically significant change with a large effect size.
+The final section of the output provides tables showing the counts calculated for each group and possible level. 
 
+The following is reported for dependent variable lean mass for the \textit{Akt2} dataset and we can see that for all datasets, there is a statistically significant change of the values for knockout animals towards low classification with a large effect size.
 
+\subsubsection{Understanding the maximum effect size reported}
+The effect size reported is the maximum percentage change seen in the low or high classification. For each trait level (i.e. the observed phenotype), the change in percentage effect size is seen by subtracting the percentage observed in the knockout from the wildtype. Then across the low and high levels, the maximum percentage change is selected after ignoring the direction of the change. 
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
-Matrix 'males only':
-        WT Akt2/Akt2
-Low     15         7
-Normal 542         7
-High    15         0
-
-Percentage matrix 'males only' statistics:
-       WT Akt2/Akt2 ES change
-Low     3        50        47
-Normal 95        50        45
-High    3         0         3
+> for (i in seq_along(analysisResults(result))) {
+     val <- analysisResults(result)[[i]]
+     if (analysedSubset(val)=="males"){
+         print(getPercentageMatrix(val))               
+     }
+ }
+                   WT Akt2/Akt2
+Low          2.622378        50
+Normal/High 97.377622        50
+                  WT Akt2/Akt2
+High        2.622378         0
+Normal/Low 97.377622       100
 \end{verbatim}
 \endgroup 
-Example count and percentage output.  Shown are the male only results for the \textit{Akt2} lean mass example.
-\subsubsection{Understanding the maximum effect size reported}
-The effect size reported is the maximum percentage change seen in the low or high classification. For each trait level (i.e. the observed phenotype), the change in percentage effect size is seen by subtracting the percentage observed in the knockout from the wildtype. Then across the low and high levels, the maximum percentage change is selected after ignoring the direction of the change. Thus in the \textit{Akt2} example, the maximum effect size would be 47\% for the male data as the increase in classification of low ($|3-50|=47$\%) was larger than the change in the high classification ($|3-0|=3$\%). 
+
+Thus in the \textit{Akt2} example, the maximum effect size would be 47\% for the male data as the increase in classification of low ($|3-50|=47$\%) was larger than the change in the high classification ($|3-0|=3$\%). 
 
 \subsection{PhenStat FE framework Usage Example}
 The following dataset, provided by Wellcome Trust Sanger Institute (WTSI) Mouse Genetics Project (\href{http://www.sanger.ac.uk/resources/mouse/}{MGP}) of high resolution X-ray data obtained from 
@@ -3091,20 +3569,20 @@ Therefore tables showing both the percentage and count values are included in th
 \caption{\textit{categoricalBarplot} function for \textit{Aff3} example.}\label{fig:24}
 \end{figure}
 
-\subsubsection{Understanding the \textit{summaryOutput}}
+\subsubsection{Understanding the summary output}
 
 The first two lines of \textit{summaryOutput} indicate the dependent variable studied and the statistical framework used.  
-The next section, titled "Model output", reports the summary of statistical assessment. Four measures are provided for each dataset (All data, Males only data, Females only data) when comparing Low vs Normal plus High values and High vs Normal plus Low values considered:
+The next section, titled "Model output", reports the summary of statistical assessment. Three datasets are assessed: All, Females only and Males only. Two measures are provided for each dataset considered:
 \begin{enumerate}
-\item A test of statistical significance assessed using a Fisher Exact Test. 
-\item A measure of biological significance, the maximum effect size
+\item A test of statistical significance (p-value) assessed using a Fisher Exact Test. 
+\item A measure of biological significance, the maximum effect size (ES)
 \end{enumerate}
-The classification tag section 
-The final section provides tables showing the counts and percentage calculated for each group and possible level. 
 
-The following is reported for dependent variable thoracic processes for the \textit{Aff3} dataset and we can see that for all datasets, there is a statistically significant change with a large effect size. 
+In the case of Fisher Exact Test classification tag means not sexual dimorphism classification, but rather the overall estimation of the signals significance across the different datasets.
 
-The \textit{summaryOutput} function shows the model fitted and the model output for the analysis of the thoracic processes for the \textit{Aff3} dataset. 
+The signal is significant in all three tested datasets, so classification tag "significant in males, females and in combined dataset" is assigned (see Table \ref{table:06}).
+ 
+The final section provides tables showing the counts calculated for each tested dataset. 
 
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
@@ -3120,9 +3598,17 @@ Method:
 ----------------------------------------------------------------------------
 Model Output ('*' highlights results with p-values less than threshold 0.01)
 ----------------------------------------------------------------------------
-               All    Males only Females only
-* p-value:     0.0000 0.0003     0.0003      
-* Effect size: 76%    70%        70%         
+All
+* p-value:     0.0000
+* Effect size: 76%   
+
+Males only                     
+* p-value:     0.0003
+* Effect size: 70%   
+
+Females only                 
+* p-value:     0.0000
+* Effect size: 81%   
 
 ----------------------------------------------------------------------------
 Classification Tag
@@ -3132,18 +3618,17 @@ With phenotype threshold value 0.01 - significant in males, females and in combi
 ----------------------------------------------------------------------------
 Count Matrices
 ----------------------------------------------------------------------------
-
-'All' matrix:
+All
          +/+ Aff3/Aff3
 Abnormal 142        12
 Normal   753         1
 
-'Males only' matrix:
+Males only
          +/+ Aff3/Aff3
 Abnormal  59         5
 Normal   390         1
 
-'Females only' matrix:
+Females only
          +/+ Aff3/Aff3
 Abnormal  83         7
 Normal   363         0
@@ -3226,9 +3711,17 @@ Method:
 ----------------------------------------------------------------------------
 Model Output ('*' highlights results with p-values less than threshold 0.01)
 ----------------------------------------------------------------------------
-               All    Males only Females only
-  p-value:     1.0000 1.0000     1.0000      
-  Effect size: 0%     0%         0%          
+All                
+  p-value:     1.0000
+  Effect size: 0%    
+
+Males only        
+  p-value:     1.0000
+  Effect size: 0%    
+
+Females only       
+  p-value:     1.0000
+  Effect size: 0%    
 
 ----------------------------------------------------------------------------
 Classification Tag
@@ -3238,20 +3731,19 @@ Not significant
 ----------------------------------------------------------------------------
 Count Matrices
 ----------------------------------------------------------------------------
-
-'All' matrix:
+All
    +/+ Aff3/Aff3
 12   1         0
 13 893        13
 14   1         0
 
-'Males only' matrix:
+Males only
    +/+ Aff3/Aff3
 12   1         0
 13 448         6
 14   0         0
 
-'Females only' matrix:
+Females only
    +/+ Aff3/Aff3
 12   0         0
 13 445         7
@@ -3260,39 +3752,119 @@ Count Matrices
 \endgroup 
 
 %\subsection{PhenStat Integration with Database}
+\subsection{PhenStat LR framework Usage Example}
+The following dataset, provided by Wellcome Trust Sanger Institute (WTSI) Mouse Genetics Project (MGP) of high resolution X-ray data obtained from a study on gene knockout mice carrying the \textit{Aff3tm1a}(EUCOMM)\textsuperscript{Wtsi} targeted allele which were created by blastocyst injection of targeted ES cells, and bred on the B6N genetic background. Data was collected on a standardized high throughput phenotyping pipeline following a multi-batch workflow, where regular control animals are collected and knockout animals of the correct age are then issued to the pipeline as they arise. At WTSI, batch to batch variation has not been found to be significant for these rare event categorical variables. Consequently, we ignore batch and combine data for the same genetic background when collected with the same protocol and housing and husbandry conditions. This increases the sensitivity of the analysis as we have more accuracy on the estimate of the prevalence of the condition in the wildtype population.
+\subsubsection{Loading the data and initial steps of analysis}
+Initial steps focus on loading the data, using the PhenStat tools to generate the PhenList object, recoding the variables to the (0: normal, 1: abnormal) that is required for this framework and then generating the result object. We can then explore the data and fitted results using the visualisation and output functions.
+
+\begingroup
+\fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> file <- system.file("extdata", "test_categorical.csv", package="PhenStat")
+> dataset_cat <- read.csv(file)
+> test <- PhenList(dataset=dataset_cat, testGenotype="Aff3/Aff3",
+	 		refGenotype="+/+",
+	 		dataset.colname.batch="Assay.Date")
+> test <- LRDataset(test, depVariable="Thoracic.Processes",
+			abnormalValues="Abnormal")
+> result <- testDataset(test, depVariable="Thoracic.Processes", method="LR")
+\end{verbatim}
+\endgroup 
+\subsubsection{Visualisation of data}
+The \textit{categoricalBarplot} function is used to visualise the categorical data as summary  percentage data. It reports the percentage of each classification observed for up to three datasets: all data, male only and female only. 
+\begingroup
+\fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> categoricalBarplot(result)
+\end{verbatim}
+\endgroup 
+
+\begin{figure}[H]%figure01
+\centerline{\includegraphics[scale=0.5]{LR_example.png}}
+\caption{\textit{categoricalBarplot} function for Akt2 Thoracic Processes example after recoding to 0 and 1 for Logistic Regression analysis.}\label{fig:26}
+\end{figure}
+
+\subsubsection{Understanding the summary output}
+\begingroup
+\fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+> summaryOutput(result)
+
+Test for dependent variable:
+*** Thoracic.Processes ***
+
+Method:
+*** Logistic Regression ***
+
+----------------------------------------------------------------------------
+Model Output
+----------------------------------------------------------------------------
+Final fitted model: Thoracic.Processes ~ Genotype + Sex
+Was batch significant? FALSE
+Genotype p-value: 1.943939e-09
+Genotype effect: 3.7983 +/- 0.9034
+Was there evidence of sexual dimorphism? no (p-value 5.441219e-01)
+
+----------------------------------------------------------------------------
+Classification Tag
+----------------------------------------------------------------------------
+With phenotype threshold value 0.01 - both sexes equally
+
+----------------------------------------------------------------------------
+Model Output Summary
+----------------------------------------------------------------------------
+                       Value Std.Error   ci.lower    ci.upper      p-value
+(Intercept)       -1.4646494 0.1209814 -1.7077333 -1.23321580 0.000000e+00
+GenotypeAff3/Aff3  3.7983232 0.9033813  2.3619588  6.02332990 1.943939e-09
+SexMale           -0.4251768 0.1840563 -0.7891747 -0.06661705 2.002838e-02
+\end{verbatim}
+\endgroup
+
+The first two lines of \textit{summaryOutput} function results indicate the statistical framework used and the dependent variable studied. 
+
+The next section, titled “Model output”, of the output clarifies the final fitted model details and global findings.  As the "LR" framework is an optimisation process exploring the data to fit the best model to the data, the final fitted model details will vary. The “Final fitted model” tells us that the final model includes both genotype and sex as sex was found to be a significant source of variation. The validation test to assess whether batch was significant tells us that batch wasn’t significant. This is a positive outcome as the Biased Reduction Logistic Regression package underpinning this analysis cannot include random effects and hence we cannot manage significant batch effects. 
+
+The “Was there evidence of sexual dimorphism?” reports the outcome of the statistical assessment of whether there was evidence of sexual dimorphism (i.e. the genotype effect was found to be dependent on sexes). In this case, the statistical test of sexual dimorphism was non-significant (p-value = 0.54) hence the final model assessed a genotype effect rather than the genotypes for each sex separately. 
+
+The “Genotype effect" reports the statistical significance for the genotype effect and is assessed by comparing a treatment model (final fitted model) with a null model where a null model has no genotype effects in the model but all other significant main effects. In this example the null model would thus be $Thoracic.Processes \sim Sex$. Looking at the output the "Genotype p-value" is highly statistical significant as a $1.9e-9$ value is reported. The genotype effect is estimated at $3.79 \pm 0.9$. Logistic regression estimates log odds and to relate this back to the experiment it is recommended that you convert the estimate into an odds ratio by calculating the exponential of the value (i.e. E\textsuperscript{$\beta$} or exp(\textsuperscript{$\beta$})). Where an odds ratio is an indicator of the change in odds resulting from a unit change in the predictor. In this example that gives us an odds ratio of 44.2 which tells us that being a knockout mouse leads to a 44.2 higher odds of being abnormal.
+
+The section titled “Classification Tag” indicate how the genotype effect has been classed.  In this case as the model found no evidence of sexual dimorphism the effect was found to effect “both sexes equally”.   
+
+Finally in the section “Model Output Summary”, the estimates from the final model are reported. 
 
 \subsection{PhenStat Example Using Cluster}
 If someone would like to analyse all variables in the dataset and has a cluster available for such kind of job then here is an example of PhenStat package usage.
 
-First, the function that runs on each cluster's node and stores the results in particular directory is created. This function is based on the section \textit{dataset.stat} of the \textit{PhenList} object. 
+First, the function that runs on each cluster's node and stores the results in particular directory is created. This function is based on the method \textit{getStat} of the \textit{PhenList} object. 
 
 
 \begingroup
 \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
 PhenStatCluster<-function(phenList,i){
-    # reads variable names from dataset.stat table
-    variable <- as.character(phenList$dataset.stat$Variables[i]) 
+  # reads variable names from getStat table
+  datasetStat <- getStat(phenList)
+  variable <- as.character(datasetStat$Variables[i]) 
+  
+  # checks if variable is continuous again by using getStat table
+  isContinuous <- datasetStat$Continuous[i]  
+  
+  # skip the analysis for Batch and Genotype variables
+  if (!(variable %in% c("Batch","Genotype"))){	
+    if (isContinuous && !(variable %in% c("Weight"))) 
+      # performs MM framework for continuous data
+      result <- testDataset(phenList, variable, method="MM",outputMessages=FALSE)	 
+    else
+      if (!isContinuous){
+        # performs FET framework for categorical data
+        result <- testDataset(phenList, variable, method="FE",outputMessages=FALSE)	
+      }
+    else
+      # performs MM framework for weight variable
+      result <- testDataset(phenList, variable, method="MM",equation="withoutWeight",outputMessages=FALSE) 
     
-    # checks if variable is continuous again by using dataset.stat table
-    isContinuous <- phenList$dataset.stat$Continuous[i]	
-    
-    # skip the analysis for Batch and Genotype variables
-    if (!(variable %in% c("Batch","Genotype"))){	
-      if (isContinuous && !(variable %in% c("Weight"))) 
-	  # performs MM framework for continuous data
-	  result <- testDataset(phenList, variable, method="MM",outputMessages=FALSE)	 
-      else
-	  if (!isContinuous){
-	      # performs FET framework for categorical data
-	      result <- testDataset(phenList, variable, method="FE",outputMessages=FALSE)	
-	   }
-	  else
-	      # performs MM framework for weight variable
-	      result <- testDataset(phenList, variable, method="MM",equation="withoutWeight",outputMessages=FALSE) 
-	      
-      write(vectorOutput(result),paste("./",variable,".txt",sep="")) # stores the results
-    }
+    write(vectorOutput(result),paste("./",variable,".txt",sep="")) # stores the results
+  }
 }
 \end{verbatim}
 \endgroup
@@ -3311,8 +3883,19 @@ setwd("/yourWorkingDirectory")
 # create logs folder in it
 dir.create(paste(getwd(), "/logs", sep=""))
 
+file <- system.file("extdata", "test_Akt2.csv", package="PhenStat") 
+DEXAdata <- read.csv(file)
+test <- PhenList(dataset=DEXAdata,
+                   testGenotype="Akt2/Akt2",
+                   refGenotype="WT",
+                   dataset.colname.batch="dateOfExperiment",
+                   dataset.values.female="female",
+                   dataset.values.male="male", 
+                   dataset.colname.genotype="Genotype", 
+                   dataset.colname.sex="Gender")
+                   
 # define tasks
-tasks <- c(1:length(test$dataset.stat$Variables))
+tasks <- c(1:length(getVariables(test)))
 
 # load snow
 # snow creates and manages clusters
@@ -3326,7 +3909,7 @@ cluster = makeCluster(length(tasks), type="...") # type values: MPI, RCLOUD, etc
 clusterEvalQ(cluster, setwd("/yourWorkingDirectory"))
 
 # create logs and forward output to the log files
-clusterEvalQ(cluster, try({ fn = paste(getwd(), "./", Sys.info()[4], "-", Sys.getpid(), ".log", sep=""); 
+clusterEvalQ(cluster, try({ fn = paste(getwd(), "/logs", Sys.info()[4], "-", Sys.getpid(), ".log", sep=""); 
 o <- file(fn, open = "w"); sink(o); sink(o, type = "message"); }))
 
 # test output is routed to the logs
@@ -3342,7 +3925,7 @@ clusterExport(cluster, "test")
 
 # finally apply function for each one variable within the dataset
 clusterApplyLB(cluster, tasks, function(x){ message("---------- processing ", 
-test$dataset.stat$Variables[x], " ----------"); try(PhenStatCluster(test,x)); })
+getVariables(test)[x], " ----------"); try(PhenStatCluster(test,x)); })
 
 # clean up
 stopCluster(cluster)
@@ -3366,15 +3949,20 @@ Gentleman,R. (2008) R Programming for Bioinformatics. Chapman \& Hall$\backslash
 \bibitem[Hahne \textit{et~al}., 2008]{Hahne08}
 Hahne,F., Huber,W., Gentleman,R., Falcon,S. (2008). Bioconductor Case Studies. Springer.  ISBN 978-0-387-77239-4.
 
+\bibitem[Box and Cox, 1964]{BoxCox}
+Box, George E. P.; Cox, D. R. (1964). "An analysis of transformations". Journal of the Royal Statistical Society, Series B 26 (2): 211–252. 
+
 \bibitem[Karp {\it et~al}., 2012]{MM12} Karp,N., Melvin,D., Sanger Mouse Genetics Project, Mott,R. (2012) Robust and Sensitive Analysis of Mouse Knockout Phenotypes, {\it PLoS ONE}, {\bf 7}(12), e52410, doi:10.1371/journal.pone.0052410.
 
 \bibitem[West {\it et~al}., 2007]{MM07}  West,B., Welch,K., Galecki,A. (2007) Linear Mixed Models: A practical guide using statistical software. Chapman \& Hall$\backslash$CRC. ISBN 978-1-584-88480-4.
 
-\bibitem[Houseman {\it et~al}., 2004]{RotatedResiduals04} E. Andrés Houseman, Louise M. Ryan and Brent A. Coull (2004) Cholesky Residuals for Assessing Normal Errors in a Linear Model with Correlated Outcomes, {\it Journal of the American Statistical Association}, {\bf 99} (466), 383-394
+\bibitem[Houseman {\it et~al}., 2004]{RotatedResiduals04} Houseman,E.A, Ryan,L.M., and Coull,B.A. (2004) Cholesky Residuals for Assessing Normal Errors in a Linear Model with Correlated Outcomes, {\it Journal of the American Statistical Association}, {\bf 99} (466), 383-394
 
-\bibitem[Pinkert, 2002]{Pinkert} C.A. Pinkert, Transgenic Animal Technology. A laboratory Handbook (2002), {\it Academic Press Inc.}, USA
+\bibitem[Pinkert, 2002]{Pinkert} Pinkert,C.A. (2002) Transgenic Animal Technology. A laboratory Handbook (2002), {\it Academic Press Inc.}, USA
 
-\bibitem[Solberg, 1983]{Solberg} H.E. Solberg, The theory of reference values Part 5. Statistical treatment of collected reference values. Determination of reference limits, {\it Journal of clinical chemistry and clinical biochemistry}, {\bf 21} (11), 749-760
+\bibitem[Solberg, 1983]{Solberg} Solberg,H.E. (1983) The theory of reference values Part 5. Statistical treatment of collected reference values. Determination of reference limits, {\it Journal of clinical chemistry and clinical biochemistry}, {\bf 21} (11), 749-760
+
+\bibitem[Heinze, 2006]{Heinze} Heinze,G. (2006) A comparative investigation of methods for logistic regression with separated or nearly separated data, {\it Statistics in Medicine}, {\bf 25}, 4216-4226
 
 %%An R2 statistic for fixed effects in the linear mixed model
 

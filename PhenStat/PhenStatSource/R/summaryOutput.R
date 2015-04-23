@@ -102,7 +102,9 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
     else if (method(phenTestResult) %in% c("RR")){
         x <- analysedDataset(phenTestResult)
         noSexes <- length(levels(x$Sex))
-        
+        message(line)
+        message("Model Output")
+        message(line)
         colnum <- 1
         #cat("\n1) High vs Normal/Low\n")
         nl <- data.frame(nr=c(1,2,3))
