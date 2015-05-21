@@ -15,7 +15,10 @@
 
 
 %opening
-\title{\textbf{PhenStat}: \\ statistical analysis of phenotypic data\\ \textbf{User's Guide}}
+
+\title{\begin{figure}[H]%figure01a
+\centerline{\includegraphics[]{PhenStat_logo.png}}
+\end{figure}\textbf{PhenStat}: \\ statistical analysis of phenotypic data\\ \textbf{User's Guide}}
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
 \date{Last revised: \today}
 
@@ -1739,6 +1742,8 @@ If a coefficient is positive, its transformed log value will be greater than one
 
 \section{Data Transformation}
 \label{section:transformation}
+The \textit{testDataset} function has an argument “transformValues" which can be set to TRUE or FALSE. By default the value is set to TRUE meaning to perform transformation if needed.
+
 The "MM" and "TF" regression methods make an assumption of normally distributed data. Unfortunately at times, a non-linear transformation is needed to improve the distribution of the data to improve the model fitting reliability. 
 The Box-Cox transformation (\cite{BoxCox}) represents a family of power transformations with a procedure to find the normalizing transformation for each variable. The procedure returns the optimal lambda value that specifies the transformation necessary and the procedure identifies the value by testing a variety of lambda values. The Box-Cox power transformation is not a guarantee for normality as the procedure looks to minimise standard deviation based on the assumption that the transformed data has the highest likelihood to be normally distributed when the standard deviation is the smallest. 
 The Box-Cox transformation of the variable is defined as:
@@ -1758,7 +1763,6 @@ The Box-Box transformation incorporates many tradition transformations (table \r
   \hline
 $\lambda$&\multicolumn{2}{|c|}{Transformation equivalent}\\\hline
 &Name&Specification\\\hline
-1&No transformation needed&Y\\
 0.5&Square root transformation&$\sqrt{Y}$\\
 0.33&Cube root transformation&$\sqrt[3]{Y}$\\
 0.25&Fourth root transformation&$\sqrt[4]{Y}$\\
@@ -1783,14 +1787,31 @@ The Box-Cox power transformation only works if all the data is positive and grea
 The Box-Cox procedure is applied to the data taking into account structure in the data by specifying them as fixed effects and use profile-likelihood techniques to derive the optimal $\lambda$ and the 95\% confidence interval for $\lambda$.
 \item  \textbf{Convert output to transformation requirement}
 \begin{itemize}
-\item If the 95\% confidence interval for $\lambda$ includes 1 then the implementation returns "lambda=NA" for the transformation value as no transformation is needed.
-\item If the $\lambda$ value is between -0.1 or 0.1 then the value is classed as 0 and the implementation returns "lambda=0" which indicate that a log transformation is required. 
-\item If the $\lambda$ value exceeds 5 or -5 then the implementation returns "lambda=NA" for transformation value as transformation is not appropriate. This has been implemented as with these large $\lambda$ values the resulting transformed variable would have values that were too large/small for meaningful regression analysis. This can happen with small datasets or datasets that are poorly suited to regression analysis (e.g. datasets with little variation). 
-\item For all other lambda values the implementation returns the optimal $\lambda$ value.  
+\item If the statistical method is "FE", "LR" or "RR" or if the user has chosen to perform analysis without data transformation (\textit{testDataset} function's argument \textit{transformValues} is set to FALSE) then no transformation is needed ("lambda=NA, scaleShift=NA, transformed=FALSE, code=0")
+\item If the 95\% confidence interval for $\lambda$ includes 1 then no transformation is needed ("lambda=value, scaleShift=value, transformed=FALSE, code=1").
+\item If the $\lambda$ value is between -0.1 and 0.1, at the same time 1 is not included into the 95\% confidence interval for $\lambda$ then the value is classed as 0 and a log transformation is performed ("lambda=0, scaleShift=value, transformed=TRUE, code=2"). 
+\item If the optimal $\lambda$ value exceeds 5 or -5 then we consider that transformation is not appropriate ("lambda=value, scaleShift=value, transformed=FALSE, code=4"). 
+This has been implemented as with these large $\lambda$ values the resulting transformed variable would have values that were too large/small for meaningful regression analysis. This can happen with small datasets or datasets that are poorly suited to regression analysis (e.g. datasets with little variation). 
+\item For all other lambda values the implementation performs power transformation using  the optimal $\lambda$ value ("lambda=value, scaleShift=value, transformed=TRUE, code=3").  
 \end{itemize}
 \end{enumerate}
 
-The \textit{testDataset} function has an argument “transformValues" which can be set to TRUE or FALSE. By default the value is set to TRUE meaning to perform transformation if needed.
+\textit{VectorOutput} results concerning transformation are classified in table \ref{table:tr2}.
+\begin{table}[!h]
+\begin{center}
+\begin{tabular}{| c | c | c | p{10cm} |}
+\hline
+Code&$\lambda$&Values transformed&Comment\\\hline
+0&NA&No&Statistical method doesn't required data transformation or user requested to perform without transformation.\\
+1&value&No&According to test results transformation is not needed.\\
+2&0&Yes&Log transformation is applied.\\
+3&value&Yes&Power transformation is applied.\\
+4&value&No&Optimal lambda value is not found within a range of -5 to 5.\\
+\hline
+\end{tabular}
+\caption{VectorOutput values explaining transformation.}\label{table:tr2}
+\end{center}
+\end{table}
 
 As shown in figure \ref{fig:tr1}, the transformation recommended by PhenStat package lead to an improvement in the residual distribution improving the model fit.  
 
