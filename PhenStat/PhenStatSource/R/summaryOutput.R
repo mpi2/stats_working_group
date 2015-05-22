@@ -102,9 +102,7 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
     else if (method(phenTestResult) %in% c("RR")){
         x <- analysedDataset(phenTestResult)
         noSexes <- length(levels(x$Sex))
-        message(line)
-        message("Model Output")
-        message(line)
+        
         colnum <- 1
         #cat("\n1) High vs Normal/Low\n")
         nl <- data.frame(nr=c(1,2,3))
@@ -184,9 +182,9 @@ printLROutput <- function(phenTestResult,phenotypeThreshold=0.01)
                 linearRegressionOutput$model.output.summary["sex_FvKO_SE"])
         
         if (phenTestResult@transformationRequired) {
-            effectValuesMales <- as.numeric(reverseTransformValues(effectValuesMales,phenTestResult@lambdaValue,
+            effectValuesMales <- as.numeric(performReverseTransformation(effectValuesMales,phenTestResult@lambdaValue,
                             phenTestResult@scaleShift))
-            effectValuesFemales <- as.numeric(reverseTransformValues(effectValuesFemales,phenTestResult@lambdaValue,
+            effectValuesFemales <- as.numeric(performReverseTransformation(effectValuesFemales,phenTestResult@lambdaValue,
                             phenTestResult@scaleShift))
         }
         effectValues <- c(effectValuesMales,effectValuesFemales)

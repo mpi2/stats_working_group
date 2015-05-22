@@ -11,8 +11,8 @@
 test_columnChecks <- function() {    
     data_categorical <- read.csv("PhenStat/inst/extdata/test_categorical.csv")
     test <- PhenList(dataset=data_categorical,testGenotype="Aff3/Aff3",outputMessages=FALSE)
-    output <- columnChecks(dataset(test), "Weight", 4) 
-    output2 <- columnChecks(dataset(test), "Number.Of.Digits", 8) 
+    output <- columnChecks(getDataset(test), "Weight", 4) 
+    output2 <- columnChecks(getDataset(test), "Number.Of.Digits", 8) 
     checkEquals(length(output),3, "check column function returns incorrect output")
     checkEquals(length(output2),3, "check column function returns incorrect output")
     checkTrue(!output[1], "check column function returns incorrect output - there are no column Weight")
@@ -34,7 +34,7 @@ test_PhenList <- function() {
 test_oneSex <- function(){
     data_oneSex <- read.csv("PhenStat/inst/extdata/test1_1sex.csv")
     test <- PhenList(dataset=data_oneSex,testGenotype="Mysm1/+",outputMessages=FALSE)
-    checkEquals(length(levels(dataset(test)$Sex)),1,paste("length of sex levels is not equals to 1",
+    checkEquals(length(levels(getDataset(test)$Sex)),1,paste("length of sex levels is not equals to 1",
                     " - it realises there is only one gender",sep=""))
 }
 ###############################################################################
@@ -76,7 +76,7 @@ test_vectorOutput <- function(){
     test <- PhenList(dataset=data_typical,testGenotype="Mysm1/+", dataset.clean=TRUE)
     result <- testDataset(test,depVariable="Lean.Mass")
     vector_results <- vectorOutput(result)   
-    checkEquals(length(vector_results), 34, "length of vector is not 33") 
+    checkEquals(length(vector_results), 34, "length of vector is not 34") 
     checkTrue(!is.null(names(vector_results)),"names of vector are missed")
     checkTrue(all(lapply(vector_results,is.character)==TRUE),"not all vector elements are of type character")
 }
@@ -147,33 +147,33 @@ test_TFOutput <- function(){
     checkEquals(length(classificationTag(result)),1, "length of classificationTag output is not 1")
     checkTrue(is.character(classificationTag(result)), "classificationTag output is not character")
     checkEquals(classificationTag(result),
-        "With phenotype threshold value 0.01 - significant in males and in combined dataset",
+        "With phenotype threshold value 0.01 - significant in males, females and in combined dataset",
         "classificationTag output is incorrect for this dataset")
 }
 ###############################################################################
 # test unit for trasnformation function
 test_transformation <- function(){
-data1 <- read.csv("PhenStat/inst/extdata/permutationTest.csv")
-test <- PhenList(dataset=data1,testGenotype="Kcne2/Kcne2", 
+    data1 <- read.csv("PhenStat/inst/extdata/permutationTest.csv")
+    test <- PhenList(dataset=data1,testGenotype="Kcne2/Kcne2", 
         dataset.colname.weight="Weight.Value",
         dataset.clean=TRUE,outputMessages=FALSE)
-resultSodium <- testDataset(test,depVariable="Sodium",outputMessages=FALSE)
-checkTrue(!(resultSodium@transformationRequired), "transformation is required")
-resultSodiumAdded <- testDataset(test,depVariable="Sodium_added",outputMessages=FALSE)
-checkTrue(resultSodiumAdded@transformationRequired, "transformation is not required")
-checkEquals(resultSodiumAdded@lambdaValue,7.9, "transformation lambda value is not 7.9")
-checkEquals(resultSodiumAdded@scaleShift,3, "transformation scale shift value is not 3")
-resultHdl <- testDataset(test,depVariable="Hdl",outputMessages=FALSE)
-checkEquals(resultHdl@lambdaValue,2.15, "transformation lambda value is not 2.15")
-resultCa <- testDataset(test,depVariable="Ca",outputMessages=FALSE)
-checkEquals(resultCa@lambdaValue,-2.9, "transformation lambda value is not -2.9")
-resultTrigs<- testDataset(test,depVariable="Trigs",outputMessages=FALSE)
-checkEquals(resultTrigs@lambdaValue,0, "transformation lambda value is not 0, which means log transformed")
+    resultSodium <- testDataset(test,depVariable="Sodium",outputMessages=FALSE)
+    checkTrue(!(resultSodium@transformationRequired), "transformation is not required")
+    resultSodiumAdded <- testDataset(test,depVariable="Sodium_added",outputMessages=FALSE)
+    checkTrue(!(resultSodiumAdded@transformationRequired), "transformation is not required")
+    checkEquals(resultSodiumAdded@lambdaValue,10.3, "transformation lambda value is not 10.3")
+    checkEquals(resultSodiumAdded@scaleShift,3, "transformation scale shift value is not 3")
+    resultHdl <- testDataset(test,depVariable="Hdl",outputMessages=FALSE)
+    checkEquals(resultHdl@lambdaValue,2.1, "transformation lambda value is not 2.1")
+    resultCa <- testDataset(test,depVariable="Ca",outputMessages=FALSE)
+    checkEquals(resultCa@lambdaValue,-2.9, "transformation lambda value is not -2.9")
+    resultTrigs<- testDataset(test,depVariable="Trigs",outputMessages=FALSE)
+    checkEquals(resultTrigs@lambdaValue,0, "transformation lambda value is not 0, which means log transformed")
 #testDataset function with argument values requiring NOT TO TRANSFORM dependent variable
-resultTrigs<- testDataset(test,depVariable="Trigs",transformValues=FALSE,outputMessages=FALSE)
-checkTrue(!resultTrigs@transformationRequired, "transformation is not required")
-resultAst <- testDataset(test,depVariable="Ast",outputMessages=FALSE)
-checkEquals(resultAst@lambdaValue,0.2, "transformation lambda value is not 0.2")
+    resultTrigs<- testDataset(test,depVariable="Trigs",transformValues=FALSE,outputMessages=FALSE)
+    checkTrue(!resultTrigs@transformationRequired, "transformation is not required")
+    resultAst <- testDataset(test,depVariable="Ast",outputMessages=FALSE)
+    checkEquals(resultAst@lambdaValue,0.2, "transformation lambda value is not 0.2")
 }
 ###############################################################################
 

@@ -211,7 +211,10 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
     if ('Batch' %in% colnames(dataset))
     dataset$Batch<-factor(dataset$Batch)
         
-            
+    ## CHECKS
+    dataset <- checkDataset(dataset, testGenotype, refGenotype, 
+            outputMessages, dataset.clean)
+    
         checkWeight <- columnChecks(dataset,"Weight",2) 
         
         if (! checkWeight[1]){
@@ -236,11 +239,6 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
             }  
         }     
 
-    ## CHECKS
-    dataset <- checkDataset(dataset, testGenotype, refGenotype, 
-            outputMessages, dataset.clean)
-    
-    
     Genotype_levels <- levels(dataset$Genotype)
     Sex_levels <- levels(dataset$Sex)
     

@@ -301,12 +301,16 @@ setClass("PhenTestResult",
                 transformationRequired = "logical",
                 lambdaValue = "numeric",
                 scaleShift = "numeric",
+                transformationCode = "numeric",
                 depVariable = "character",
                 refGenotype = "character",
                 testGenotype = "character",
                 method = "character",
                 parameters = "matrix",
-                analysisResults="list")
+                analysisResults = "list"),
+        prototype=list(
+                transformationCode = 0
+                )
         
 )
 # Stores statistical analysis results:  depending on method they can be gls, lme (MM and TF), loigstf (LR), 
@@ -337,9 +341,11 @@ transformationText = function(obj)
                         ,""))
         ,"")
 transformation = function(obj) 
-    ifelse(obj@transformationRequired,
-        paste("lambda=",obj@lambdaValue,", scaleShift=",obj@scaleShift,sep="")
-        ,"lambda=NA, scaleShift=NA")
+    ifelse((obj@transformationCode!=0),
+        paste("lambda=",obj@lambdaValue,", scaleShift=",obj@scaleShift,                
+                ", transformed=",obj@transformationRequired,
+                ", code=",obj@transformationCode,sep="")
+        ,"lambda=NA, scaleShift=NA, transformed=FALSE, code=0")
 ##------------------------------------------------
 # Number of sexes
 setMethod("noSexes", signature(obj = "PhenTestResult"),
@@ -462,7 +468,7 @@ setMethod("getGenotypeEffect", signature(obj = "PhenTestResult"),
                 effect_values <- c(obj@analysisResults$model.output.summary["genotype_estimate"],
                         obj@analysisResults$model.output.summary["genotype_estimate_SE"])
                 if (obj@transformationRequired)
-                    effect_values <- reverseTransformValues(effect_values,obj@lambdaValue,obj@scaleShift)
+                    effect_values <- performReverseTransformation(effect_values,obj@lambdaValue,obj@scaleShift)
                 
                 as.numeric(effect_values)
             }

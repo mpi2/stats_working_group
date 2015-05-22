@@ -16,7 +16,9 @@
 ##------------------------------------------------------------------------------
 ##Function transforms the given vector of values according to the lambda value:
 # log transformation if the lambda is 0, power transformation otherwise
-transformValues <- function (values, lambda, scaleShift){
+performTransformation <- function (values, lambda, scaleShift){
+
+    
     if (lambda==0){
         transformedValues <- lapply(values, 
                 function (x) {log(x+scaleShift)})
@@ -27,12 +29,13 @@ transformValues <- function (values, lambda, scaleShift){
         #(((values+scaleShift)^lambda)-1)/lambda   
        
     }
+    
     return(unlist(transformedValues))
 }
 ##------------------------------------------------------------------------------
 ##Function reverse back the transformed values according to the lambda value:
 # exponential transformation if the lambda is 0, fractional power transformation otherwise
-reverseTransformValues <- function (values, lambda, scaleShift){
+performReverseTransformation <- function (values, lambda, scaleShift){
     if (lambda==0){
         reverseValues <- lapply(values, function (x) {exp(x) - scaleShift})
     }
@@ -66,6 +69,7 @@ determiningLambda <- function(phenList, depVariable, equation="withWeight"){
     df <- getDataset(phenList)
     noSexes <- noSexes(phenList)
     multipleBatches <-  ifelse(multipleBatches(phenList), "Yes", "No")
+    transformationCode <- 100
     if (!weightIn(phenList)){
         equation <- "withoutWeight"
     }
@@ -102,19 +106,30 @@ determiningLambda <- function(phenList, depVariable, equation="withWeight"){
     # Based on observation that 0.5 equals a sqrt transformation and 0.2 did ok in a test dataset.    
     if (midpoint > -0.1 & midpoint < 0.1){
         lambda_value=0
+        transformationCode <- 2
     }else{
         lambda_value=midpoint
+        transformationCode <- 3
     }
     #determine if the confidence interval includes 1 where the transformation has no impact  
     #if includes one - TransformationRequired=FALSE if excludes one then TransformationRequired=TRUE
-    RangeExcludes1= !(1 > lambda_CI[1] & 1 < lambda_CI[2])
+    #RangeExcludes1= !(1 > lambda_CI[1] & 1 < lambda_CI[2])
+    RangeExcludes1 <- TRUE
+    
+    if (1 >= lambda_CI[1] & 1 <= lambda_CI[2]){
+        transformationCode <- 1 
+        RangeExcludes1 <- FALSE
+    }
     
     if ((lambda_value > 5) || (lambda_value < -5)){
+      transformationCode <- 4   
       RangeExcludes1 <- FALSE
     }
+
     #collate results for export
-    output=c(lambda_CI, midpoint, lambda_value, as.character(RangeExcludes1), scaleShift)
-    names(output)=c("CI_min", "CI_max", "midpointCI", "lambda_value", "TransformationRequired", "scalingConstant")
+    output=c(lambda_CI, midpoint, lambda_value, as.character(RangeExcludes1), scaleShift, transformationCode)
+    names(output)=c("CI_min", "CI_max", "midpointCI", "lambda_value", "TransformationRequired", 
+            "scalingConstant", "Code")
     return(output)
 }
 

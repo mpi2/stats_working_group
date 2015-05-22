@@ -45,6 +45,29 @@ getIMPCDataset <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NUL
     {
         df <- read.csv(url,sep=",")
         df_trimmed <- as.data.frame(lapply(df,function (x) gsub("^\\s+|\\s+|\\n+$", "", x)))
+        #remove factors
+        if ('Weight' %in% colnames(df_trimmed)){
+          #for (i in 1:length(colnames(dataset))){
+          columnName <- "Weight"
+          checkNA_transformed <- sum(is.na(suppressWarnings(as.numeric(as.character(df_trimmed[,c(columnName)])))))
+          checkNA_initial <- sum(is.na(df_trimmed[,c(columnName)])) 
+          if (checkNA_transformed == checkNA_initial) {
+            df_trimmed[,c(columnName)]<-as.numeric(as.character(df_trimmed[,c(columnName)]))
+          }
+          
+          #}
+        }
+        if ('Value' %in% colnames(df_trimmed)){
+          #for (i in 1:length(colnames(dataset))){
+          columnName <- "Value"
+          checkNA_transformed <- sum(is.na(suppressWarnings(as.numeric(as.character(df_trimmed[,c(columnName)])))))
+          checkNA_initial <- sum(is.na(df_trimmed[,c(columnName)])) 
+          if (checkNA_transformed == checkNA_initial) {
+            df_trimmed[,c(columnName)]<-as.numeric(as.character(df_trimmed[,c(columnName)]))
+          }
+          
+          #}
+        }
         return (df_trimmed)
     },
     warning = function(war){

@@ -43,13 +43,23 @@
     8. "scaleShift" contains the value of scale shift for Box-Cox transformation: 
 
     \code{transformationText(phenTestResult)} or \code{phenTestResult@scaleShift}
+ 
+    9. "transformationCode" contains the code of transformation. Possible values:
+    
+    0 - transformation is not applicable (methods "FE", "RR", "LR") or switched off by user
+    1 - transformation is not needed (1 is within the 95% confidence interval for lambda)
+    2 - log transformation
+    3 - power transformation
+    4 - transformation is not performed since optimal lambda value is not found  (-5 > lambda > 5)
+    
+    \code{transformationText(phenTestResult)} or \code{phenTestResult@transformationCode}
 
-    9. "parameters" contains the parameters used during method application, e.g. pThreshold for MM and TF: 
+    10. "parameters" contains the parameters used during method application, e.g. pThreshold for MM and TF: 
     
     \code{parameters(phenTestResult)}
     
     
-    10. Modelling/testing results are stored in the sections "analysisResults": 
+    11. Modelling/testing results are stored in the sections "analysisResults": 
     \code{analysisResults(phenTestResult)}
     
     The contents of the analysisResults slot depend on framework that was used.
@@ -104,6 +114,7 @@
             transformation performed}
         \item{\code{lambdaValue}:}{Object of class \code{"numeric"} ~~ Box-Cox transform lambda value}
         \item{\code{scaleShift}:}{Object of class \code{"numeric"} ~~ Box-Cox transform scale shift}
+        \item{\code{transformationCode}:}{Object of class \code{"numeric"} ~~ code explaining the transformation output}
         \item{\code{depVariable}:}{Object of class \code{"character"} ~~ dependent variable}
         \item{\code{refGenotype}:}{Object of class \code{"character"} ~~ reference genotype}
         \item{\code{testGenotype}:}{Object of class \code{"character"} ~~ test genotype}
