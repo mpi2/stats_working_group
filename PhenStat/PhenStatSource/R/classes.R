@@ -346,6 +346,13 @@ transformation = function(obj)
                 ", transformed=",obj@transformationRequired,
                 ", code=",obj@transformationCode,sep="")
         ,"lambda=NA, scaleShift=NA, transformed=FALSE, code=0")
+
+transformationJSON = function(obj) 
+  ifelse((obj@transformationCode!=0),
+         paste('"lambda value":',obj@lambdaValue,', "scale shift":',obj@scaleShift,                
+               ', "variable values are transformed":"',obj@transformationRequired,
+               '", "code":"',obj@transformationCode,'"',sep="")
+         ,'"lambda value":NA, "scale shift":NA, "transformed":"FALSE", "code":"0"')
 ##------------------------------------------------
 # Number of sexes
 setMethod("noSexes", signature(obj = "PhenTestResult"),
