@@ -371,7 +371,7 @@ JSONOutput <- function(phenTestResult, phenotypeThreshold=0.01)
     
     JSONOutput <- gsub("NA", "null", JSONOutput)
     JSONOutput <- gsub('"null"', "null", JSONOutput)
-    return(cat(paste("{",JSONOutput,"}",sep="")))
+    return(paste("{",JSONOutput,"}",sep=""))
 }
 
 #-------------------------------------------------------------------------------

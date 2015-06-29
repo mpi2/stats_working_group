@@ -218,7 +218,7 @@ classificationTag<-function(phenTestResult, userMode="summaryOutput",
                 if(all_p.value < phenotypeThreshold && 
                         male_p.value >= phenotypeThreshold && 
                         female_p.value >= phenotypeThreshold){
-                    if (phenTestResult$numberSexes==2)
+                    if (noSexes(phenTestResult)==2)
                         ChangeClassification <- paste("With phenotype threshold value",phenotypeThreshold, 
                             "- significant in combined dataset only")
                     else
