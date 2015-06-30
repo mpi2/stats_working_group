@@ -3,7 +3,8 @@
 \title{Method "getColumnBatchAdjusted"}
 \docType{methods}
 \description{
-    Method \code{getColumnBatchAdjusted} returns column of interest adjested for batch
+    Method \code{getColumnBatchAdjusted} returns column of interest 
+    adjusted for batch
 }
 \section{Methods}{
     \describe{       

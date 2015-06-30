@@ -183,6 +183,53 @@ setMethod("getColumnBatchAdjusted", signature(obj = "PhenList",columnName="chara
         }
         )
 ##------------------------------------------------
+# Column of interest adjusted for weight
+setGeneric("getColumnWeightBatchAdjusted",
+           function(obj,columnName)
+             standardGeneric("getColumnWeightBatchAdjusted"))
+setMethod("getColumnWeightBatchAdjusted", signature(obj = "PhenList",columnName="character"),
+          function(obj, columnName){
+            if (c(columnName) %in% colnames(getDataset(obj))){
+              columnOfInterest <- getDataset(obj)[,c(columnName)] 
+              weightBatchIn <- (multipleBatches(obj) && weightIn(obj))
+              weigthOnly <- (!(multipleBatches(obj)) && weightIn(obj))
+              batchOnly <- (multipleBatches(obj) && !(weightIn(obj)))
+              # Only batch is present 
+              if (batchOnly){
+                columnOfInterest <- getColumnBatchAdjusted(obj,columnName)
+              }
+              # Both batch and weight are in
+              if (weightBatchIn){
+                nullFormula=as.formula(paste(columnName, "Weight",  sep="~"))                
+                model.null=do.call("lme", args = list(nullFormula, 
+                                                      random=~1|Batch, 
+                                                      getDataset(obj), 
+                                                      na.action="na.exclude", 
+                                                      method="ML"))
+                # Find the depVariable column adjusted for the batch effect
+                columnOfInterest=resid(model.null)   
+              }
+              # Only weight is present
+              else {
+                if (weightOnly){
+                  nullFormula=as.formula(paste(columnName, "Weight",  sep="~"))  
+                  model_null <- do.call("gls", args=list(nullFormula,
+                                                         getDataset(obj),, 
+                                                         na.action="na.exclude", 
+                                                         method="ML"))
+                  # Find the depVariable column adjusted for the batch effect
+                  columnOfInterest=resid(model.null)   
+                }
+              }
+              
+            }
+            else {
+              columnOfInterest <- NULL
+            }
+            columnOfInterest
+          }
+)
+##------------------------------------------------
 # Variables
 setGeneric("getVariables",
         function(obj)
