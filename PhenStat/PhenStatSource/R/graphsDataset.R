@@ -67,15 +67,21 @@ boxplotSexGenotype<-function(phenList, depVariable=NULL,
     else {
         ## Plot creation
         numberofsexes <- length(levels(x$Sex))
+        if (is.numeric(x[ ,depVariable]))   
+          y_range <- c(min(x[ ,depVariable], na.rm=TRUE), 
+                       max((x[ ,depVariable]), na.rm=TRUE))
+        else
+          y_range <- c(1, length(levels(x[ ,depVariable])))
+        
         if(numberofsexes==2){
             Male <- subset(x, x$Sex=="Male")
-            Female <- subset(x, x$Sex=="Female")
+            Female <- subset(x, x$Sex=="Female")      
             op <- par(mfrow=c(1,2))
             boxplot(Male[ , depVariable]~Male$Genotype, 
-                    ylab=graphingName, xlab="Genotype")
+                    ylab=graphingName, xlab="Genotype",ylim=y_range)
             legend("topright", "Male", cex=1.3, bty="n")
             boxplot(Female[ , depVariable]~Female$Genotype, 
-                    ylab=graphingName, xlab="Genotype")
+                    ylab=graphingName, xlab="Genotype",ylim=y_range)
             legend("topright", "Female", cex=1.3, bty="n")
             par(op) 
             op_normal <- par(mfrow=c(1,1))
@@ -151,15 +157,21 @@ boxplotSexGenotypeBatchAdjusted<-function(phenList, depVariable=NULL,
         
         ## Plot creation
         numberofsexes <- length(levels(x$Sex))
+        if (is.numeric(x[ ,depVariable]))   
+          y_range <- c(min(x[ ,depVariable], na.rm=TRUE), 
+                       max((x[ ,depVariable]), na.rm=TRUE))
+        else
+          y_range <- c(1, length(levels(x[ ,depVariable])))
+        
         if(numberofsexes==2){
             Male <- subset(x, x$Sex=="Male")
-            Female <- subset(x, x$Sex=="Female")
+            Female <- subset(x, x$Sex=="Female")            
             op <- par(mfrow=c(1,2))
             boxplot(Male[ , depVariable]~Male$Genotype, 
-                    ylab=graphingName, xlab="Genotype")
+                    ylab=graphingName, xlab="Genotype", ylim=y_range)
             legend("topright", "Male", cex=1.3, bty="n")
             boxplot(Female[ , depVariable]~Female$Genotype, 
-                    ylab=graphingName, xlab="Genotype")
+                    ylab=graphingName, xlab="Genotype", ylim=y_range)
             legend("topright", "Female", cex=1.3, bty="n")
             par(op) 
             op_normal <- par(mfrow=c(1,1))
@@ -241,15 +253,21 @@ boxplotSexGenotypeWeightBatchAdjusted<-function(phenList, depVariable=NULL,
     
     ## Plot creation
     numberofsexes <- length(levels(x$Sex))
+    if (is.numeric(x[ ,depVariable]))   
+      y_range <- c(min(x[ ,depVariable], na.rm=TRUE), 
+                   max((x[ ,depVariable]), na.rm=TRUE))
+    else
+      y_range <- c(1, length(levels(x[ ,depVariable])))
+    
     if(numberofsexes==2){
       Male <- subset(x, x$Sex=="Male")
       Female <- subset(x, x$Sex=="Female")
       op <- par(mfrow=c(1,2))
       boxplot(Male[ , depVariable]~Male$Genotype, 
-              ylab=graphingName, xlab="Genotype")
+              ylab=graphingName, xlab="Genotype", ylim=y_range)
       legend("topright", "Male", cex=1.3, bty="n")
       boxplot(Female[ , depVariable]~Female$Genotype, 
-              ylab=graphingName, xlab="Genotype")
+              ylab=graphingName, xlab="Genotype",ylim=y_range)
       legend("topright", "Female", cex=1.3, bty="n")
       par(op) 
       op_normal <- par(mfrow=c(1,1))
@@ -330,10 +348,10 @@ boxplotSexGenotypeBatch<-function(phenList, depVariable=NULL,
         ## Plot creation
         numberofsexes <- length(levels(x$Sex))
         if (is.numeric(x[ ,depVariable]))   
-        y_range <- c(min(x[ ,depVariable], na.rm=TRUE), 
-                max((x[ ,depVariable]), na.rm=TRUE))
+          y_range <- c(min(x[ ,depVariable], na.rm=TRUE), 
+                  max((x[ ,depVariable]), na.rm=TRUE))
         else
-        y_range <- c(1, length(levels(x[ ,depVariable])))
+          y_range <- c(1, length(levels(x[ ,depVariable])))
         
         if(numberofsexes==2){
             Male <- subset(x, x$Sex=="Male")
