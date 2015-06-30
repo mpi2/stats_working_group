@@ -39,7 +39,8 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
     transformationCode <- 0
     columnOfBatch <- NULL
     columnOfWeight <- NULL
-    columnOfInterestAdjusted <- NULL
+    columnOfInterestBatchAdjusted <- NULL
+    columnOfInterestBatchWeightAdjusted <- NULL
     ## CHECK ARGUMENTS   
     
     # 1
@@ -139,7 +140,11 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
                 }
                 if (batchIn(phenList)){
                     # Adjusted for batch depVariable values WITHOUT transformation!
-                    columnOfInterestAdjusted=getColumnBatchAdjusted(phenList,depVariable)
+                    columnOfInterestBatchAdjusted <- getColumnBatchAdjusted(phenList,depVariable)
+                }
+                if (weightIn(phenList)){
+                  # Adjusted for weight and batch if present depVariable values WITHOUT transformation!
+                  columnOfInterestBatchWeightAdjusted <- getColumnWeightBatchAdjusted(phenList,depVariable)
                 }
             }
             else {
@@ -194,10 +199,16 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
                 columnNameOriginal <- paste(depVariable,"_original",sep="")
                 datasetToAnalyse[,columnNameOriginal] <- columnOfInterestOriginal
             }
-            if (!is.null(columnOfInterestAdjusted)) {
-                columnNameAdjusted <- paste(depVariable,"_adjusted",sep="")
-                datasetToAnalyse[,columnNameAdjusted] <- columnOfInterestAdjusted  
+            if (!is.null(columnOfInterestBatchAdjusted)) {
+                columnNameBatchAdjusted <- paste(depVariable,"_batch_adjusted",sep="")
+                datasetToAnalyse[,columnNameBatchAdjusted] <- columnOfInterestBatchAdjusted  
             }
+            if (!is.null(columnOfInterestBatchWeightAdjusted)) {
+              columnNameBatchWeightAdjusted <- paste(depVariable,"_batch_weight_adjusted",sep="")
+              datasetToAnalyse[,columnNameBatchWeightAdjusted] <- columnOfInterestBatchWeightAdjusted  
+            }
+            
+            
 
 
         phenListToAnalyse <- new("PhenList",datasetPL=datasetToAnalyse,
