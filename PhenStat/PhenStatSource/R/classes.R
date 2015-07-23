@@ -187,12 +187,14 @@ setMethod("getColumnBatchAdjusted", signature(obj = "PhenList",columnName="chara
 setGeneric("getColumnWeightBatchAdjusted",
            function(obj,columnName)
              standardGeneric("getColumnWeightBatchAdjusted"))
+
 setMethod("getColumnWeightBatchAdjusted", signature(obj = "PhenList",columnName="character"),
           function(obj, columnName){
+            columnOfInterest <- NULL
             if (c(columnName) %in% colnames(getDataset(obj))){
               columnOfInterest <- getDataset(obj)[,c(columnName)] 
               weightBatchIn <- (multipleBatches(obj) && weightIn(obj))
-              weigthOnly <- (!(multipleBatches(obj)) && weightIn(obj))
+              weightOnly <- (!(multipleBatches(obj)) && weightIn(obj))
               batchOnly <- (multipleBatches(obj) && !(weightIn(obj)))
               # Only batch is present 
               if (batchOnly){
@@ -214,17 +216,14 @@ setMethod("getColumnWeightBatchAdjusted", signature(obj = "PhenList",columnName=
                 if (weightOnly){
                   nullFormula=as.formula(paste(columnName, "Weight",  sep="~"))  
                   model_null <- do.call("gls", args=list(nullFormula,
-                                                         getDataset(obj),, 
-                                                         na.action="na.exclude", 
-                                                         method="ML"))
+                                                         getDataset(obj), 
+                                                         na.action="na.exclude"))
                   # Find the depVariable column adjusted for the batch effect
                   columnOfInterest=resid(model.null)   
                 }
               }
+
               
-            }
-            else {
-              columnOfInterest <- NULL
             }
             columnOfInterest
           }

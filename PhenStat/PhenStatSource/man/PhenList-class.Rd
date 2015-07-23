@@ -7,6 +7,7 @@
 \alias{hemiGenotype,PhenList-method}
 \alias{getColumn,PhenList,character-method}
 \alias{getColumnBatchAdjusted,PhenList,character-method}
+\alias{getColumnWeightBatchAdjusted,PhenList,character-method}
 \alias{getStat,PhenList-method}
 \alias{getVariables,PhenList-method}
 \alias{multipleBatches,PhenList-method}
@@ -81,6 +82,7 @@ The PhenList object can be created by using function \code{\link{PhenList}}.}
         \item{hemiGenotype}{(accessor): Returns hemi genotype if specified}
         \item{getColumn}{Returns specified column if exists}
         \item{getColumnBatchAdjusted}{Returns specified column adjusted for batch effect}
+        \item{getColumnWeightBatchAdjusted}{Returns specified column adjusted for batch and weight effects}
         \item{getStat}{Returns simple dataset statistics}
         \item{getVariables}{Returns dataset column names}
         \item{batchIn}{Returns TRUE if the batch is in the dataset, FALSE otherwise}

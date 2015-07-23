@@ -1,4 +1,4 @@
-\name{getColumnWeigthBatchAdjusted}
+\name{getColumnWeightBatchAdjusted}
 \alias{getColumnWeightBatchAdjusted}
 \title{Method "getColumnWeightBatchAdjusted"}
 \docType{methods}

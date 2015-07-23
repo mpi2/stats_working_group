@@ -385,3 +385,178 @@ categoricalBarplot<-function(phenTestResult,outputMessages=TRUE){
     
 }
 ##------------------------------------------------------------------------------
+## Similar to raw data boxplot: split by sex and genotype
+boxplotSexGenotypeResult<-function(phenTestResult, graphingName=NULL, outputMessages=TRUE){
+  stop_message <- ""
+  # Checks
+  if(is(phenTestResult,"PhenTestResult")) {
+    if((method(phenTestResult) %in% c("MM","TF"))){            
+      x <- analysedDataset(phenTestResult)
+      depVariable <- getVariable(phenTestResult)
+      if (is.null(graphingName))
+        graphingName <- depVariable
+    }
+    else {
+      stop_message <- "Error:\nThis plot can be created only within Mixed Model framework.\n"
+    }   
+  }
+  else{
+    stop_message <- "Error:\nPlease create a PhenTestResult object first.\n"
+  }
+  
+  
+  if (nchar(stop_message)>0){
+    if (outputMessages){
+      message(stop_message)
+      opt <- options(show.error.messages=FALSE)
+      on.exit(options(opt))
+      stop()
+    }
+    else {
+      stop(stop_message)
+    }
+  } 
+  else {
+    ## Plot creation
+    numberofsexes <- length(levels(x$Sex))
+    if (is.numeric(x[ ,depVariable]))   
+      y_range <- c(min(x[ ,depVariable], na.rm=TRUE), 
+                   max((x[ ,depVariable]), na.rm=TRUE))
+    else
+      y_range <- c(1, length(levels(x[ ,depVariable])))
+    
+    if(numberofsexes==2){
+      Male <- subset(x, x$Sex=="Male")
+      Female <- subset(x, x$Sex=="Female")      
+      op <- par(mfrow=c(1,2))
+      boxplot(Male[ , depVariable]~Male$Genotype, 
+              ylab=graphingName, xlab="Genotype",ylim=y_range)
+      legend("topright", "Male", cex=1.3, bty="n")
+      boxplot(Female[ , depVariable]~Female$Genotype, 
+              ylab=graphingName, xlab="Genotype",ylim=y_range)
+      legend("topright", "Female", cex=1.3, bty="n")
+      par(op) 
+      op_normal <- par(mfrow=c(1,1))
+      par(op_normal) 
+    }else{
+      op <- par(mfrow=c(1,1))
+      boxplot(x[ ,depVariable]~x$Genotype, ylab=graphingName, xlab="Genotype")  
+      par(op)  
+    }
+  }
+}
+##------------------------------------------------------------------------------
+## Similar to raw data boxplot: split by sex,genotype and batch 
+scatterplotSexGenotypeBatchResult<-function(phenTestResult, 
+                                      graphingName=NULL, outputMessages=TRUE){    
+  stop_message <- ""
+  # Checks
+  if(is(phenTestResult,"PhenTestResult")) {
+    if((method(phenTestResult) %in% c("MM","TF"))){            
+      x <- analysedDataset(phenTestResult)
+      depVariable <- getVariable(phenTestResult)
+      if (is.null(graphingName))
+        graphingName <- depVariable
+    }
+    else {
+      stop_message <- "Error:\nThis plot can be created only within Mixed Model framework.\n"
+    }   
+  }
+  else{
+    stop_message <- "Error:\nPlease create a PhenTestResult object first.\n"
+  }
+  
+  if (nchar(stop_message)>0){
+    if (outputMessages){
+      message(stop_message)
+      opt <- options(show.error.messages=FALSE)
+      on.exit(options(opt))
+      stop()
+    }
+    else {
+      stop(stop_message)
+    }
+  }
+  else {
+    ## Plot creation
+    numberofsexes <- length(levels(x$Sex))
+    if (is.numeric(x[ ,depVariable]))  
+      y_range <- c(min(x[ ,depVariable], na.rm=TRUE),
+                   max((x[ ,depVariable]), na.rm=TRUE))
+    else
+      y_range <- c(1, length(levels(x[ ,depVariable])))
+    
+    if(numberofsexes==2){
+      Male <- subset(x, x$Sex=="Male")
+      Female <- subset(x, x$Sex=="Female")
+      Male$Batch <- factor(Male$Batch)
+      Female$Batch <- factor(Female$Batch)
+      op <- par(mfrow=c(1,2))
+      stripchart(Male[ , depVariable]~Male$Batch, ,pch=1,vertical=T, 
+                 subset=(Male$Genotype==refGenotype(phenTestResult)),
+                 ylab=graphingName, ylim=y_range, xlab="Batch", xaxt='n')
+      points(Male[ , depVariable]~Male$Batch, 
+             subset=(Male$Genotype!=refGenotype(phenTestResult)), col="red")
+      legend("topright", "Male", cex=1.3, bty="n")
+      stripchart(Female[ , depVariable]~Female$Batch, ,pch=1,vertical=T, 
+                 subset=(Female$Genotype==refGenotype(phenTestResult)), 
+                 ylab=graphingName, ylim=y_range, xlab="Batch", xaxt='n')
+      points(Female[ , depVariable]~Female$Batch, 
+             subset=(Female$Genotype!=refGenotype(phenTestResult)), col="red")
+      legend("topright", "Female", cex=1.3, bty="n")
+      par(op)
+      op_normal <- par(mfrow=c(1,1))
+      par(op_normal)
+    }else{
+      op <- par(mfrow=c(1,1))
+      stripchart(x[ , depVariable]~x$Batch, ,pch=1,vertical=T, 
+                 subset=(x$Genotype==refGenotype(phenTestResult)),
+                 ylab=graphingName, ylim=y_range, xlab="Batch", xaxt='n')
+      points(x[ , depVariable]~x$Batch, 
+             subset=(x$Genotype!=refGenotype(phenTestResult)), col="red")
+      par(op)
+    }
+  }   
+}  
+##------------------------------------------------------------------------------
+## Simialr to raw data scatterplot: body weight versus dependant variable
+scatterplotGenotypeWeightResult<-function(phenTestResult, 
+                                    graphingName=NULL, outputMessages=TRUE){
+  stop_message <- ""
+  # Checks
+  if(is(phenTestResult,"PhenTestResult")) {
+    if((method(phenTestResult) %in% c("MM","TF"))){            
+      x <- analysedDataset(phenTestResult)
+      depVariable <- getVariable(phenTestResult)
+      if (is.null(graphingName))
+        graphingName <- depVariable
+    }
+    else {
+      stop_message <- "Error:\nThis plot can be created only within Mixed Model framework.\n"
+    }   
+  }
+  else{
+    stop_message <- "Error:\nPlease create a PhenTestResult object first.\n"
+  }
+    
+  if (nchar(stop_message)>0){
+    if (outputMessages){
+      message(stop_message)
+      opt <- options(show.error.messages=FALSE)
+      on.exit(options(opt))
+      stop()
+    }
+    else {
+      stop(stop_message)
+    }
+  } 
+  else {
+    ## Plot creation
+    model.formula <- as.formula(paste(depVariable, "~", 
+                                      paste("Weight", "Genotype", sep= "|")))
+    
+    scatterplot(data=x, model.formula, ylab=graphingName, 
+                pch=c(1,1),col=c("black","red"))
+  }
+}
+##------------------------------------------------------------------------------

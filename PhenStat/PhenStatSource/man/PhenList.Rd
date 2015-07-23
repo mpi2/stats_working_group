@@ -23,7 +23,7 @@
             outputMessages=TRUE, dataset.clean=TRUE, 
             dataset.colname.batch=NULL, dataset.colname.genotype=NULL, 
             dataset.colname.sex=NULL, dataset.colname.weight=NULL, 
-            dataset.values.missingValue=NULL, dataset.values.male=NULL, 
+            dataset.values.missingValue=" ", dataset.values.male=NULL, 
             dataset.values.female=NULL)
     
 }
