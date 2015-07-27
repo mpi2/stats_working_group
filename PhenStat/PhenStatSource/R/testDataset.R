@@ -29,7 +29,7 @@
 testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight", 
         outputMessages=TRUE, pThreshold=0.05, method="MM", callAll=TRUE, 
         keepList=NULL, dataPointsThreshold=4, RR_naturalVariation=95, 
-        RR_controlPointsThreshold=60, transformValues=TRUE)
+        RR_controlPointsThreshold=60, transformValues=FALSE)
 {
 
     stop_message <- ""
