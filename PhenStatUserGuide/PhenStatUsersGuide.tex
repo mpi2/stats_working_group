@@ -1742,7 +1742,7 @@ If a coefficient is positive, its transformed log value will be greater than one
 
 \section{Data Transformation}
 \label{section:transformation}
-The \textit{testDataset} function has an argument “transformValues" which can be set to TRUE or FALSE. By default the value is set to TRUE meaning to perform transformation if needed.
+The \textit{testDataset} function has an argument “transformValues" which can be set to TRUE or FALSE. By default the value is set to FALSE meaning NOT to perform transformation.
 
 The "MM" and "TF" regression methods make an assumption of normally distributed data. Unfortunately at times, a non-linear transformation is needed to improve the distribution of the data to improve the model fitting reliability. 
 The Box-Cox transformation (\cite{BoxCox}) represents a family of power transformations with a procedure to find the normalizing transformation for each variable. The procedure returns the optimal lambda value that specifies the transformation necessary and the procedure identifies the value by testing a variety of lambda values. The Box-Cox power transformation is not a guarantee for normality as the procedure looks to minimise standard deviation based on the assumption that the transformed data has the highest likelihood to be normally distributed when the standard deviation is the smallest. 
