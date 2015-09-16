@@ -1,5 +1,39 @@
 \name{PhenStat-NEWS}
 \title{PhenStat News}
+\section{CHANGES IN VERSION 2.3.1}{
+
+  \subsection{COMPATIBILITY ISSUES}{
+      
+        \itemize{            
+            \item The Box-Cox transformation is switched off by default. In order 
+            to swithc in on the \code{testDataset()} function's argument “transformValues" 
+            has to be set to TRUE.            
+        }
+    }  
+}
+
+\section{CHANGES IN VERSION 2.1.3}{
+    
+    \subsection{NEW FUNCTIONALITY}{        
+        \itemize{
+            \item Box-Cox transformation is applied when needed for the continues data. 
+            Transformation values are shown in output functions. Genotype effects are converted back into 
+            original scale if transformation was applied.
+            \item New statistical method is implemented for the categorical data - Logistic Regression.
+            \item New function is created \code{boxplotSexGenotypeBatchAdjusted()} that allows to evaluate Batch effect.
+            \item Major architectural changes: classes PhenList and PhenTestResult are S4 classes now. 
+            Different new methods are provided for the classes.
+            \item PhenTestResult object contains dataset \code{analysedDataset()} that was used for the analysis including original values, transformed values (if transformation has been applied) and values adjusted for batch effect.
+            
+        }
+    }
+    \subsection{COMPATIBILITY ISSUES}{    
+        \itemize{
+            \item The \code{vectorOutput()} has new element for transformation values which have increased its length. 
+            
+        }
+    }
+}
 \section{CHANGES IN VERSION 2.0.2}{
     
     \subsection{BUG FIXES}{
