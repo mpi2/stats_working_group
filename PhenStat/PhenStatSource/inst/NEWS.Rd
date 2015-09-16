@@ -1,6 +1,13 @@
 \name{PhenStat-NEWS}
 \title{PhenStat News}
 \section{CHANGES IN VERSION 2.3.1}{
+  \subsection{NEW FUNCTIONALITY}{        
+        \itemize{
+            \item New output format is added: JSON format. In odred to get output in JSON 
+            format apply JSONOutput with the PhenTestResult object as an argument.
+        }
+    }
+    
 
   \subsection{COMPATIBILITY ISSUES}{
       
