@@ -1019,7 +1019,7 @@ Example calculation:
 \fontsize{8pt}{12pt}\selectfont
 \begin{verbatim}
 > file <- system.file("extdata", "test1.csv", package="PhenStat")
-> test=PhenList(dataset=read.csv(file), testGenotype="Sparc/Sparc")
+> test <- PhenList(dataset=read.csv(file), testGenotype="Sparc/Sparc")
 ...
 > result <- testDataset(test,depVariable="Lean.Mass", 
 			method="MM", equation="withoutWeight", transformValues=FALSE)
@@ -1849,6 +1849,9 @@ The output of the \textit{testDataset} function is the \textit{PhenTestResult} o
 \end{itemize} 
 
 There is a number of useful methods available for the \textit{PhenTestResult} object, like \textit{batchIn} and \textit{weightIn} to figure out the batch/weight presence, \textit{noSexes} to get a number of sex values available in the dataset, etc.
+
+
+If transformation of original data has been performed it is useful to plot the dataset based graphics to see the transformation effect. In such a case method called \textit{analysedDatasetPhenList} will output the PhenList object with transformed values. This object is used as an input argument for the graphic functions.
 
 There is also a method specific for regression analysis methods (MM, TF, LR): \textit{getGenotypeEffect} to get report of biological effect and a method specific for the Fisher Exact Test based frameworks (FE, RR): \textit{getCountMatrices} to obtain all count matrices.
 

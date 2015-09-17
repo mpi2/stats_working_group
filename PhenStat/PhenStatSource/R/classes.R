@@ -399,6 +399,10 @@ transformationJSON = function(obj)
                ', "variable values are transformed":"',obj@transformationRequired,
                '", "code":"',obj@transformationCode,'"',sep="")
          ,'"lambda value":NA, "scale shift":NA, "transformed":"FALSE", "code":"0"')
+
+analysedDatasetPhenList = function(obj) PhenList(analysedDataset(obj),
+                                                             testGenotype = testGenotype(obj),
+                                                             refGenotype = refGenotype(obj))
 ##------------------------------------------------
 # Number of sexes
 setMethod("noSexes", signature(obj = "PhenTestResult"),
