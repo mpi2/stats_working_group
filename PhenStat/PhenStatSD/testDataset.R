@@ -225,7 +225,7 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
 		checkWeight <- columnChecks(x,"Weight",dataPointsThreshold)
 		
 		if (method %in% c("SD_continuous")) {
-			if (noSexes(PhenList)==1) {
+			if (noSexes(phenList)==1) {
 				stop_message <- paste(stop_message,"Error:\nFor the variable '", depVariable,"' only one sex is available.\n",sep="") 
 			}
 		}	
