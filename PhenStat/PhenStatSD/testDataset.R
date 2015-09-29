@@ -211,7 +211,7 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
 		
 		
 		
-		phenListToAnalyse <- new("PhenList",datasetPL=datasetToAnalyse,
+		phenListToAnalyse <- new("phenList",datasetPL=datasetToAnalyse,
 				refGenotype = refGenotype(phenList),
 				testGenotype = testGenotype(phenList),
 				hemiGenotype = hemiGenotype(phenList))
