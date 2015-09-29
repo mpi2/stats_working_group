@@ -43,25 +43,54 @@ source("testDataset.R")
 source("vectorOutputSD.R")
 source("MMFrameworkAssessSD.R")
 
+#debug(testDataset)
 
 setwd("X:\\2013\\BioconductorPackageTesting\\Dataset")
 data_typical=read.csv("MAHN_DEXAdata.csv")
 PhenObject=PhenList(data_typical, testGenotype="Mysm1/+", dataset.colname.sex="Gender", dataset.clean=TRUE,dataset.colname.batch="Assay.Date", dataset.colname.genotype="Genotype", dataset.colname.weight="Weight", dataset.values.male="Male", 		dataset.values.female="Female") 
-Modelfeatures=testDataset(PhenObject, depVariable="Bone.Mineral.Density", equation="withoutWeight")  
-
-Modelfeatures=testDataset(PhenObject, depVariable="Bone.Mineral.Density", equation="withoutWeight", method="SD_continuous")  
+Modelfeatures=testDataset(PhenObject, depVariable="Bone.Mineral.Density", equation="withoutWeight", method="MM")  
 Modelfeatures=testDataset(PhenObject, depVariable="Bone.Mineral.Density", equation="withWeight", method="SD_continuous")  
 
-data2=read.csv("MAHN_DEXAdataNoWeight.csv")
+summary(Modelfeatures@analysisResults$model.SDmodel_output)
+vectorOutputSD(Modelfeatures)   # problem not grabbing the right values
 
+undebug(testDataset)
+
+
+undebug(vectorOutputSD)
+
+#ruled 
+#table length is correct
+#components are in the same order
+
+Modelfeatures=testDataset(PhenObject, depVariable="Bone.Mineral.Density", equation="withoutWeight", method="SD_continuous")  
+
+#undebug(analysisResults)
+
+
+data2=read.csv("MAHN_DEXAdataNoWeight.csv")
 PhenObject=PhenList(data2, testGenotype="Mysm1/+", dataset.colname.sex="Gender", dataset.clean=TRUE,dataset.colname.batch="Assay.Date", dataset.colname.genotype="Genotype", dataset.colname.weight="Weight", dataset.values.male="Male", 		dataset.values.female="Female") 
 Modelfeatures=testDataset(PhenObject, depVariable="Bone.Mineral.Density", equation="withoutWeight")  
 Modelfeatures=testDataset(PhenObject, depVariable="Bone.Mineral.Density", equation="withoutWeight", method="SD_continuous")  
 Modelfeatures=testDataset(PhenObject, depVariable="Bone.Mineral.Density", equation="withWeight", method="SD_continuous")  
 
 
+setwd("X:\\2013\\BioconductorPackageTesting\\Dataset")
+data3= read.csv("MAHN_DEXAdataNoWeightNoFemale.csv")
+PhenObject=PhenList(data3, testGenotype="Mysm1/+", dataset.colname.sex="Gender", dataset.clean=TRUE,dataset.colname.batch="Assay.Date", dataset.colname.genotype="Genotype", dataset.colname.weight="Weight", dataset.values.male="Male", 		dataset.values.female="Female") 
+Modelfeatures=testDataset(PhenObject, depVariable="Bone.Mineral.Density", equation="withoutWeight")  
+Modelfeatures=testDataset(PhenObject, depVariable="Bone.Mineral.Density", equation="withoutWeight", method="SD_continuous")  
+Modelfeatures=testDataset(PhenObject, depVariable="Bone.Mineral.Density", equation="withWeight", method="SD_continuous")  
+
+data4=read.csv("MAHN_DEXAdataNoWeightNoKOFemale.csv")
+PhenObject=PhenList(data4, testGenotype="Mysm1/+", dataset.colname.sex="Gender", dataset.clean=TRUE,dataset.colname.batch="Assay.Date", dataset.colname.genotype="Genotype", dataset.colname.weight="Weight", dataset.values.male="Male", 		dataset.values.female="Female") 
+Modelfeatures=testDataset(PhenObject, depVariable="Bone.Mineral.Density", equation="withoutWeight")  
+Modelfeatures=testDataset(PhenObject, depVariable="Bone.Mineral.Density", equation="withoutWeight", method="SD_continuous")  
+Modelfeatures=testDataset(PhenObject, depVariable="Bone.Mineral.Density", equation="withWeight", method="SD_continuous")  
+
+#correctly halts the analysis. 
+
 #To do
-#1 check handles one sex dataset appropriately
-#2 double check correctly grabs data in the right places from various models
-#3 large scale run locally
+#1 double check correctly grabs data in the right places from various models
+#2 large scale run locally
 
