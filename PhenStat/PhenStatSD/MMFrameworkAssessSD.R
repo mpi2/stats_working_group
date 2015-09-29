@@ -725,7 +725,7 @@ finalModel_SDpipeline <- function(phenTestResult, outputMessages=TRUE)
 parserOutputSummarySD<-function(linearRegressionOutput)
 {
 	result <- linearRegressionOutput
-	modeloutput_summary <- summary(result$model.output)
+	modeloutput_summary <- summary(result$model.SDmodel_output)
 	
 	# Set all values to NA initially prior to selecting those relevant to the model 
 	genotype_estimate <- NA
@@ -750,21 +750,21 @@ parserOutputSummarySD<-function(linearRegressionOutput)
 	lengthoftable <- {
 		table_length <- NA        
 		if (result$equation=="withWeight"){
-			if(result$numberSexes==2){
+			
 				
 				table_length <- 5
 			}
 			else{
-				if(result$numberSexes==2){
+				
 					
 					table_length <- 4
 				}
 				
-			}
+			table_length
 		}	
-		table_length
 		
-	}
+		
+	#}
 	
 	# Decision tree to pull the information depending on the final model fitted
 	# note position is dependent on equation and presence of effects
