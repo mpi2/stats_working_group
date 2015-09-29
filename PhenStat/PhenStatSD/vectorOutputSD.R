@@ -23,13 +23,15 @@ vectorOutputSD <- function(phenTestResult, phenotypeThreshold=0.01)
 	analysisResults <- analysisResults(phenTestResult)       
 	noSexes <- length(levels(analysedDataset(phenTestResult)$Sex))
 	
-	if (method(phenTestResult) %in% c("MM","TF", "SD")) {        
+	if (method(phenTestResult) %in% c("MM","TF", "SD", "SD_continuous")) {        
 		equation <- switch(analysisResults$equation,
 				withoutWeight = {"equation withoutWeight"},withWeight = {"equation withWeight"})
 		
 		framework <- switch(method(phenTestResult),
 				MM = "Mixed Model framework",
-				TF = "Time as Fixed Effect framework")
+				TF = "Time as Fixed Effect framework",
+		SD_continuous = "SD continuous pipeline"
+		)
 		
 		fittingMethod <- "generalized least squares, "
 		if (analysisResults$model.effect.batch && method(phenTestResult)=="MM")
