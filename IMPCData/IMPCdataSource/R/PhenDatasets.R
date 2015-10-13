@@ -37,10 +37,10 @@ getIMPCDataset <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NUL
                     "&pipeline_stable_id=", PipelineID,
                     "&procedure_stable_id=", ProcedureID,
                     "&parameter_stable_id=", ParameterID,
-                    "&allele_accession=", AlleleID, 
+                    "&allele_accession_id=", AlleleID, 
                     add_this,sep=""))
     
-    #print(url)
+    print(url)
     tryCatch(
     {
         df <- read.csv(url,sep=",")

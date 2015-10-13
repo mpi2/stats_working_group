@@ -1,8 +1,8 @@
 Package: IMPCdata
 Type: Package
 Title: Retrieves data from IMPC database
-Version: 0.99.1
-Date: 2014-09-16
+Version: 1.2.1
+Date: 2015-10-13
 Author: Natalja Kurbatova, Jeremy Mason
 Maintainer: Jeremy Mason <jmason@ebi.ac.uk>
 Depends: R (>= 2.3.0)
