@@ -73,7 +73,7 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
 	}
 	
 	# 5
-	if (!(method %in% c("MM","FE","RR","TF","LR", "SD_continuous"))){
+	if (!(method %in% c("MM","FE","RR","TF","LR", "SD_continuous", "SD_categorical"))){
 		stop_message <- paste(stop_message,"Error:\nMethod define in the 'method' argument '",
 				method,"' is not supported.\nAt the moment we are supporting 'MM' ", 
 				"value for Mixed Model framework, 'FE' value for Fisher Exact Test framework",
@@ -224,7 +224,7 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
 		
 		checkWeight <- columnChecks(x,"Weight",dataPointsThreshold)
 		
-		if (method %in% c("SD_continuous")) {
+		if (method %in% c("SD_continuous", "SD_categorical")) {
 			if (noSexes(phenList)==1) {
 				stop_message <- paste(stop_message,"Error:\nFor the variable '", depVariable,"' only one sex is available.\n",sep="") 
 			}
@@ -501,6 +501,26 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
 		}
 		
 	}
+	
+	else if (method=="SD_categorical")    { 
+		if (callAll){
+			if (outputMessages)
+				message(paste("Information:\nPerform all Logistic Regression Direct Assessment stages: startModel and finalModel.\n",sep=""))
+		}    
+			
+		
+		if (outputMessages)
+			message(paste("Information:\nMethod: Logistic REgression SD direct assessment.\n",sep="")) 
+		
+		result <- startLRModel_SD(phenListToAnalyse, depVariable, outputMessages=TRUE, pThreshold=0.05)
+		
+		## Perform all framework methods 
+		if (callAll && is(result,"PhenTestResult")){
+			result <- finalLRModel_SD(result, outputMessages)  #problem here
+		}
+		
+	}
+	
 	
 	else if (method=="TF") {
 		if (callAll){

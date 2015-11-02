@@ -30,7 +30,8 @@ vectorOutputSD <- function(phenTestResult, phenotypeThreshold=0.01)
 		framework <- switch(method(phenTestResult),
 				MM = "Mixed Model framework",
 				TF = "Time as Fixed Effect framework",
-		SD_continuous = "SD continuous pipeline"
+				SD_continuous = "SD continuous pipeline",
+				
 		)
 		
 		fittingMethod <- "generalized least squares, "
@@ -386,6 +387,83 @@ vectorOutputSD <- function(phenTestResult, phenotypeThreshold=0.01)
 				"Intercept standard error",
 				"Interaction included",
 				"Interaction p-val", #24
+				"Sex FvKO estimate",
+				"Sex FvKO standard error",
+				"Sex FvKO p-val",
+				"Sex MvKO estimate",
+				"Sex MvKO standard error",
+				"Sex MvKO p-val",
+				"Classification tag",
+				"Transformation",
+				"Additional information")
+	
+		}else if (method(phenTestResult) == "SD_categorical"){        
+		
+		classificationValue <- NA
+		#playing1 <- analysisResults(phenTestResult)  
+		
+		vectorOutput <- c(
+				"Logistic Regression framework - direct assessment",
+				as.character(depVariable), 
+				"NA",# as.character(analysisResults$model.effect.batch), 
+				"NA",  #variance assessment
+				as.character(analysisResults$Genotype.model.output.pVal), 
+				as.character(analysisResults$SD.model.output.pVal), 
+				as.character(analysisResults$Sex.model.output.pVal), 
+				#as.character(analysisResults$model.output.summary["genotype_estimate"]), 
+				#as.character(analysisResults$model.output.summary["genotype_estimate_SE"]),  
+				#as.character(analysisResults$model.output.summary["genotype_p_value"]),
+				"NA" ,  # percentage change
+				as.numeric(analysisResults$model.output.summary["sex_estimate"]), 
+				as.numeric(analysisResults$model.output.summary["sex_estimate_SE"]),  
+				as.numeric(analysisResults$model.output.summary["sex_p_value"]), 
+				"NA",   # weight estimate
+				"NA",  # weight SE
+				"NA", # weight p val
+				#as.character(analysisResults$model.output.quality), 
+				as.character(phenTestResult@refGenotype),
+				as.character(phenTestResult@testGenotype),
+				as.character(analysisResults$model.output.summary["intercept_estimate"]), 
+				as.character(analysisResults$model.output.summary["intercept_estimate_SE"]), 
+				"NA",   #as.character(analysisResults$model.effect.interaction),
+				"NA",   #as.character(analysisResults$model.output.interaction),
+				"NA",   #as.character(analysisResults$model.output.summary["sex_FvKO_estimate"]), 
+				"NA",   #as.character(analysisResults$model.output.summary["sex_FvKO_SE"]), 
+				"NA",   #as.character(analysisResults$model.output.summary["sex_FvKO_p_value"]),  
+				"NA",   #as.character(analysisResults$model.output.summary["sex_MvKO_estimate"]),  
+				"NA",   #as.character(analysisResults$model.output.summary["sex_MvKO_SE"]), 
+				"NA",   #as.character(analysisResults$model.output.summary["sex_MvKO_p_value"]),
+				"NA", #as.character(classificationValue),
+				"lambda=NA, scaleShift=NA",
+				"NA" )  
+		
+		names(vectorOutput) <- c("Method",
+				"Dependent variable",
+				"Batch included",
+				"Residual variances homogeneity",
+				"Genotype contribution",
+				"SD contribution",
+				"Sex contribution",
+				#"Genotype estimate",
+				#"Genotype standard error",
+				#"Genotype p-Val",
+				"Genotype percentage change",
+				"Sex estimate",
+				"Sex standard error",
+				"Sex p-val", 
+				"Weight estimate",
+				"Weight standard error",
+				"Weight p-val",
+				"Gp1 genotype",
+				#"Gp1 Residuals normality test", 
+				"Gp2 genotype",
+				#"Gp2 Residuals normality test",
+				#"Blups test",
+				#"Rotated residuals normality test", 
+				"Intercept estimate",  #not getting these
+				"Intercept standard error",  ##not getting these
+				"Interaction included",  ###not getting these
+				"Interaction p-val",   ## not getting these
 				"Sex FvKO estimate",
 				"Sex FvKO standard error",
 				"Sex FvKO p-val",
