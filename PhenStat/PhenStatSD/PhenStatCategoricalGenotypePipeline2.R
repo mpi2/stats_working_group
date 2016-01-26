@@ -345,7 +345,7 @@ Cat_GenotypeSDeffect_pipeline2<-function(df,dependentVariable, ZygosityToTest, r
 #Version without tryCatch management of errors	for jeremy mason
 Cat_GenotypeSDeffect_pipeline2v2<-function(df,dependentVariable, ZygosityToTest, refGenotype="WT"){
 	
-	test=PhenList(df, testGenotype=ZygosityToTest, refGenotype=refGenotype, dataset.clean=TRUE, dataset.colname.batch="Assay.Date",  dataset.colname.genotype="Zygosity", outputMessages=FALSE)
+	test=PhenList(df, testGenotype=ZygosityToTest, refGenotype=refGenotype, dataset.clean=TRUE, dataset.colname.batch="Assay.Date",  dataset.colname.genotype="Genotype", outputMessages=FALSE)
 		
 				# runs the PhenStat FE method
 				result=testDataset(phenList=test, depVariable=dependentVariable, outputMessages=FALSE, pThreshold=0.05, method="FE", transformValues=FALSE)
