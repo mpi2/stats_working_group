@@ -68,13 +68,18 @@ startModel <- function(phenList, depVariable, equation="withWeight",
     # Averages for percentage changes - is the ratio of the genotype effect for a sex relative to 
     # the wildtype signal for that variable for that sex - calculation        
     WT <- subset(x,x$Genotype==refGenotype(phenList))
-    mean_all <- mean(WT[,c(depVariable)],na.rm=TRUE)  
+    #mean_all <- mean(WT[,c(depVariable)],na.rm=TRUE)  
+    mean_all <- mean(x[,c(depVariable)],na.rm=TRUE)  
     mean_list <- c(mean_all)  
     if (numberofsexes==2){  
-        WT_f <- subset(WT,WT$Sex=="Female")
-        WT_m <- subset(WT,WT$Sex=="Male")
-        mean_f <- mean(WT_f[,c(depVariable)],na.rm=TRUE)
-        mean_m <- mean(WT_m[,c(depVariable)],na.rm=TRUE)
+        #WT_f <- subset(WT,WT$Sex=="Female")
+        #WT_m <- subset(WT,WT$Sex=="Male")
+        #mean_f <- mean(WT_f[,c(depVariable)],na.rm=TRUE)
+        #mean_m <- mean(WT_m[,c(depVariable)],na.rm=TRUE)
+        all_f <- subset(x,x$Sex=="Female")
+        all_m <- subset(x,x$Sex=="Male")
+        mean_f <- mean(all_f[,c(depVariable)],na.rm=TRUE)
+        mean_m <- mean(all_m[,c(depVariable)],na.rm=TRUE)
         mean_list <- c(mean_all,mean_f,mean_m)  
     }
     
@@ -611,7 +616,7 @@ finalModel <- function(phenTestResult, outputMessages=TRUE)
                             denominator_f <- linearRegressionOutput$model.output.summary['intercept_estimate']
                             denominator_m <- linearRegressionOutput$model.output.summary['intercept_estimate'] +
                             linearRegressionOutput$model.output.summary['sex_estimate']
-                            demoninator_f <- denominator
+                            denominator_f <- denominator
                             denominator_m <- denominator
                             ratio_f <- linearRegressionOutput$model.output.summary['sex_FvKO_estimate']/denominator_f                       
                             ratio_m <- linearRegressionOutput$model.output.summary['sex_MvKO_estimate']/denominator_m
@@ -627,7 +632,7 @@ finalModel <- function(phenTestResult, outputMessages=TRUE)
                             denominator_f <- linearRegressionOutput$model.output.summary['intercept_estimate']
                             denominator_m <- linearRegressionOutput$model.output.summary['intercept_estimate'] +
                             linearRegressionOutput$model.output.summary['sex_estimate']
-                            demoninator_f <- denominator
+                            denominator_f <- denominator
                             denominator_m <- denominator
                             ratio_f <- linearRegressionOutput$model.output.summary['genotype_estimate']/denominator_f                        
                             ratio_m <- linearRegressionOutput$model.output.summary['genotype_estimate']/denominator_m 
@@ -644,7 +649,7 @@ finalModel <- function(phenTestResult, outputMessages=TRUE)
                         mean_list <- linearRegressionOutput$model.output.averageRefGenotype
                         denominator_f <- mean_list[2]
                         denominator_m <- mean_list[3]
-                        demoninator_f <- denominator
+                        denominator_f <- denominator
                         denominator_m <- denominator
                         if (!is.na(linearRegressionOutput$model.output.summary['sex_estimate']) &&
                         !is.na(linearRegressionOutput$model.output.summary['sex_FvKO_estimate']))
