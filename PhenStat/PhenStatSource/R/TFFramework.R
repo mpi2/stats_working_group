@@ -765,7 +765,8 @@ finalTFModel <- function(phenTestResult, outputMessages=TRUE)
 
     # Percentage changes - is the ratio of the genotype effect for a sex relative to 
     # the wildtype signal for that variable for that sex - calculation   
-
+    mean_list <- linearRegressionOutput$model.output.averageRefGenotype
+    denominator <- mean_list[1]
     if(numberofSexes==2){
         # without weight
         if (is.na(linearRegressionOutput$model.output.summary['weight_estimate'])){ 
@@ -775,12 +776,14 @@ finalTFModel <- function(phenTestResult, outputMessages=TRUE)
                 denominator_f <- linearRegressionOutput$model.output.summary['intercept_estimate']
                 denominator_m <- linearRegressionOutput$model.output.summary['intercept_estimate']+
                 linearRegressionOutput$model.output.summary['sex_estimate']
+                demoninator_f <- denominator
+                denominator_m <- denominator
                 ratio_f <- linearRegressionOutput$model.output.summary['sex_FvKO_estimate']/denominator_f                       
                 ratio_m <- linearRegressionOutput$model.output.summary['sex_MvKO_estimate']/denominator_m 
             }
             else if (!is.na(linearRegressionOutput$model.output.summary['sex_FvKO_estimate']))
             {
-                denominator <- linearRegressionOutput$model.output.summary['intercept_estimate']
+                #denominator <- linearRegressionOutput$model.output.summary['intercept_estimate']
                 ratio_f <- linearRegressionOutput$model.output.summary['sex_FvKO_estimate']/denominator                            
                 ratio_m <- linearRegressionOutput$model.output.summary['sex_MvKO_estimate']/denominator            
             }
@@ -789,12 +792,14 @@ finalTFModel <- function(phenTestResult, outputMessages=TRUE)
                 denominator_f <- linearRegressionOutput$model.output.summary['intercept_estimate']
                 denominator_m <- linearRegressionOutput$model.output.summary['intercept_estimate']+
                 linearRegressionOutput$model.output.summary['sex_estimate']
+                demoninator_f <- denominator
+                denominator_m <- denominator
                 ratio_f <- linearRegressionOutput$model.output.summary['genotype_estimate']/denominator_f                        
                 ratio_m <- linearRegressionOutput$model.output.summary['genotype_estimate']/denominator_m 
             }
             else
             {
-                denominator <- linearRegressionOutput$model.output.summary['intercept_estimate']
+                #denominator <- linearRegressionOutput$model.output.summary['intercept_estimate']
                 ratio_f <- linearRegressionOutput$model.output.summary['genotype_estimate']/denominator                            
                 ratio_m <- ratio_f                      
             }
@@ -804,6 +809,8 @@ finalTFModel <- function(phenTestResult, outputMessages=TRUE)
             mean_list <- linearRegressionOutput$model.output.averageRefGenotype
             denominator_f <- mean_list[2]
             denominator_m <- mean_list[3]
+            demoninator_f <- denominator
+            denominator_m <- denominator
             if (!is.na(linearRegressionOutput$model.output.summary['sex_estimate']) &&
             !is.na(linearRegressionOutput$model.output.summary['sex_FvKO_estimate']))
             {
@@ -827,7 +834,7 @@ finalTFModel <- function(phenTestResult, outputMessages=TRUE)
     else{
         # without weight
         if (is.na(linearRegressionOutput$model.output.summary['weight_estimate'])){ 
-            denominator <- linearRegressionOutput$model.output.summary['intercept_estimate']
+            #denominator <- linearRegressionOutput$model.output.summary['intercept_estimate']
             ratio_f <- linearRegressionOutput$model.output.summary['genotype_estimate']/denominator                            
         }
         # with weight
