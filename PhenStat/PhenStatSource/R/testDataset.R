@@ -31,7 +31,6 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
         keepList=NULL, dataPointsThreshold=4, RR_naturalVariation=95, 
         RR_controlPointsThreshold=60, transformValues=FALSE)
 {
-
     stop_message <- ""
     transformationRequired <- FALSE
     lambdaValue <- NA
@@ -442,7 +441,7 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
             stop()
         }
         else {
-            stop(stop_message)
+            stop()
         }
     }
     
