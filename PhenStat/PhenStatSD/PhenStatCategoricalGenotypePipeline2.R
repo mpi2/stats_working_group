@@ -339,7 +339,7 @@ Cat_GenotypeSDeffect_pipeline2<-function(df,dependentVariable, ZygosityToTest, r
 							filename=paste(paste(dependentVariable,ZygosityToTest, "Failure",  sep="_"), "csv", sep=".")
 							write.csv(x=df, file=filename)
 						})	
-			return(CombinedResults)
+			return(as.numeric(CombinedResults))
 }
 	
 #Version without tryCatch management of errors	for jeremy mason
@@ -416,5 +416,5 @@ Cat_GenotypeSDeffect_pipeline2v2<-function(df,dependentVariable, ZygosityToTest,
 				CombinedResults=c(Stage1_MH, CIoutput,Stage2_InteractionTest,  CI_stage2_output, Stage2_zelen)
 				#print(CombinedResults)
 				
-				return(CombinedResults)
+				return(as.numeric(CombinedResults))
 }						
