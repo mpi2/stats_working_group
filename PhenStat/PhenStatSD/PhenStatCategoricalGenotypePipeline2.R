@@ -56,6 +56,107 @@ LR_KOdata<-function(KOdata, depVariableString){
 }
 
 
+
+###LR_KOalpha star  p value which is the most extreme value possible arising as a function of the number of abnormal calls and number of readings taken. 
+
+##Using the annotation used within this code:
+#' Females:             Males: 
+#'   
+#' |  |KO  |WT  |    |  |  |KO  |WT  |    |
+#' |--|:--:|:--:|:--:|  |--|:--:|:--:|:--:|
+#' |1 |y_f |    |yx_f|  |1 |y_m |    |yx_m|
+#' |0 |    |    |    |  |0 |    |    |    |
+#' |  |n2_f|n1_f|    |  |  |n2_m|n1_m|    |
+
+##The 2 by 2 table for stage 2 would be: 
+#' |  |KO _M |KO_F  |  
+#' |--|:-  -:|:--:  |
+#' |1 |y_m   |  y_f |  
+#' |0 |      |      |      
+#' |  |n2_m  |n2_f  |    
+
+
+LR_KOalphaStar<-function(y_m, y_f, n2_m, n2_f){
+	
+	#build a dataframe based on the most extreme values being loaded into the males 	
+	if((y_m+y_f)<=n2_m){  			#number of abnormalities is less than the number of male mice
+		
+		#' |  |KO _M                |KO_F     |  
+		#' |--|                     |         |
+		#' |1 |(y_m +y_f )          |         | 
+		#' |0 |(n2_m)-(y_m +y_f )   |n2_f     |    		
+		
+		male_df <- data.frame(AbnormalityCall=c(rep(x=0, times=((n2_m)-(y_m +y_f ))), rep(x=1, times=(y_m +y_f ))), Sex=rep(x="Male", times=n2_m))
+		female_df <- data.frame(AbnormalityCall=rep(x=0, times=n2_f), Sex=rep(x="Female", times=n2_f))
+		male_extreme=rbind(male_df, female_df)
+		
+	}else { #number of abnormalities is greater than the number of male mice
+		#if	((y_m+y_f)>n2_m)	
+		#' |  |KO _M          |KO_F                    |  
+		#' |--|               |                        |
+		#' |1 |n2_m	          |(y_m+y_f)-n2_m          |
+		#' |0 |		   	   	|n2_f- ((y_m+y_f)-n2_m )   |  
+		
+		male_df <- data.frame(AbnormalityCall=rep(x=1, times=n2_m), Sex=rep(x="Male", times=n2_m))
+		female_df <- data.frame(AbnormalityCall=c(rep(x=1, times=((y_m+y_f)-n2_m)), rep(x=0, times=(n2_f- ((y_m+y_f)-n2_m )))), Sex=rep(x="Female", times=n2_f))
+		male_extreme=rbind(male_df, female_df)	
+	}		
+	require(logistf)
+	
+	Signal2=length(levels(as.factor(male_extreme[ ,"AbnormalityCall"]))) ##assessing whether sufficient signal within the male_extreme table to allow model fitting
+	
+	if(Signal2==2){
+		
+		formula_full_stage2=model_Formula(modelType="full", depVariableString="AbnormalityCall")  #returns the model formula Y~Sex
+		model_full_stage2 <- do.call("logistf",	args=list(formula_full_stage2, data=male_extreme, na.action="na.omit"))  #fits the test model to the male extreme data
+		Male_extreme_pval=logistftest(model_full_stage2)$prob   # strategy needed to test effect  as you cannot specify an intercept only model with logistf you cannot anova(test, null)
+		
+	}else{
+		Male_extreme_pval=1  #when there is no abnormality signal returns a p value of 1 	
+	}		
+	#build a dataframe based on the most extreme values being loaded into the females 	
+	if((y_m+y_f)<=n2_f){  			#number of abnormalities is less than the number of female mice
+		
+		#' |  |KO _M         |KO_F              |  
+		#' |--|              |                  |
+		#' |1 |              |(y_m +y_f )       | 
+		#' |0 |(n2_m)        |n2_f-(y_m +y_f )  |     
+		female_df <- data.frame(AbnormalityCall =c(rep(x=0, times=(n2_f-(y_m +y_f ))), rep(x=1, times=(y_m +y_f ))), Sex=rep(x="Female", times=n2_f))
+		male_df <- data.frame(AbnormalityCall =rep(x=0, times=n2_m), Sex=rep(x="Male", times=n2_m))
+		female_extreme=rbind(male_df, female_df)
+		
+		
+	}else { #number of abnormalities is greater than the number of female mice
+		#if	((y_m+y_f)>n2_f)	
+		
+		#' |  |KO _M        		  |KO_F                    |  
+		#' |--|              		  |                        |
+		#' |1 |(y_m+y_f)-n2_f 	      |n2_f                    |
+		#' |0 |	n2_m-((y_m+y_f)-n2_f) |	                       |  
+		
+		female_df <- data.frame(AbnormalityCall=rep(x=1, times=n2_f), Sex=rep(x="Female", times=n2_m))
+		male_df <- data.frame(AbnormalityCall=c(rep(x=1, times=((y_m+y_f)-n2_m)), rep(x=0, times=(n2_m-((y_m+y_f)-n2_f )))), Sex=rep(x="Male", times=n2_f))
+		female_extreme=rbind(male_df, female_df)	
+	}
+	
+	Signal2=length(levels(as.factor(female_extreme[ ,"AbnormalityCall"]))) ##assessing whether sufficient signal within the female_extreme table to allow model fitting
+	if(Signal2==2){	
+		formula_full_stage2=model_Formula(modelType="full", depVariableString="AbnormalityCall")  #returns the model formula Y~Sex
+		model_full_stage2 <- do.call("logistf",	args=list(formula_full_stage2, data=female_extreme, na.action="na.omit"))  #fits the test model to the female extreme data
+		Female_extreme_pval=logistftest(model_full_stage2)$prob   # strategy needed to test effect  as you cannot specify an intercept only model with logistf you cannot anova(test, null)	
+	}else{
+		Female_extreme_pval=1  #when there is no abnormality signal returns a p value of 1 	
+	}		
+	output=min(Male_extreme_pval, Female_extreme_pval)
+	#names(output) = "LR_KO_alphaStar"
+	return(output)	
+}
+
+
+
+
+
+
 #' Notations
 #'  
 #' Females:             Males: 
@@ -298,6 +399,11 @@ Cat_GenotypeSDeffect_pipeline2<-function(df,dependentVariable, ZygosityToTest, r
 							KOdatasetOnly=subset(result@analysedDataset, result@analysedDataset$Genotype!="WT")  #prepare knockout data for stage 2 function
 							Stage2_InteractionTest=LR_KOdata(KOdatasetOnly, depVariableString=dependentVariable)
 							
+							#stage 2 testing: LR_KO alpha star p value
+							LR_KOalphaStar=LR_KOalphaStar(y_m=allCountMatrices$male[2,2], y_f=allCountMatrices$female[2,2], n2_m=(allCountMatrices$male[2,2]+allCountMatrices$male[1,2]), n2_f=(allCountMatrices$female[2,2]+allCountMatrices$female[1,2]))
+							names(LR_KOalphaStar)	=c("LR_KOalphaStar")					
+							
+							
 							#stage 1 testing: MH_test
 							Stage1_MH=MH_test(y_f=allCountMatrices$female[2,2], yx_f=(allCountMatrices$female[2,2]+allCountMatrices$female[2,1]), n2_f=(allCountMatrices$female[2,2]+allCountMatrices$female[1,2]), n1_f=(allCountMatrices$female[1,1]+allCountMatrices$female[2,1]), y_m =allCountMatrices$male[2,2], yx_m=(allCountMatrices$male[2,2]+allCountMatrices$male[2,1]), n2_m=(allCountMatrices$male[2,2]+allCountMatrices$male[1,2]), n1_m =(allCountMatrices$male[1,1]+allCountMatrices$male[2,1]), example = F)			
 							names(Stage1_MH)=c("MH_alpha_star", "MH_pv", "Stage1_MH_midpv")			
@@ -330,7 +436,7 @@ Cat_GenotypeSDeffect_pipeline2<-function(df,dependentVariable, ZygosityToTest, r
 							names(CI_stage2_output)=c("Stage2DiffAbRate", "Stage2lower95CI", "Stage2upper95CI" )
 
 							
-							CombinedResults=c(Stage1_MH, CIoutput,Stage2_InteractionTest,  CI_stage2_output, Stage2_zelen)
+							CombinedResults=c(Stage1_MH, CIoutput,Stage2_InteractionTest,  CI_stage2_output, Stage2_zelen, LR_KOalphaStar)
 							#print(CombinedResults)
 							
 						},					
@@ -381,6 +487,11 @@ Cat_GenotypeSDeffect_pipeline2v2<-function(df,dependentVariable, ZygosityToTest,
 				KOdatasetOnly=subset(result@analysedDataset, result@analysedDataset$Genotype!="WT")  #prepare knockout data for stage 2 function
 				Stage2_InteractionTest=LR_KOdata(KOdatasetOnly, depVariableString=dependentVariable)
 				
+				#stage 2 testing: LR_KO alpha star p value
+				LR_KOalphaStar=LR_KOalphaStar(y_m=allCountMatrices$male[2,2], y_f=allCountMatrices$female[2,2], n2_m=(allCountMatrices$male[2,2]+allCountMatrices$male[1,2]), n2_f=(allCountMatrices$female[2,2]+allCountMatrices$female[1,2]))
+				names(LR_KOalphaStar)	=c("LR_KOalphaStar")					
+				
+				
 				#stage 1 testing: MH_test
 				Stage1_MH=MH_test(y_f=allCountMatrices$female[2,2], yx_f=(allCountMatrices$female[2,2]+allCountMatrices$female[2,1]), n2_f=(allCountMatrices$female[2,2]+allCountMatrices$female[1,2]), n1_f=(allCountMatrices$female[1,1]+allCountMatrices$female[2,1]), y_m =allCountMatrices$male[2,2], yx_m=(allCountMatrices$male[2,2]+allCountMatrices$male[2,1]), n2_m=(allCountMatrices$male[2,2]+allCountMatrices$male[1,2]), n1_m =(allCountMatrices$male[1,1]+allCountMatrices$male[2,1]), example = F)			
 				names(Stage1_MH)=c("MH_alpha_star", "MH_pv", "Stage1_MH_midpv")			
@@ -413,7 +524,7 @@ Cat_GenotypeSDeffect_pipeline2v2<-function(df,dependentVariable, ZygosityToTest,
 				names(CI_stage2_output)=c("Stage2DiffAbRate", "Stage2lower95CI", "Stage2upper95CI" )
 				
 				
-				CombinedResults=c(Stage1_MH, CIoutput,Stage2_InteractionTest,  CI_stage2_output, Stage2_zelen)
+				CombinedResults=c(Stage1_MH, CIoutput,Stage2_InteractionTest,  CI_stage2_output, Stage2_zelen, LR_KOalphaStar)
 				#print(CombinedResults)
 				
 				return(as.numeric(CombinedResults))
