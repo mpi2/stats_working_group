@@ -12,7 +12,7 @@
 \usepackage{float}
 \usepackage{rotating}
 \usepackage{array}
-
+\usepackage[dvipsnames]{xcolor}
 
 %opening
 
@@ -368,7 +368,7 @@ Alternatively you can define 'hemiGenotype' and 'testGenotype' arguments to rela
 \end{verbatim}
 \endgroup
 
-Filtering also takes place when there are records that do not have at least two records in the dataset with the same genotype and sex values. 
+Filtering also takes place when there are records that do not have at least two records in the dataset with the same genotype and sex values. This type of filtering is needed to successfully process a dataset with Mixed Model, Time Fixed Effect and Logistic Regression frameworks. However, in some cases it is beneficial to process dataset with all genotype/sex records by using Fisher Exact Test and Reference Range Plus frameworks. Unfiltered dataset is stored within \textit{PhenList} object to allow such processing (see p.\pageref{specificArguments}).    
 
 Consider the following example of the genotype and sex values in the dataset:
 \begin{table}[!h]
@@ -376,16 +376,15 @@ Consider the following example of the genotype and sex values in the dataset:
 \begin{tabular}{| l | l | l | }
   \hline
 Sex&Reference genotype&Test genotype\\\hline
-Female&+\slash +&Mysm1\slash +\\
-Male&+\slash +&Mysm1\slash +\\
-unsexed& &Mysm1\slash + (1 record only)\\
+Female&+\slash + (20 records)&Mysm1\slash + (5 records)\\
+Male&+\slash + (25 records)&\textcolor{red}{Mysm1\slash + (1 record only)} \\
 \hline  
 \end{tabular}
 \caption{Example of the dataset with 3 sex values}\label{table:04}
 \end{center}
 \end{table}
 
-When \textit{dataset.clean} argument's is set to TRUE all "unsexed" records are filtered out since there are no records for genotype "+\slash +" and only one record for "Mysm1\slash +".
+When \textit{dataset.clean} argument's is set to TRUE all "Male" records are filtered out since there is only one record for "Mysm1\slash +" genotype.
 
 \subsection{Dataset Checks}
 \label{section:DatasetChecks}
@@ -556,10 +555,11 @@ The PhenStat package provides five methods (frameworks) for statistical analysis
 the statistical significance is assessed, the biological significance measured through an effect size estimate and finally the genotype effect is classified e.g. "If phenotype is significant - both sexes equally".  
 
 
+\subsection{Manager for Analysis Methods -- \textit{testDataset} function}
 PhenStat's function \textit{testDataset} works as a manager for the different statistical analyses methods. It checks the dependent variable, runs the selected statistical analysis framework and
  returns modelling\slash testing results in the \textit{PhenTestResult} object (see Figure \ref{fig:01}). 
-
-\subsection{Manager for Analysis Methods -- \textit{testDataset} function}
+ 
+\subsubsection{Common Arguments}
 The \textit{testDataset} function's argument \textit{phenList} defines the \textit{PhenList} object prepared for the analysis.
 
 Function's argument \textit{depVariable} defines the dependent variable.
@@ -567,9 +567,15 @@ Function's argument \textit{depVariable} defines the dependent variable.
 Function's argument \textit{method} defines which statistical analysis framework to use. 
 The default value is "MM" which stands for mixed model framework. To perform Time as Fixed Effect method the argument \textit{method} is set to "TF". To perform Fisher Exact Test, the argument \textit{method} is set to "FE". For the Reference Range Plus framework \textit{method} is set to "RR" and finally, for the Logistic Regression framework \textit{method} is set to "LR".
 
-Function's argument \textit{dataPointsThreshold} defines the required number of data points in a group (subsets per genotype and sex combinations) for a successful analysis. The default value is 4. The minimal value is 2.
+\subsubsection{Method Specific Arguments} \label{specificArguments}
 
-Function's argument \textit{transformValues} defines to perform or not data transformation if needed. The default value is TRUE.
+There are two arguments specific for the "MM" and "TF" frameworks: 
+\begin{itemize}
+\item \textit{dataPointsThreshold} defines the required number of data points in a group (subsets per genotype and sex combinations) for a successful analysis. The default value is 4. The minimal value is 2.
+\item \textit{transformValues} defines to perform or not data transformation if needed (see p.\pageref{section:transformation} for details). The default value is FALSE.
+\end{itemize}
+
+There is argument \textit{useUnfiltered} specific for "RR" and "FE" frameworks which defines to use or not unfiltered dataset (dataset with all records regardless the number of records per genotype/sex combinations). The default value is FALSE.
 
 There are two more arguments specific for the "RR" framework: 
 \begin{itemize}
@@ -577,6 +583,7 @@ There are two more arguments specific for the "RR" framework:
 \item \textit{RR\_controlPointsThreshold} for the number of control data points in the RR framework with default value 60 and minimal value set to 40.
 \end{itemize}
 
+\subsubsection{Checks}
 The \textit{testDataset} function performs basic checks which ensure the statistical analysis would be appropriate and successful: \textit{depVariable} column is present in the dataset; thresholds value are set and do not exceed minimal values.
 
 After the basic checks the \textit{testDataset} function performs framework specific checks:

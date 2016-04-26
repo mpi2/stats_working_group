@@ -28,7 +28,9 @@ setClass("PhenList",
                 dataset.values.missingValue = "character",
                 dataset.values.male = "character",
                 dataset.values.female = "character",
-                dataset.clean = "logical")
+                dataset.clean = "logical",
+                datasetUNF = "data.frame")
+        # RR special case - unfiltered dataset
 )
 ##------------------------------------------------
 # Dimension functions

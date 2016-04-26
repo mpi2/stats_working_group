@@ -21,7 +21,7 @@ vectorOutput <- function(phenTestResult, phenotypeThreshold=0.01)
 {
     depVariable <- getVariable(phenTestResult)
     analysisResults <- analysisResults(phenTestResult)       
-    noSexes <- length(levels(analysedDataset(phenTestResult)$Sex))
+    #noSexes <- length(levels(analysedDataset(phenTestResult)$Sex))
     
     if (method(phenTestResult) %in% c("MM","TF")) {        
         equation <- switch(analysisResults$equation,
@@ -66,7 +66,7 @@ vectorOutput <- function(phenTestResult, phenotypeThreshold=0.01)
         addInfo = paste("{",DSsize,variability,",",formula,"}",sep="")
         
         percentageChanges <- "NA"
-        if (noSexes==2){
+        if (noSexes(phenTestResult)==2){
             percentageChanges <- paste("Female: ",round(analysisResults$model.output.percentageChanges[1],digits=2),"%",
                     ", ",
                     "Male: ",
@@ -195,7 +195,7 @@ vectorOutput <- function(phenTestResult, phenotypeThreshold=0.01)
             }
             p_value_all <- paste(low_all_p.value,high_all_p.value,sep=",")
             ES_all <- paste(low_all_ES,high_all_ES,sep=",")
-            if (noSexes==2){
+            if (noSexes(phenTestResult)==2){
                 male_pval <- paste(low_male_p.value,high_male_p.value,sep=",")
                 female_pval <- paste(low_female_p.value,high_female_p.value,sep=",")
                 male_ES <- paste(low_male_ES,high_male_ES,sep=",")
@@ -230,7 +230,7 @@ vectorOutput <- function(phenTestResult, phenotypeThreshold=0.01)
             addInfo = paste(addInfo,'"',rownames(parameters(phenTestResult))[2],
                             parameters(phenTestResult)[2],'"',",",sep="")
             
-            if (noSexes==2){
+            if (noSexes(phenTestResult)==2){
                 addInfo = paste(addInfo,'"',rownames(parameters(phenTestResult))[3],
                                 parameters(phenTestResult)[3],'"',",",sep="")
                 addInfo = paste(addInfo,'"',rownames(parameters(phenTestResult))[4],
@@ -398,10 +398,18 @@ vectorOutput <- function(phenTestResult, phenotypeThreshold=0.01)
 #-------------------------------------------------------------------------------
 vectorOutputMatrices <- function(phenTestResult,outputMessages=TRUE){
     stop_message <- ""
+    count_matrices <- getCountMatrices(phenTestResult)
+    #noSexes <- length(levels(analysedDataset(phenTestResult)$Sex))
     if (method(phenTestResult) %in% c("FE","RR")){
-        noSexes <- length(levels(analysedDataset(phenTestResult)$Sex))
-        levels <- length(levels(analysedDataset(phenTestResult)[, getVariable(phenTestResult)]))
-        count_matrices <- getCountMatrices(phenTestResult)
+        if (method(phenTestResult)=="FE"){
+          values <- analysedDataset(phenTestResult)[, getVariable(phenTestResult)]
+          values <- factor(values)
+          levels <- length(levels(values))
+        }
+        else {
+          levels <- length(rownames(count_matrices[["all"]]))
+        }
+
         vectorOutput <- c(getVariable(phenTestResult), 
                 colnames(count_matrices[["all"]])[1], 
                 colnames(count_matrices[["all"]])[2],
@@ -420,14 +428,14 @@ vectorOutputMatrices <- function(phenTestResult,outputMessages=TRUE){
         
         vectorOutput <- c(vectorOutput,all,add_levels,add_levels)
         
-        if (noSexes==2){
+        if (noSexes(phenTestResult)==2){
             males <- as.vector(t(count_matrices[["male"]]))
             vectorOutput <- c(vectorOutput,males,add_levels,add_levels)
         }
         else{
             vectorOutput <- c(vectorOutput,add_levels2)  
         }   
-        if (noSexes==2){
+        if (noSexes(phenTestResult)==2){
             females <- as.vector(t(count_matrices[["female"]]))
             vectorOutput <- c(vectorOutput,females,add_levels,add_levels)
         }

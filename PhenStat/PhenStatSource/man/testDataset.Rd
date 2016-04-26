@@ -17,7 +17,7 @@
     testDataset(phenList=NULL, depVariable=NULL, 
             equation="withWeight", outputMessages=TRUE, 
             pThreshold=0.05, method="MM", callAll=TRUE, keepList=NULL, dataPointsThreshold=4,
-            RR_naturalVariation=95,RR_controlPointsThreshold=60,transformValues=FALSE)
+            RR_naturalVariation=95,RR_controlPointsThreshold=60,transformValues=FALSE,useUnfiltered=FALSE)
 }
 \arguments{
     \item{phenList}{instance of the \code{\linkS4class{PhenList}} class; mandatory argument}       
@@ -42,6 +42,8 @@
         ; default value is 60; minimal value is 40}
     \item{transformValues}{flag: "FALSE" value to suppress transformation; "TRUE" value to perform transformation if needed; 
         default value FALSE}  
+    \item{useUnfiltered}{flag: "FALSE" value to use filtered dataset; "TRUE" value to use unfiltered dataset; 
+        default value FALSE}        
 }
 \value{
     Returns results stored in instance of the \code{\linkS4class{PhenTestResult}} class
