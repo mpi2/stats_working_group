@@ -461,7 +461,7 @@ At the moment there are no enough data points for the following combination(s):
 Many checking failures will be avoided when \textit{dataset.clean} argument of the \textit{PhenList} function is set to TRUE (default value). See examples in this and in the previous section \ref{section:Filtering}.
 
 \section{PhenList Object}
-The output of the \textit{PhenList} function is the \textit{PhenList} object that contains a cleaned dataset (\textit{PhenList} object's slot \textit{datasetPL}), reference genotype and test genotypes, terminology unification values. There is a number of useful methods available for the object, like \textit{getStat} to obtain a simple statistics about dataset columns, \textit{noSexes} to get a number of sex values available in the dataset, etc.
+The output of the \textit{PhenList} function is the \textit{PhenList} object that contains a cleaned dataset (\textit{PhenList} object's slot \textit{datasetPL}), unfiltered dataset for future potential usage in RR and FE frameworks (\textit{PhenList} object's slot \textit{datasetUNF}), reference genotype and test genotypes, terminology unification values. There is a number of useful methods available for the object, like \textit{getStat} to obtain a simple statistics about dataset columns, \textit{noSexes} to get a number of sex values available in the dataset, etc.
 
 The example below shows how to print out the whole cleaned dataset and how to view the statistics about it (output is shown in Table \ref{table:05}). 
 
