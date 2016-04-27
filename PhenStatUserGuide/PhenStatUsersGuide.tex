@@ -384,7 +384,7 @@ Male&+\slash + (25 records)&\textcolor{red}{Mysm1\slash + (1 record only)} \\
 \end{center}
 \end{table}
 
-When \textit{dataset.clean} argument's is set to TRUE all "Male" records are filtered out since there is only one record for "Mysm1\slash +" genotype.
+When \textit{dataset.clean} argument's is set to TRUE all "Male" records are filtered out since there is only one record for genotype/sex combination "Mysm1\slash +"/males.
 
 \subsection{Dataset Checks}
 \label{section:DatasetChecks}
@@ -576,6 +576,48 @@ There are two arguments specific for the "MM" and "TF" frameworks:
 \end{itemize}
 
 There is an argument \textit{useUnfiltered} specific for "RR" and "FE" frameworks which defines to use or not unfiltered dataset (dataset with all records regardless the number of records per genotype/sex combinations). The default value is FALSE.
+
+Consider the following example of the genotype and sex values in the dataset with a low sample size for the measurement "6kHz-evoked Auditory Brain Stem Response Threshold":
+\begin{table}[!h]
+\begin{center}
+\begin{tabular}{| l | l | l | l |}
+\hline
+Batch&Genotype&Sex&Value\\\hline
+10/08/2015&BL3569&Female&15\\
+03/08/2015&BL3569&Female&15\\
+29/07/2015&BL3569&Male&10\\
+25/11/2015&+/+&Female&10\\
+25/11/2013&+/+&Male&15\\
+11/08/2014&+/+&Male&20\\
+05/08/2014&+/+&Male&15\\
+07/10/2015&+/+&Female&15\\
+06/02/2014&+/+&Male&10\\
+08/06/2015&+/+&Male&15\\
+27/10/2014&+/+&Female&15\\
+\hline  
+\end{tabular}
+\caption{Example of the dataset with low sample size}\label{table:04un}
+\end{center}
+\end{table}
+
+If "RR" framework is called with the argument "useUnfiltered" set to FALSE then the original dataset is cleaned by filtering out records with genotype/sex combinations less than 2 (Table \ref{table:04fi}):
+\begin{table}[!h]
+\begin{center}
+\begin{tabular}{| l | l | l | l |}
+\hline
+Batch&Genotype&Sex&Value\\\hline
+10/08/2015&BL3569&Female&15\\
+03/08/2015&BL3569&Female&15\\
+25/11/2015&+/+&Female&10\\
+07/10/2015&+/+&Female&15\\
+27/10/2014&+/+&Female&15\\
+\hline  
+\end{tabular}
+\caption{Example of the cleaned dataset with low sample size}\label{table:04fi}
+\end{center}
+\end{table}
+
+In turn, when "RR" framework is called with the argument "useUnfiltered" set to TRUE the original unfiltered dataset (Table \ref{table:04un}) is used. 
 
 There are two more arguments specific for the "RR" framework: 
 \begin{itemize}
@@ -1962,7 +2004,7 @@ The following is an example of summary output of MM framework:
     testGenotype="Sparc/Sparc",outputMessages=FALSE)
     
 > result <- testDataset(test,
-    depVariable="Lean.Mass",outputMessages=FALSE, transformValues=FALSE)
+    depVariable="Lean.Mass",outputMessages=FALSE, transformValues=TRUE)
 
 > summaryOutput(result)
 
