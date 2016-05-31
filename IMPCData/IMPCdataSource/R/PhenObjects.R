@@ -12,7 +12,7 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ##------------------------------------------------------------------------------
-## impress_lists.R contains functions to get and to print out IMPC objects retrieved 
+## impress_lists.R contains functions to get and to print out IMPC objects retrieved
 ## from IMPC database by using Impress SOLR REST API
 ##------------------------------------------------------------------------------
 library("rjson")
@@ -22,18 +22,18 @@ getName <- function(fieldNameFrom,fieldNameTo,fieldValueFrom)
 {
     fieldValueFrom <- gsub(":","\\\\:",fieldValueFrom)
     json_file <- URLencode(paste("http://www.ebi.ac.uk/mi/impc/solr/experiment/select?q=",fieldNameFrom,":",
-                    fieldValueFrom,"&rows=0&wt=json&facet=true&"
+                    fieldValueFrom,"&rows=0&wt=json&facet=true&facet.mincount=1&facet.limit=-1&"
                     ,"facet.field=",fieldNameTo,sep=""))
     #print(json_file)
     json_data <- fromJSON(paste(readLines(json_file), collapse=""))
-    names <- unlist(json_data$facet_counts$facet_fields)    
+    names <- unlist(json_data$facet_counts$facet_fields)
     numDocs <- names[seq(2,length(names),2)]
     numDocs <- as.numeric(numDocs)
-    selected <- numDocs>0    
+    selected <- numDocs>0
     names <- names[seq(1,length(names),2)]
     names(names) <- NULL
     result <- unlist(names[selected])
-    
+
     return (result)
 }
 ##------------------------------------------------------------------------------
@@ -41,11 +41,11 @@ getName <- function(fieldNameFrom,fieldNameTo,fieldValueFrom)
 getPhenCenters <- function(excludeLegacyPipelines=TRUE)
 {
     json_file <- paste("http://www.ebi.ac.uk/mi/impc/solr/experiment/select?q=*%3A*&rows=0&",
-            "wt=json&facet=true&facet.field=phenotyping_center",sep="")
+            "wt=json&facet=true&facet.mincount=1&facet.limit=-1&facet.field=phenotyping_center",sep="")
     json_data <- fromJSON(paste(readLines(json_file), collapse=""))
     centers <- unlist(json_data$facet_counts$facet_fields$phenotyping_center)
     centers <- centers[seq(1,length(centers),2)]
-    
+
     if (excludeLegacyPipelines){
         for (centerIndex in 1:length(centers) ) {
             listPipelines <- getPipelines(centers[centerIndex],excludeLegacyPipelines)
@@ -74,32 +74,32 @@ getPipelines <- function(PhenCenterName=NULL,excludeLegacyPipelines=TRUE)
     }
     else {
         PhenCenterName <- paste("\"",PhenCenterName,"\"",sep="")
-        
+
     }
 
     legacy_pipelines <- c("M-G-P_001","ESLIM_001","ESLIM_002","ESLIM_003","GMC_001")
-    
+
     json_file <- URLencode(paste("http://www.ebi.ac.uk/mi/impc/solr/experiment/select?q=phenotyping_center:",
-            PhenCenterName,"&rows=0&wt=json&facet=true&"
+            PhenCenterName,"&rows=0&wt=json&facet=true&facet.mincount=1&facet.limit=-1&"
             ,"facet.field=pipeline_stable_id",sep=""))
     #print(json_file)
     json_data <- fromJSON(paste(readLines(json_file), collapse=""))
     pipeline_ids <- unlist(json_data$facet_counts$facet_fields$pipeline_stable_id)
-    
+
     numDocs <- pipeline_ids[seq(2,length(pipeline_ids),2)]
     numDocs <- as.numeric(numDocs)
     #print(numDocs)
     selected <- numDocs>0
     pipeline_ids <- pipeline_ids[seq(1,length(pipeline_ids),2)]
-    
+
     result_ids <- as.list(pipeline_ids[selected])
-    
+
     if (excludeLegacyPipelines){
         result_ids <- result_ids[!(result_ids %in% legacy_pipelines)]
     }
 
     return (unlist(result_ids))
-   
+
 }
 ##------------------------------------------------------------------------------
 ## Pipelines within phenotyping center
@@ -129,12 +129,12 @@ getProcedures <- function(PhenCenterName=NULL, PipelineID=NULL)
     }
     else {
         PhenCenterName <- paste("\"",PhenCenterName,"\"",sep="")
-        
+
     }
-    
+
     json_file <- URLencode(paste("http://www.ebi.ac.uk/mi/impc/solr/experiment/select?q=phenotyping_center:",
                     PhenCenterName," AND pipeline_stable_id:",
-                    PipelineID,"&rows=0&wt=json&facet=true&"
+                    PipelineID,"&rows=0&wt=json&facet=true&facet.mincount=1&facet.limit=-1&"
                     ,"facet.field=procedure_stable_id",sep=""))
     #print(json_file)
     json_data <- fromJSON(paste(readLines(json_file), collapse=""))
@@ -144,7 +144,7 @@ getProcedures <- function(PhenCenterName=NULL, PipelineID=NULL)
     #print(numDocs)
     selected <- numDocs>0
     procedures <- procedures[seq(1,length(procedures),2)]
-    
+
     return (as.list(procedures[selected]))
 }
 ##------------------------------------------------------------------------------
@@ -174,13 +174,13 @@ getParameters <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL
     }
     else {
         PhenCenterName <- paste("\"",PhenCenterName,"\"",sep="")
-        
+
     }
-    
+
     json_file <- URLencode(paste("http://www.ebi.ac.uk/mi/impc/solr/experiment/select?q=phenotyping_center:",
                     PhenCenterName," AND pipeline_stable_id:",
                     PipelineID," AND procedure_stable_id:",
-                    ProcedureID,"&rows=0&wt=json&facet=true&"
+                    ProcedureID,"&rows=0&wt=json&facet=true&facet.mincount=1&facet.limit=-1&"
                     ,"facet.field=parameter_stable_id",sep=""))
    # print(json_file)
     json_data <- fromJSON(paste(readLines(json_file), collapse=""))
@@ -190,7 +190,7 @@ getParameters <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL
     #print(numDocs)
     selected <- numDocs>0
     parameters <- parameters[seq(1,length(parameters),2)]
-    
+
     return (as.list(parameters[selected]))
 }
 ##------------------------------------------------------------------------------
@@ -220,15 +220,15 @@ getStrains <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL, P
     }
     else {
         PhenCenterName <- paste("\"",PhenCenterName,"\"",sep="")
-        
+
     }
 
-    
+
     json_file <- URLencode(paste("http://www.ebi.ac.uk/mi/impc/solr/experiment/select?q=phenotyping_center:",
                     PhenCenterName," AND pipeline_stable_id:",
                     PipelineID," AND procedure_stable_id:",
                     ProcedureID," AND parameter_stable_id:",
-                    ParameterID,"&rows=0&wt=json&facet=true&"
+                    ParameterID,"&rows=0&wt=json&facet=true&facet.mincount=1&facet.limit=-1&"
                     ,"facet.field=strain_accession_id",sep=""))
     #print(json_file)
     json_data <- fromJSON(paste(readLines(json_file), collapse=""))
@@ -238,7 +238,7 @@ getStrains <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL, P
     #print(numDocs)
     selected <- numDocs>0
     strains <- strains[seq(1,length(strains),2)]
-    
+
     return (as.list(strains[selected]))
 }
 ##------------------------------------------------------------------------------
@@ -268,16 +268,16 @@ getGenes <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL, Par
     }
     else {
         PhenCenterName <- paste("\"",PhenCenterName,"\"",sep="")
-        
+
     }
-    
+
     if (is.null(StrainID)){
-    
+
         json_file <- URLencode(paste("http://www.ebi.ac.uk/mi/impc/solr/experiment/select?q=phenotyping_center:",
                         PhenCenterName," AND pipeline_stable_id:",
                         PipelineID," AND procedure_stable_id:",
                         ProcedureID," AND parameter_stable_id:",
-                        ParameterID,"&rows=0&wt=json&facet=true&"
+                        ParameterID,"&rows=0&wt=json&facet=true&facet.mincount=1&facet.limit=-1&"
                         ,"facet.field=gene_accession_id",sep=""))
     }
     else {
@@ -287,7 +287,7 @@ getGenes <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL, Par
                         PipelineID," AND procedure_stable_id:",
                         ProcedureID," AND parameter_stable_id:",
                         ParameterID," AND strain_accession_id:",
-                        StrainID,"&rows=0&wt=json&facet=true&"
+                        StrainID,"&rows=0&wt=json&facet=true&facet.mincount=1&facet.limit=-1&"
                         ,"facet.field=gene_accession_id",sep=""))
     }
     #print(json_file)
@@ -298,7 +298,7 @@ getGenes <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL, Par
     #print(numDocs)
     selected <- numDocs>0
     genes <- genes[seq(1,length(genes),2)]
-    
+
     return (as.list(genes[selected]))
 }
 ##------------------------------------------------------------------------------
@@ -329,23 +329,23 @@ getAlleles <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL, P
     }
     else {
         PhenCenterName <- paste("\"",PhenCenterName,"\"",sep="")
-        
+
     }
     add_this <- ""
     if (!is.null(StrainID)){
         StrainID <- gsub(":","\\\\:",StrainID)
         add_this <- paste(add_this," AND strain_accession_id:", StrainID, sep="")
-    }  
-    
-    
+    }
+
+
     json_file <- URLencode(paste("http://www.ebi.ac.uk/mi/impc/solr/experiment/select?q=phenotyping_center:",
                     PhenCenterName," AND pipeline_stable_id:",
                     PipelineID," AND procedure_stable_id:",
                     ProcedureID," AND parameter_stable_id:",
-                    ParameterID,add_this,"&rows=0&wt=json&facet=true&"
+                    ParameterID,add_this,"&rows=0&wt=json&facet=true&facet.mincount=1&facet.limit=-1&"
                     ,"facet.field=allele_accession_id",sep=""))
-    
-    #print(json_file)
+
+    print(json_file)
     json_data <- fromJSON(paste(readLines(json_file), collapse=""))
     alleles <- unlist(json_data$facet_counts$facet_fields$allele_accession_id)
     numDocs <- alleles[seq(2,length(alleles),2)]
@@ -353,7 +353,7 @@ getAlleles <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL, P
     #print(numDocs)
     selected <- numDocs>0
     alleles <- alleles[seq(1,length(alleles),2)]
-    
+
     return (as.list(alleles[selected]))
 }
 ##------------------------------------------------------------------------------
@@ -377,7 +377,7 @@ printAlleles <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL,
 }
 ##------------------------------------------------------------------------------
 ## Zygosities
-getZygosities <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL, 
+getZygosities <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL,
                           ParameterID=NULL, StrainID=NULL, GeneID=NULL, AlleleID=NULL)
 {
     if(is.null(PhenCenterName)||is.null(PipelineID)||is.null(ProcedureID)||is.null(ParameterID)){
@@ -385,29 +385,29 @@ getZygosities <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL
     }
     else {
         PhenCenterName <- paste("\"",PhenCenterName,"\"",sep="")
-        
+
     }
     add_this <- ""
     if (!is.null(StrainID)){
         StrainID <- gsub(":","\\\\:",StrainID)
         add_this <- paste(add_this," AND strain_accession_id:", StrainID, sep="")
-    }  
+    }
     if (!is.null(GeneID)){
         GeneID <- gsub(":","\\\\:",GeneID)
         add_this <- paste(add_this," AND gene_accession_id:", GeneID, sep="")
-    } 
+    }
     if (!is.null(AlleleID)){
         AlleleID <- gsub(":","\\\\:",AlleleID)
         add_this <- paste(add_this," AND allele_accession_id:", AlleleID, sep="")
-    } 
-        
+    }
+
     json_file <- URLencode(paste("http://www.ebi.ac.uk/mi/impc/solr/experiment/select?q=phenotyping_center:",
                     PhenCenterName," AND pipeline_stable_id:",
                     PipelineID," AND procedure_stable_id:",
                     ProcedureID," AND parameter_stable_id:",
-                    ParameterID,add_this,"&rows=0&wt=json&facet=true&"
+                    ParameterID,add_this,"&rows=0&wt=json&facet=true&facet.mincount=1&facet.limit=-1&"
                     ,"facet.field=zygosity",sep=""))
-    
+
     #print(json_file)
     json_data <- fromJSON(paste(readLines(json_file), collapse=""))
     zygosities <- unlist(json_data$facet_counts$facet_fields$zygosity)
@@ -416,7 +416,7 @@ getZygosities <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL
     #print(numDocs)
     selected <- numDocs>0
     zygosities <- zygosities[seq(1,length(zygosities),2)]
-    
+
     return (as.list(zygosities[selected]))
 }
 ##------------------------------------------------------------------------------
