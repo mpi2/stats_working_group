@@ -12,7 +12,7 @@
 \usepackage{float}
 \usepackage{rotating}
 \usepackage{array}
-
+\usepackage[dvipsnames]{xcolor}
 
 %opening
 
@@ -368,7 +368,7 @@ Alternatively you can define 'hemiGenotype' and 'testGenotype' arguments to rela
 \end{verbatim}
 \endgroup
 
-Filtering also takes place when there are records that do not have at least two records in the dataset with the same genotype and sex values. 
+Filtering also takes place when there are records that do not have at least two records in the dataset with the same genotype and sex values. This type of filtering is needed to successfully process a dataset with Mixed Model, Time Fixed Effect and Logistic Regression frameworks. However, in some cases it is beneficial to process dataset with all genotype/sex records by using Fisher Exact Test and Reference Range Plus frameworks. Unfiltered dataset is stored within \textit{PhenList} object to allow such processing (see p.\pageref{specificArguments}).    
 
 Consider the following example of the genotype and sex values in the dataset:
 \begin{table}[!h]
@@ -376,16 +376,15 @@ Consider the following example of the genotype and sex values in the dataset:
 \begin{tabular}{| l | l | l | }
   \hline
 Sex&Reference genotype&Test genotype\\\hline
-Female&+\slash +&Mysm1\slash +\\
-Male&+\slash +&Mysm1\slash +\\
-unsexed& &Mysm1\slash + (1 record only)\\
+Female&+\slash + (20 records)&Mysm1\slash + (5 records)\\
+Male&+\slash + (25 records)&\textcolor{red}{Mysm1\slash + (1 record only)} \\
 \hline  
 \end{tabular}
 \caption{Example of the dataset with 3 sex values}\label{table:04}
 \end{center}
 \end{table}
 
-When \textit{dataset.clean} argument's is set to TRUE all "unsexed" records are filtered out since there are no records for genotype "+\slash +" and only one record for "Mysm1\slash +".
+When \textit{dataset.clean} argument's is set to TRUE all "Male" records are filtered out since there is only one record for genotype/sex combination "Mysm1\slash +"/males.
 
 \subsection{Dataset Checks}
 \label{section:DatasetChecks}
@@ -462,7 +461,7 @@ At the moment there are no enough data points for the following combination(s):
 Many checking failures will be avoided when \textit{dataset.clean} argument of the \textit{PhenList} function is set to TRUE (default value). See examples in this and in the previous section \ref{section:Filtering}.
 
 \section{PhenList Object}
-The output of the \textit{PhenList} function is the \textit{PhenList} object that contains a cleaned dataset (\textit{PhenList} object's slot \textit{datasetPL}), reference genotype and test genotypes, terminology unification values. There is a number of useful methods available for the object, like \textit{getStat} to obtain a simple statistics about dataset columns, \textit{noSexes} to get a number of sex values available in the dataset, etc.
+The output of the \textit{PhenList} function is the \textit{PhenList} object that contains a cleaned dataset (\textit{PhenList} object's slot \textit{datasetPL}), unfiltered dataset for future potential usage in RR and FE frameworks (\textit{PhenList} object's slot \textit{datasetUNF}), reference genotype and test genotypes, terminology unification values. There is a number of useful methods available for the object, like \textit{getStat} to obtain a simple statistics about dataset columns, \textit{noSexes} to get a number of sex values available in the dataset, etc.
 
 The example below shows how to print out the whole cleaned dataset and how to view the statistics about it (output is shown in Table \ref{table:05}). 
 
@@ -556,10 +555,11 @@ The PhenStat package provides five methods (frameworks) for statistical analysis
 the statistical significance is assessed, the biological significance measured through an effect size estimate and finally the genotype effect is classified e.g. "If phenotype is significant - both sexes equally".  
 
 
+\subsection{Manager for Analysis Methods -- \textit{testDataset} function}
 PhenStat's function \textit{testDataset} works as a manager for the different statistical analyses methods. It checks the dependent variable, runs the selected statistical analysis framework and
  returns modelling\slash testing results in the \textit{PhenTestResult} object (see Figure \ref{fig:01}). 
-
-\subsection{Manager for Analysis Methods -- \textit{testDataset} function}
+ 
+\subsubsection{Common Arguments}
 The \textit{testDataset} function's argument \textit{phenList} defines the \textit{PhenList} object prepared for the analysis.
 
 Function's argument \textit{depVariable} defines the dependent variable.
@@ -567,9 +567,57 @@ Function's argument \textit{depVariable} defines the dependent variable.
 Function's argument \textit{method} defines which statistical analysis framework to use. 
 The default value is "MM" which stands for mixed model framework. To perform Time as Fixed Effect method the argument \textit{method} is set to "TF". To perform Fisher Exact Test, the argument \textit{method} is set to "FE". For the Reference Range Plus framework \textit{method} is set to "RR" and finally, for the Logistic Regression framework \textit{method} is set to "LR".
 
-Function's argument \textit{dataPointsThreshold} defines the required number of data points in a group (subsets per genotype and sex combinations) for a successful analysis. The default value is 4. The minimal value is 2.
+\subsubsection{Method Specific Arguments} \label{specificArguments}
 
-Function's argument \textit{transformValues} defines to perform or not data transformation if needed. The default value is TRUE.
+There are two arguments specific for the "MM" and "TF" frameworks: 
+\begin{itemize}
+\item \textit{dataPointsThreshold} defines the required number of data points in a group (subsets per genotype and sex combinations) for a successful analysis. The default value is 4. The minimal value is 2.
+\item \textit{transformValues} defines to perform or not data transformation if needed (see p.\pageref{section:transformation} for details). The default value is FALSE.
+\end{itemize}
+
+There is an argument \textit{useUnfiltered} specific for "RR" and "FE" frameworks which defines to use or not unfiltered dataset (dataset with all records regardless the number of records per genotype/sex combinations). The default value is FALSE.
+
+Consider the following example of the genotype and sex values in the dataset with a low sample size for the measurement "6kHz-evoked Auditory Brain Stem Response Threshold":
+\begin{table}[!h]
+\begin{center}
+\begin{tabular}{| l | l | l | l |}
+\hline
+Batch&Genotype&Sex&Value\\\hline
+10/08/2015&BL3569&Female&15\\
+03/08/2015&BL3569&Female&15\\
+29/07/2015&BL3569&Male&10\\
+25/11/2015&+/+&Female&10\\
+25/11/2013&+/+&Male&15\\
+11/08/2014&+/+&Male&20\\
+05/08/2014&+/+&Male&15\\
+07/10/2015&+/+&Female&15\\
+06/02/2014&+/+&Male&10\\
+08/06/2015&+/+&Male&15\\
+27/10/2014&+/+&Female&15\\
+\hline  
+\end{tabular}
+\caption{Example of the dataset with low sample size}\label{table:04un}
+\end{center}
+\end{table}
+
+If "RR" framework is called with the argument "useUnfiltered" set to FALSE then the original dataset is cleaned by filtering out records with genotype/sex combinations less than 2 (Table \ref{table:04fi}):
+\begin{table}[!h]
+\begin{center}
+\begin{tabular}{| l | l | l | l |}
+\hline
+Batch&Genotype&Sex&Value\\\hline
+10/08/2015&BL3569&Female&15\\
+03/08/2015&BL3569&Female&15\\
+25/11/2015&+/+&Female&10\\
+07/10/2015&+/+&Female&15\\
+27/10/2014&+/+&Female&15\\
+\hline  
+\end{tabular}
+\caption{Example of the cleaned dataset with low sample size}\label{table:04fi}
+\end{center}
+\end{table}
+
+In turn, when "RR" framework is called with the argument "useUnfiltered" set to TRUE the original unfiltered dataset (Table \ref{table:04un}) is used. 
 
 There are two more arguments specific for the "RR" framework: 
 \begin{itemize}
@@ -577,6 +625,7 @@ There are two more arguments specific for the "RR" framework:
 \item \textit{RR\_controlPointsThreshold} for the number of control data points in the RR framework with default value 60 and minimal value set to 40.
 \end{itemize}
 
+\subsubsection{Checks}
 The \textit{testDataset} function performs basic checks which ensure the statistical analysis would be appropriate and successful: \textit{depVariable} column is present in the dataset; thresholds value are set and do not exceed minimal values.
 
 After the basic checks the \textit{testDataset} function performs framework specific checks:
@@ -992,25 +1041,23 @@ Genotype3    1.308178 0.4792010 238  2.729914  6.808624e-03
 
 \subsubsection{Reporting Biological Effect}
 \label{section:BiologicalEffect}
-The biological effect is reported in two formats: estimate and a percentage change. 
+The biological effect is reported in two formats: model estimate and a percentage change. 
 
-The first measure is on a scale specific to that variable; whilst the second is relative to the wildtype signal and thus is scaled comparable across variables. 
+The first measure is on a scale specific to that variable; whilst the second is relative to the global signal and thus is scaled comparable across variables. 
 
-The estimate is in the scale of the variable and is the estimated change arising from being a knockout animal relative to the reference data. In the presence of sexual dimorphism it is estimated separately for the male and female knockout animals. In the \textit{summaryOutput} view these estimates are reported in the ANOVA table. In the \textit{vectorOutput} view these values are captured and reported as either Genotype estimate or Sex FvKO estimate and Sex MvKO estimate depending on whether sexual dimorphism was found to be significant.
+The model estimate is in the scale of the variable and is the estimated change arising from being a knockout animal relative to the reference data. In the presence of sexual dimorphism the model estimate is estimated separately for the male and female knockout animals. In the \textit{summaryOutput} view these estimates are reported in the ANOVA table. In the \textit{vectorOutput} view these values are captured and reported as either Genotype estimate or Sex FvKO estimate and Sex MvKO estimate depending on whether sexual dimorphism was found to be significant.
 
-The percentage change is the ratio of the genotype effect for a sex relative to the wildtype signal for that variable for that sex. When weight is not included in the model, it is entirely estimated from the coefficients returned from the model. When weight is included in the model, then the estimated genotype effect is reported relative to the average for that sex from the wildtype data. This distinction arises, because when weight is included the model the intercept is an estimate of the wildtype female animal with zero body weight.
-
-The Figures \ref{fig:05_be1} and \ref{fig:05_be2} shows the various models and how the percentage change is estimated such the genotype effect is relative to the wildtype signal for that sex. The calculated values are in the \textit{summaryOutput} and reported in the \textit{vectorOutput} as "Genotype percentage change Male" and/or "Genotype percentage change Female".  
+The percentage change is the ratio of the genotype effect for a sex relative to the global average signal for that variable. The figures \ref{fig:05_be1} and \ref{fig:05_be2} show the various models and how the percentage change is estimated. The global average here is the mean value of all values from the variable of interest. The calculated percentage changes are in the \textit{summaryOutput} and reported in the \textit{vectorOutput} as "Genotype percentage change Male" and/or "Genotype percentage change Female".  
 
 See Figures \ref{fig:05_be1} and \ref{fig:05_be2} for the percentage change calculation details.
 
 \begin{figure}[!htpb]%figure01
-\centerline{\includegraphics[scale=0.6]{BiologicalEffect1.png}}
-\caption{Calculation of the percentage change for model wihtout weight}\label{fig:05_be1}
+\centerline{\includegraphics[scale=0.6]{BiologicalEffect4.png}}
+\caption{Calculation of the percentage change for model without weight}\label{fig:05_be1}
 \end{figure}
 
 \begin{figure}[!htpb]%figure01
-\centerline{\includegraphics[scale=0.6]{BiologicalEffect2.png}}
+\centerline{\includegraphics[scale=0.6]{BiologicalEffect3.png}}
 \caption{Calculation of the percentage change for model that includes weight}\label{fig:05_be2}
 \end{figure}
 
@@ -1040,8 +1087,8 @@ Was variance equal? TRUE
 Genotype p-value: 6.751997e-04
 Genotype effect: -1.8618 +/- 0.5418
 Was there evidence of sexual dimorphism? no (p-value 6.330802e-01)
-Genotype percentage change Female: -10.1%
-Genotype percentage change Male: -8.22%
+Genotype percentage change Female: -9.17%
+Genotype percentage change Male: -9.17%
 
 ----------------------------------------------------------------------------
 Classification Tag
@@ -1055,13 +1102,17 @@ Model Output Summary
 (Intercept)         18.440648 0.1696796 412 108.679253 2.044168e-305
 GenotypeSparc/Sparc -1.861759 0.5417867 412  -3.436332  6.495823e-04
 SexMale              4.209940 0.1607472 412  26.189818  1.018842e-89
+
+> mean_all <- mean(test@datasetPL[,c("Lean.Mass")],na.rm=TRUE)  
+[1] 20.30544
+
 \end{verbatim}
 \endgroup 
 \[
-Genotype\:percentage\:change\:Male = (-1.86/(18.44+4.21))*100=-8.2\%
+Genotype\:percentage\:change\:Male = (-1.861759/20.30544)*100=-9.17\%
 \]
 \[
-Genotype\:percentage\:change\:Female = (-1.86/18.44)*100=-10.1\%
+Genotype\:percentage\:change\:Female = (-1.861759/20.30544)*100=-9.17\%
 \]
 
 
@@ -1087,8 +1138,8 @@ Was variance equal? FALSE
 Genotype p-value: 3.715089e-01
 Genotype effect: -0.2914 +/- 0.3305
 Was there evidence of sexual dimorphism? no (p-value 1.022353e-01)
-Genotype percentage change Female: -1.59%
-Genotype percentage change Male: -1.3%
+Genotype percentage change Female: -1.44%
+Genotype percentage change Male: -1.44%
 
 ----------------------------------------------------------------------------
 Classification Tag
@@ -1104,20 +1155,15 @@ GenotypeSparc/Sparc -0.2914357 0.33047985 411 -0.8818562 3.783700e-01
 SexMale              1.6407343 0.18080930 411  9.0743913 4.791912e-18
 Weight               0.3430502 0.01808121 411 18.9727422 4.147891e-58
 
-> wt_subset <- subset(test@datasetPL, Genotype=="+/+")
-> wt_subset_females <- subset(wt_subset, Sex=="Female")
-> wt_subset_males <- subset(wt_subset, Sex=="Male")
-> mean(wt_subset_females$Lean.Mass,na.rm=TRUE)
-[1] 18.28705
-> mean(wt_subset_males$Lean.Mass,na.rm=TRUE)
-[1] 22.49357
+> mean_all <- mean(test@datasetPL[,c("Lean.Mass")],na.rm=TRUE)  
+[1] 20.30544
 \end{verbatim}
 \endgroup 
 \[
-Genotype\:percentage\:change\:Male = (-0.29/22.49)*100 = -1.3\%
+Genotype\:percentage\:change\:Male = (-0.2914357/20.30544)*100 = -1.44\%
 \]
 \[
-Genotype\:percentage\:change\:Female = (-0.29/18.28)*100 = -1.59\%
+Genotype\:percentage\:change\:Female = (-0.2914357/20.30544)*100 = -1.44\%
 \]
 
 \subsection{Time Fixed Effect Framework}
@@ -1300,7 +1346,7 @@ The \textit{classificationTag} function returns a classification tag to assign a
 When the function is called through \textit{vectorOutput} function, the tag will be proceeded by the phrase “If phenotype is significant", meaning that globally the test has not assessed whether there was a statistical significant difference just that if there was this would be the classification if it was statistically significant. When the function is called through \textit{summaryOutput} function or directly there is an argument \textit{phenotypeThreshold} (default value is 0.01), which sets the significance threshold of whether there is a phenotype of interest. If globally, the analysis indicates there is a statistically significant phenotype then the classification tag is appended to the phrase “With phenotype threshold value XXX".
 
 \subsubsection{Reporting Biological Effect}
-Within Time Fixed Effect framework the biological effect is also reported in two formats: estimate and a percentage change. The meaning of the calculated values is the same as in Mixed Model framework. Please see section \ref{section:BiologicalEffect} for details. 
+Within Time Fixed Effect framework the biological effect is also reported in two formats: model estimate and a percentage change. The meaning of the calculated values is the same as in Mixed Model framework. Please see section \ref{section:BiologicalEffect} for details. 
 \subsection{Fisher Exact Test Framework}
 \label{section:FET}
 Fisher Exact Test is a standard framework for categorical data which compares data proportions and calculates the percentage change in classification. 
@@ -1958,7 +2004,7 @@ The following is an example of summary output of MM framework:
     testGenotype="Sparc/Sparc",outputMessages=FALSE)
     
 > result <- testDataset(test,
-    depVariable="Lean.Mass",outputMessages=FALSE, transformValues=FALSE)
+    depVariable="Lean.Mass",outputMessages=FALSE, transformValues=TRUE)
 
 > summaryOutput(result)
 

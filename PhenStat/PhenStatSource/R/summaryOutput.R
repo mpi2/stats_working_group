@@ -101,7 +101,7 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
     
     else if (method(phenTestResult) %in% c("RR")){
         x <- analysedDataset(phenTestResult)
-        noSexes <- length(levels(x$Sex))
+        #noSexes <- length(levels(x$Sex))
         
         colnum <- 1
         #cat("\n1) High vs Normal/Low\n")
@@ -122,7 +122,7 @@ summaryOutput <- function(phenTestResult,phenotypeThreshold=0.01)
         }
         nh<-nh[ , -which(names(nh) %in% c("nr"))]
         
-        if (noSexes==2){
+        if (noSexes(phenTestResult)==2){
             colnames(nl) <- head(nl,1)
             nl <- nl[-1,]
             rownames(nl) <- c("p-value","ES")

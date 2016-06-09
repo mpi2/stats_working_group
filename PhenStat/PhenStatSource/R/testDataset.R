@@ -29,7 +29,7 @@
 testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight", 
         outputMessages=TRUE, pThreshold=0.05, method="MM", callAll=TRUE, 
         keepList=NULL, dataPointsThreshold=4, RR_naturalVariation=95, 
-        RR_controlPointsThreshold=60, transformValues=FALSE)
+        RR_controlPointsThreshold=60,transformValues=FALSE, useUnfiltered=FALSE)
 {
     stop_message <- ""
     transformationRequired <- FALSE
@@ -40,6 +40,13 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
     columnOfWeight <- NULL
     columnOfInterestBatchAdjusted <- NULL
     columnOfInterestBatchWeightAdjusted <- NULL
+    # RR and FE special case - unfiltered dataset
+    if ((method=="RR" || method=="FE") && useUnfiltered){
+      phenList <- new("PhenList",datasetPL=phenList@datasetUNF,
+                      refGenotype = refGenotype(phenList),
+                      testGenotype = testGenotype(phenList),
+                      hemiGenotype = hemiGenotype(phenList))
+    }
     ## CHECK ARGUMENTS   
     
     # 1
@@ -495,14 +502,16 @@ testDataset <- function(phenList=NULL, depVariable=NULL, equation="withWeight",
     else if (method=="FE") {
         ## Fisher Exact Test 
         if (outputMessages)
-        message(paste("Information:\nMethod: Fisher Exact Test framework.\n",sep="")) 
+        message(paste("Information:\nMethod: Fisher Exact Test framework with ",
+        ifelse(useUnfiltered,"unfiltered dataset.","filtered dataset."),"\n",sep="")) 
         result <- FisherExactTest(phenListToAnalyse,depVariable,outputMessages)
     }
     
     else if (method=="RR"){
         ## RR Plus
         if (outputMessages)
-        message(paste("Information:\nMethod: Reference Ranges Plus framework.\n",sep="")) 
+          message(paste("Information:\nMethod: Reference Ranges Plus framework with ",
+          ifelse(useUnfiltered,"unfiltered dataset.","filtered dataset."),"\n",sep="")) 
         result <- RRTest(phenListToAnalyse,depVariable,outputMessages,RR_naturalVariation,RR_controlPointsThreshold)
     }
     else if (method=="LR"){

@@ -212,6 +212,7 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
     dataset$Batch<-factor(dataset$Batch)
         
     ## CHECKS
+    dataset_unfiltered <- dataset  # RR special case - unfiltered dataset
     dataset <- checkDataset(dataset, testGenotype, refGenotype, 
             outputMessages, dataset.clean)
     
@@ -253,7 +254,9 @@ PhenList <- function(dataset, testGenotype, refGenotype='+/+', hemiGenotype=NULL
     dataset.values.missingValue = ifelse(is.null(dataset.values.missingValue),character(0),dataset.values.missingValue),
     dataset.values.male = ifelse(is.null(dataset.values.male),character(0),as.character(dataset.values.male)),
     dataset.values.female = ifelse(is.null(dataset.values.female),character(0),as.character(dataset.values.female)),
-    dataset.clean = dataset.clean)
+    dataset.clean = dataset.clean,
+    datasetUNF=as.data.frame(dataset_unfiltered))
+    # RR special case - unfiltered dataset
         
   }
   else {
@@ -377,12 +380,15 @@ checkDataset <- function(dataset, testGenotype, refGenotype="+/+",
                     1, nchar(filtered_list_combinations)-2)
             
             if (dataset.clean){
-                if (outputMessages)
-                message(paste("Warning:\nSince dataset has to have at least ", 
+                if (outputMessages){
+                  message(paste("Warning:\nSince dataset has to have at least ", 
                               "two data points for each genotype/sex combination and ",
                               "there are not enough records for the combination(s): ",
                                filtered_list_combinations,", appropriate sex records ",
-                              "have been filtered out from the dataset.\n",sep=""))
+                              "have been filtered out from the dataset.",sep=""))
+                  message(paste("N.B. for RR and FE methods:\nBy default RR and FE will use filtered dataset. ", 
+                                "However, you can use unfiltered dataset which includes all data points by setting 'testDataset' function's argument 'useUnfiltered' to TRUE .\n",sep=""))
+                }
             }
             else
             message_dp <- paste("\nCheck failed:\nDataset should have at ", 
@@ -410,8 +416,14 @@ checkDataset <- function(dataset, testGenotype, refGenotype="+/+",
         if (outputMessages){
             message(paste("Information:\nDataset's 'Genotype' ", 
                     "column has following values: '",genotype_values,"'\n",sep=""))
-            message(paste("Information:\nDataset's 'Sex' ", 
+            if (nchar(filtered_list_combinations)>2){
+              message(paste("Information:\nFiltered dataset's 'Sex' ", 
+                            "column has following value(s): '",sex_values,"'\n",sep=""))
+            }
+            else {
+              message(paste("Information:\nDataset's 'Sex' ", 
                     "column has following value(s): '",sex_values,"'\n",sep=""))
+            }
         }
         
         ## Check of genotype and sex levels after cleaning

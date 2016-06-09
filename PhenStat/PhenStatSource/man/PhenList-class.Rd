@@ -72,6 +72,7 @@ The PhenList object can be created by using function \code{\link{PhenList}}.}
         \item{\code{dataset.values.female}:}{Object of class \code{"character"} ~~ value used to label "females" 
             in the original dataset}
         \item{\code{dataset.clean}:}{Object of class \code{"logical"} ~~ flag value is stored}
+        \item{\code{datasetUNF}:}{Object of class \code{"data.frame"} ~~ unfiltered dataset}
     }
 }
 \section{Methods}{

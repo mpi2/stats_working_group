@@ -16,7 +16,7 @@
 
 \title{PhenStat: statistical analysis of phenotypic data}
 \author{Natalja Kurbatova, Natasha Karp, Jeremy Mason}
-\date{Modified: 08 September, 2014. Compiled: \today}
+\date{Modified: 25 April, 2016. Compiled: \today}
 
 \maketitle
 
@@ -121,6 +121,12 @@ This is necessary to manage sex linked genes, where the genotype will be describ
 With \textit{hemiGenotype} argument of the PhenList function defined as "KO\slash Y", the actions of the function are: 
 "KO/Y" genotypes are relabelled to "KO/KO" for males;  females "+\slash KO" heterozygous are filtered out. 
 \newline\newline
+Filtering also takes place when there are records that do not have at least two records in the dataset with the same
+genotype and sex values. This type of filtering is needed to successfully process a dataset with Mixed Model,
+Time Fixed Effect and Logistic Regression frameworks. However, in some cases it is beneficial to process dataset 
+with all genotype/sex records by using Fisher Exact Test and Reference Range Plus frameworks.
+Unfiltered dataset is stored within \textit{PhenList} object to allow such processing.
+\newline\newline
 If a user would like to switch off filtering, (s)he can set \textit{PhenList}
 function's argument \textit{dataset.clean} to FALSE (default value is TRUE). 
 In the following example the same dataset is processed successfully passing the checks procedures when 
@@ -129,43 +135,41 @@ In the following example the same dataset is processed successfully passing the 
 \subsection{PhenList Object}
 The output of the \textit{PhenList} function is the \textit{PhenList} object that contains a cleaned dataset 
 (\textit{PhenList} object's section \textit{dataset}), simple statistics about dataset columns and additional 
-        information. 
-        \newline\newline
-        The example below shows how to print out the whole cleaned dataset and how to view the statistics about it. 
-        <<R.hide, results=hide, echo=FALSE, eval=TRUE>>=
-        library(PhenStat)
-        dataset1 <- system.file("extdata", "test3.csv", package="PhenStat")
+information. 
+\newline\newline
+The example below shows how to print out the whole cleaned dataset and how to view the statistics about it. 
         
-        test <- PhenList(dataset=read.csv(dataset1), 
+<<R.hide, results=hide, echo=TRUE, eval=TRUE>>=
+library(PhenStat)
+dataset1 <- system.file("extdata", "test3.csv", package="PhenStat")
+        
+test <- PhenList(dataset=read.csv(dataset1), 
                 dataset.clean=TRUE, 
                 dataset.values.female=1, 
                 dataset.values.male=2, 
                 testGenotype="Mysm1/+")
         
-        getDataset(test)
-        
-        test
-        @
-        \textit{PhenList} object has stored many characteristics about the data: reference genotype, test genotype, 
-        hemizygotes genotype, original column names, etc.
-        \newline
-        An example is given below.
-        <<R.hide, results=hide, echo=TRUE, eval=TRUE>>=
-        library(PhenStat)
-        dataset2 <- system.file("extdata", "test2.csv", package="PhenStat")
-        
-        test2 <- PhenList(dataset=read.csv(dataset2),
+getDataset(test)
+test
+@
+\textit{PhenList} object has stored many characteristics about the data: reference genotype, test genotype, 
+hemizygotes genotype, original column names, etc.
+\newline
+An example is given below.
+<<R.hide, results=hide, echo=TRUE, eval=TRUE>>=
+library(PhenStat)
+dataset2 <- system.file("extdata", "test2.csv", package="PhenStat")
+
+test2 <- PhenList(dataset=read.csv(dataset2),
                 testGenotype="Arid4a/Arid4a",
                 dataset.colname.weight="Weight.Value")
         
-        testGenotype(test2)
-        
-        refGenotype(test2)
-        @
-        
-        \section{Data Analysis}
-        The package contains four statistical frameworks for the phenodeviants identification:
-        \begin{enumerate}
+testGenotype(test2)
+refGenotype(test2)
+@
+\section{Data Analysis}
+The package contains four statistical frameworks for the phenodeviants identification:
+\begin{enumerate}
         \item Mixed Models framework assumes that base line values of dependent variable are normally distributed but batch 
         (assay date) adds noise and models variables accordingly in order to separate the batch and the genotype. Assume 
         batch is normally distributed with defined variance. This framework can be used in case when you have controls 
@@ -186,8 +190,7 @@ The output of the \textit{PhenList} function is the \textit{PhenList} object tha
         PhenStat's function \textit{testDataset} works as a manager for the different statistical analyses methods. 
         It checks the dependent variable, runs the selected statistical analysis framework and  returns modelling\slash 
         testing results in the \textit{PhenTestResult} object.
-        \newline\newline
-        
+        \newline\newline        
         The \textit{testDataset} function's argument \textit{phenList} defines the dataset stored in \textit{PhenList} object.
         \newline\newline
         The \textit{testDataset} function's argument \textit{depVariable} defines the dependent variable.
@@ -197,9 +200,15 @@ The output of the \textit{PhenList} function is the \textit{PhenList} object tha
         \textit{method} is set to "TF". To perform Fisher Exact Test, the argument \textit{method} is set to "FE". For the 
         Reference Range Plus framework \textit{method} is set to "RR".
         \newline\newline
-        Function's argument \textit{dataPointsThreshold} defines the required number of data points in a group (subsets per
-        genotype and sex combinations) for a successful analysis within "MM". The default value is 4. 
-The minimal value is 2.
+        There are two arguments specific for the "MM" and "TF" frameworks: 
+\begin{itemize}
+\item \textit{dataPointsThreshold} defines the required number of data points in a group (subsets per genotype and sex combinations) 
+for a successful analysis. The default value is 4. The minimal value is 2.
+\item \textit{transformValues} defines to perform or not data transformation if needed. The default value is FALSE.
+\end{itemize}
+There is an argument \textit{useUnfiltered} specific for "RR" and "FE" frameworks which defines 
+to use or not unfiltered dataset (dataset with all records regardless the number 
+of records per genotype/sex combinations). The default value is FALSE.
 \newline\newline
 There are two more arguments specific for the "RR" framework: 
 \begin{itemize}
