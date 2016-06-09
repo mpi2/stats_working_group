@@ -16,6 +16,31 @@
 ## from IMPC database by using Impress SOLR REST API
 ##------------------------------------------------------------------------------
 library("rjson")
+
+##------------------------------------------------------------------------------
+## unwrapSolrPivotResults - Function to unwrap the facet results from a solr call
+unwrapSolrPivotResults <- function(facets)
+{
+
+	if (length(facets)==0) {
+		return (list())
+	}
+
+	# facets is an array that looks like
+	# [1] "hemizygote"   "0"  "heterozygote" "0"  "homozygote"   "0"
+	# numDocs is every other value in the array
+	numDocs <- facets[seq(2,length(facets),2)]
+	numDocs <- as.numeric(numDocs)
+
+	# Return only the values that have results
+	selected <- numDocs>0
+	results <- facets[seq(1,length(facets),2)]
+	#names(results) <- NULL
+	return (as.list(results[selected]))
+
+}
+
+
 ##------------------------------------------------------------------------------
 ## Returns name (fieldNameTo) of the IMPC object by id (fieldValueFrom) and object class (fieldNameFrom)
 getName <- function(fieldNameFrom,fieldNameTo,fieldValueFrom)
@@ -27,15 +52,9 @@ getName <- function(fieldNameFrom,fieldNameTo,fieldValueFrom)
     #print(json_file)
     json_data <- fromJSON(paste(readLines(json_file), collapse=""))
     names <- unlist(json_data$facet_counts$facet_fields)
-    numDocs <- names[seq(2,length(names),2)]
-    numDocs <- as.numeric(numDocs)
-    selected <- numDocs>0
-    names <- names[seq(1,length(names),2)]
-    names(names) <- NULL
-    result <- unlist(names[selected])
-
-    return (result)
+	return (unwrapSolrPivotResults(names))
 }
+
 ##------------------------------------------------------------------------------
 ## Phenotyping center
 getPhenCenters <- function(excludeLegacyPipelines=TRUE)
@@ -44,6 +63,11 @@ getPhenCenters <- function(excludeLegacyPipelines=TRUE)
             "wt=json&facet=true&facet.mincount=1&facet.limit=-1&facet.field=phenotyping_center",sep="")
     json_data <- fromJSON(paste(readLines(json_file), collapse=""))
     centers <- unlist(json_data$facet_counts$facet_fields$phenotyping_center)
+
+	if (length(centers)==0) {
+		return (list())
+	}
+
     centers <- centers[seq(1,length(centers),2)]
 
     if (excludeLegacyPipelines){
@@ -71,8 +95,7 @@ getPipelines <- function(PhenCenterName=NULL,excludeLegacyPipelines=TRUE)
 {
     if(is.null(PhenCenterName)){
         stop("Please define phenotyping center")
-    }
-    else {
+    } else {
         PhenCenterName <- paste("\"",PhenCenterName,"\"",sep="")
 
     }
@@ -86,13 +109,7 @@ getPipelines <- function(PhenCenterName=NULL,excludeLegacyPipelines=TRUE)
     json_data <- fromJSON(paste(readLines(json_file), collapse=""))
     pipeline_ids <- unlist(json_data$facet_counts$facet_fields$pipeline_stable_id)
 
-    numDocs <- pipeline_ids[seq(2,length(pipeline_ids),2)]
-    numDocs <- as.numeric(numDocs)
-    #print(numDocs)
-    selected <- numDocs>0
-    pipeline_ids <- pipeline_ids[seq(1,length(pipeline_ids),2)]
-
-    result_ids <- as.list(pipeline_ids[selected])
+	result_ids <- unwrapSolrPivotResults(pipeline_ids)
 
     if (excludeLegacyPipelines){
         result_ids <- result_ids[!(result_ids %in% legacy_pipelines)]
@@ -107,8 +124,7 @@ printPipelines <- function(PhenCenterName=NULL, n=NULL, excludeLegacyPipelines=T
 {
     if(is.null(PhenCenterName)){
         stop("Please define phenotyping center")
-    }
-    else {
+    } else {
         listPipelines  <- getPipelines(PhenCenterName,excludeLegacyPipelines)
         if (is.null(n) || n>length(listPipelines)){
             n <- length(listPipelines)
@@ -126,8 +142,7 @@ getProcedures <- function(PhenCenterName=NULL, PipelineID=NULL)
 {
     if(is.null(PhenCenterName)||is.null(PipelineID)){
         stop("Please define phenotyping center and pipeline")
-    }
-    else {
+    } else {
         PhenCenterName <- paste("\"",PhenCenterName,"\"",sep="")
 
     }
@@ -139,13 +154,8 @@ getProcedures <- function(PhenCenterName=NULL, PipelineID=NULL)
     #print(json_file)
     json_data <- fromJSON(paste(readLines(json_file), collapse=""))
     procedures <- unlist(json_data$facet_counts$facet_fields$procedure_stable_id)
-    numDocs <- procedures[seq(2,length(procedures),2)]
-    numDocs <- as.numeric(numDocs)
-    #print(numDocs)
-    selected <- numDocs>0
-    procedures <- procedures[seq(1,length(procedures),2)]
 
-    return (as.list(procedures[selected]))
+	return (unwrapSolrPivotResults(procedures))
 }
 ##------------------------------------------------------------------------------
 ## Procedures within pipeline of phenotyping center
@@ -153,8 +163,7 @@ printProcedures <- function(PhenCenterName=NULL, PipelineID=NULL, n=NULL)
 {
     if(is.null(PhenCenterName)||is.null(PipelineID)){
         stop("Please define phenotyping center and pipeline")
-    }
-    else {
+    } else {
         listProcedures  <- getProcedures(PhenCenterName,PipelineID)
         if (is.null(n) || n>length(listProcedures)){
             n <- length(listProcedures)
@@ -171,8 +180,7 @@ getParameters <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL
 {
     if(is.null(PhenCenterName)||is.null(PipelineID)||is.null(ProcedureID)){
         stop("Please define phenotyping center, pipeline and procedure")
-    }
-    else {
+    } else {
         PhenCenterName <- paste("\"",PhenCenterName,"\"",sep="")
 
     }
@@ -185,13 +193,8 @@ getParameters <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL
    # print(json_file)
     json_data <- fromJSON(paste(readLines(json_file), collapse=""))
     parameters <- unlist(json_data$facet_counts$facet_fields$parameter_stable_id)
-    numDocs <- parameters[seq(2,length(parameters),2)]
-    numDocs <- as.numeric(numDocs)
-    #print(numDocs)
-    selected <- numDocs>0
-    parameters <- parameters[seq(1,length(parameters),2)]
 
-    return (as.list(parameters[selected]))
+	return (unwrapSolrPivotResults(parameters))
 }
 ##------------------------------------------------------------------------------
 ## Parameters measured within procedure of pipeline of phenotyping center
@@ -199,8 +202,7 @@ printParameters <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NU
 {
     if(is.null(PhenCenterName)||is.null(PipelineID)||is.null(ProcedureID)){
         stop("Please define phenotyping center, pipeline and procedure")
-    }
-    else {
+    } else {
         listParameters  <- getParameters(PhenCenterName,PipelineID,ProcedureID)
         if (is.null(n) || n>length(listParameters)){
             n <- length(listParameters)
@@ -217,8 +219,7 @@ getStrains <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL, P
 {
     if(is.null(PhenCenterName)||is.null(PipelineID)||is.null(ProcedureID)||is.null(ParameterID)){
         stop("Please define phenotyping center, pipeline, procedure and parameter of interest")
-    }
-    else {
+    } else {
         PhenCenterName <- paste("\"",PhenCenterName,"\"",sep="")
 
     }
@@ -233,13 +234,9 @@ getStrains <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL, P
     #print(json_file)
     json_data <- fromJSON(paste(readLines(json_file), collapse=""))
     strains <- unlist(json_data$facet_counts$facet_fields$strain)
-    numDocs <- strains[seq(2,length(strains),2)]
-    numDocs <- as.numeric(numDocs)
-    #print(numDocs)
-    selected <- numDocs>0
-    strains <- strains[seq(1,length(strains),2)]
 
-    return (as.list(strains[selected]))
+	return (unwrapSolrPivotResults(strains))
+
 }
 ##------------------------------------------------------------------------------
 ## Strains
@@ -247,8 +244,7 @@ printStrains <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL,
 {
     if(is.null(PhenCenterName)||is.null(PipelineID)||is.null(ProcedureID)||is.null(ParameterID)){
         stop("Please define phenotyping center, pipeline, procedure and parameter of interest")
-    }
-    else {
+    } else {
         listStrains  <- getStrains(PhenCenterName,PipelineID,ProcedureID,ParameterID)
         if (is.null(n) || n>length(listStrains)){
             n <- length(listStrains)
@@ -265,8 +261,7 @@ getGenes <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL, Par
 {
     if(is.null(PhenCenterName)||is.null(PipelineID)||is.null(ProcedureID)||is.null(ParameterID)){
         stop("Please define phenotyping center, pipeline, procedure and parameter of interest")
-    }
-    else {
+    } else {
         PhenCenterName <- paste("\"",PhenCenterName,"\"",sep="")
 
     }
@@ -279,8 +274,7 @@ getGenes <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL, Par
                         ProcedureID," AND parameter_stable_id:",
                         ParameterID,"&rows=0&wt=json&facet=true&facet.mincount=1&facet.limit=-1&"
                         ,"facet.field=gene_accession_id",sep=""))
-    }
-    else {
+    } else {
         StrainID <- gsub(":","\\\\:",StrainID)
         json_file <- URLencode(paste("http://www.ebi.ac.uk/mi/impc/solr/experiment/select?q=phenotyping_center:",
                         PhenCenterName," AND pipeline_stable_id:",
@@ -293,13 +287,9 @@ getGenes <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL, Par
     #print(json_file)
     json_data <- fromJSON(paste(readLines(json_file), collapse=""))
     genes <- unlist(json_data$facet_counts$facet_fields$gene_accession_id)
-    numDocs <- genes[seq(2,length(genes),2)]
-    numDocs <- as.numeric(numDocs)
-    #print(numDocs)
-    selected <- numDocs>0
-    genes <- genes[seq(1,length(genes),2)]
 
-    return (as.list(genes[selected]))
+	return (unwrapSolrPivotResults(genes))
+
 }
 ##------------------------------------------------------------------------------
 ## Genes
@@ -308,8 +298,7 @@ printGenes <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL, P
 {
     if(is.null(PhenCenterName)||is.null(PipelineID)||is.null(ProcedureID)||is.null(ParameterID)){
         stop("Please define phenotyping center, pipeline, procedure and parameter of interest")
-    }
-    else {
+    } else {
         listGenes  <- getGenes(PhenCenterName,PipelineID,ProcedureID,ParameterID,StrainID)
         if (is.null(n) || n>length(listGenes)){
             n <- length(listGenes)
@@ -326,8 +315,7 @@ getAlleles <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL, P
 {
     if(is.null(PhenCenterName)||is.null(PipelineID)||is.null(ProcedureID)||is.null(ParameterID)){
         stop("Please define phenotyping center, pipeline, procedure and parameter of interest")
-    }
-    else {
+    } else {
         PhenCenterName <- paste("\"",PhenCenterName,"\"",sep="")
 
     }
@@ -348,13 +336,9 @@ getAlleles <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL, P
     print(json_file)
     json_data <- fromJSON(paste(readLines(json_file), collapse=""))
     alleles <- unlist(json_data$facet_counts$facet_fields$allele_accession_id)
-    numDocs <- alleles[seq(2,length(alleles),2)]
-    numDocs <- as.numeric(numDocs)
-    #print(numDocs)
-    selected <- numDocs>0
-    alleles <- alleles[seq(1,length(alleles),2)]
 
-    return (as.list(alleles[selected]))
+	return (unwrapSolrPivotResults(alleles))
+
 }
 ##------------------------------------------------------------------------------
 ## Alleles
@@ -363,8 +347,7 @@ printAlleles <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL,
 {
     if(is.null(PhenCenterName)||is.null(PipelineID)||is.null(ProcedureID)||is.null(ParameterID)){
         stop("Please define phenotyping center, pipeline, procedure and parameter of interest")
-    }
-    else {
+    } else {
         listAlleles  <- getAlleles(PhenCenterName,PipelineID,ProcedureID,ParameterID,StrainID)
         if (is.null(n) || n>length(listAlleles)){
             n <- length(listAlleles)
@@ -382,8 +365,7 @@ getZygosities <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL
 {
     if(is.null(PhenCenterName)||is.null(PipelineID)||is.null(ProcedureID)||is.null(ParameterID)){
         stop("Please define phenotyping center, pipeline, procedure and parameter of interest")
-    }
-    else {
+    } else {
         PhenCenterName <- paste("\"",PhenCenterName,"\"",sep="")
 
     }
@@ -408,15 +390,10 @@ getZygosities <- function(PhenCenterName=NULL, PipelineID=NULL, ProcedureID=NULL
                     ParameterID,add_this,"&rows=0&wt=json&facet=true&facet.mincount=1&facet.limit=-1&"
                     ,"facet.field=zygosity",sep=""))
 
-    #print(json_file)
+    print(json_file)
     json_data <- fromJSON(paste(readLines(json_file), collapse=""))
     zygosities <- unlist(json_data$facet_counts$facet_fields$zygosity)
-    numDocs <- zygosities[seq(2,length(zygosities),2)]
-    numDocs <- as.numeric(numDocs)
-    #print(numDocs)
-    selected <- numDocs>0
-    zygosities <- zygosities[seq(1,length(zygosities),2)]
 
-    return (as.list(zygosities[selected]))
+	return (unwrapSolrPivotResults(zygosities))
 }
 ##------------------------------------------------------------------------------

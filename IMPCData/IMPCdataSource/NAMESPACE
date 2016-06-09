@@ -1,3 +1,4 @@
+importFrom("utils", URLencode, read.csv, write.table)
 importFrom(rjson, fromJSON)
 export(getPhenCenters,
        printPhenCenters,
