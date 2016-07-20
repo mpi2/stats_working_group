@@ -23,6 +23,10 @@ importFrom(logistf, logistf, logistftest)
 
 importFrom(MASS, boxcox)
 
+importFrom("graphics", "points", "stripchart")
+importFrom("stats", "binomial", "logLik", "p.adjust", "pchisq", "qchisq", "quantile", "setNames", "vcov")
+importFrom("utils", "head")
+
 #  All functions exported other than those starting with "."
 exportPattern("^[^\\.]")
 
