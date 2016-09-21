@@ -429,7 +429,7 @@ finalModel_SDpipeline <- function(phenTestResult, outputMessages=TRUE)
 			withWeight = {
 				## Eq.2
 				as.formula(paste(depVariable, "~", 
-								paste("Sex",  "Weight", sep= "+")))
+								paste("Sex",  "Weight", "Sex*Weight", sep= "+")))
 			}
 			,
 			withoutWeight = {
